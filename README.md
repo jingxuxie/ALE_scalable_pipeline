@@ -13,24 +13,24 @@ evaluators provide executable behavior.
 
 ```mermaid
 flowchart LR
-    M["Manifest and local sources"] --> S["Snapshot and hash"]
-    S --> T["Triage paper"]
-    T --> E["Extract evidence and workflow"]
-    E --> C["Mine task candidates"]
-    C --> G["Compile with trusted capabilities"]
-    G --> V["Audit references, mutants, and leakage"]
-    V --> P["Publish ALE bundles"]
-    T -->|Unsuitable or uncertain| R["Reject or request review"]
+    M["Paper, code, and data"] --> S["Save exact file versions"]
+    S --> T{"Can this make a good task?"}
+    T -->|Yes| E["Find the research steps"]
+    E --> C["Choose tasks"]
+    C --> G["Build with approved tools"]
+    G --> V["Test tasks and protect hidden answers"]
+    V --> P["Create ALE task files"]
+    T -->|No or unclear| R["Stop or ask for review"]
 ```
 
-The pipeline starts from an explicit manifest and local source files. It does
-not crawl the web or silently download code and data. Paper discovery and
-ranking can be added upstream, while Paper2ALE owns the reproducible path from
-resolved bytes to verified task packages.
+The pipeline starts from files explicitly provided by the user. It does not
+crawl the web or silently download code and data. Paper discovery and ranking
+can be added before this pipeline.
 
-Only a closed, bounded workflow with an independent verification route can be
-published. Every release is content-addressed, visibility-partitioned, and
-audited before packaging.
+Only papers with clear, bounded research steps and a reliable way to check the
+answers can produce published tasks. Paper2ALE records the exact input files,
+keeps hidden answers away from the evaluated agent, and runs final checks
+before creating the task packages.
 
 ## Quick start
 
@@ -58,10 +58,10 @@ paper2ale publish examples/generic/project.json --out dist --jobs 2
 ## Using your own paper
 
 1. Create an orchestration manifest that names the paper, local code or data,
-   provenance, licenses, and triage signals.
+   provenance, licenses, and suitability information.
 2. Resolve and hash the source assets.
 3. Run orchestration with a structured provider adapter.
-4. Review the generated project, then publish it through the trusted audit.
+4. Review the generated project, then publish it through the trusted checks.
 
 ```powershell
 paper2ale orchestrate manifests/my-paper.json `
@@ -116,7 +116,7 @@ system. See [the difficulty guide](docs/DIFFICULTY.md).
 
 | Example | Purpose |
 | --- | --- |
-| [Offline orchestration](examples/orchestration/README.md) | Runs triage, extraction, workflow synthesis, compilation, and audit from a deterministic replay. |
+| [Offline orchestration](examples/orchestration/README.md) | Checks paper suitability, finds the research steps, chooses tasks, builds them, and runs final checks from a deterministic replay. |
 | [Generic compiler](examples/generic/README.md) | Builds a hard affine-recovery task from an allowlisted declarative protocol. |
 | [HNN smoke suite](examples/hnn/README.md) | Provides three fast, grounded Hamiltonian Neural Networks workflow tasks. |
 | [Hard HNN suite](examples/hnn_hard/README.md) | Provides three structurally hard identification, variable-body, and coordinate-recovery tasks. |
@@ -126,10 +126,10 @@ system. See [the difficulty guide](docs/DIFFICULTY.md).
 - Source and asset bytes are pinned by hash with portable provenance records.
 - Source text and provider output cannot register code, commands, or grading
   authority.
-- Private graders recompute truth from evaluator-owned data; golden solutions
-  must pass while realistic mutants must fail.
-- Visibility, leakage, resource, reproducibility, path, checksum, and archive
-  checks fail closed before release.
+- Private graders calculate the correct results from hidden data. Known-correct
+  solutions must pass, while deliberately incorrect solutions must fail.
+- Hidden-data privacy, resource limits, repeatability, file paths, checksums,
+  and task packages are checked before release.
 
 `build` may create a candidate build. `publish` requires full publication
 readiness and emits deterministic agent, evaluator, author, and ALE-local
