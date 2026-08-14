@@ -1,0 +1,18 @@
+{
+  "schema_version": "paper2ale.config/v1",
+  "master_seed": 0,
+  "jobs": 4,
+  "source_policy": {
+    "require_exact_version": true,
+    "require_license": true,
+    "untrusted_source_content": true
+  },
+  "publication_gates": {
+    "schema": true,
+    "provenance": true,
+    "visibility_isolation": true,
+    "deterministic_archives": true,
+    "trusted_metric_recomputation": true,
+    "unresolved_high_impact_conflicts": false
+  }
+}

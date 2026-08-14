@@ -1,0 +1,204 @@
+{
+  "schema_version": "paper2ale.project/v1",
+  "project_id": "hnn-grounded-suite",
+  "source_bundle": [
+    {
+      "id": "src-hnn-paper-v3",
+      "kind": "paper",
+      "uri": "https://arxiv.org/pdf/1906.01563",
+      "version": "arXiv:1906.01563v3",
+      "sha256": "bd83fe321874ddad9471f83a642ae94ab7412fd9eb0add8caae84a0ee20d168b",
+      "citation": "Sam Greydanus, Misko Dzamba, and Jason Yosinski. Hamiltonian Neural Networks. NeurIPS 2019. arXiv:1906.01563v3.",
+      "retrieved_at": "2026-08-13",
+      "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/; paper bytes are not redistributed",
+      "visibility": "author"
+    },
+    {
+      "id": "src-hnn-code-master",
+      "kind": "code",
+      "uri": "https://github.com/greydanus/hamiltonian-nn",
+      "version": "bcc362235dc623ffe48f22ccc22417e02e9803b4",
+      "citation": "greydanus/hamiltonian-nn at commit bcc362235dc623ffe48f22ccc22417e02e9803b4",
+      "retrieved_at": "2026-08-13",
+      "license": "Apache-2.0",
+      "visibility": "author"
+    }
+  ],
+  "evidence_graph": {
+    "records": [
+      {
+        "id": "ev-canonical-equations",
+        "kind": "equation",
+        "statement": "For canonical ordering x=(q,p), the scalar gradient induces (dq/dt,dp/dt)=(dH/dp,-dH/dq).",
+        "source_refs": ["src-hnn-paper-v3", "src-hnn-code-master"],
+        "confidence": 1.0,
+        "status": "verified"
+      },
+      {
+        "id": "ev-spring-scaling-protocol-conflict",
+        "kind": "conflict",
+        "statement": "The paper prints the unit spring scalar as 0.5(q^2+p^2) and states uniform energy in [0.2,1], while code uses q^2+p^2 and samples radius uniformly in [0.1,1].",
+        "source_refs": ["src-hnn-paper-v3", "src-hnn-code-master"],
+        "confidence": 1.0,
+        "status": "resolved",
+        "conflict_set": "spring-scaling-and-protocol",
+        "interpretation": "The task freezes the code scaling, discloses only the standalone data contract to participants, and grades the resulting time scale.",
+        "impact": "high"
+      },
+      {
+        "id": "ev-two-body-sign-power-conflict",
+        "kind": "conflict",
+        "statement": "Printed Eq. 6 has positive G*m1*m2/r^2, whereas code computes potential -G*m1*m2/r and attractive acceleration proportional to displacement/r^3.",
+        "source_refs": ["src-hnn-paper-v3", "src-hnn-code-master"],
+        "confidence": 1.0,
+        "status": "resolved",
+        "conflict_set": "two-body-potential",
+        "interpretation": "The disagreement is preserved as an explicit reconciliation task whose correct verdict is conflict.",
+        "impact": "high"
+      },
+      {
+        "id": "ev-pixel-loss-sign-conflict",
+        "kind": "conflict",
+        "statement": "Printed L_CC uses z_p^t-(z_q^t-z_q^(t+1)); implementation uses z_p^t-(z_q^(t+1)-z_q^t).",
+        "source_refs": ["src-hnn-paper-v3", "src-hnn-code-master"],
+        "confidence": 1.0,
+        "status": "resolved",
+        "conflict_set": "pixel-loss-sign",
+        "interpretation": "The conflict remains in provenance but is not selected for the three-task fixture.",
+        "impact": "medium"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "node-symplectic-transform",
+        "kind": "method",
+        "label": "Canonical scalar-gradient transform",
+        "evidence_ids": ["ev-canonical-equations"]
+      },
+      {
+        "id": "node-spring-learning",
+        "kind": "experiment",
+        "label": "Noisy spring derivative learning and rollout",
+        "evidence_ids": ["ev-canonical-equations", "ev-spring-scaling-protocol-conflict"]
+      },
+      {
+        "id": "node-two-body-reconciliation",
+        "kind": "audit",
+        "label": "Two-body potential and force reconciliation",
+        "evidence_ids": ["ev-two-body-sign-power-conflict"]
+      }
+    ],
+    "edges": [
+      {
+        "id": "edge-transform-to-spring",
+        "source": "node-symplectic-transform",
+        "target": "node-spring-learning",
+        "kind": "enables",
+        "evidence_ids": ["ev-canonical-equations"]
+      },
+      {
+        "id": "edge-spring-to-audit",
+        "source": "node-spring-learning",
+        "target": "node-two-body-reconciliation",
+        "kind": "scales-to",
+        "evidence_ids": ["ev-two-body-sign-power-conflict"]
+      }
+    ],
+    "claims": [
+      {
+        "id": "claim-canonical-transform",
+        "statement": "A scalar model can be evaluated as a canonical vector field by permuting and signing its input gradient.",
+        "evidence_ids": ["ev-canonical-equations"],
+        "status": "verified",
+        "impact": "high"
+      },
+      {
+        "id": "claim-spring-protocol-choice",
+        "statement": "A reproducible spring task must choose one time scaling and one sampling protocol rather than merge conflicting descriptions.",
+        "evidence_ids": ["ev-spring-scaling-protocol-conflict"],
+        "status": "verified",
+        "impact": "high",
+        "conflict_set": "spring-scaling-and-protocol",
+        "interpretation": "Use the official-code vector-field scale in hidden evaluation."
+      },
+      {
+        "id": "claim-two-body-conflict",
+        "statement": "The positive inverse-square candidate potential yields a repulsive inverse-cube-magnitude force and cannot match the attractive code force.",
+        "evidence_ids": ["ev-two-body-sign-power-conflict"],
+        "status": "verified",
+        "impact": "high",
+        "conflict_set": "two-body-potential",
+        "interpretation": "The matching potential is negative inverse distance."
+      },
+      {
+        "id": "claim-pixel-sign-recorded",
+        "statement": "The latent-coordinate auxiliary loss has opposite finite-difference signs in the paper and code.",
+        "evidence_ids": ["ev-pixel-loss-sign-conflict"],
+        "status": "verified",
+        "impact": "medium",
+        "conflict_set": "pixel-loss-sign",
+        "interpretation": "Record but do not generate a fourth task."
+      }
+    ]
+  },
+  "tasks": [
+    {
+      "id": "hnn-symplectic-gradient",
+      "title": "Complete a canonical gradient transform",
+      "mode": "masked_workflow_completion",
+      "family": "hnn",
+      "summary": "Masked NumPy code completion with hidden quadratic scalar tests.",
+      "evidence_ids": ["ev-canonical-equations", "claim-canonical-transform"],
+      "workflow_nodes": ["node-symplectic-transform"],
+      "instances": 3,
+      "resource_budget": {"cpu_seconds": 10, "memory_mb": 256, "disk_mb": 8},
+      "output_contract": {"language": "python", "path": "software/solution.py"},
+      "evaluation": {
+        "weights": {"numerical_correctness": 0.8, "interface_and_safety": 0.2},
+        "gates": ["all hidden quadratic cases pass", "odd dimensions raise ValueError"],
+        "grader": "reference/grader.py"
+      },
+      "tags": ["numpy", "code-completion", "automatic-differentiation", "mechanics"]
+    },
+    {
+      "id": "hnn-mass-spring",
+      "title": "Train and export a scalar spring model",
+      "mode": "specification_preserving",
+      "family": "hnn",
+      "summary": "Public train and validation labels, hidden test targets, safe tanh-MLP JSON export, and independent rollouts.",
+      "evidence_ids": ["ev-canonical-equations", "ev-spring-scaling-protocol-conflict", "claim-spring-protocol-choice"],
+      "workflow_nodes": ["node-symplectic-transform", "node-spring-learning"],
+      "instances": 3,
+      "resource_budget": {"cpu_seconds": 300, "memory_mb": 1024, "disk_mb": 32},
+      "output_contract": {"format": "tanh-mlp-v1", "path": "output/<NNN>/model.json"},
+      "evaluation": {
+        "weights": {"hidden_derivative_mse": 0.5, "rollout_state_mse": 0.35, "energy_stability": 0.15},
+        "gates": ["safe scalar JSON parses", "hidden derivative threshold", "rollout threshold"],
+        "grader": "reference/grader.py"
+      },
+      "tags": ["numpy", "training", "portable-weights", "hidden-labels", "rollout"]
+    },
+    {
+      "id": "hnn-two-body-audit",
+      "title": "Audit a two-body equation conflict",
+      "mode": "specification_preserving",
+      "family": "hnn",
+      "summary": "Reconcile a candidate potential with implemented attractive dynamics and return a structured derivation.",
+      "evidence_ids": ["ev-two-body-sign-power-conflict", "claim-two-body-conflict"],
+      "workflow_nodes": ["node-two-body-reconciliation"],
+      "instances": 3,
+      "resource_budget": {"cpu_seconds": 20, "memory_mb": 256, "disk_mb": 8},
+      "output_contract": {"format": "structured-json-v1", "path": "output/<NNN>/audit.json"},
+      "evaluation": {
+        "weights": {"conflict_classification": 0.2, "symbolic_derivation": 0.4, "numerical_force": 0.4},
+        "gates": ["conflict verdict", "correct distance powers", "finite numerical forces"],
+        "grader": "reference/grader.py"
+      },
+      "tags": ["equation-audit", "structured-output", "two-body", "provenance-conflict"]
+    }
+  ],
+  "defaults": {
+    "master_seed": 190601563,
+    "instances": 3
+  }
+}

@@ -1,0 +1,205 @@
+{
+  "schema_version": "paper2ale.project/v1",
+  "project_id": "hnn-hard-grounded-suite",
+  "source_bundle": [
+    {
+      "id": "src-hnn-paper-v3",
+      "kind": "paper",
+      "uri": "https://arxiv.org/pdf/1906.01563",
+      "version": "arXiv:1906.01563v3",
+      "sha256": "bd83fe321874ddad9471f83a642ae94ab7412fd9eb0add8caae84a0ee20d168b",
+      "citation": "Sam Greydanus, Misko Dzamba, and Jason Yosinski. Hamiltonian Neural Networks. NeurIPS 2019. arXiv:1906.01563v3.",
+      "retrieved_at": "2026-08-13",
+      "license": "http://arxiv.org/licenses/nonexclusive-distrib/1.0/; paper bytes are not redistributed",
+      "visibility": "author"
+    },
+    {
+      "id": "src-hnn-code-master",
+      "kind": "code",
+      "uri": "https://github.com/greydanus/hamiltonian-nn",
+      "version": "bcc362235dc623ffe48f22ccc22417e02e9803b4",
+      "citation": "greydanus/hamiltonian-nn at commit bcc362235dc623ffe48f22ccc22417e02e9803b4",
+      "retrieved_at": "2026-08-13",
+      "license": "Apache-2.0",
+      "visibility": "author"
+    }
+  ],
+  "evidence_graph": {
+    "records": [
+      {
+        "id": "ev-canonical-equations",
+        "kind": "equation",
+        "statement": "For canonical x=(q,p), a scalar Hamiltonian induces (dq/dt,dp/dt)=(dH/dp,-dH/dq).",
+        "source_refs": ["src-hnn-paper-v3", "src-hnn-code-master"],
+        "confidence": 1.0,
+        "status": "verified"
+      },
+      {
+        "id": "ev-nonlinear-experiments",
+        "kind": "method",
+        "statement": "The source evaluates scalar-energy dynamics on pendulum and gravitational systems, motivating nonlinear and compositional extensions.",
+        "source_refs": ["src-hnn-paper-v3", "src-hnn-code-master"],
+        "confidence": 1.0,
+        "status": "verified"
+      },
+      {
+        "id": "ev-gravity-resolution",
+        "kind": "conflict",
+        "statement": "The printed two-body expression and implementation disagree in potential sign and distance power; this suite explicitly uses negative softened inverse distance and canonical momentum.",
+        "source_refs": ["src-hnn-paper-v3", "src-hnn-code-master"],
+        "confidence": 1.0,
+        "status": "resolved_for_task",
+        "conflict_set": "two-body-potential",
+        "interpretation": "Use an explicit standalone softened N-body Hamiltonian consistent with attractive inverse-distance gravity.",
+        "impact": "high"
+      },
+      {
+        "id": "ev-canonical-representation",
+        "kind": "method",
+        "statement": "The structural model relies on canonical coordinates, making recovery from mixed observed coordinates a grounded stress test.",
+        "source_refs": ["src-hnn-paper-v3"],
+        "confidence": 0.95,
+        "status": "verified"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "node-coupled-identification",
+        "kind": "hard-task",
+        "label": "Coupled periodic scalar identification",
+        "evidence_ids": ["ev-canonical-equations", "ev-nonlinear-experiments"]
+      },
+      {
+        "id": "node-variable-nbody",
+        "kind": "hard-task",
+        "label": "Variable-body gravitational composition",
+        "evidence_ids": ["ev-canonical-equations", "ev-gravity-resolution"]
+      },
+      {
+        "id": "node-canonical-recovery",
+        "kind": "hard-task",
+        "label": "Latent canonical coordinate recovery",
+        "evidence_ids": ["ev-canonical-equations", "ev-canonical-representation"]
+      }
+    ],
+    "edges": [
+      {
+        "id": "edge-structure-to-composition",
+        "source": "node-coupled-identification",
+        "target": "node-variable-nbody",
+        "kind": "increases-compositionality",
+        "evidence_ids": ["ev-canonical-equations"]
+      },
+      {
+        "id": "edge-composition-to-representation",
+        "source": "node-variable-nbody",
+        "target": "node-canonical-recovery",
+        "kind": "adds-representation-discovery",
+        "evidence_ids": ["ev-canonical-representation"]
+      }
+    ],
+    "claims": [
+      {
+        "id": "claim-periodic-generalization",
+        "statement": "A correct scalar basis must generalize coupled periodic dynamics outside the labeled angle range.",
+        "evidence_ids": ["ev-canonical-equations", "ev-nonlinear-experiments"],
+        "status": "verified",
+        "impact": "high"
+      },
+      {
+        "id": "claim-pairwise-generalization",
+        "statement": "Pairwise Hamiltonian structure composes across varying body counts and permutations.",
+        "evidence_ids": ["ev-canonical-equations", "ev-gravity-resolution"],
+        "status": "verified",
+        "impact": "high",
+        "conflict_set": "two-body-potential",
+        "interpretation": "Grade the explicitly resolved softened attractive Hamiltonian."
+      },
+      {
+        "id": "claim-coordinate-recovery",
+        "statement": "Mixed observations require recovering a latent canonical representation before scalar-energy dynamics can be applied.",
+        "evidence_ids": ["ev-canonical-equations", "ev-canonical-representation"],
+        "status": "verified",
+        "impact": "high"
+      }
+    ]
+  },
+  "tasks": [
+    {
+      "id": "hnn-hard-coupled-identification",
+      "title": "Identify a coupled nonlinear Hamiltonian",
+      "mode": "method_masked_rediscovery",
+      "family": "hnn_hard",
+      "summary": "Recover a three-DOF coupled periodic scalar model from noisy local derivatives and generalize to wide-angle rollouts.",
+      "evidence_ids": ["ev-canonical-equations", "ev-nonlinear-experiments", "claim-periodic-generalization"],
+      "workflow_nodes": ["node-coupled-identification"],
+      "instances": 2,
+      "difficulty": {
+        "profile_id": "core",
+        "profile_version": 1,
+        "level": "hard",
+        "generator_overrides": {"instance_count": 2}
+      },
+      "resource_budget": {"cpu_seconds": 600, "memory_mb": 2048, "disk_mb": 64},
+      "output_contract": {"format": "coupled-periodic-hamiltonian-v1", "path": "output/<NNN>/model.json"},
+      "evaluation": {
+        "weights": {"hidden_field": 0.45, "nonlinear_rollout": 0.45, "artifact_safety": 0.1},
+        "gates": ["safe coefficient JSON", "wide-angle hidden field threshold", "long-rollout threshold"],
+        "grader": "reference/grader.py"
+      },
+      "tags": ["hard", "nonlinear", "three-dof", "system-identification", "ood-generalization"]
+    },
+    {
+      "id": "hnn-hard-variable-nbody",
+      "title": "Solve variable-N gravitational dynamics",
+      "mode": "specification_preserving",
+      "family": "hnn_hard",
+      "summary": "Compute exact softened gravitational energies and canonical fields for changing body counts and close encounters.",
+      "evidence_ids": ["ev-canonical-equations", "ev-gravity-resolution", "claim-pairwise-generalization"],
+      "workflow_nodes": ["node-variable-nbody"],
+      "instances": 2,
+      "difficulty": {
+        "profile_id": "core",
+        "profile_version": 1,
+        "level": "hard",
+        "generator_overrides": {"instance_count": 2}
+      },
+      "resource_budget": {"cpu_seconds": 180, "memory_mb": 1024, "disk_mb": 32},
+      "output_contract": {"format": "nbody-query-results-v1", "path": "output/<NNN>/results.json"},
+      "evaluation": {
+        "weights": {"energy": 0.25, "canonical_field": 0.55, "composition_and_equivariance": 0.2},
+        "gates": ["all query IDs present", "finite exact fields", "variable-body and permutation cases pass"],
+        "grader": "reference/grader.py"
+      },
+      "tags": ["hard", "n-body", "variable-cardinality", "close-encounter", "permutation-equivariance"]
+    },
+    {
+      "id": "hnn-hard-canonical-recovery",
+      "title": "Recover hidden canonical coordinates",
+      "mode": "method_masked_rediscovery",
+      "family": "hnn_hard",
+      "summary": "Jointly identify a canonicalizing linear transform and coupled quartic energy from mixed observations.",
+      "evidence_ids": ["ev-canonical-equations", "ev-canonical-representation", "claim-coordinate-recovery"],
+      "workflow_nodes": ["node-canonical-recovery"],
+      "instances": 2,
+      "difficulty": {
+        "profile_id": "core",
+        "profile_version": 1,
+        "level": "hard",
+        "generator_overrides": {"instance_count": 2}
+      },
+      "resource_budget": {"cpu_seconds": 900, "memory_mb": 3072, "disk_mb": 64},
+      "output_contract": {"format": "latent-canonical-hamiltonian-v1", "path": "output/<NNN>/recovery.json"},
+      "evaluation": {
+        "weights": {"hidden_induced_field": 0.45, "transformed_rollout": 0.45, "artifact_structure": 0.1},
+        "gates": ["bounded invertible canonicalizer", "higher-energy field threshold", "hidden rollout threshold"],
+        "grader": "reference/grader.py"
+      },
+      "tags": ["hard", "canonical-coordinates", "representation-recovery", "quartic", "ood-generalization"]
+    }
+  ],
+  "defaults": {
+    "master_seed": 190601563,
+    "instances": 2
+  }
+}
