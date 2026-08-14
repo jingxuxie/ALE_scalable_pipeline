@@ -1,0 +1,27 @@
+{
+  "category": "physical_sciences",
+  "paper2ale": {
+    "difficulty": "hard",
+    "entrypoint": "main.py",
+    "family": "hnn_hard",
+    "familyTaskId": "hnn-hard-variable-nbody",
+    "instanceCount": 2,
+    "instancePattern": "input/instances/<NNN>/",
+    "schemaVersion": 1,
+    "submission": {
+      "executable": false,
+      "format": "nbody-query-results-v1",
+      "path": "output/<NNN>/results.json"
+    }
+  },
+  "summary": "Compute exact softened N-body energies and canonical fields across changing body counts and close encounters.",
+  "taskId": "physical_sciences/hnn-hard-variable-nbody",
+  "title": "Solve variable-N gravitational dynamics",
+  "vm": {
+    "disk_gb": 200,
+    "memory_gb": 16,
+    "snapshot": "cpu-free-ubuntu",
+    "timeout_s": 1800,
+    "vcpus": 4
+  }
+}

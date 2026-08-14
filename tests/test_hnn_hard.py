@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import ast
 from copy import deepcopy
 import json
 from pathlib import Path
@@ -179,6 +180,53 @@ class HNNHardTaskFamilyTests(unittest.TestCase):
                     self.assertIn(
                         f"example/instances/{instance_id}/mutant.json", paths
                     )
+
+    def test_participant_descriptions_are_complete_and_used_at_runtime(self) -> None:
+        task_specific = {
+            "hnn-hard-coupled-identification": (
+                "dq/dt   = A p",
+                "inverse_mass",
+                "Common mistakes",
+            ),
+            "hnn-hard-variable-nbody": (
+                "dq_i/dt = p_i / m_i",
+                "one result for every public query ID",
+                "Common mistakes",
+            ),
+            "hnn-hard-canonical-recovery": (
+                "dx/dt = inverse(B) dz/dt",
+                "canonical_from_observed",
+                "Common mistakes",
+            ),
+        }
+        for task_id, files in self.builds.items():
+            with self.subTest(task_id=task_id):
+                paths = self.by_path(files)
+                description = paths["description.md"].data.decode("utf-8")
+                self.assertGreater(len(description), 2_000)
+                for heading in (
+                    "## Goal",
+                    "## Input",
+                    "## Required output",
+                    "## Evaluation",
+                    "## Common mistakes",
+                ):
+                    self.assertIn(heading, description)
+                for fragment in task_specific[task_id]:
+                    self.assertIn(fragment, description)
+
+                module = ast.parse(paths["main.py"].data.decode("utf-8"))
+                runtime_description = next(
+                    ast.literal_eval(node.value)
+                    for node in module.body
+                    if isinstance(node, ast.Assign)
+                    and any(
+                        isinstance(target, ast.Name)
+                        and target.id == "TASK_DESCRIPTION"
+                        for target in node.targets
+                    )
+                )
+                self.assertEqual(runtime_description, description.strip())
 
     def test_every_generated_python_file_compiles(self) -> None:
         for task_id, files in self.builds.items():

@@ -1,8 +1,8 @@
 # HNN hard ALE task family
 
-A complete generated canonical-recovery instance, including participant inputs
-and reviewer-only evaluation references, is available in the
-[HNN review example](../review/hnn-canonical-recovery/README.md).
+Complete generated instances of all three hard tasks, including participant
+inputs and reviewer-only evaluation references, are available in the
+[review examples](../review/README.md).
 
 This fixture is a deliberately separate, slower complement to the three-task
 HNN smoke family. It turns the canonical scalar-gradient rule

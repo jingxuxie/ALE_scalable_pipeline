@@ -1,0 +1,22 @@
+{
+  "schema_version": "paper2ale.review-example/v1",
+  "task_id": "hnn-hard-coupled-identification",
+  "instance_id": "000",
+  "source_project_id": "hnn-hard-grounded-suite",
+  "source_build_id": "build_0cf376e7c0768c651ea764eb481f1940698bebc71b90a3442bfd546020cdc624",
+  "source_task_build_id": "task-build_7a91d9183f43862779d49d70bf74053a031711aabdcc5ea5769dbd5c77917570",
+  "public_review_fixture": true,
+  "usable_for_live_evaluation": false,
+  "warning": "reviewer_only contains hidden answers and must not be given to participants",
+  "files": [
+    {"path": "participant/data.json", "source_path": "input/instances/000/data.json", "visibility": "participant", "size_bytes": 121473, "sha256": "c58aa2f51a48a0f9000ac7c9f797be2ad2d863a8c0177818da580e86f379df65"},
+    {"path": "participant/description.md", "source_path": "description.md", "visibility": "participant", "size_bytes": 3108, "sha256": "020c49e7e60c41fd05aebfe4d12b2ed42830849d3db64c75d501872127539be4"},
+    {"path": "participant/starter/fit_model.py", "source_path": "software/fit_model.py", "visibility": "participant", "size_bytes": 1109, "sha256": "411c3f80d0b6948ef64447086010dbef963a4388287f2cf9ad8a57707a8f4ebd"},
+    {"path": "participant/starter/requirements.txt", "source_path": "software/requirements.txt", "visibility": "participant", "size_bytes": 15, "sha256": "99f43573522565d7c480efd1f954892948033915df6a4e685327e995d3396eb6"},
+    {"path": "participant/task_card.json", "source_path": "task_card.json", "visibility": "participant", "size_bytes": 788, "sha256": "ba0ba5b9cc4fd2e2b3a1e535deb6e5b94b5b80786dcfb678861c1bea4dcde00f"},
+    {"path": "reviewer_only/examples/correct_submission.json", "source_path": "example/instances/000/golden.json", "visibility": "reviewer_only", "size_bytes": 666, "sha256": "bc42566d45d322cbbdca9e7ba90d6b0d6b408b29e12043d7d05822847758c986"},
+    {"path": "reviewer_only/examples/incorrect_submission.json", "source_path": "example/instances/000/mutant.json", "visibility": "reviewer_only", "size_bytes": 576, "sha256": "94ee4b57a004a071a5e7757fa8368b5753620d6ef9f564170ffa5a5f5029fff7"},
+    {"path": "reviewer_only/reference/grader.py", "source_path": "reference/grader.py", "visibility": "reviewer_only", "size_bytes": 5963, "sha256": "cdc26e194b1a128621f5efb8fdf7b265083c53b2cd991dedaf4e8b7ab634a442"},
+    {"path": "reviewer_only/reference/instances/000/truth.json", "source_path": "reference/instances/000/truth.json", "visibility": "reviewer_only", "size_bytes": 28339, "sha256": "7cbefe552f5ea103896cf76011ffdfe3f9d5f32d110277cac10d43ae5762ef3b"}
+  ]
+}

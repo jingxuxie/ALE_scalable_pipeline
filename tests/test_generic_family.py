@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import ast
 from copy import deepcopy
 import json
 from pathlib import Path
@@ -325,6 +326,53 @@ class GenericCompilerTests(unittest.TestCase):
                 self.assertFalse(validation["executes_protocol_code"])
                 compile(paths["main.py"].data.decode("utf-8"), "main.py", "exec")
                 compile(paths["reference/grader.py"].data.decode("utf-8"), "grader.py", "exec")
+
+    def test_numeric_affine_description_is_clear_and_reused_by_ale_runtime(self) -> None:
+        files, _ = self._build("generic-numeric-description", numeric_protocol())
+        paths = self.by_path(files)
+
+        description_file = paths["description.md"].data.decode("utf-8")
+        self.assertTrue(description_file.endswith("\n"))
+        description = description_file.removesuffix("\n")
+        self.assertGreaterEqual(len(description), 1_500)
+        for heading in (
+            "## Goal",
+            "## Input",
+            "## Required output",
+            "## Evaluation",
+            "## Common mistakes",
+        ):
+            with self.subTest(heading=heading):
+                self.assertIn(heading, description)
+        for required_detail in (
+            "y = W x + b",
+            "public_examples",
+            "queries",
+            "submission.json",
+            '"predictions"',
+            "finite",
+            "query ID",
+        ):
+            with self.subTest(required_detail=required_detail):
+                self.assertIn(required_detail, description)
+
+        main_source = paths["main.py"].data.decode("utf-8")
+        module = ast.parse(main_source)
+        runtime_descriptions = [
+            node.value.value
+            for node in module.body
+            if isinstance(node, ast.Assign)
+            and any(
+                isinstance(target, ast.Name) and target.id == "TASK_DESCRIPTION"
+                for target in node.targets
+            )
+            and isinstance(node.value, ast.Constant)
+            and isinstance(node.value.value, str)
+        ]
+        self.assertEqual(runtime_descriptions, [description])
+        self.assertIn('TASK_DESCRIPTION + "\\n\\nRead "', main_source)
+        self.assertIn('"/input.json and write "', main_source)
+        self.assertIn('"/submission.json. "', main_source)
 
     def test_generated_grader_accepts_golden_and_rejects_mutant_for_each_template(self) -> None:
         protocols = (numeric_protocol(), table_protocol(), json_protocol())

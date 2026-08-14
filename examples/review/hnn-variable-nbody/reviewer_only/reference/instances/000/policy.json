@@ -1,0 +1,5 @@
+{
+  "absolute_tolerance": 1e-09,
+  "relative_tolerance": 1e-09,
+  "required_query_count": 10
+}

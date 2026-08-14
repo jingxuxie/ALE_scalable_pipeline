@@ -19,9 +19,10 @@ Concretely, the input contains 360 noisy training state/derivative pairs and
 must contain a 4-by-4 canonicalizing transform, two 2-by-2 positive-definite
 quadratic matrices, and three quartic coefficients.
 
-## Evaluation reference
+## Public reviewer reference
 
-The `reviewer_only/` directory contains:
+The public `reviewer_only/` directory exposes material that would normally be
+private:
 
 - `reference/grader.py`: the exact private NumPy grader;
 - `reference/instances/000/truth.json`: hidden higher-energy states, rollout
@@ -40,6 +41,6 @@ negative checks with:
 python examples/review/run_checks.py
 ```
 
-This directory is for review, so it intentionally contains private answers.
 Only `participant/` belongs in a participant-facing package. Because the
-answers are public here, do not reuse this exact instance in an evaluation.
+answers are public here, do not reuse this exact instance in an evaluation;
+use an unpublished seed and keep the new evaluator artifacts private.
