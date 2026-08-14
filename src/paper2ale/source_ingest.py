@@ -13,11 +13,13 @@ import importlib.metadata
 import io
 import json
 import os
-from pathlib import Path
+from pathlib import Path, PurePosixPath, PureWindowsPath
 import re
 import stat
 from types import MappingProxyType
 from typing import Any, Iterable, Mapping, Sequence
+
+from .schema import SOURCE_KINDS
 
 
 DEFAULT_MAX_SOURCE_BYTES = 64 * 1024 * 1024
@@ -30,8 +32,11 @@ DEFAULT_CHUNK_CHARS = 20_000
 _SOURCE_REQUIRED = frozenset(
     {"id", "kind", "uri", "version", "license", "visibility"}
 )
-_SOURCE_OPTIONAL = frozenset({"sha256", "citation", "retrieved_at"})
+_SOURCE_OPTIONAL = frozenset({"sha256", "citation", "retrieved_at", "asset_id"})
 _SHA256 = re.compile(r"^[0-9a-f]{64}$")
+_ASSET_ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$")
+_FILE_URI = re.compile(r"^file:(?://)?", re.IGNORECASE)
+_WINDOWS_DRIVE_PATH = re.compile(r"^[A-Za-z]:")
 
 
 @dataclass(frozen=True, slots=True)
@@ -62,6 +67,36 @@ class IngestedSource:
 
     def source_dict(self) -> dict[str, Any]:
         return dict(self.source_ref)
+
+    def extraction_lock(self) -> dict[str, Any]:
+        """Return a path-free lock for the exact extraction used downstream."""
+
+        chunks = [
+            {
+                "locator": chunk.locator,
+                "text_sha256": hashlib.sha256(chunk.text.encode("utf-8")).hexdigest(),
+                "character_count": len(chunk.text),
+            }
+            for chunk in self.chunks
+        ]
+        extraction_sha256 = hashlib.sha256(
+            json.dumps(
+                chunks,
+                ensure_ascii=False,
+                separators=(",", ":"),
+                sort_keys=True,
+            ).encode("utf-8")
+        ).hexdigest()
+        return {
+            "schema_version": "paper2ale.source-extraction/v1",
+            "source_id": str(self.source_ref["id"]),
+            "raw_sha256": str(self.source_ref["sha256"]),
+            "media_type": self.media_type,
+            "size_bytes": self.size_bytes,
+            "extractor": self.extractor,
+            "extraction_sha256": extraction_sha256,
+            "chunks": chunks,
+        }
 
 
 def _positive_integer(value: int, name: str) -> int:
@@ -131,6 +166,23 @@ def _strict_json_copy(value: Mapping[str, Any], *, name: str) -> dict[str, Any]:
     return copied
 
 
+def _is_local_path_value(value: str) -> bool:
+    """Recognize portable spellings of operator-local absolute paths."""
+
+    stripped = value.strip()
+    return bool(
+        _FILE_URI.match(stripped)
+        or _WINDOWS_DRIVE_PATH.match(stripped)
+        or PurePosixPath(stripped).is_absolute()
+        or PureWindowsPath(stripped).is_absolute()
+        or stripped == "~"
+        or stripped.startswith(("~/", "~\\"))
+        # ``PureWindowsPath('\\foo')`` is rooted but not absolute without a
+        # drive.  It is still operator-local and must not cross trust bounds.
+        or stripped.startswith("\\")
+    )
+
+
 def normalize_source_metadata(metadata: Mapping[str, Any]) -> dict[str, Any]:
     """Validate the exact source-ref fields accepted by project schema v1."""
 
@@ -141,15 +193,27 @@ def normalize_source_metadata(metadata: Mapping[str, Any]) -> dict[str, Any]:
     unknown = sorted(set(source) - _SOURCE_REQUIRED - _SOURCE_OPTIONAL)
     if unknown:
         raise ValueError(f"source metadata contains unknown fields: {', '.join(unknown)}")
-    for key in sorted(_SOURCE_REQUIRED | ({"citation", "retrieved_at"} & set(source))):
+    for key in sorted(
+        _SOURCE_REQUIRED | ({"citation", "retrieved_at", "asset_id"} & set(source))
+    ):
         value = source[key]
         if not isinstance(value, str) or not value.strip():
             raise ValueError(f"source metadata field {key!r} must be a nonempty string")
+        if _is_local_path_value(value):
+            raise ValueError(
+                f"source metadata field {key!r} must not contain a local filesystem path"
+            )
+    kind = source["kind"]
+    if kind not in SOURCE_KINDS:
+        raise ValueError(f"source metadata kind must be one of {sorted(SOURCE_KINDS)}")
     digest = source.get("sha256")
     if digest is not None and (
         not isinstance(digest, str) or _SHA256.fullmatch(digest) is None
     ):
         raise ValueError("source metadata sha256 must be 64 lowercase hexadecimal characters")
+    asset_id = source.get("asset_id")
+    if asset_id is not None and _ASSET_ID.fullmatch(asset_id) is None:
+        raise ValueError("source metadata asset_id must be a safe portable identifier")
     return source
 
 
@@ -444,6 +508,17 @@ def source_bundle(sources: Iterable[IngestedSource]) -> list[dict[str, Any]]:
     return [source.source_dict() for source in sources]
 
 
+def source_extraction_locks(
+    sources: Iterable[IngestedSource],
+) -> list[dict[str, Any]]:
+    """Return stable extraction locks ordered by source identity."""
+
+    return [
+        source.extraction_lock()
+        for source in sorted(sources, key=lambda item: str(item.source_ref["id"]))
+    ]
+
+
 __all__ = [
     "DEFAULT_CHUNK_CHARS",
     "DEFAULT_MAX_EVIDENCE_CHARS",
@@ -460,4 +535,5 @@ __all__ = [
     "load_source_metadata",
     "normalize_source_metadata",
     "source_bundle",
+    "source_extraction_locks",
 ]

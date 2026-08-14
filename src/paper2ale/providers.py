@@ -11,7 +11,9 @@ from dataclasses import dataclass, field
 import hashlib
 import json
 import math
+import os
 from pathlib import Path
+import stat
 import subprocess
 import threading
 from typing import Any, Mapping, Protocol, Sequence
@@ -244,9 +246,22 @@ class ReplayProvider:
     Duplicate keys and non-finite numbers are rejected.
     """
 
-    def __init__(self, path: str | Path) -> None:
+    def __init__(self, path: str | Path, *, max_bytes: int = 64 * 1024 * 1024) -> None:
+        if not isinstance(max_bytes, int) or isinstance(max_bytes, bool) or max_bytes < 1:
+            raise ValueError("max_bytes must be a positive integer")
         replay_path = Path(path)
-        text = replay_path.read_text(encoding="utf-8")
+        if replay_path.is_symlink():
+            raise ValueError("replay file must not be a symbolic link")
+        with replay_path.open("rb") as stream:
+            if not stat.S_ISREG(os.fstat(stream.fileno()).st_mode):
+                raise ValueError("replay path must be a regular file")
+            raw = stream.read(max_bytes + 1)
+        if len(raw) > max_bytes:
+            raise ValueError(f"replay file exceeds the {max_bytes}-byte limit")
+        try:
+            text = raw.decode("utf-8-sig")
+        except UnicodeDecodeError as error:
+            raise ValueError("replay file must be valid UTF-8") from error
         self._responses: dict[str, bytes] = {}
         if replay_path.suffix.lower() == ".jsonl":
             for line_number, line in enumerate(text.splitlines(), start=1):

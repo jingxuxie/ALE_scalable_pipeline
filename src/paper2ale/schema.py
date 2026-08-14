@@ -8,9 +8,11 @@ the cross-reference and policy checks that JSON Schema cannot express neatly.
 from __future__ import annotations
 
 from dataclasses import dataclass
+import hashlib
 import json
 import math
 from pathlib import Path
+from pathlib import PurePosixPath
 import re
 from typing import Any, Mapping
 
@@ -22,6 +24,9 @@ from .difficulty import (
 
 
 PROJECT_SCHEMA_VERSION = "paper2ale.project/v1"
+SOURCE_KINDS = frozenset(
+    {"paper", "code", "document", "file", "dataset", "repository"}
+)
 TASK_MODES = frozenset(
     {
         "specification_preserving",
@@ -101,6 +106,7 @@ class _Validator:
         self.issues: list[Issue] = []
         self._ids: dict[str, str] = {}
         self.source_ids: set[str] = set()
+        self.asset_ids: set[str] = set()
         self.evidence_ids: set[str] = set()
         self.node_ids: set[str] = set()
         self.claim_ids: set[str] = set()
@@ -217,7 +223,11 @@ class _Validator:
             "tasks",
         }
         self.require_keys(root, required, "")
-        self.reject_unknown_keys(root, required | {"defaults", "difficulty_profiles"}, "")
+        self.reject_unknown_keys(
+            root,
+            required | {"defaults", "difficulty_profiles", "asset_snapshots"},
+            "",
+        )
 
         if "schema_version" in root:
             version = root["schema_version"]
@@ -234,6 +244,8 @@ class _Validator:
         if "difficulty_profiles" in root:
             self.validate_difficulty_profiles(root["difficulty_profiles"], "/difficulty_profiles")
 
+        if "asset_snapshots" in root:
+            self.validate_asset_snapshots(root["asset_snapshots"], "/asset_snapshots")
         if "source_bundle" in root:
             self.validate_sources(root["source_bundle"], "/source_bundle")
         if "evidence_graph" in root:
@@ -286,7 +298,7 @@ class _Validator:
         if not sources:
             self.add("invalid_value", "source_bundle must contain at least one source", path)
         required = {"id", "kind", "uri", "version", "license", "visibility"}
-        allowed = required | {"sha256", "citation", "retrieved_at"}
+        allowed = required | {"sha256", "citation", "retrieved_at", "asset_id"}
         for index, item in enumerate(sources):
             item_path = _pointer(path, index)
             source = self.expect_mapping(item, item_path)
@@ -297,7 +309,16 @@ class _Validator:
             source_id = None
             if "id" in source:
                 source_id = self.register_id(source["id"], _pointer(item_path, "id"), "source")
-            for key in ("kind", "uri", "version", "license", "visibility"):
+            if "kind" in source:
+                kind_path = _pointer(item_path, "kind")
+                kind = self.nonempty_string(source["kind"], kind_path)
+                if kind not in SOURCE_KINDS:
+                    self.add(
+                        "invalid_source_kind",
+                        f"source kind must be one of {sorted(SOURCE_KINDS)}",
+                        kind_path,
+                    )
+            for key in ("uri", "version", "license", "visibility"):
                 if key in source:
                     self.nonempty_string(source[key], _pointer(item_path, key))
             for key in ("citation", "retrieved_at"):
@@ -312,8 +333,140 @@ class _Validator:
                         "sha256 must contain exactly 64 lowercase hexadecimal characters",
                         digest_path,
                     )
+            if "asset_id" in source:
+                asset_path = _pointer(item_path, "asset_id")
+                asset_id = self.nonempty_string(source["asset_id"], asset_path)
+                if asset_id is not None and asset_id not in self.asset_ids:
+                    self.add(
+                        "unknown_reference",
+                        f"unknown asset snapshot {asset_id!r}",
+                        asset_path,
+                    )
             if source_id is not None:
                 self.source_ids.add(source_id)
+
+    def validate_asset_snapshots(self, value: Any, path: str) -> None:
+        snapshots = self.expect_list(value, path)
+        if snapshots is None:
+            return
+        if not snapshots:
+            self.add("invalid_value", "asset_snapshots must not be empty", path)
+            return
+        if len(snapshots) > 256:
+            self.add("invalid_value", "asset_snapshots may contain at most 256 assets", path)
+        allowed_snapshot = {
+            "schema_version",
+            "asset_id",
+            "kind",
+            "content_sha256",
+            "size_bytes",
+            "metadata",
+            "files",
+        }
+        required_snapshot = set(allowed_snapshot)
+        for index, item in enumerate(snapshots):
+            item_path = _pointer(path, index)
+            snapshot = self.expect_mapping(item, item_path)
+            if snapshot is None:
+                continue
+            self.require_keys(snapshot, required_snapshot, item_path)
+            self.reject_unknown_keys(snapshot, allowed_snapshot, item_path)
+            asset_id = None
+            if "asset_id" in snapshot:
+                asset_id = self.register_id(
+                    snapshot["asset_id"], _pointer(item_path, "asset_id"), "asset"
+                )
+                if asset_id is not None:
+                    if _SAFE_COMPONENT_RE.fullmatch(asset_id) is None or len(asset_id) > 128:
+                        self.add(
+                            "unsafe_id",
+                            "asset id must be a portable identifier",
+                            _pointer(item_path, "asset_id"),
+                        )
+                    self.asset_ids.add(asset_id)
+            if snapshot.get("schema_version") != "paper2ale.asset-snapshot/v1":
+                self.add(
+                    "schema_version",
+                    "expected 'paper2ale.asset-snapshot/v1'",
+                    _pointer(item_path, "schema_version"),
+                )
+            if snapshot.get("kind") not in {"document", "repository", "dataset", "file"}:
+                self.add(
+                    "invalid_value",
+                    "asset kind must be document, repository, dataset, or file",
+                    _pointer(item_path, "kind"),
+                )
+            metadata = snapshot.get("metadata")
+            if "metadata" in snapshot:
+                self.expect_mapping(metadata, _pointer(item_path, "metadata"))
+                self._reject_local_path_metadata(metadata, _pointer(item_path, "metadata"))
+            files = self.expect_list(snapshot.get("files"), _pointer(item_path, "files"))
+            tree: list[dict[str, Any]] = []
+            total_size = 0
+            paths: list[str] = []
+            if files is not None:
+                if not files:
+                    self.add("invalid_value", "asset files must not be empty", _pointer(item_path, "files"))
+                if len(files) > 5000:
+                    self.add("invalid_value", "asset files may contain at most 5000 entries", _pointer(item_path, "files"))
+                for file_index, raw_file in enumerate(files):
+                    file_path = _pointer(_pointer(item_path, "files"), file_index)
+                    file = self.expect_mapping(raw_file, file_path)
+                    if file is None:
+                        continue
+                    required_file = {"relative_path", "size_bytes", "sha256", "media_type", "extraction_status"}
+                    allowed_file = required_file | {"extractor"}
+                    self.require_keys(file, required_file, file_path)
+                    self.reject_unknown_keys(file, allowed_file, file_path)
+                    relative = file.get("relative_path")
+                    relative_path = _pointer(file_path, "relative_path")
+                    if not isinstance(relative, str) or not relative:
+                        self.add("type", "relative_path must be a nonempty string", relative_path)
+                    else:
+                        posix = PurePosixPath(relative)
+                        if (
+                            posix.is_absolute()
+                            or "\\" in relative
+                            or ":" in posix.parts[0]
+                            or any(part in {"", ".", ".."} for part in posix.parts)
+                        ):
+                            self.add("unsafe_path", "asset path must be safe and relative", relative_path)
+                        paths.append(relative)
+                    size = file.get("size_bytes")
+                    if not isinstance(size, int) or isinstance(size, bool) or size < 0:
+                        self.add("invalid_value", "size_bytes must be a nonnegative integer", _pointer(file_path, "size_bytes"))
+                    else:
+                        total_size += size
+                    digest = file.get("sha256")
+                    if not isinstance(digest, str) or _SHA256_RE.fullmatch(digest) is None:
+                        self.add("invalid_sha256", "file sha256 must be lowercase hexadecimal", _pointer(file_path, "sha256"))
+                    for key in ("media_type",):
+                        if key in file:
+                            self.nonempty_string(file[key], _pointer(file_path, key))
+                    if file.get("extraction_status") not in {"extracted", "binary", "empty", "omitted_limit"}:
+                        self.add("invalid_value", "invalid extraction_status", _pointer(file_path, "extraction_status"))
+                    if "extractor" in file:
+                        self.nonempty_string(file["extractor"], _pointer(file_path, "extractor"))
+                    if isinstance(relative, str) and isinstance(size, int) and not isinstance(size, bool) and isinstance(digest, str):
+                        tree.append({"relative_path": relative, "size_bytes": size, "sha256": digest})
+                if paths != sorted(paths) or len({name.casefold() for name in paths}) != len(paths):
+                    self.add("asset_file_order", "asset paths must be sorted and unique without case collisions", _pointer(item_path, "files"))
+            if snapshot.get("size_bytes") != total_size:
+                self.add("asset_size_mismatch", f"asset size_bytes must equal file total {total_size}", _pointer(item_path, "size_bytes"))
+            expected_digest = hashlib.sha256(canonical_json_bytes(tree)).hexdigest()
+            if snapshot.get("content_sha256") != expected_digest:
+                self.add("asset_digest_mismatch", "asset content_sha256 does not match its file manifest", _pointer(item_path, "content_sha256"))
+
+    def _reject_local_path_metadata(self, value: Any, path: str) -> None:
+        if isinstance(value, Mapping):
+            for key, item in value.items():
+                child = _pointer(path, key)
+                if isinstance(key, str) and key.casefold() in {"path", "local_path", "absolute_path", "root", "cwd"}:
+                    self.add("local_path_metadata", f"metadata field {key!r} may expose a local path", child)
+                self._reject_local_path_metadata(item, child)
+        elif isinstance(value, list):
+            for index, item in enumerate(value):
+                self._reject_local_path_metadata(item, _pointer(path, index))
 
     def validate_evidence_graph(self, value: Any, path: str) -> None:
         graph = self.expect_mapping(value, path)
@@ -445,6 +598,7 @@ class _Validator:
         allowed = required | {"id", "evidence_ids"}
         pending_nodes: list[tuple[str, str]] = []
         pending_evidence: list[tuple[str, str]] = []
+        graph_edges: list[tuple[str, str]] = []
         for index, item in enumerate(edges):
             item_path = _pointer(path, index)
             edge = self.expect_mapping(item, item_path)
@@ -460,6 +614,10 @@ class _Validator:
                     node_ref = self.nonempty_string(edge[key], ref_path)
                     if node_ref is not None:
                         pending_nodes.append((node_ref, ref_path))
+            source = edge.get("source")
+            target = edge.get("target")
+            if isinstance(source, str) and isinstance(target, str):
+                graph_edges.append((source, target))
             if "kind" in edge:
                 self.nonempty_string(edge["kind"], _pointer(item_path, "kind"))
             if "evidence_ids" in edge:
@@ -471,6 +629,32 @@ class _Validator:
             if node_ref not in self.node_ids:
                 self.add("unknown_reference", f"unknown node reference {node_ref!r}", ref_path)
         self._check_evidence_refs(pending_evidence)
+        adjacency: dict[str, set[str]] = {node_id: set() for node_id in self.node_ids}
+        indegree: dict[str, int] = {node_id: 0 for node_id in self.node_ids}
+        for source, target in graph_edges:
+            if source not in adjacency or target not in adjacency:
+                continue
+            if target not in adjacency[source]:
+                adjacency[source].add(target)
+                indegree[target] += 1
+        ready = sorted(node_id for node_id, count in indegree.items() if count == 0)
+        visited = 0
+        while ready:
+            node_id = ready.pop(0)
+            visited += 1
+            for target in sorted(adjacency[node_id]):
+                indegree[target] -= 1
+                if indegree[target] == 0:
+                    ready.append(target)
+            ready.sort()
+        if visited != len(self.node_ids):
+            cyclic = sorted(node_id for node_id, count in indegree.items() if count > 0)
+            self.add(
+                "evidence_graph_cycle",
+                "evidence/workflow graph must be acyclic; cycle includes: "
+                + ", ".join(cyclic),
+                path,
+            )
 
     def validate_claims(self, value: Any, path: str) -> None:
         claims = self.expect_list(value, path)
@@ -537,6 +721,13 @@ class _Validator:
         tasks = self.expect_list(value, path)
         if tasks is None:
             return
+        if not tasks:
+            self.add(
+                "invalid_value",
+                "tasks must contain at least one task",
+                path,
+            )
+            return
         required = {
             "id",
             "title",
@@ -557,7 +748,11 @@ class _Validator:
             if task is None:
                 continue
             self.require_keys(task, required, item_path)
-            self.reject_unknown_keys(task, required | {"difficulty"}, item_path)
+            self.reject_unknown_keys(
+                task,
+                required | {"difficulty", "protocol", "workflow_binding"},
+                item_path,
+            )
             if "id" in task:
                 self.safe_path_id(task["id"], _pointer(item_path, "id"), "task")
             for key in ("title", "family", "summary"):
@@ -612,6 +807,50 @@ class _Validator:
                 self.validate_resources(task["resource_budget"], _pointer(item_path, "resource_budget"))
             if "output_contract" in task:
                 self.expect_mapping(task["output_contract"], _pointer(item_path, "output_contract"))
+            if "protocol" in task:
+                self.expect_mapping(task["protocol"], _pointer(item_path, "protocol"))
+            if task.get("family") == "generic" and "protocol" not in task:
+                self.add(
+                    "required",
+                    "generic tasks require a declarative protocol",
+                    _pointer(item_path, "protocol"),
+                )
+            if task.get("family") == "generic" and "workflow_binding" not in task:
+                self.add(
+                    "required",
+                    "generic tasks require a persisted workflow_binding",
+                    _pointer(item_path, "workflow_binding"),
+                )
+            if "workflow_binding" in task:
+                from .bindings import parse_workflow_binding
+
+                binding_path = _pointer(item_path, "workflow_binding")
+                binding = self.expect_mapping(task["workflow_binding"], binding_path)
+                if binding is not None:
+                    try:
+                        _workflow, candidate = parse_workflow_binding(
+                            binding,
+                            expected_family=(
+                                task.get("family")
+                                if isinstance(task.get("family"), str)
+                                else None
+                            ),
+                        )
+                    except (TypeError, ValueError) as error:
+                        self.add("invalid_workflow_binding", str(error), binding_path)
+                    else:
+                        if set(task_evidence) != set(candidate.evidence_ids):
+                            self.add(
+                                "workflow_binding_mismatch",
+                                "task evidence_ids must match the bound candidate",
+                                _pointer(item_path, "evidence_ids"),
+                            )
+                        if set(task_nodes) != set(candidate.operation_ids):
+                            self.add(
+                                "workflow_binding_mismatch",
+                                "task workflow_nodes must match the bound candidate operations",
+                                _pointer(item_path, "workflow_nodes"),
+                            )
             if "evaluation" in task:
                 self.validate_evaluation(task["evaluation"], _pointer(item_path, "evaluation"))
             if "tags" in task:
@@ -809,6 +1048,7 @@ def require_valid_project(data: dict[str, Any]) -> dict[str, Any]:
 __all__ = [
     "Issue",
     "PROJECT_SCHEMA_VERSION",
+    "SOURCE_KINDS",
     "TASK_MODES",
     "canonical_json_bytes",
     "load_project",

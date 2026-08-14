@@ -1,19 +1,41 @@
-# Generating a project from local sources
+# Provider adapters and the one-shot trust boundary
 
-`paper2ale generate` is the probabilistic front end to the deterministic
-compiler. It ingests local source bytes, constructs one provider-neutral
-structured-completion request, validates the untrusted response, and atomically
-publishes `paper2ale.project/v1` JSON. It does not compile task assets unless
-the operator explicitly adds `--build`.
+Paper2ALE v0.3 has one supported end-to-end generation path:
 
-## 1. Pin source metadata
+```powershell
+paper2ale orchestrate manifests/my-paper.json `
+  --replay replays/my-paper.jsonl `
+  --asset-cache .paper2ale/assets
+```
 
-Each local source requires a separate strict JSON metadata object. The object
-is the exact `source_bundle` record that the provider must return. Required
+`orchestrate` resolves and locks local inputs, applies evidence-backed paper
+triage, performs bounded map/reduce extraction, validates Workflow IR v2,
+mines and triages candidates, constructs workflow bindings locally, and only
+then asks a provider for a project proposal. See
+[ORCHESTRATION.md](ORCHESTRATION.md).
+
+The `generate` command is retained as a lower-level compatibility surface, but
+it cannot establish the trusted workflow/candidate binding required by a
+task-bearing project. A normal CLI invocation therefore fails closed before
+provider completion and directs the operator to `orchestrate`; its `--build`
+and `--publish` flags cannot bypass that gate.
+
+Library callers may call `generate_project(...)` with
+`trusted_workflow_bindings={task_id: binding}` when those bindings were
+constructed by trusted local code. A provider may not supply or rewrite
+`workflow_binding`, and it may propose only a family with a reviewed candidate
+validator. Fixed authored-only HNN families remain available to reviewed
+project files, not to one-shot model proposals. `require_tasks=False` exists
+for controlled empty-project fixtures and migrations; it is not a task
+generation path.
+
+## Pin source metadata
+
+Each local one-shot source has a separate strict JSON metadata object. Required
 fields are `id`, `kind`, `uri`, `version`, `license`, and `visibility`.
 `citation`, `retrieved_at`, and an expected `sha256` are optional. Unknown
-fields, duplicate JSON keys, non-finite numbers, and empty required strings are
-rejected.
+fields, duplicate JSON keys, non-finite numbers, local absolute-path values,
+and `file://` URIs are rejected.
 
 ```json
 {
@@ -28,92 +50,30 @@ rejected.
 }
 ```
 
-When `sha256` is present, ingestion verifies it before invoking a provider. If
-it is omitted, Paper2ALE computes and records the digest, so the generated
-project still pins the exact bytes. Paper2ALE never invents a retrieval time or
-source version.
+When `sha256` is supplied, ingestion verifies it. Otherwise Paper2ALE computes
+and pins the digest. Source paths and `--metadata` options pair positionally;
+the normalized bundle is then sorted by source ID. Local paths are not copied
+into provider messages or portable project data.
 
-For multiple sources, paths and `--metadata` options pair positionally. The
-normalized request sorts the resulting sources by source ID, making input order
-irrelevant after duplicate IDs are rejected.
+## PDF and text ingestion
 
-## 2. Choose a completion provider
+Non-PDF sources must be nonempty UTF-8 text without NUL bytes. They receive
+deterministic `lines:start-end` locators. PDF detection uses the suffix and PDF
+header; `pypdf` produces `page:number` locators. Encrypted, malformed,
+image-only, binary-looking, and over-limit inputs fail rather than being
+silently OCRed or truncated.
 
-The command adapter is an argv vector, never a shell command string:
+The one-shot request records normalized evidence and extractor identity.
+End-to-end orchestration additionally records a
+`paper2ale.source-extraction/v1` lock for each source: raw SHA-256, media type,
+byte count, extractor identity, aggregate extraction hash, and every chunk's
+locator, text hash, and character count. These locks are included in the
+orchestration receipt and final synthesis context without local paths.
 
-```powershell
-paper2ale generate .\Hamiltonian-Neural-Networks.pdf `
-  --metadata .\hnn-paper.source.json `
-  --project-id hnn-generated `
-  --out .\projects\hnn.generated.json `
-  --command python `
-  --command-arg .\provider_adapter.py `
-  --command-arg=--model `
-  --command-arg example-model
-```
-
-The adapter receives normalized request JSON on standard input. It must emit
-one bounded JSON envelope on standard output:
-
-```json
-{
-  "data": {"schema_version": "paper2ale.project/v1"},
-  "finish_reason": "stop",
-  "usage": {"input_tokens": 1000, "output_tokens": 500}
-}
-```
-
-`data` must contain the complete project, not the abbreviated example above.
-Use `--parameters provider-parameters.json` for provider-neutral model
-parameters. `--command-cwd` sets the adapter working directory. Adapter
-arguments beginning with a dash use the `--command-arg=--flag` form.
-
-For deterministic offline replay, point the same command at a replay JSON or
-JSONL file:
-
-```powershell
-paper2ale generate .\Hamiltonian-Neural-Networks.pdf `
-  --metadata .\hnn-paper.source.json `
-  --project-id hnn-generated `
-  --out .\projects\hnn.generated.json `
-  --replay .\replays\hnn.jsonl
-```
-
-A JSON replay maps request idempotency keys to response data. A JSONL replay
-contains records of this exact form:
-
-```json
-{"idempotency_key":"r-...","data":{"schema_version":"paper2ale.project/v1"}}
-```
-
-A recording command adapter can persist the normalized request's
-`idempotency_key` and successful response in this format. Replays are keyed, so
-a changed source byte, extractor version, prompt, schema, project ID,
-difficulty, or provider parameter cannot accidentally reuse an old response.
-
-## 3. PDF and text ingestion
-
-Non-PDF files must be nonempty UTF-8 text without NUL bytes. Text receives
-deterministic `lines:start-end` locators. PDF detection uses both the suffix and
-PDF header. PDF extraction uses the required `pypdf` runtime dependency, which
-is installed with Paper2ALE. If that installation is damaged, repair it with:
-
-```powershell
-python -m pip install pypdf
-```
-
-Each extracted PDF page receives a `page:number` locator, and the installed
-`pypdf` version becomes part of the request evidence. Text extraction does not
-preserve visual layout and is not a fidelity check for equations, figures, or
-tables. Encrypted, malformed, over-limit, and image-only PDFs fail. Paper2ALE
-does not silently OCR or truncate them; for layout-critical sources, run a
-reviewed OCR/vision extraction separately and ingest its UTF-8 text as another
-pinned source.
-
-Defaults are 64 MiB per source, 128 MiB for all source bytes, 2,000,000
-extracted characters per source, 4,000,000 extracted characters total, 1,000
-PDF pages, and 20,000 characters per evidence chunk. The corresponding CLI
-options are:
+Default one-shot limits are 64 MiB per source, 128 MiB total source bytes,
+2,000,000 extracted characters per source, 4,000,000 extracted characters in
+total, 1,000 PDF pages, and 20,000 characters per evidence chunk. CLI controls
+are:
 
 ```text
 --max-source-mb
@@ -124,105 +84,191 @@ options are:
 --chunk-chars
 ```
 
-All limits are rejecting bounds, not truncation targets.
+All limits reject; none are truncation targets.
 
-## 4. Validation and atomic publication
+## Completion providers
 
-Before writing the destination, generation requires all of the following:
+No LLM API is mandatory. Both orchestration and the lower-level generation API
+use the provider-neutral `CompletionProvider.complete(request)` interface.
 
-- a successful provider finish reason;
-- strict `paper2ale.project/v1` validation and reference integrity;
-- an exact match for the requested project ID;
-- a byte-canonical match for every pinned `source_bundle` record;
-- at least one task;
-- a registered trusted task-family implementation for every task.
-
-The structured request uses one self-contained schema assembled from the
-project, evidence, task, and difficulty schemas. Local schema references are
-rewritten into namespaced `$defs`, so a remote adapter does not need filesystem
-access.
-
-Provider, schema, provenance, and family failures create no destination. An
-existing destination prevents provider invocation unless `--overwrite` is
-explicit. With `--overwrite`, the old file remains intact until the new project
-has validated and a same-directory temporary file has been flushed. Local
-source paths are never included in provider messages. Provider exceptions are
-reported with request and exception types while adapter stderr is suppressed.
-
-On success, the CLI prints a receipt containing the project ID, canonical file
-digest, provider-neutral response-data digest, request ID, finish reason, usage,
-and output path. The status is `validated_candidate`: generation alone does not
-claim that runtime, mutation, resource, or reproducibility publication gates
-have passed.
-
-## 5. Optional deterministic compilation
-
-Add `--build` to invoke the compiler only after the validated project has been
-published:
+`ReplayProvider` reads exact request-keyed JSON or JSONL responses and is fully
+offline. `CommandProvider` invokes an operator-owned argv vector with
+`shell=False`, writes one normalized request to standard input, and reads one
+bounded response envelope from standard output. It can wrap a local model or a
+hosted API client.
 
 ```powershell
-paper2ale generate paper.pdf `
-  --metadata paper.source.json `
-  --project-id generated-suite `
-  --out projects\generated-suite.json `
-  --replay replays\generated-suite.jsonl `
-  --build `
-  --build-out dist `
-  --jobs 4
+paper2ale orchestrate manifests/my-paper.json `
+  --command python `
+  --command-arg provider_adapter.py `
+  --asset-cache .paper2ale/assets
 ```
 
-Build controls are `--seed`, `--instances`, `--build-no-resume`, and
-`--build-force`. A compiler failure does not remove the validated project; it
-can be inspected, audited, or rebuilt independently.
+Adapter arguments beginning with a dash use
+`--command-arg=--adapter-flag`. `--command-cwd` sets the adapter working
+directory. Provider output is structured data and is never executed.
 
-Difficulty is an enforceable profile, not a display label:
-
-```powershell
-paper2ale generate paper.pdf ... --difficulty hard --build
-paper2ale build projects\generated-suite.json --difficulty hard
-paper2ale audit projects\generated-suite.json --difficulty hard
-```
-
-The choices are `easy`, `medium`, `hard`, and `frontier`. A requested level is
-resolved to versioned generator/evaluator controls. Generation and compilation
-fail if any selected family does not declare support or does not emit proof
-that it consumed those controls. `generate --build` passes the same override to
-the compiler.
-
-## 6. Calibration summaries
-
-`calibrate` groups trial rows by task and level and compares Wilson confidence
-intervals with the resolved target band:
+The adapter returns a bounded envelope:
 
 ```json
-[
-  {
-    "task_id": "hnn-mass-spring",
-    "level": "hard",
-    "passed": true,
-    "score": 0.91,
-    "model": "example-model",
-    "agent": "example-agent"
-  }
-]
+{
+  "data": {"schema_version": "<stage-specific schema>"},
+  "finish_reason": "stop",
+  "usage": {"input_tokens": 1000, "output_tokens": 500}
+}
 ```
+
+The `data` object above is abbreviated. It must satisfy the complete strict
+schema attached to that request. Adapter stderr is suppressed from portable
+receipts and errors.
+
+Replay JSON maps each normalized idempotency key to its response object. JSONL
+uses one record per request:
+
+```json
+{"idempotency_key":"map-request_<digest>","data":{"schema_version":"paper2ale.evidence-map/v1","unit_id":"<bound-unit-id>","findings":[]}}
+```
+
+This schema is abbreviated. Real stage data must satisfy all required fields
+and bounds. A changed normalized locator or text, prompt, output schema,
+parameter, workflow batch, or capability catalog changes the relevant key. An
+extractor implementation/version change alone does not necessarily change a
+key when the normalized locators and text remain byte-identical; the exact
+extractor still remains visible in the extraction lock and receipt.
+
+## Workflow IR v2 and trusted bindings
+
+Workflow artifacts use explicit materialization origins:
+
+- `asset` requires an exact `asset_ref` for a resolved snapshot file;
+- `trusted_generator` requires a registered `capability_ref`;
+- `participant` requires a participant producer operation;
+- `trusted_evaluator` requires a trusted-evaluator producer operation;
+- `external` is not a self-contained participant input.
+
+Direct input/reference evidence derived from an asset must cite the exact
+`(asset_id, relative_path)` implied by the evidence. Closure validation checks
+origins, producer authority, references, cycles, outputs, and required
+evaluator independence. Workflow authority labels remain descriptive; they do
+not install executable code.
+
+After candidate mining, trusted local code persists a canonical
+`paper2ale.workflow-binding/v1` object that binds the closed workflow, mined
+candidate, and selected family. Its content-derived `binding_id` is rechecked
+by the registered candidate validator during compilation. The final provider
+schema forbids this field so model output cannot confer evaluator authority.
+
+## Validation, compilation, and assets
+
+Before atomically writing an orchestrated project, Paper2ALE requires exact
+project/source/asset/candidate/capability agreement, strict project validation,
+local workflow bindings, supported families/templates/protocols, admissible
+triage decisions, and no disallowed unresolved findings. Existing output is
+replaced only when the manifest explicitly permits overwrite.
+
+Candidate mode writes a project for review. Run trusted commands separately:
 
 ```powershell
-paper2ale calibrate trials.json
-paper2ale calibrate trials.json --project projects\custom-profile-project.json
+paper2ale inspect projects/my-paper.json
+paper2ale audit projects/my-paper.json --asset-cache .paper2ale/assets
+paper2ale build projects/my-paper.json --out dist --asset-cache .paper2ale/assets
+paper2ale publish projects/my-paper.json --out dist --asset-cache .paper2ale/assets
 ```
 
-Without `--project`, calibration uses the built-in `core` profile. With a
-project, task-specific custom profiles are resolved from that project. Exit
-status is zero only when every task/level group is calibrated; insufficient,
-too-easy, too-hard, or inconclusive groups return status 2 with a complete JSON
-report.
+`build` can return a non-publication-ready candidate. `publish` fails unless
+every release gate passes. With manifest `release: true`, `orchestrate` supplies
+the trusted audit callback, writes the project only after the callback reports
+`publication_ready: true`, then invokes fail-closed `publish_project` under
+`--build-out`. Release output is one envelope containing both `orchestration`
+and `build`.
+
+Project JSON stores path-free asset snapshots, not raw repository/dataset
+bytes. `--asset-cache` points `orchestrate`, `audit`, `build`, and `publish` at
+the same content-addressed store. Reviewed asset-aware families receive a
+read-only `BuildContext` and request an exact `(asset_id, relative_path)`;
+cache reads recheck byte count and SHA-256. The cache location does not enter
+the build identity. Generic v1 templates cannot materialize asset files and
+reject such workflows until a reviewed capability is added.
+
+Compiler identity covers the registered `compiler_id`, capability catalog,
+and implementation identities of the builder, protocol schema/validator, and
+candidate and project/task validators. Verifier identity covers publication
+and grader-runner implementations plus registered preparation hooks.
+Trusted-code changes thus invalidate build/resume identity. Publication also rebuilds the file inventory
+twice and runs every golden and mutant grader twice; mismatched package bytes,
+stdout, stderr, process summary, or parsed score payload fail reproducibility.
+
+## Difficulty and exact-build calibration
+
+Difficulty v2 keeps `challenge`, `evaluation_power`, and
+`benchmark_sampling` separate. Generic controls are consumed per template and
+recorded in `author/difficulty_control_audit.json`; an explicit non-default
+override that the selected template cannot consume fails closed. These are
+structural checks, not empirical evidence that a frontier model will find the
+task hard.
+
+V2 trial rows have exactly these fields and no extras:
+
+```json
+{
+  "trial_id": "trial-001",
+  "task_id": "hnn-hard-variable-nbody",
+  "task_build_id": "task-build_<64-hex-digest>",
+  "level": "hard",
+  "agent_system_id": "agent_system_<derived-digest>",
+  "semantic_id": "task_calibration_<derived-digest>",
+  "passed": false,
+  "score": 0.31,
+  "seed": 17,
+  "attempt": 1
+}
+```
+
+`trial_id` is a globally unique portable path component of at most 128
+characters; Windows device names are rejected. `seed` and `attempt` are
+nonnegative integers. The full run coordinate is unique, `passed` is Boolean,
+and `score` is a mandatory finite number in `[0, 1]`. Agent descriptors require
+a provider, an operator-pinned immutable model revision, an exact lowercase
+40- or 64-hex harness commit, tool policy, budgets, network policy, and
+evaluation date. Use `pin_agent_system` to derive the versioned descriptor ID.
+
+For publication-grade calibration, verify trials against the exact completed
+build:
+
+```powershell
+paper2ale calibrate calibration-trials-v2.json `
+  --project dist/my-paper/b-<build-prefix>/project.lock.json `
+  --catalog dist/my-paper/b-<build-prefix>/catalog.json
+```
+
+V2 requires `--project` and `--catalog` together. The catalog must be the
+literal manifest-covered `catalog.json` beside the exact canonical
+`project.lock.json`. Paper2ALE validates the complete build manifests and
+archive structure, project/task set, nested task-build and QA identities,
+per-trial build ID, family level support, and selected level before producing a
+report. A stale semantic ID is a hard pre-report error.
+
+V2 can run without either binding flag for exploratory format checks and
+summaries; that mode reports `build_catalog_verified: false` and cannot
+establish that claimed task-build IDs came from a real build. A v2 claim is
+release-usable only when `verified_claim_ready` is true, which requires both
+verified build provenance and passing statistical/monotonicity targets. The
+CLI therefore exits with status 2 for no-catalog v2 reports even when
+`all_calibrated` is true.
+
+Legacy v1 trials may use `--project` alone, do not accept `--catalog`, and do
+not provide v2 pinned-system or exact task-build guarantees. One verified
+catalog binds one selected build/level per task, so cross-level comparisons
+across distinct builds currently require the unverified exploratory summary
+mode. See [DIFFICULTY.md](DIFFICULTY.md).
 
 ## Installation integration
 
-The source checkout locates schemas at the repository-level `schemas/`
-directory. Installed distributions discover the four schemas from the
-packaged data-files location. `--schema-dir` remains available for relocated or
-standalone deployments. PDF ingestion uses the declared `pypdf` runtime
-dependency. Schema availability does not affect compilation of an already
-generated project JSON.
+The CLI entry point is declared by the package:
+
+```toml
+[project.scripts]
+paper2ale = "paper2ale.cli:main"
+```
+
+After an editable install, the commands above use the current working tree.

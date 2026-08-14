@@ -1,0 +1,822 @@
+{
+  "$id": "https://paper2ale.local/schemas/generic_protocol.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "oneOf": [
+    {
+      "additionalProperties": false,
+      "properties": {
+        "evaluation": {
+          "additionalProperties": false,
+          "properties": {
+            "gates": {
+              "allOf": [
+                {
+                  "contains": {
+                    "const": "finite_numbers"
+                  },
+                  "minContains": 1
+                },
+                {
+                  "contains": {
+                    "const": "max_bytes"
+                  },
+                  "minContains": 1
+                },
+                {
+                  "contains": {
+                    "const": "query_id_match"
+                  },
+                  "minContains": 1
+                },
+                {
+                  "contains": {
+                    "const": "shape_match"
+                  },
+                  "minContains": 1
+                },
+                {
+                  "contains": {
+                    "const": "strict_json"
+                  },
+                  "minContains": 1
+                }
+              ],
+              "items": {
+                "enum": [
+                  "strict_json",
+                  "max_bytes",
+                  "shape_match",
+                  "finite_numbers",
+                  "query_id_match",
+                  "row_schema_match",
+                  "required_keys"
+                ]
+              },
+              "minItems": 1,
+              "type": "array",
+              "uniqueItems": true
+            },
+            "max_submission_bytes": {
+              "maximum": 1048576,
+              "minimum": 128,
+              "type": "integer"
+            },
+            "metrics": {
+              "items": {
+                "additionalProperties": false,
+                "properties": {
+                  "id": {
+                    "pattern": "^[A-Za-z][A-Za-z0-9_]{0,63}$",
+                    "type": "string"
+                  },
+                  "primitive": {
+                    "enum": [
+                      "numeric_max_abs",
+                      "numeric_rmse"
+                    ]
+                  },
+                  "threshold": {
+                    "exclusiveMinimum": 0,
+                    "maximum": 1000000,
+                    "type": "number"
+                  },
+                  "weight": {
+                    "exclusiveMinimum": 0,
+                    "maximum": 100,
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "id",
+                  "primitive",
+                  "threshold",
+                  "weight"
+                ],
+                "type": "object"
+              },
+              "maxItems": 8,
+              "minItems": 1,
+              "type": "array"
+            },
+            "required_pass_fraction": {
+              "maximum": 1,
+              "minimum": 0.5,
+              "type": "number"
+            }
+          },
+          "required": [
+            "metrics",
+            "gates"
+          ],
+          "type": "object"
+        },
+        "generator": {
+          "additionalProperties": false,
+          "properties": {
+            "decimals": {
+              "maximum": 10,
+              "minimum": 0,
+              "type": "integer"
+            },
+            "high": {
+              "maximum": 1000000,
+              "minimum": -1000000,
+              "type": "number"
+            },
+            "input_dimension": {
+              "maximum": 16,
+              "minimum": 1,
+              "type": "integer"
+            },
+            "low": {
+              "maximum": 1000000,
+              "minimum": -1000000,
+              "type": "number"
+            },
+            "output_dimension": {
+              "maximum": 16,
+              "minimum": 1,
+              "type": "integer"
+            },
+            "primitive": {
+              "const": "uniform_numeric_matrix"
+            },
+            "public_example_count": {
+              "maximum": 512,
+              "minimum": 2,
+              "type": "integer"
+            },
+            "public_noise_std": {
+              "maximum": 100,
+              "minimum": 0,
+              "type": "number"
+            },
+            "query_count": {
+              "maximum": 2048,
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "primitive",
+            "input_dimension",
+            "output_dimension",
+            "query_count",
+            "public_example_count",
+            "low",
+            "high"
+          ],
+          "type": "object"
+        },
+        "output": {
+          "additionalProperties": false,
+          "properties": {
+            "filename": {
+              "const": "submission.json"
+            },
+            "primitive": {
+              "const": "numeric_predictions_json"
+            }
+          },
+          "required": [
+            "primitive"
+          ],
+          "type": "object"
+        },
+        "reference_solver": {
+          "additionalProperties": false,
+          "properties": {
+            "bias": {
+              "items": {
+                "maximum": 1000000,
+                "minimum": -1000000,
+                "type": "number"
+              },
+              "maxItems": 16,
+              "minItems": 1,
+              "type": "array"
+            },
+            "primitive": {
+              "const": "affine_transform"
+            },
+            "weights": {
+              "items": {
+                "items": {
+                  "maximum": 1000000,
+                  "minimum": -1000000,
+                  "type": "number"
+                },
+                "maxItems": 16,
+                "minItems": 1,
+                "type": "array"
+              },
+              "maxItems": 16,
+              "minItems": 1,
+              "type": "array"
+            }
+          },
+          "required": [
+            "primitive",
+            "weights",
+            "bias"
+          ],
+          "type": "object"
+        },
+        "schema_version": {
+          "const": "paper2ale.generic-protocol/v1"
+        },
+        "template_id": {
+          "const": "numeric-affine-v1"
+        }
+      },
+      "required": [
+        "schema_version",
+        "template_id",
+        "generator",
+        "reference_solver",
+        "output",
+        "evaluation"
+      ],
+      "type": "object"
+    },
+    {
+      "additionalProperties": false,
+      "properties": {
+        "evaluation": {
+          "additionalProperties": false,
+          "properties": {
+            "gates": {
+              "allOf": [
+                {
+                  "contains": {
+                    "const": "max_bytes"
+                  },
+                  "minContains": 1
+                },
+                {
+                  "contains": {
+                    "const": "row_schema_match"
+                  },
+                  "minContains": 1
+                },
+                {
+                  "contains": {
+                    "const": "strict_json"
+                  },
+                  "minContains": 1
+                }
+              ],
+              "items": {
+                "enum": [
+                  "strict_json",
+                  "max_bytes",
+                  "shape_match",
+                  "finite_numbers",
+                  "query_id_match",
+                  "row_schema_match",
+                  "required_keys"
+                ]
+              },
+              "minItems": 1,
+              "type": "array",
+              "uniqueItems": true
+            },
+            "max_submission_bytes": {
+              "maximum": 1048576,
+              "minimum": 128,
+              "type": "integer"
+            },
+            "metrics": {
+              "items": {
+                "additionalProperties": false,
+                "properties": {
+                  "id": {
+                    "pattern": "^[A-Za-z][A-Za-z0-9_]{0,63}$",
+                    "type": "string"
+                  },
+                  "primitive": {
+                    "enum": [
+                      "table_exact"
+                    ]
+                  },
+                  "threshold": {
+                    "maximum": 1,
+                    "minimum": 0,
+                    "type": "number"
+                  },
+                  "weight": {
+                    "exclusiveMinimum": 0,
+                    "maximum": 100,
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "id",
+                  "primitive",
+                  "threshold",
+                  "weight"
+                ],
+                "type": "object"
+              },
+              "maxItems": 8,
+              "minItems": 1,
+              "type": "array"
+            },
+            "required_pass_fraction": {
+              "maximum": 1,
+              "minimum": 0.5,
+              "type": "number"
+            }
+          },
+          "required": [
+            "metrics",
+            "gates"
+          ],
+          "type": "object"
+        },
+        "generator": {
+          "additionalProperties": false,
+          "properties": {
+            "columns": {
+              "items": {
+                "oneOf": [
+                  {
+                    "additionalProperties": false,
+                    "properties": {
+                      "name": {
+                        "pattern": "^[A-Za-z][A-Za-z0-9_]{0,63}$",
+                        "type": "string"
+                      },
+                      "primitive": {
+                        "const": "sequence_integer"
+                      },
+                      "start": {
+                        "maximum": 1000000,
+                        "minimum": -1000000,
+                        "type": "integer"
+                      },
+                      "step": {
+                        "maximum": 1000000,
+                        "minimum": -1000000,
+                        "not": {
+                          "const": 0
+                        },
+                        "type": "integer"
+                      }
+                    },
+                    "required": [
+                      "name",
+                      "primitive",
+                      "start",
+                      "step"
+                    ],
+                    "type": "object"
+                  },
+                  {
+                    "additionalProperties": false,
+                    "properties": {
+                      "high": {
+                        "maximum": 1000000,
+                        "minimum": -1000000,
+                        "type": "integer"
+                      },
+                      "low": {
+                        "maximum": 1000000,
+                        "minimum": -1000000,
+                        "type": "integer"
+                      },
+                      "name": {
+                        "pattern": "^[A-Za-z][A-Za-z0-9_]{0,63}$",
+                        "type": "string"
+                      },
+                      "primitive": {
+                        "const": "uniform_integer"
+                      }
+                    },
+                    "required": [
+                      "name",
+                      "primitive",
+                      "low",
+                      "high"
+                    ],
+                    "type": "object"
+                  },
+                  {
+                    "additionalProperties": false,
+                    "properties": {
+                      "decimals": {
+                        "maximum": 10,
+                        "minimum": 0,
+                        "type": "integer"
+                      },
+                      "high": {
+                        "maximum": 1000000,
+                        "minimum": -1000000,
+                        "type": "number"
+                      },
+                      "low": {
+                        "maximum": 1000000,
+                        "minimum": -1000000,
+                        "type": "number"
+                      },
+                      "name": {
+                        "pattern": "^[A-Za-z][A-Za-z0-9_]{0,63}$",
+                        "type": "string"
+                      },
+                      "primitive": {
+                        "const": "uniform_number"
+                      }
+                    },
+                    "required": [
+                      "name",
+                      "primitive",
+                      "low",
+                      "high"
+                    ],
+                    "type": "object"
+                  },
+                  {
+                    "additionalProperties": false,
+                    "properties": {
+                      "name": {
+                        "pattern": "^[A-Za-z][A-Za-z0-9_]{0,63}$",
+                        "type": "string"
+                      },
+                      "primitive": {
+                        "const": "choice"
+                      },
+                      "values": {
+                        "items": {
+                          "maxLength": 64,
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "maxItems": 32,
+                        "minItems": 1,
+                        "type": "array",
+                        "uniqueItems": true
+                      }
+                    },
+                    "required": [
+                      "name",
+                      "primitive",
+                      "values"
+                    ],
+                    "type": "object"
+                  }
+                ]
+              },
+              "maxItems": 16,
+              "minItems": 1,
+              "type": "array"
+            },
+            "primitive": {
+              "const": "typed_record_table"
+            },
+            "row_count": {
+              "maximum": 2048,
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "primitive",
+            "row_count",
+            "columns"
+          ],
+          "type": "object"
+        },
+        "output": {
+          "additionalProperties": false,
+          "properties": {
+            "filename": {
+              "const": "submission.json"
+            },
+            "primitive": {
+              "const": "table_rows_json"
+            }
+          },
+          "required": [
+            "primitive"
+          ],
+          "type": "object"
+        },
+        "reference_solver": {
+          "additionalProperties": false,
+          "properties": {
+            "filter": {
+              "additionalProperties": false,
+              "properties": {
+                "column": {
+                  "pattern": "^[A-Za-z][A-Za-z0-9_]{0,63}$",
+                  "type": "string"
+                },
+                "operator": {
+                  "enum": [
+                    "eq",
+                    "ne",
+                    "lt",
+                    "lte",
+                    "gt",
+                    "gte"
+                  ]
+                },
+                "value": {
+                  "oneOf": [
+                    {
+                      "maximum": 1000000,
+                      "minimum": -1000000,
+                      "type": "number"
+                    },
+                    {
+                      "maxLength": 64,
+                      "minLength": 1,
+                      "type": "string"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "column",
+                "operator",
+                "value"
+              ],
+              "type": "object"
+            },
+            "primitive": {
+              "const": "filter_sort_project"
+            },
+            "project": {
+              "items": {
+                "pattern": "^[A-Za-z][A-Za-z0-9_]{0,63}$",
+                "type": "string"
+              },
+              "maxItems": 16,
+              "minItems": 1,
+              "type": "array",
+              "uniqueItems": true
+            },
+            "sort": {
+              "items": {
+                "additionalProperties": false,
+                "properties": {
+                  "column": {
+                    "pattern": "^[A-Za-z][A-Za-z0-9_]{0,63}$",
+                    "type": "string"
+                  },
+                  "direction": {
+                    "enum": [
+                      "ascending",
+                      "descending"
+                    ]
+                  }
+                },
+                "required": [
+                  "column",
+                  "direction"
+                ],
+                "type": "object"
+              },
+              "maxItems": 3,
+              "minItems": 1,
+              "type": "array"
+            }
+          },
+          "required": [
+            "primitive",
+            "filter",
+            "sort",
+            "project"
+          ],
+          "type": "object"
+        },
+        "schema_version": {
+          "const": "paper2ale.generic-protocol/v1"
+        },
+        "template_id": {
+          "const": "table-filter-sort-v1"
+        }
+      },
+      "required": [
+        "schema_version",
+        "template_id",
+        "generator",
+        "reference_solver",
+        "output",
+        "evaluation"
+      ],
+      "type": "object"
+    },
+    {
+      "additionalProperties": false,
+      "properties": {
+        "evaluation": {
+          "additionalProperties": false,
+          "properties": {
+            "gates": {
+              "allOf": [
+                {
+                  "contains": {
+                    "const": "max_bytes"
+                  },
+                  "minContains": 1
+                },
+                {
+                  "contains": {
+                    "const": "required_keys"
+                  },
+                  "minContains": 1
+                },
+                {
+                  "contains": {
+                    "const": "strict_json"
+                  },
+                  "minContains": 1
+                }
+              ],
+              "items": {
+                "enum": [
+                  "strict_json",
+                  "max_bytes",
+                  "shape_match",
+                  "finite_numbers",
+                  "query_id_match",
+                  "row_schema_match",
+                  "required_keys"
+                ]
+              },
+              "minItems": 1,
+              "type": "array",
+              "uniqueItems": true
+            },
+            "max_submission_bytes": {
+              "maximum": 1048576,
+              "minimum": 128,
+              "type": "integer"
+            },
+            "metrics": {
+              "items": {
+                "additionalProperties": false,
+                "properties": {
+                  "id": {
+                    "pattern": "^[A-Za-z][A-Za-z0-9_]{0,63}$",
+                    "type": "string"
+                  },
+                  "primitive": {
+                    "enum": [
+                      "json_exact"
+                    ]
+                  },
+                  "threshold": {
+                    "maximum": 1,
+                    "minimum": 0,
+                    "type": "number"
+                  },
+                  "weight": {
+                    "exclusiveMinimum": 0,
+                    "maximum": 100,
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "id",
+                  "primitive",
+                  "threshold",
+                  "weight"
+                ],
+                "type": "object"
+              },
+              "maxItems": 8,
+              "minItems": 1,
+              "type": "array"
+            },
+            "required_pass_fraction": {
+              "maximum": 1,
+              "minimum": 0.5,
+              "type": "number"
+            }
+          },
+          "required": [
+            "metrics",
+            "gates"
+          ],
+          "type": "object"
+        },
+        "generator": {
+          "additionalProperties": false,
+          "properties": {
+            "group_field": {
+              "pattern": "^[A-Za-z][A-Za-z0-9_]{0,63}$",
+              "type": "string"
+            },
+            "groups": {
+              "items": {
+                "maxLength": 64,
+                "minLength": 1,
+                "type": "string"
+              },
+              "maxItems": 32,
+              "minItems": 1,
+              "type": "array",
+              "uniqueItems": true
+            },
+            "primitive": {
+              "const": "grouped_integer_records"
+            },
+            "record_count": {
+              "maximum": 2048,
+              "minimum": 1,
+              "type": "integer"
+            },
+            "value_field": {
+              "pattern": "^[A-Za-z][A-Za-z0-9_]{0,63}$",
+              "type": "string"
+            },
+            "value_high": {
+              "maximum": 1000000,
+              "minimum": -1000000,
+              "type": "integer"
+            },
+            "value_low": {
+              "maximum": 1000000,
+              "minimum": -1000000,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "primitive",
+            "record_count",
+            "groups",
+            "group_field",
+            "value_field",
+            "value_low",
+            "value_high"
+          ],
+          "type": "object"
+        },
+        "output": {
+          "additionalProperties": false,
+          "properties": {
+            "filename": {
+              "const": "submission.json"
+            },
+            "primitive": {
+              "const": "json_object"
+            }
+          },
+          "required": [
+            "primitive"
+          ],
+          "type": "object"
+        },
+        "reference_solver": {
+          "additionalProperties": false,
+          "properties": {
+            "group_field": {
+              "pattern": "^[A-Za-z][A-Za-z0-9_]{0,63}$",
+              "type": "string"
+            },
+            "operation": {
+              "enum": [
+                "sum",
+                "count",
+                "min",
+                "max"
+              ]
+            },
+            "primitive": {
+              "const": "grouped_aggregate"
+            },
+            "value_field": {
+              "pattern": "^[A-Za-z][A-Za-z0-9_]{0,63}$",
+              "type": "string"
+            }
+          },
+          "required": [
+            "primitive",
+            "operation",
+            "group_field",
+            "value_field"
+          ],
+          "type": "object"
+        },
+        "schema_version": {
+          "const": "paper2ale.generic-protocol/v1"
+        },
+        "template_id": {
+          "const": "json-group-aggregate-v1"
+        }
+      },
+      "required": [
+        "schema_version",
+        "template_id",
+        "generator",
+        "reference_solver",
+        "output",
+        "evaluation"
+      ],
+      "type": "object"
+    }
+  ],
+  "title": "paper2ale trusted generic task protocol"
+}

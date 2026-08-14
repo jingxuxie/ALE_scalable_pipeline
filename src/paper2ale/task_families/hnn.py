@@ -139,6 +139,7 @@ def _ale_main(
 
     from dataclasses import dataclass
     import json
+    import math
     import shlex
 
     import cua_bench as cb
@@ -259,7 +260,16 @@ def _ale_main(
             result = json.loads(stdout[begin : end + 1]) if begin >= 0 and end >= begin else {{}}
         except (TypeError, ValueError, json.JSONDecodeError):
             result = {{}}
-        return [1.0 if result.get("passed") else 0.0]
+        score = result.get("score")
+        if (
+            result.get("passed") is not True
+            or isinstance(score, bool)
+            or not isinstance(score, (int, float))
+            or not math.isfinite(float(score))
+            or not 0.0 <= float(score) <= 1.0
+        ):
+            return [0.0]
+        return [float(score)]
 
 
     if __name__ == "__main__":
@@ -599,7 +609,23 @@ def _build_symplectic(
                 pass
         except Exception as exc:
             errors.append(f"grader exception: {type(exc).__name__}: {exc}")
-        result = {"passed": not errors, "errors": errors, "instance": args.instance}
+        passed = not errors
+        metric_scores = {
+            "numerical_correctness": 1.0 if passed else 0.0,
+            "interface_and_safety": 1.0 if passed else 0.0,
+        }
+        result = {
+            "passed": passed,
+            "score": (
+                0.8 * metric_scores["numerical_correctness"]
+                + 0.2 * metric_scores["interface_and_safety"]
+                if passed
+                else 0.0
+            ),
+            "metric_scores": metric_scores,
+            "errors": errors,
+            "instance": args.instance,
+        }
         print(json.dumps(result, indent=2))
         return 0 if not errors else 1
 
@@ -647,7 +673,7 @@ def _build_symplectic(
             ),
             _file("software/public_check.py", public_check_py, AGENT, executable=True),
             _file("software/solution.py", starter, AGENT),
-            _file("software/requirements.txt", "numpy>=1.26\n", AGENT),
+            _file("software/requirements.txt", "numpy>=1.26,<3\n", AGENT),
             _file("reference/grader.py", grader, EVALUATOR, executable=True),
             _file("example/reference_solution.py", reference_solution, EVALUATOR),
         ]
@@ -1047,7 +1073,40 @@ def _build_mass_spring(
                 errors.append("mean rollout energy drift exceeds threshold")
         except Exception as exc:
             errors.append(f"grader exception: {type(exc).__name__}: {exc}")
-        result = {"passed": not errors, "instance": args.instance, "metrics": metrics, "errors": errors}
+        passed = not errors
+        thresholds = target.get("thresholds", {})
+        metric_scores = {
+            "hidden_derivative_mse": max(
+                0.0,
+                1.0 - metrics.get("test_derivative_mse", float("inf"))
+                / max(float(thresholds.get("test_derivative_mse_max", 0.0)), 1e-30),
+            ),
+            "rollout_state_mse": max(
+                0.0,
+                1.0 - metrics.get("rollout_state_mse", float("inf"))
+                / max(float(thresholds.get("rollout_state_mse_max", 0.0)), 1e-30),
+            ),
+            "energy_stability": max(
+                0.0,
+                1.0 - metrics.get("mean_energy_drift", float("inf"))
+                / max(float(thresholds.get("mean_energy_drift_max", 0.0)), 1e-30),
+            ),
+        }
+        score = (
+            0.5 * metric_scores["hidden_derivative_mse"]
+            + 0.35 * metric_scores["rollout_state_mse"]
+            + 0.15 * metric_scores["energy_stability"]
+            if passed
+            else 0.0
+        )
+        result = {
+            "passed": passed,
+            "score": score,
+            "instance": args.instance,
+            "metrics": metrics,
+            "metric_scores": metric_scores,
+            "errors": errors,
+        }
         print(json.dumps(result, indent=2))
         return 0 if not errors else 1
 
@@ -1098,7 +1157,7 @@ def _build_mass_spring(
             _file("software/model.py", model_py, AGENT),
             _file("software/train.py", train_py, AGENT),
             _file("software/__init__.py", '"""Participant training software."""\n', AGENT),
-            _file("software/requirements.txt", "numpy>=1.26\n", AGENT),
+            _file("software/requirements.txt", "numpy>=1.26,<3\n", AGENT),
             _file("reference/grader.py", grader, EVALUATOR, executable=True),
             _file("example/reference_solver.py", reference_solver, EVALUATOR),
         ]
@@ -1351,7 +1410,25 @@ def _build_two_body_audit(
                     errors.append(f"correction: incorrect {key}")
         except Exception as exc:
             errors.append(f"grader exception: {type(exc).__name__}: {exc}")
-        result = {"passed": not errors, "instance": args.instance, "errors": errors}
+        passed = not errors
+        metric_scores = {
+            "conflict_classification": 1.0 if passed else 0.0,
+            "symbolic_derivation": 1.0 if passed else 0.0,
+            "numerical_force": 1.0 if passed else 0.0,
+        }
+        result = {
+            "passed": passed,
+            "score": (
+                0.2 * metric_scores["conflict_classification"]
+                + 0.4 * metric_scores["symbolic_derivation"]
+                + 0.4 * metric_scores["numerical_force"]
+                if passed
+                else 0.0
+            ),
+            "instance": args.instance,
+            "metric_scores": metric_scores,
+            "errors": errors,
+        }
         print(json.dumps(result, indent=2))
         return 0 if not errors else 1
 
@@ -1424,7 +1501,7 @@ def _build_two_body_audit(
             _file("software/public_check.py", public_check_py, AGENT, executable=True),
             _file("software/audit.py", audit_py, AGENT),
             _file("software/__init__.py", '"""Participant audit software."""\n', AGENT),
-            _file("software/requirements.txt", "numpy>=1.26\n", AGENT),
+            _file("software/requirements.txt", "numpy>=1.26,<3\n", AGENT),
             _file("reference/grader.py", grader, EVALUATOR, executable=True),
             _file("example/reference_solver.py", reference_solver, EVALUATOR),
         ]
@@ -1446,6 +1523,7 @@ def build_task_files(
     *,
     master_seed: int,
     instances: int | None = None,
+    build_context: Any | None = None,
 ) -> list[BuildFile]:
     """Build one of the three grounded HNN task packages.
 
@@ -1455,6 +1533,7 @@ def build_task_files(
         master_seed: Root seed from which every instance seed is derived.
         instances: Optional deterministic override of the configured count.
     """
+    del build_context  # Built-in HNN fixtures use analytic trusted generators.
     if not isinstance(project, dict) or not isinstance(task, dict):
         raise TypeError("project and task must be dictionaries")
     task_id = task.get("id") or task.get("task_id")

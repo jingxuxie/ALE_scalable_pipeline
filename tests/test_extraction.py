@@ -27,8 +27,58 @@ def project() -> dict:
         "schema_version": "paper2ale.project/v1",
         "project_id": "extracted-project",
         "source_bundle": source_bundle(),
-        "evidence_graph": {"records": [], "nodes": [], "edges": [], "claims": []},
-        "tasks": [],
+        "evidence_graph": {
+            "records": [
+                {
+                    "id": "evidence.method",
+                    "kind": "method",
+                    "statement": "A bounded method is described.",
+                    "source_refs": ["source.paper"],
+                    "confidence": 1.0,
+                    "status": "supported",
+                }
+            ],
+            "nodes": [
+                {
+                    "id": "workflow.run",
+                    "kind": "inference",
+                    "evidence_ids": ["evidence.method"],
+                }
+            ],
+            "edges": [],
+            "claims": [
+                {
+                    "id": "claim.result",
+                    "statement": "The bounded workflow has a measurable result.",
+                    "evidence_ids": ["evidence.method"],
+                    "status": "supported",
+                    "impact": "medium",
+                }
+            ],
+        },
+        "tasks": [
+            {
+                "id": "extracted-task",
+                "title": "Extracted task",
+                "mode": "specification_preserving",
+                "family": "fixture",
+                "summary": "A schema-valid extraction fixture.",
+                "evidence_ids": ["claim.result"],
+                "workflow_nodes": ["workflow.run"],
+                "instances": 1,
+                "resource_budget": {
+                    "cpu_cores": 1,
+                    "memory_mb": 128,
+                    "wall_time_seconds": 30,
+                },
+                "output_contract": {"required_files": ["result.json"]},
+                "evaluation": {
+                    "weights": {"correctness": 1.0},
+                    "gates": ["trusted_check"],
+                },
+                "tags": ["fixture"],
+            }
+        ],
     }
 
 

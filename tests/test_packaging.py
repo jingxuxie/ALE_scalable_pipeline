@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib
 from pathlib import Path
 import stat
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -16,6 +17,7 @@ from paper2ale.packaging import (  # noqa: E402
     BuildFile,
     projection_files,
     write_deterministic_zip,
+    write_deterministic_zip_from_files,
     write_manifest,
     write_projection,
 )
@@ -37,6 +39,28 @@ class BuildFileTests(unittest.TestCase):
         for path in unsafe:
             with self.subTest(path=path), self.assertRaises((TypeError, ValueError)):
                 BuildFile(path, b"data", "agent")
+
+    def test_rejects_win32_devices_ads_and_ignored_suffixes(self) -> None:
+        unsafe = (
+            "NUL",
+            "nul.txt",
+            "folder/CON.json",
+            "COM1.log",
+            "LPT9",
+            "COM¹.txt",
+            "payload.json:secret",
+            "folder/name.",
+            "folder/name ",
+        )
+        for path in unsafe:
+            with self.subTest(path=path), self.assertRaisesRegex(
+                ValueError, "Windows|Win32"
+            ):
+                BuildFile(path, b"data", "agent")
+
+        for path in ("console.txt", "com10.txt", ".env", "folder/name.txt"):
+            with self.subTest(path=path):
+                self.assertEqual(BuildFile(path, b"data", "agent").path, path)
 
     def test_projection_visibility_and_order(self) -> None:
         files = [
@@ -80,6 +104,29 @@ class ManifestAndZipTests(unittest.TestCase):
         )
         write_manifest(root)
 
+    def test_direct_inventory_zip_avoids_materializing_deep_member_paths(self) -> None:
+        member = (
+            "task-data/research_workflows/"
+            + "t" * 128
+            + "/000/reference/instances/000/evaluation.json"
+        )
+        files = [BuildFile(member, b'{"expected":42}\n', "evaluator")]
+        with tempfile.TemporaryDirectory() as temporary:
+            archive_path = Path(temporary) / "deployment.zip"
+            first = write_deterministic_zip_from_files(files, archive_path)
+            first_bytes = archive_path.read_bytes()
+            second = write_deterministic_zip_from_files(files, archive_path)
+            self.assertEqual(first, second)
+            self.assertEqual(first_bytes, archive_path.read_bytes())
+            with zipfile.ZipFile(archive_path) as archive:
+                self.assertEqual(
+                    set(archive.namelist()),
+                    {"MANIFEST.sha256", member},
+                )
+                manifest = archive.read("MANIFEST.sha256").decode("utf-8")
+                self.assertIn(hashlib.sha256(files[0].data).hexdigest(), manifest)
+                self.assertIn(f"./{member}", manifest)
+
     def test_manifest_is_sorted_repeatable_and_does_not_hash_itself(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary) / "package"
@@ -122,6 +169,67 @@ class ManifestAndZipTests(unittest.TestCase):
                     expected_mode = 0o755 if info.filename == "task/bin/run.sh" else 0o644
                     self.assertEqual(mode, expected_mode)
                     self.assertTrue(stat.S_ISREG((info.external_attr >> 16) & 0xFFFF))
+
+    @unittest.skipUnless(sys.platform == "win32", "Windows junction semantics")
+    def test_package_walk_rejects_directory_junctions(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            base = Path(temporary)
+            root = base / "package"
+            outside = base / "outside"
+            root.mkdir()
+            outside.mkdir()
+            (outside / "secret.txt").write_text("secret", encoding="utf-8")
+            junction = root / "linked"
+            result = subprocess.run(
+                ["cmd", "/c", "mklink", "/J", str(junction), str(outside)],
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            if result.returncode:
+                self.skipTest(f"junction creation unavailable: {result.stderr.strip()}")
+            self.assertTrue(junction.is_junction())
+            self.assertFalse(junction.is_symlink())
+            with self.assertRaisesRegex(ValueError, "junction|reparse"):
+                write_manifest(root)
+
+    @unittest.skipUnless(sys.platform == "win32", "Windows path-length semantics")
+    def test_short_atomic_temp_name_works_near_windows_path_limit(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary) / "projection"
+            parent = root / "nested"
+            filename_length = 250 - len(str(parent.resolve())) - 1
+            if not 32 <= filename_length <= 240:
+                self.skipTest("temporary root does not leave a useful filename budget")
+            filename = "x" * filename_length
+            written = write_projection(
+                [BuildFile(f"nested/{filename}", b"payload", "agent")],
+                root,
+                "agent",
+            )
+            self.assertEqual(len(str(written[0].resolve())), 250)
+            self.assertEqual(written[0].read_bytes(), b"payload")
+
+    @unittest.skipUnless(sys.platform == "win32", "Windows path-length semantics")
+    def test_overlong_windows_destination_fails_with_actionable_error(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary) / "projection"
+            parent = root / "nested"
+            filename_length = 265 - len(str(parent.resolve())) - 1
+            if not 32 <= filename_length <= 240:
+                self.skipTest("temporary root does not leave a useful filename budget")
+            with self.assertRaisesRegex(ValueError, "shorter --out"):
+                write_projection(
+                    [
+                        BuildFile(
+                            f"nested/{'x' * filename_length}",
+                            b"payload",
+                            "agent",
+                        )
+                    ],
+                    root,
+                    "agent",
+                )
 
 
 if __name__ == "__main__":

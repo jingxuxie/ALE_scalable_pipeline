@@ -27,8 +27,17 @@ _PROFILE_VISIBILITIES = {
     "author": VISIBILITIES,
 }
 _WINDOWS_DRIVE = re.compile(r"^[A-Za-z]:")
+_WINDOWS_RESERVED_STEMS = frozenset(
+    {"con", "prn", "aux", "nul", "clock$", "conin$", "conout$"}
+    | {f"com{index}" for index in range(1, 10)}
+    | {f"lpt{index}" for index in range(1, 10)}
+    | {f"com{index}" for index in "¹²³"}
+    | {f"lpt{index}" for index in "¹²³"}
+)
 _FIXED_ZIP_TIMESTAMP = (1980, 1, 1, 0, 0, 0)
 MANIFEST_NAME = "MANIFEST.sha256"
+_WINDOWS_PORTABLE_MAX_PATH = 259
+_ATOMIC_TEMP_NAME_BUDGET = len(".p2a-xxxxxxxx.tmp")
 
 
 def _validate_relative_posix_path(path: str) -> str:
@@ -50,7 +59,124 @@ def _validate_relative_posix_path(path: str) -> str:
     parts = path.split("/")
     if any(part in {"", ".", ".."} for part in parts):
         raise ValueError(f"package path contains an unsafe component: {path!r}")
+    for part in parts:
+        if ":" in part:
+            raise ValueError(
+                f"package path contains a Windows drive/ADS separator: {path!r}"
+            )
+        if part.endswith((".", " ")):
+            raise ValueError(
+                f"package path component ends with a Windows-ignored dot or space: {path!r}"
+            )
+        stem = part.split(".", 1)[0].casefold()
+        if stem in _WINDOWS_RESERVED_STEMS:
+            raise ValueError(
+                f"package path contains a reserved Windows device name: {path!r}"
+            )
     return path
+
+
+def _windows_path_key(path: str) -> str:
+    """Return the collision key used by portable Windows package paths."""
+
+    validated = _validate_relative_posix_path(path)
+    return "/".join(part.rstrip(". ").casefold() for part in validated.split("/"))
+
+
+def _windows_path_collisions(
+    entries: Iterable[tuple[str, bool]],
+) -> list[tuple[str, str]]:
+    """Return collisions between Win32-normalized path components.
+
+    Each entry is ``(path, leaf_is_file)``.  Tracking every prefix catches
+    case aliases in directory components as well as file-versus-directory
+    conflicts, while allowing ordinary siblings in the same directory.
+    """
+
+    seen: dict[str, tuple[str, str, bool, bool]] = {}
+    collisions: list[tuple[str, str]] = []
+    for path, leaf_is_file in entries:
+        validated = _validate_relative_posix_path(path)
+        parts = validated.split("/")
+        conflict: tuple[str, str] | None = None
+        for index in range(1, len(parts) + 1):
+            literal = "/".join(parts[:index])
+            key = "/".join(part.rstrip(". ").casefold() for part in parts[:index])
+            component_is_leaf = index == len(parts)
+            component_is_file = leaf_is_file and index == len(parts)
+            previous = seen.get(key)
+            if previous is None:
+                seen[key] = (
+                    literal,
+                    validated,
+                    component_is_file,
+                    component_is_leaf,
+                )
+                continue
+            (
+                previous_literal,
+                previous_path,
+                previous_is_file,
+                previous_is_leaf,
+            ) = previous
+            if (
+                previous_literal != literal
+                or previous_is_file
+                or component_is_file
+                or (previous_is_leaf and component_is_leaf)
+            ):
+                conflict = (previous_path, validated)
+                break
+        if conflict is not None:
+            collisions.append(conflict)
+    return collisions
+
+
+def _is_reparse_point(path: Path) -> bool:
+    """Return whether *path* is a symlink, junction, or other reparse point."""
+
+    try:
+        if path.is_symlink():
+            return True
+        is_junction = getattr(path, "is_junction", None)
+        if callable(is_junction) and is_junction():
+            return True
+        attributes = getattr(path.lstat(), "st_file_attributes", 0)
+    except FileNotFoundError:
+        return False
+    reparse_flag = getattr(stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0x400)
+    return bool(attributes & reparse_flag)
+
+
+def _ensure_resolved_contained(root_resolved: Path, candidate: Path) -> None:
+    """Reject a discovered path whose resolved target escapes *root_resolved*."""
+
+    try:
+        candidate.resolve(strict=True).relative_to(root_resolved)
+    except (OSError, ValueError) as error:
+        raise ValueError(f"path resolves outside package root: {candidate}") from error
+
+
+def _ensure_windows_path_budget(
+    path: Path,
+    *,
+    context: str,
+    reserve_name_chars: int = 0,
+) -> None:
+    """Fail before a portable build crosses the legacy Win32 path budget."""
+
+    if os.name != "nt":
+        return
+    rendered = os.path.abspath(os.fspath(path))
+    if rendered.startswith("\\\\?\\"):
+        return
+    length = len(rendered) + reserve_name_chars
+    if length > _WINDOWS_PORTABLE_MAX_PATH:
+        raise ValueError(
+            f"{context} exceeds the portable Windows path budget "
+            f"({length} > {_WINDOWS_PORTABLE_MAX_PATH} characters): {rendered}. "
+            "Use a shorter --out directory or enable and use extended-length Windows paths."
+        )
 
 
 @dataclass(frozen=True, slots=True)
@@ -221,23 +347,25 @@ def ale_local_deployment_files(
 
 
 def _casefold_duplicates(files: Sequence[BuildFile]) -> list[tuple[str, str]]:
-    seen: dict[str, str] = {}
-    duplicates: list[tuple[str, str]] = []
-    for file in files:
-        key = file.path.casefold()
-        if key in seen:
-            duplicates.append((seen[key], file.path))
-        else:
-            seen[key] = file.path
-    return duplicates
+    return _windows_path_collisions((file.path, True) for file in files)
 
 
 def _write_bytes_atomically(path: Path, data: bytes) -> None:
+    _ensure_windows_path_budget(path, context="package destination")
+    _ensure_windows_path_budget(
+        path.parent,
+        context="atomic package temporary path",
+        reserve_name_chars=1 + _ATOMIC_TEMP_NAME_BUDGET,
+    )
     path.parent.mkdir(parents=True, exist_ok=True)
     temporary_name: str | None = None
     try:
         with tempfile.NamedTemporaryFile(
-            mode="wb", dir=path.parent, prefix=f".{path.name}.", delete=False
+            mode="wb",
+            dir=path.parent,
+            prefix=".p2a-",
+            suffix=".tmp",
+            delete=False,
         ) as temporary:
             temporary.write(data)
             temporary.flush()
@@ -276,11 +404,14 @@ def write_projection(
         raise ValueError(f"projection contains duplicate or case-colliding paths: {rendered}")
 
     root_path = Path(root)
-    if root_path.exists() and root_path.is_symlink():
-        raise ValueError(f"projection root must not be a symlink: {root_path}")
+    if _is_reparse_point(root_path):
+        raise ValueError(
+            f"projection root must not be a symlink, junction, or reparse point: {root_path}"
+        )
     root_path.mkdir(parents=True, exist_ok=True)
     if not root_path.is_dir():
         raise ValueError(f"projection root is not a directory: {root_path}")
+    root_resolved = root_path.resolve(strict=True)
 
     written: list[Path] = []
     for file in selected:
@@ -290,13 +421,18 @@ def write_projection(
         current = root_path
         for part in file.path.split("/")[:-1]:
             current = current / part
-            if current.exists() and current.is_symlink():
-                raise ValueError(f"projection path traverses a symlink: {current}")
+            if _is_reparse_point(current):
+                raise ValueError(
+                    f"projection path traverses a symlink, junction, or reparse point: {current}"
+                )
             current.mkdir(exist_ok=True)
             if not current.is_dir():
                 raise ValueError(f"projection parent is not a directory: {current}")
-        if destination.exists() and destination.is_symlink():
-            raise ValueError(f"projection destination is a symlink: {destination}")
+            _ensure_resolved_contained(root_resolved, current)
+        if _is_reparse_point(destination):
+            raise ValueError(
+                f"projection destination is a symlink, junction, or reparse point: {destination}"
+            )
         if destination.exists() and not destination.is_file():
             raise ValueError(f"projection destination is not a file: {destination}")
 
@@ -307,29 +443,49 @@ def write_projection(
 
 
 def _iter_regular_files(root: Path, *, exclude: frozenset[str] = frozenset()) -> Iterator[tuple[str, Path]]:
-    if root.is_symlink():
-        raise ValueError(f"package root must not be a symlink: {root}")
+    if _is_reparse_point(root):
+        raise ValueError(
+            f"package root must not be a symlink, junction, or reparse point: {root}"
+        )
     if not root.is_dir():
         raise ValueError(f"package root is not a directory: {root}")
+    root_resolved = root.resolve(strict=True)
 
     discovered: list[tuple[str, Path]] = []
     for current, directory_names, file_names in os.walk(root, followlinks=False):
         current_path = Path(current)
+        if _is_reparse_point(current_path):
+            raise ValueError(
+                f"package tree traverses a symlink, junction, or reparse point: {current_path}"
+            )
+        _ensure_resolved_contained(root_resolved, current_path)
         for name in list(directory_names):
             candidate = current_path / name
-            if candidate.is_symlink():
-                raise ValueError(f"package tree contains a symlink: {candidate}")
+            if _is_reparse_point(candidate):
+                raise ValueError(
+                    f"package tree contains a symlink, junction, or reparse point: {candidate}"
+                )
+            _ensure_resolved_contained(root_resolved, candidate)
         for name in file_names:
             candidate = current_path / name
-            if candidate.is_symlink():
-                raise ValueError(f"package tree contains a symlink: {candidate}")
+            if _is_reparse_point(candidate):
+                raise ValueError(
+                    f"package tree contains a symlink, junction, or reparse point: {candidate}"
+                )
             if not candidate.is_file():
                 raise ValueError(f"package tree contains a non-regular file: {candidate}")
+            _ensure_resolved_contained(root_resolved, candidate)
             relative = candidate.relative_to(root).as_posix()
             _validate_relative_posix_path(relative)
             if relative not in exclude:
                 discovered.append((relative, candidate))
     discovered.sort(key=lambda item: item[0])
+    collisions = _windows_path_collisions((relative, True) for relative, _ in discovered)
+    if collisions:
+        rendered = ", ".join(
+            f"{first!r}/{second!r}" for first, second in collisions
+        )
+        raise ValueError(f"package tree contains Win32-colliding paths: {rendered}")
     yield from discovered
 
 
@@ -383,14 +539,22 @@ def write_deterministic_zip(
         raise ValueError(f"executable paths do not exist in package root: {names}")
 
     destination_path.parent.mkdir(parents=True, exist_ok=True)
-    if destination_path.exists() and destination_path.is_symlink():
-        raise ValueError(f"ZIP destination must not be a symlink: {destination_path}")
+    if _is_reparse_point(destination_path):
+        raise ValueError(
+            f"ZIP destination must not be a symlink, junction, or reparse point: {destination_path}"
+        )
+    _ensure_windows_path_budget(destination_path, context="ZIP destination")
+    _ensure_windows_path_budget(
+        destination_path.parent,
+        context="ZIP temporary path",
+        reserve_name_chars=1 + _ATOMIC_TEMP_NAME_BUDGET,
+    )
 
     temporary_name: str | None = None
     try:
         with tempfile.NamedTemporaryFile(
             dir=destination_path.parent,
-            prefix=f".{destination_path.name}.",
+            prefix=".p2a-",
             suffix=".tmp",
             delete=False,
         ) as temporary:
@@ -426,6 +590,86 @@ def write_deterministic_zip(
     return _sha256_file(destination_path)
 
 
+def write_deterministic_zip_from_files(
+    files: Iterable[BuildFile],
+    zip_path: str | os.PathLike[str],
+) -> str:
+    """Archive an already projected inventory without materializing deep paths.
+
+    This is used for ALE layouts whose portable archive member names may exceed
+    legacy Windows host-path limits.  The embedded manifest and ZIP metadata are
+    identical in form to directory-backed packages.
+    """
+
+    inventory = tuple(files)
+    if any(not isinstance(item, BuildFile) for item in inventory):
+        raise TypeError("ZIP inventory must contain only BuildFile values")
+    if not inventory:
+        raise ValueError("ZIP inventory must contain at least one file")
+    if any(item.path == MANIFEST_NAME for item in inventory):
+        raise ValueError(f"ZIP inventory must not supply {MANIFEST_NAME}")
+    duplicates = _casefold_duplicates(inventory)
+    if duplicates:
+        rendered = ", ".join(f"{first!r}/{second!r}" for first, second in duplicates)
+        raise ValueError(f"ZIP inventory contains duplicate or case-colliding paths: {rendered}")
+
+    ordered = tuple(sorted(inventory, key=lambda item: item.path))
+    manifest_lines = [
+        f"{hashlib.sha256(item.data).hexdigest()}  ./{item.path}"
+        for item in ordered
+    ]
+    manifest = ("\n".join(manifest_lines) + ("\n" if manifest_lines else "")).encode(
+        "utf-8"
+    )
+    entries = (*ordered, BuildFile(MANIFEST_NAME, manifest, "author"))
+
+    destination_path = Path(zip_path)
+    destination_path.parent.mkdir(parents=True, exist_ok=True)
+    if _is_reparse_point(destination_path):
+        raise ValueError(
+            f"ZIP destination must not be a symlink, junction, or reparse point: {destination_path}"
+        )
+    _ensure_windows_path_budget(destination_path, context="ZIP destination")
+    _ensure_windows_path_budget(
+        destination_path.parent,
+        context="ZIP temporary path",
+        reserve_name_chars=1 + _ATOMIC_TEMP_NAME_BUDGET,
+    )
+    temporary_name: str | None = None
+    try:
+        with tempfile.NamedTemporaryFile(
+            dir=destination_path.parent,
+            prefix=".p2a-",
+            suffix=".tmp",
+            delete=False,
+        ) as temporary:
+            temporary_name = temporary.name
+        with zipfile.ZipFile(
+            temporary_name,
+            mode="w",
+            compression=zipfile.ZIP_DEFLATED,
+            compresslevel=9,
+            allowZip64=True,
+        ) as archive:
+            for item in sorted(entries, key=lambda entry: entry.path):
+                permissions = 0o755 if item.executable else 0o644
+                info = zipfile.ZipInfo(item.path, date_time=_FIXED_ZIP_TIMESTAMP)
+                info.create_system = 3
+                info.compress_type = zipfile.ZIP_DEFLATED
+                info.external_attr = (stat.S_IFREG | permissions) << 16
+                info.internal_attr = 0
+                info.extra = b""
+                info.comment = b""
+                info.file_size = len(item.data)
+                archive.writestr(info, item.data)
+        os.replace(temporary_name, destination_path)
+        temporary_name = None
+    finally:
+        if temporary_name is not None:
+            Path(temporary_name).unlink(missing_ok=True)
+    return _sha256_file(destination_path)
+
+
 # Discoverable aliases for callers that prefer a build-oriented name.
 build_deterministic_zip = write_deterministic_zip
 build_zip = write_deterministic_zip
@@ -440,6 +684,7 @@ __all__ = [
     "build_zip",
     "projection_files",
     "write_deterministic_zip",
+    "write_deterministic_zip_from_files",
     "write_manifest",
     "write_projection",
 ]

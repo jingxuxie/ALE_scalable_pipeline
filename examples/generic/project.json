@@ -1,0 +1,434 @@
+{
+  "schema_version": "paper2ale.project/v1",
+  "project_id": "generic-affine-demo",
+  "source_bundle": [
+    {
+      "id": "source.generic.workflow",
+      "kind": "document",
+      "uri": "repo:examples/generic/source.txt",
+      "version": "sha256:98b2211f2c372583781a810019afbd33dbe32578dd22bd1ca6254ee4faedcb8b",
+      "license": "CC0-1.0",
+      "visibility": "author",
+      "sha256": "98b2211f2c372583781a810019afbd33dbe32578dd22bd1ca6254ee4faedcb8b",
+      "citation": "Paper2ALE generic workflow test fixture",
+      "retrieved_at": "2026-08-13",
+      "asset_id": "asset.generic.workflow"
+    }
+  ],
+  "asset_snapshots": [
+    {
+      "schema_version": "paper2ale.asset-snapshot/v1",
+      "asset_id": "asset.generic.workflow",
+      "kind": "document",
+      "content_sha256": "b6495ab2eabf50155f86ef8a72b94a36e08f49a27168de15372d6c99cb14a1f0",
+      "size_bytes": 222,
+      "metadata": {
+        "license": "CC0-1.0",
+        "role": "bounded workflow source"
+      },
+      "files": [
+        {
+          "relative_path": "source.txt",
+          "size_bytes": 222,
+          "sha256": "98b2211f2c372583781a810019afbd33dbe32578dd22bd1ca6254ee4faedcb8b",
+          "media_type": "text/plain",
+          "extraction_status": "extracted",
+          "extractor": "utf-8-text/v1"
+        }
+      ]
+    }
+  ],
+  "evidence_graph": {
+    "records": [
+      {
+        "id": "evidence.affine.workflow",
+        "kind": "method",
+        "statement": "The workflow applies an unknown affine transformation to input vectors.",
+        "source_refs": [
+          "source.generic.workflow"
+        ],
+        "confidence": 1.0,
+        "status": "supported"
+      },
+      {
+        "id": "evidence.affine.verification",
+        "kind": "verification",
+        "statement": "Held-out predictions can be verified independently with numerical error metrics.",
+        "source_refs": [
+          "source.generic.workflow"
+        ],
+        "confidence": 1.0,
+        "status": "supported"
+      }
+    ],
+    "nodes": [
+      {
+        "id": "workflow.affine.infer",
+        "kind": "inference",
+        "label": "Infer a transformation from examples",
+        "evidence_ids": [
+          "evidence.affine.workflow"
+        ]
+      },
+      {
+        "id": "workflow.affine.evaluate",
+        "kind": "evaluation",
+        "label": "Evaluate held-out predictions",
+        "evidence_ids": [
+          "evidence.affine.verification"
+        ]
+      }
+    ],
+    "edges": [
+      {
+        "source": "workflow.affine.infer",
+        "target": "workflow.affine.evaluate",
+        "kind": "produces_predictions_for"
+      }
+    ],
+    "claims": [
+      {
+        "id": "claim.affine.task",
+        "statement": "A paper-blind affine recovery task has an independent hidden oracle.",
+        "evidence_ids": [
+          "evidence.affine.workflow",
+          "evidence.affine.verification"
+        ],
+        "status": "supported",
+        "impact": "high"
+      }
+    ]
+  },
+  "tasks": [
+    {
+      "id": "generic-hard-affine-recovery",
+      "title": "Recover a noisy affine research transform",
+      "mode": "method_masked_rediscovery",
+      "family": "generic",
+      "summary": "Infer a three-input, two-output affine transform from a small noisy example set and predict hidden-range queries.",
+      "evidence_ids": [
+        "claim.affine.task"
+      ],
+    "workflow_nodes": [
+      "workflow.affine.infer"
+    ],
+      "instances": 5,
+      "difficulty": {
+        "profile_id": "core",
+        "profile_version": 1,
+        "level": "hard"
+      },
+      "resource_budget": {
+        "cpu_seconds": 30,
+        "disk_mb": 16,
+        "memory_mb": 512
+      },
+      "output_contract": {
+        "filename": "submission.json",
+        "format": "numeric_predictions_json"
+      },
+      "evaluation": {
+        "metrics": [
+          {
+            "id": "rmse",
+            "weight": 0.7,
+            "direction": "lower_is_better",
+            "threshold": 0.08,
+            "description": "Root mean squared prediction error"
+          },
+          {
+            "id": "maximum_error",
+            "weight": 0.3,
+            "direction": "lower_is_better",
+            "threshold": 0.2,
+            "description": "Maximum absolute prediction error"
+          }
+        ],
+        "gates": [
+          "strict_json",
+          "max_bytes",
+          "shape_match",
+          "finite_numbers",
+          "query_id_match"
+        ],
+        "grader": "reference/grader.py"
+      },
+      "tags": [
+        "generic",
+        "affine",
+        "hard",
+        "paper-blind"
+      ],
+      "protocol": {
+        "schema_version": "paper2ale.generic-protocol/v1",
+        "template_id": "numeric-affine-v1",
+        "generator": {
+          "primitive": "uniform_numeric_matrix",
+          "input_dimension": 3,
+          "output_dimension": 2,
+          "query_count": 96,
+          "public_example_count": 16,
+          "low": -3.0,
+          "high": 3.0,
+          "decimals": 6,
+          "public_noise_std": 0.01
+        },
+        "reference_solver": {
+          "primitive": "affine_transform",
+          "weights": [
+            [
+              1.75,
+              -0.6,
+              0.35
+            ],
+            [
+              -0.4,
+              1.2,
+              2.1
+            ]
+          ],
+          "bias": [
+            0.45,
+            -1.1
+          ]
+        },
+        "output": {
+          "primitive": "numeric_predictions_json",
+          "filename": "submission.json"
+        },
+        "evaluation": {
+          "metrics": [
+            {
+              "id": "rmse",
+              "primitive": "numeric_rmse",
+              "threshold": 0.08,
+              "weight": 0.7
+            },
+            {
+              "id": "maximum_error",
+              "primitive": "numeric_max_abs",
+              "threshold": 0.2,
+              "weight": 0.3
+            }
+          ],
+          "gates": [
+            "strict_json",
+            "max_bytes",
+            "shape_match",
+            "finite_numbers",
+            "query_id_match"
+          ],
+          "max_submission_bytes": 131072,
+          "required_pass_fraction": 1.0
+        }
+      },
+      "workflow_binding": {
+        "schema_version": "paper2ale.workflow-binding/v1",
+        "binding_id": "binding_592db28dfd198e2dc404d7ad39e4675bf182373e28319b70141dfa9a2de0c41e",
+        "family": "generic",
+        "workflow": {
+          "schema_version": "paper2ale.workflow/v2",
+          "id": "workflow.generic.affine",
+          "title": "Infer and verify a bounded affine transformation",
+          "artifacts": [
+            {
+              "id": "input-examples",
+              "role": "input",
+              "availability": "provided",
+              "media_type": "application/json",
+              "description": "Trusted synthetic examples and held-out query vectors.",
+              "origin": "trusted_generator",
+              "evidence_ids": [
+                "claim.affine.task"
+              ],
+              "capability_ref": "generic.numeric-affine-v1.input"
+            },
+            {
+              "id": "predictions",
+              "role": "output",
+              "availability": "generated",
+              "media_type": "application/json",
+              "description": "Participant predictions for held-out query vectors.",
+              "origin": "participant",
+              "evidence_ids": [
+                "claim.affine.task"
+              ]
+            },
+            {
+              "id": "metric-report",
+              "role": "intermediate",
+              "availability": "generated",
+              "media_type": "application/json",
+              "description": "Trusted evaluator metric report.",
+              "origin": "trusted_evaluator",
+              "evidence_ids": [
+                "claim.affine.task"
+              ]
+            }
+          ],
+          "operations": [
+            {
+              "id": "workflow.affine.infer",
+              "operation_type": "infer",
+              "authority": "participant",
+              "description": "Infer the affine transformation and predict held-out queries.",
+              "inputs": [
+                "input-examples"
+              ],
+              "outputs": [
+                "predictions"
+              ],
+              "evidence_ids": [
+                "claim.affine.task"
+              ],
+              "parameters": {
+                "protocol": {
+                  "evaluation": {
+                    "gates": [
+                      "strict_json",
+                      "max_bytes",
+                      "shape_match",
+                      "finite_numbers",
+                      "query_id_match"
+                    ],
+                    "max_submission_bytes": 131072,
+                    "metrics": [
+                      {
+                        "id": "rmse",
+                        "primitive": "numeric_rmse",
+                        "threshold": 0.08,
+                        "weight": 0.7
+                      },
+                      {
+                        "id": "maximum_error",
+                        "primitive": "numeric_max_abs",
+                        "threshold": 0.2,
+                        "weight": 0.3
+                      }
+                    ],
+                    "required_pass_fraction": 1.0
+                  },
+                  "generator": {
+                    "decimals": 6,
+                    "high": 3.0,
+                    "input_dimension": 3,
+                    "low": -3.0,
+                    "output_dimension": 2,
+                    "primitive": "uniform_numeric_matrix",
+                    "public_example_count": 16,
+                    "public_noise_std": 0.01,
+                    "query_count": 96
+                  },
+                  "output": {
+                    "filename": "submission.json",
+                    "primitive": "numeric_predictions_json"
+                  },
+                  "reference_solver": {
+                    "bias": [
+                      0.45,
+                      -1.1
+                    ],
+                    "primitive": "affine_transform",
+                    "weights": [
+                      [
+                        1.75,
+                        -0.6,
+                        0.35
+                      ],
+                      [
+                        -0.4,
+                        1.2,
+                        2.1
+                      ]
+                    ]
+                  },
+                  "schema_version": "paper2ale.generic-protocol/v1",
+                  "template_id": "numeric-affine-v1"
+                }
+              }
+            },
+            {
+              "id": "workflow.affine.evaluate",
+              "operation_type": "evaluate",
+              "authority": "trusted_evaluator",
+              "description": "Compare predictions with evaluator-owned references.",
+              "inputs": [
+                "predictions"
+              ],
+              "outputs": [
+                "metric-report"
+              ],
+              "evidence_ids": [
+                "claim.affine.task"
+              ],
+              "parameters": {
+                "evaluation": {
+                  "gates": [
+                    "strict_json",
+                    "max_bytes",
+                    "shape_match",
+                    "finite_numbers",
+                    "query_id_match"
+                  ],
+                  "max_submission_bytes": 131072,
+                  "metrics": [
+                    {
+                      "id": "rmse",
+                      "primitive": "numeric_rmse",
+                      "threshold": 0.08,
+                      "weight": 0.7
+                    },
+                    {
+                      "id": "maximum_error",
+                      "primitive": "numeric_max_abs",
+                      "threshold": 0.2,
+                      "weight": 0.3
+                    }
+                  ],
+                  "required_pass_fraction": 1.0
+                },
+                "output": {
+                  "filename": "submission.json",
+                  "primitive": "numeric_predictions_json"
+                }
+              }
+            }
+          ],
+          "outputs": [
+            "predictions"
+          ],
+          "evidence_ids": [
+            "claim.affine.task"
+          ]
+        },
+        "candidate": {
+          "candidate_id": "candidate_e2c4a6e2b8a80f931686535c4f1a5c7e78d890b3467933afb1387ed1ab87e29a",
+          "workflow_id": "workflow.generic.affine",
+          "title": "Infer and verify a bounded affine transformation: produce predictions",
+          "target_artifact_id": "predictions",
+          "operation_ids": [
+            "workflow.affine.infer"
+          ],
+          "input_artifact_ids": [
+            "input-examples"
+          ],
+          "output_artifact_ids": [
+            "predictions"
+          ],
+          "verifier_operation_ids": [
+            "workflow.affine.evaluate"
+          ],
+          "evidence_ids": [
+            "claim.affine.task"
+          ],
+          "self_contained": true,
+          "verification_plan_present": true
+        }
+      }
+    }
+  ],
+  "defaults": {
+    "master_seed": 20260813,
+    "instances": 5
+  }
+}

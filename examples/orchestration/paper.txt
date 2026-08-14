@@ -1,0 +1,1 @@
+The workflow reads numeric input examples, applies a fixed affine transformation, and verifies held-out predictions against hidden reference values.

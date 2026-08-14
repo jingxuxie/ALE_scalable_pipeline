@@ -13,9 +13,13 @@ sys.path.insert(0, str(ROOT / "src"))
 from paper2ale.packaging import BuildFile  # noqa: E402
 from paper2ale.pipeline import _build_task_in_memory  # noqa: E402
 from paper2ale.task_families.hnn import build_task_files  # noqa: E402
+import paper2ale.verification as verification_module  # noqa: E402
 from paper2ale.verification import (  # noqa: E402
+    _provenance_check,
     _run_bounded_subprocess,
+    register_task_verification,
     registered_task_ids,
+    verification_catalog_identity,
     verify_task_publication,
 )
 
@@ -42,7 +46,7 @@ class HNNPublicationVerificationTests(unittest.TestCase):
                     "provenance",
                     "runtime_reference",
                     "mutation_resistance",
-                    "resource_budget",
+                    "publication_smoke_budget",
                     "reproducibility",
                 ):
                     self.assertEqual(qa["checks"][gate]["status"], "passed")
@@ -55,7 +59,7 @@ class HNNPublicationVerificationTests(unittest.TestCase):
                 self.assertTrue(all(item["rejected"] for item in mutants["instances"]))
                 self.assertTrue(all(item["mutant_id"] for item in mutants["instances"]))
 
-                resources = qa["checks"]["resource_budget"]["details"]
+                resources = qa["checks"]["publication_smoke_budget"]["details"]
                 self.assertEqual(resources["evidence_kind"], "publication_smoke_test")
                 self.assertTrue(resources["wall_time_measured"])
                 self.assertGreater(resources["measured_package_bytes"], 0)
@@ -67,6 +71,10 @@ class HNNPublicationVerificationTests(unittest.TestCase):
                 reproduction = qa["checks"]["reproducibility"]["details"]
                 self.assertTrue(reproduction["byte_identical"])
                 self.assertTrue(reproduction["archive_byte_identical"])
+                self.assertTrue(reproduction["runtime_output_reproducible"])
+                self.assertEqual(reproduction["grader_runs_per_submission"], 2)
+                self.assertGreater(reproduction["grader_execution_pairs_compared"], 0)
+                self.assertEqual(reproduction["runtime_mismatches"], [])
                 self.assertEqual(
                     reproduction["original_archive_sha256"],
                     reproduction["repeated_archive_sha256"],
@@ -76,6 +84,7 @@ class HNNPublicationVerificationTests(unittest.TestCase):
                     next(item.data for item in files if item.path == "author/qa_report.json")
                 )
                 self.assertEqual(report, qa)
+                self.assertNotIn("wall_time_seconds", json.dumps(qa, sort_keys=True))
 
     def test_registered_mutant_that_escapes_is_a_failed_gate(self) -> None:
         task = dict(
@@ -87,7 +96,17 @@ class HNNPublicationVerificationTests(unittest.TestCase):
         )
         task["instances"] = 1
         original = build_task_files(self.project, task, master_seed=self.seed, instances=1)
-        always_pass = b'''import argparse\nimport json\nparser=argparse.ArgumentParser()\nparser.add_argument("--submission")\nparser.add_argument("--instance")\nparser.parse_args()\nprint(json.dumps({"passed": True}))\n'''
+        weights = task["evaluation"]["weights"]
+        always_pass = (
+            "import argparse\n"
+            "import json\n"
+            "parser=argparse.ArgumentParser()\n"
+            "parser.add_argument('--submission')\n"
+            "parser.add_argument('--instance')\n"
+            "parser.parse_args()\n"
+            f"print(json.dumps({{'passed': True, 'score': 1.0, "
+            f"'metric_scores': {dict.fromkeys(weights, 1.0)!r}}}))\n"
+        ).encode("utf-8")
         broken = [
             BuildFile(item.path, always_pass, item.visibility, item.executable)
             if item.path == "reference/grader.py"
@@ -127,9 +146,20 @@ class HNNPublicationVerificationTests(unittest.TestCase):
         task["resource_budget"] = dict(task["resource_budget"], disk_mb=1e-9)
         files = build_task_files(self.project, task, master_seed=self.seed, instances=1)
 
-        def changed_builder(project, task, *, master_seed, instances=None):
+        observed_contexts = []
+
+        def changed_builder(
+            project,
+            task,
+            *,
+            master_seed,
+            instances=None,
+            build_context=None,
+        ):
+            observed_contexts.append(build_context)
             return [*files, BuildFile("software/nondeterministic.txt", b"changed", "agent")]
 
+        build_context = object()
         report = verify_task_publication(
             self.project,
             task,
@@ -137,16 +167,136 @@ class HNNPublicationVerificationTests(unittest.TestCase):
             builder=changed_builder,
             master_seed=self.seed,
             instances=1,
+            build_context=build_context,
         )
+        self.assertEqual(observed_contexts, [build_context])
         self.assertEqual(report["checks"]["reproducibility"]["status"], "failed")
         self.assertIn(
             "software/nondeterministic.txt",
             report["checks"]["reproducibility"]["details"]["mismatch_paths"],
         )
-        self.assertEqual(report["checks"]["resource_budget"]["status"], "failed")
-        self.assertFalse(
-            report["checks"]["resource_budget"]["details"]["within_disk_budget"]
+        self.assertEqual(
+            report["checks"]["publication_smoke_budget"]["status"], "failed"
         )
+        self.assertFalse(
+            report["checks"]["publication_smoke_budget"]["details"][
+                "within_disk_budget"
+            ]
+        )
+
+    def test_stdout_changing_grader_fails_runtime_reproducibility(self) -> None:
+        task = dict(
+            next(
+                item
+                for item in self.project["tasks"]
+                if item["id"] == "hnn-symplectic-gradient"
+            )
+        )
+        task["instances"] = 1
+        original = build_task_files(self.project, task, master_seed=self.seed, instances=1)
+        marker = "import sys\n"
+        counter_output = (
+            "import sys\n\n"
+            "_counter_path = Path('.verification/grader-run-counter.txt')\n"
+            "_counter_path.parent.mkdir(parents=True, exist_ok=True)\n"
+            "_counter = (int(_counter_path.read_text()) + 1 "
+            "if _counter_path.exists() else 1)\n"
+            "_counter_path.write_text(str(_counter))\n"
+            "print(f'grader-run={_counter}')\n"
+        )
+        changed = []
+        for item in original:
+            if item.path == "reference/grader.py":
+                source = item.data.decode("utf-8")
+                self.assertIn(marker, source)
+                source = source.replace(marker, counter_output, 1)
+                changed.append(
+                    BuildFile(item.path, source.encode("utf-8"), item.visibility, item.executable)
+                )
+            else:
+                changed.append(item)
+
+        def repeated_builder(project, task, *, master_seed, instances=None):
+            return changed
+
+        report = verify_task_publication(
+            self.project,
+            task,
+            changed,
+            builder=repeated_builder,
+            master_seed=self.seed,
+            instances=1,
+        )
+        self.assertIsNotNone(report)
+        reproduction = report["checks"]["reproducibility"]
+        self.assertEqual(reproduction["status"], "failed")
+        self.assertTrue(reproduction["details"]["byte_identical"])
+        self.assertFalse(reproduction["details"]["runtime_output_reproducible"])
+        self.assertTrue(
+            any(
+                item["role"] == "reference"
+                for item in reproduction["details"]["runtime_mismatches"]
+            )
+        )
+        reference = report["checks"]["runtime_reference"]["details"]["instances"][0]
+        self.assertFalse(reference["passed"])
+        self.assertFalse(reference["reproducibility"]["byte_identical"])
+        self.assertTrue(reference["reproducibility"]["payload_identical"])
+
+    def test_verification_catalog_hashes_registered_implementation_code(self) -> None:
+        namespace_one = {"__name__": "verification_identity_fixture"}
+        namespace_two = {"__name__": "verification_identity_fixture"}
+        exec(
+            compile(
+                "def prepare(root, instance_id, timeout):\n    return 1\n",
+                "<verification-identity>",
+                "exec",
+            ),
+            namespace_one,
+        )
+        exec(
+            compile(
+                "def prepare(root, instance_id, timeout):\n    return 2\n",
+                "<verification-identity>",
+                "exec",
+            ),
+            namespace_two,
+        )
+        key = ("verification_identity_test", "implementation-change")
+        try:
+            register_task_verification(
+                key[0], key[1], "mutant", namespace_one["prepare"]
+            )
+            first = next(
+                item
+                for item in verification_catalog_identity()["tasks"]
+                if (item["family"], item["task_id"]) == key
+            )
+            register_task_verification(
+                key[0],
+                key[1],
+                "mutant",
+                namespace_two["prepare"],
+                replace=True,
+            )
+            second_catalog = verification_catalog_identity()
+            second = next(
+                item
+                for item in second_catalog["tasks"]
+                if (item["family"], item["task_id"]) == key
+            )
+            self.assertEqual(first["prepare"]["module"], second["prepare"]["module"])
+            self.assertEqual(first["prepare"]["qualname"], second["prepare"]["qualname"])
+            self.assertNotEqual(
+                first["prepare"]["implementation_sha256"],
+                second["prepare"]["implementation_sha256"],
+            )
+            self.assertIn("publication_verifier", second_catalog["runtime"])
+            serialized = json.dumps(second_catalog, sort_keys=True)
+            self.assertNotIn(str(ROOT), serialized)
+            self.assertNotIn(str(ROOT).replace("\\", "\\\\"), serialized)
+        finally:
+            verification_module._REGISTERED.pop(key, None)
 
     def test_unregistered_task_has_no_dynamic_verifier(self) -> None:
         task = {"id": "custom-task", "family": "custom"}
@@ -164,6 +314,21 @@ class HNNPublicationVerificationTests(unittest.TestCase):
             )
         )
         self.assertFalse(called)
+
+    def test_provenance_rejects_unknown_source_kinds_by_default(self) -> None:
+        for invalid_kind in ("paper ", "data", "unknown"):
+            with self.subTest(kind=invalid_kind):
+                project = json.loads(json.dumps(self.project))
+                project["source_bundle"][0]["kind"] = invalid_kind
+                project["source_bundle"][0].pop("sha256", None)
+                report = _provenance_check(project)
+                self.assertEqual(report["status"], "failed")
+                self.assertTrue(
+                    any(
+                        "unknown source kind" in failure["reason"]
+                        for failure in report["details"]["failures"]
+                    )
+                )
 
 
 class BoundedSubprocessTests(unittest.TestCase):

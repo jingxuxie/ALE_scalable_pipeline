@@ -1,0 +1,63 @@
+{
+  "schema_version": "paper2ale.orchestration-manifest/v1",
+  "project_id": "orchestration-offline-demo",
+  "paper": {
+    "paper_id": "source.orchestration.demo",
+    "title": "Offline affine workflow fixture",
+    "readable": true,
+    "provenance_complete": true,
+    "license_status": "known",
+    "scientific_quality": 0.9,
+    "evidence_coverage": 0.95,
+    "independent_verification_possible": true,
+    "analytic_oracle_possible": true,
+    "synthetic_data_possible": true,
+    "public_code": false,
+    "public_data": false,
+    "code_license_known": false,
+    "data_license_known": false,
+    "workflow_reconstructable": true,
+    "contradictions_resolved": true,
+    "resources_bounded": true
+  },
+  "sources": [
+    {
+      "path": "paper.txt",
+      "metadata": {
+        "id": "source.orchestration.demo",
+        "kind": "paper",
+        "uri": "https://example.invalid/offline-affine-workflow",
+        "version": "sha256:95438768d458e2ce16f6599dcb7f7f6fc26be4d814fea7ef8b2cb6932d1061eb",
+        "license": "CC0-1.0",
+        "visibility": "author",
+        "sha256": "95438768d458e2ce16f6599dcb7f7f6fc26be4d814fea7ef8b2cb6932d1061eb",
+        "citation": "Paper2ALE offline orchestration fixture",
+        "retrieved_at": "2026-08-13"
+      }
+    }
+  ],
+  "output_path": "generated/project.json",
+  "allowed_paper_decisions": ["eligible"],
+  "allowed_candidate_decisions": ["eligible"],
+  "allowed_families": ["generic"],
+  "allow_unresolved": false,
+  "max_candidates": 4,
+  "max_final_context_chars": 500000,
+  "staged_config": {
+    "max_units": 8,
+    "max_total_chars": 100000,
+    "max_findings_per_unit": 8,
+    "reduce_batch_size": 8,
+    "max_reductions": 2,
+    "max_facts_per_reduction": 16,
+    "max_workflows": 2,
+    "max_unresolved": 8,
+    "max_concurrency": 4,
+    "timeout_s": 30,
+    "require_workflows": true,
+    "parameters": {}
+  },
+  "difficulty": "hard",
+  "release": false,
+  "overwrite": true
+}

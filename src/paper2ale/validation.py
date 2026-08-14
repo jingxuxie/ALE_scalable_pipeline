@@ -11,7 +11,15 @@ import stat
 from typing import Iterable
 import zipfile
 
-from .packaging import BuildFile, MANIFEST_NAME, _validate_relative_posix_path
+from .packaging import (
+    BuildFile,
+    MANIFEST_NAME,
+    _ensure_resolved_contained,
+    _is_reparse_point,
+    _validate_relative_posix_path,
+    _windows_path_collisions,
+    _windows_path_key,
+)
 
 
 DEFAULT_MAX_UNCOMPRESSED_BYTES = 1024 * 1024 * 1024
@@ -166,7 +174,7 @@ def inspect_zip(
     except (OSError, zipfile.BadZipFile) as error:
         return (_issue("invalid_zip", str(error), str(path)),)
 
-    seen: dict[str, str] = {}
+    safe_members: list[tuple[str, bool]] = []
     total_size = 0
     try:
         for info in archive.infolist():
@@ -176,19 +184,8 @@ def inspect_zip(
             except (TypeError, ValueError) as error:
                 issues.append(_issue("unsafe_zip_path", str(error), info.filename))
                 member_path = info.filename
-
-            folded = member_path.casefold()
-            previous = seen.get(folded)
-            if previous is not None:
-                issues.append(
-                    _issue(
-                        "duplicate_zip_member",
-                        f"member conflicts with {previous!r}",
-                        info.filename,
-                    )
-                )
             else:
-                seen[folded] = info.filename
+                safe_members.append((member_path, not is_directory))
 
             unix_mode = (info.external_attr >> 16) & 0xFFFF
             if stat.S_ISLNK(unix_mode):
@@ -208,6 +205,14 @@ def inspect_zip(
                     )
 
             total_size += info.file_size
+        for previous, current in _windows_path_collisions(safe_members):
+            issues.append(
+                _issue(
+                    "duplicate_zip_member",
+                    f"member conflicts with {previous!r}",
+                    current,
+                )
+            )
         if total_size > max_uncompressed_bytes:
             issues.append(
                 _issue(
@@ -261,14 +266,45 @@ def _sha256_file(path: Path) -> str:
 def _collect_package_files(root: Path) -> tuple[dict[str, Path], list[ValidationIssue]]:
     files: dict[str, Path] = {}
     issues: list[ValidationIssue] = []
-    casefolded: dict[str, str] = {}
+    root_resolved = root.resolve(strict=True)
     for current, directory_names, file_names in os.walk(root, followlinks=False):
         current_path = Path(current)
+        if _is_reparse_point(current_path):
+            relative = current_path.relative_to(root).as_posix()
+            issues.append(
+                _issue(
+                    "package_reparse_point",
+                    "symbolic links, junctions, and reparse points are not allowed",
+                    relative,
+                )
+            )
+            directory_names[:] = []
+            continue
+        try:
+            _ensure_resolved_contained(root_resolved, current_path)
+        except ValueError as error:
+            relative = current_path.relative_to(root).as_posix()
+            issues.append(_issue("package_path_escape", str(error), relative))
+            directory_names[:] = []
+            continue
         for directory_name in list(directory_names):
             candidate = current_path / directory_name
-            if candidate.is_symlink():
+            if _is_reparse_point(candidate):
                 relative = candidate.relative_to(root).as_posix()
-                issues.append(_issue("package_symlink", "symbolic links are not allowed", relative))
+                issues.append(
+                    _issue(
+                        "package_reparse_point",
+                        "symbolic links, junctions, and reparse points are not allowed",
+                        relative,
+                    )
+                )
+                directory_names.remove(directory_name)
+                continue
+            try:
+                _ensure_resolved_contained(root_resolved, candidate)
+            except ValueError as error:
+                relative = candidate.relative_to(root).as_posix()
+                issues.append(_issue("package_path_escape", str(error), relative))
                 directory_names.remove(directory_name)
         for file_name in file_names:
             candidate = current_path / file_name
@@ -278,26 +314,36 @@ def _collect_package_files(root: Path) -> tuple[dict[str, Path], list[Validation
             except (TypeError, ValueError) as error:
                 issues.append(_issue("unsafe_package_path", str(error), relative))
                 continue
-            if candidate.is_symlink():
-                issues.append(_issue("package_symlink", "symbolic links are not allowed", relative))
+            if _is_reparse_point(candidate):
+                issues.append(
+                    _issue(
+                        "package_reparse_point",
+                        "symbolic links, junctions, and reparse points are not allowed",
+                        relative,
+                    )
+                )
                 continue
             if not candidate.is_file():
                 issues.append(
                     _issue("package_special_file", "non-regular files are not allowed", relative)
                 )
                 continue
-            folded = relative.casefold()
-            if folded in casefolded:
-                issues.append(
-                    _issue(
-                        "conflicting_package_path",
-                        f"path conflicts with {casefolded[folded]!r}",
-                        relative,
-                    )
-                )
-            else:
-                casefolded[folded] = relative
+            try:
+                _ensure_resolved_contained(root_resolved, candidate)
+            except ValueError as error:
+                issues.append(_issue("package_path_escape", str(error), relative))
+                continue
             files[relative] = candidate
+    for previous, current in _windows_path_collisions(
+        (relative, True) for relative in files
+    ):
+        issues.append(
+            _issue(
+                "conflicting_package_path",
+                f"path conflicts with {previous!r}",
+                current,
+            )
+        )
     return files, issues
 
 
@@ -309,8 +355,14 @@ def validate_package_dir(
     root_path = Path(root)
     if not root_path.exists():
         return (_issue("package_missing", "package directory does not exist", str(root_path)),)
-    if root_path.is_symlink():
-        return (_issue("package_symlink", "package root must not be a symlink", str(root_path)),)
+    if _is_reparse_point(root_path):
+        return (
+            _issue(
+                "package_reparse_point",
+                "package root must not be a symlink, junction, or reparse point",
+                str(root_path),
+            ),
+        )
     if not root_path.is_dir():
         return (_issue("package_not_directory", "package root is not a directory", str(root_path)),)
 

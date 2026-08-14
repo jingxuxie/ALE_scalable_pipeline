@@ -3,10 +3,15 @@ from __future__ import annotations
 from pathlib import Path
 import math
 import tempfile
+import threading
 import unittest
 from unittest import mock
 
-from paper2ale.state import ContentStore, StageStateStore
+from paper2ale.state import (
+    ContentStore,
+    StageLeaseLostError,
+    StageStateStore,
+)
 
 
 class StateTests(unittest.TestCase):
@@ -77,6 +82,62 @@ class StateTests(unittest.TestCase):
                     state.renew("key", "worker-a", lease_s=5)
                 self.assertTrue(state.claim("key", "stage", "worker-b", lease_s=5))
             self.assertEqual(state.get("key")["owner"], "worker-b")
+
+    def test_heartbeat_periodically_renews_the_owned_stage(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            state = StageStateStore(Path(directory) / "state.sqlite")
+            self.assertTrue(state.claim("key", "stage", "worker-a", lease_s=5))
+            before = state.get("key")["lease_until"]
+            renewed = threading.Event()
+            original = state.renew
+
+            def observed(stage_key, owner, *, lease_s=300.0):
+                result = original(stage_key, owner, lease_s=lease_s)
+                renewed.set()
+                return result
+
+            with mock.patch.object(state, "renew", side_effect=observed):
+                heartbeat = state.heartbeat(
+                    "key",
+                    "worker-a",
+                    lease_s=5,
+                    interval_s=0.01,
+                ).start()
+                self.assertTrue(renewed.wait(1.0), "heartbeat did not renew promptly")
+                heartbeat.stop()
+                heartbeat.check()
+            self.assertGreater(state.get("key")["lease_until"], before)
+
+    def test_heartbeat_surfaces_lost_ownership_after_nonraising_stop(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            state = StageStateStore(Path(directory) / "state.sqlite")
+            self.assertTrue(state.claim("key", "stage", "worker-a", lease_s=5))
+            attempted = threading.Event()
+            original = state.renew
+
+            def rejected(stage_key, owner, *, lease_s=300.0):
+                try:
+                    return original(stage_key, owner, lease_s=lease_s)
+                finally:
+                    attempted.set()
+
+            with mock.patch.object(state, "renew", side_effect=rejected):
+                heartbeat = state.heartbeat(
+                    "key",
+                    "worker-b",
+                    lease_s=5,
+                    interval_s=0.01,
+                ).start()
+                self.assertTrue(attempted.wait(1.0), "heartbeat did not attempt renewal")
+                heartbeat.stop()
+                with self.assertRaisesRegex(StageLeaseLostError, "lost ownership"):
+                    heartbeat.check()
+
+    def test_heartbeat_interval_must_precede_expiry(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            state = StageStateStore(Path(directory) / "state.sqlite")
+            with self.assertRaisesRegex(ValueError, "shorter than lease"):
+                state.heartbeat("key", "worker", lease_s=5, interval_s=5)
 
 
 if __name__ == "__main__":
