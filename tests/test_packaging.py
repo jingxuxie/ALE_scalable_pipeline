@@ -188,7 +188,9 @@ class ManifestAndZipTests(unittest.TestCase):
             )
             if result.returncode:
                 self.skipTest(f"junction creation unavailable: {result.stderr.strip()}")
-            self.assertTrue(junction.is_junction())
+            attributes = getattr(junction.lstat(), "st_file_attributes", 0)
+            reparse_flag = getattr(stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0x400)
+            self.assertTrue(attributes & reparse_flag)
             self.assertFalse(junction.is_symlink())
             with self.assertRaisesRegex(ValueError, "junction|reparse"):
                 write_manifest(root)
