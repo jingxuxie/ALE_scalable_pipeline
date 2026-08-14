@@ -17,22 +17,26 @@ paper2ale publish examples/generic/project.json --out dist --jobs 2
 The source file is also recorded as a content-bound asset snapshot, including
 its file-tree digest. Changing its bytes or manifest invalidates the project.
 
+The generated participant specification now explains the equation, input
+fields, exact JSON output, scoring thresholds, suggested method, and common
+mistakes. The same full specification is used by the ALE runtime adapter.
+
 The 2026-08-14 release audit passed all five hard instances, accepted the
 independent visible-information baseline, and rejected 15 submissions spanning
 the template-specific scientific error plus extra-key and missing-output
 contract violations. The deterministic release build ID was
-`build_73367a43f8f79044e2ec9864b4cc2025251c21236bbfab187f4451ce444bd187`,
+`build_152d13a0aee52641a6aded28564bfd508ef3536940d84fd57469becf3b0262fc`,
 and its task build ID was
-`task-build_29ef8077e8fe6fea53a8602c85008de2a009257ee9cd0f581d19eb06c298c85c`.
+`task-build_93e633ede1300b8058ed1df6835c2569d18a40b8d5ad29a08a52f9810947e5f6`.
 Primary archive hashes were:
 
-- agent: `6b9cf61b9b8bd2c3b39ca5f20228c8a8d81f514d010cbe5be0ec2fe579967ab9`;
-- ALE-local: `5ead2eff77dd0e934b17de21a6c7907229de101163cdc3ecd7d71327b9526385`;
-- author: `736954bf62fbfad608fb097a2b8fa0323e3d6254a005e099dc436e8b87bedfac`.
+- agent: `052a8743143686c37ebbd590b1a911f567c348629770f5ed21f143e505684c61`;
+- ALE-local: `ac54ae59dd84f36419dcf56e52c721db52d220c84b2a983a52942741c38ed4f5`;
+- author: `cd7f03eed88fed691d7fd5a4aad0707d7b998eacd2fde84729afada42b54981f`.
 
 The builder inventory was reproduced over two runs, and every golden/mutant
 grader execution was repeated twice with matching process output and parsed
-score payload. The full repository suite passed 281 tests with one Windows
+score payload. The full repository suite passed 285 tests with one Windows
 symlink-capability skip. Separate processes produced the same generic build ID
 and tree hashes.
 

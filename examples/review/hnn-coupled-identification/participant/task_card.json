@@ -1,0 +1,27 @@
+{
+  "category": "physical_sciences",
+  "paper2ale": {
+    "difficulty": "hard",
+    "entrypoint": "main.py",
+    "family": "hnn_hard",
+    "familyTaskId": "hnn-hard-coupled-identification",
+    "instanceCount": 2,
+    "instancePattern": "input/instances/<NNN>/",
+    "schemaVersion": 1,
+    "submission": {
+      "executable": false,
+      "format": "coupled-periodic-hamiltonian-v1",
+      "path": "output/<NNN>/model.json"
+    }
+  },
+  "summary": "Recover coupled periodic dynamics and generalize far outside the labeled state range.",
+  "taskId": "physical_sciences/hnn-hard-coupled-identification",
+  "title": "Identify a coupled nonlinear Hamiltonian",
+  "vm": {
+    "disk_gb": 200,
+    "memory_gb": 16,
+    "snapshot": "cpu-free-ubuntu",
+    "timeout_s": 1800,
+    "vcpus": 4
+  }
+}

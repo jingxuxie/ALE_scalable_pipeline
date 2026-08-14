@@ -41,8 +41,12 @@ def _json_bytes(value: Any) -> bytes:
     return (json.dumps(value, indent=2, sort_keys=True, allow_nan=False) + "\n").encode()
 
 
+def _normalized_text(value: str) -> str:
+    return textwrap.dedent(value).strip()
+
+
 def _text_bytes(value: str) -> bytes:
-    return (textwrap.dedent(value).strip() + "\n").encode()
+    return (_normalized_text(value) + "\n").encode()
 
 
 def _file(
@@ -565,18 +569,91 @@ def _build_coupled(
             ]
         )
 
-    description = '''
+    description = f'''
     # Identify a coupled nonlinear Hamiltonian
 
-    Infer a three-degree-of-freedom scalar Hamiltonian from noisy derivative
-    observations. The safe JSON model must use the supplied periodic basis.
-    Evaluation differentiates your parameters analytically on much wider angle
-    and momentum ranges, then integrates long nonlinear rollouts. Validation
-    interpolation alone is insufficient: coupling and off-diagonal kinetic
-    terms are essential for the hidden regime.
+    ## Goal
 
-    Complete `software/fit_model.py`, then run it once per instance. Do not
-    submit predictions or executable model objects; submit only bounded JSON.
+    Recover the coefficients of a three-degree-of-freedom Hamiltonian from
+    noisy observations of states and their time derivatives. You are fitting a
+    specified physical model, not predicting the supplied rows one by one.
+
+    A state has coordinate order
+    `[q0, q1, q2, p0, p1, p2]`, where `q` contains three periodic positions and
+    `p` contains their canonical momenta. The Hamiltonian is
+
+    ```text
+    H(q,p) = 0.5 p^T A p
+             + sum_i a_i (1 - cos(q_i))
+             + sum_{{i<j}} c_ij (1 - cos(q_i - q_j)).
+    ```
+
+    The unknowns are a symmetric positive-definite 3-by-3 inverse-mass matrix
+    `A`, three onsite coefficients `a`, and a symmetric 3-by-3 coupling matrix
+    `C` with a zero diagonal. Hamilton's equations give
+
+    ```text
+    dq/dt   = A p
+    dp_i/dt = -a_i sin(q_i) - sum_{{j != i}} c_ij sin(q_i - q_j).
+    ```
+
+    ## Input
+
+    Read the variant's `data.json`. In a compiled bundle it is stored at
+    `input/instances/<NNN>/data.json`; the ALE runtime supplies the exact path.
+    It contains `{train_count}` training and `{validation_count}` validation
+    samples. In each split:
+
+    - `states[k]` is one six-number state in the coordinate order above;
+    - `derivatives[k]` is the corresponding noisy
+      `[dq0/dt, dq1/dt, dq2/dt, dp0/dt, dp1/dt, dp2/dt]` label;
+    - `model_basis` and `artifact_contract` restate the model and output path.
+
+    A useful approach is to fit `A` from the linear relation between `p` and
+    `dq/dt`, then fit `a` and the three pair couplings from the sine features in
+    `dp/dt`. Use both data splits to check that every coefficient, including
+    off-diagonal kinetic and pair-coupling terms, has been recovered.
+
+    ## Required output
+
+    Write `model.json` with exactly this structure:
+
+    ```json
+    {{
+      "format": "coupled-periodic-hamiltonian-v1",
+      "dof": 3,
+      "inverse_mass": [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]],
+      "onsite": [1.0, 1.0, 1.0],
+      "couplings": [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
+    }}
+    ```
+
+    `inverse_mass` must be symmetric positive definite. `couplings` must be
+    symmetric with a zero diagonal. Every number must be finite and have
+    absolute value at most 10. The JSON file must not exceed 1,000,000 bytes.
+    Do not submit trajectories, Python code, or a serialized model object.
+
+    Complete `software/fit_model.py` or use your own fitting program, then
+    create the JSON file at the output path stated in `artifact_contract`.
+
+    ## Evaluation
+
+    The private grader reconstructs the vector field from your coefficients.
+    It measures mean-squared field error on `{hidden_count}` wider-angle hidden
+    states and trajectory error on `{rollout_count}` nonlinear rollouts with
+    `{rollout_steps}` time points. Field MSE must be at most
+    `{0.006 * threshold_scale:.8g}` and rollout MSE at most
+    `{0.035 * threshold_scale:.8g}`. The score weights are 45% hidden field,
+    45% rollout, and 10% artifact validity; a failed required check rejects the
+    submission.
+
+    ## Common mistakes
+
+    - fitting six unrelated derivative predictors instead of the stated basis;
+    - dropping the off-diagonal entries of `A` or all pair couplings;
+    - using the wrong sign for `dp/dt`;
+    - returning asymmetric matrices or a non-positive kinetic matrix;
+    - fitting only the local rows without checking nonlinear rollouts.
     '''
     starter = '''
     """Starter for safe coupled-periodic parameter identification."""
@@ -749,7 +826,7 @@ def _build_coupled(
         [
             _file("description.md", description, AGENT),
             _file("task_card.json", _json_bytes(_task_card(task_id, "Identify a coupled nonlinear Hamiltonian", "Recover coupled periodic dynamics and generalize far outside the labeled state range.", count, "model.json", "coupled-periodic-hamiltonian-v1", str(settings["level"]))), AGENT),
-            _file("main.py", _ale_main(task_id, count, "data.json", "model.json", "Identify the full coupled periodic Hamiltonian from noisy labeled derivatives; hidden evaluation uses wide-angle states and nonlinear rollouts."), AGENT, executable=True),
+            _file("main.py", _ale_main(task_id, count, "data.json", "model.json", _normalized_text(description)), AGENT, executable=True),
             _file("software/fit_model.py", starter, AGENT, executable=True),
             _file("software/requirements.txt", "numpy>=1.26,<3\n", AGENT),
             _file("reference/grader.py", grader, EVALUATOR, executable=True),
@@ -932,17 +1009,105 @@ def _build_variable_nbody(
             ]
         )
 
-    description = '''
-    # Solve a variable-body Hamiltonian system
+    description = f'''
+    # Compute softened gravitational Hamiltonian dynamics
 
-    Compute the scalar energy and full canonical vector field for every
-    unlabeled query. Body counts vary across the range present in the input, softened close
-    encounters are included, and one query is a hidden permutation-equivalence
-    check. The evaluator recomputes every answer from the public states; no
-    stored participant predictions or pickled objects are trusted.
+    ## Goal
 
-    Complete `software/solve_queries.py` and emit the bounded results JSON.
-    Preserve the requested query IDs and body ordering exactly.
+    For every unlabeled N-body query, compute both the scalar Hamiltonian and
+    the full canonical time derivative of every body. This is a numerical
+    physics task: all constants and states needed for the calculation are in
+    the input.
+
+    Each body has mass `m_i` and one state row
+    `[q_x, q_y, p_x, p_y]`. With the supplied gravitational constant `G` and
+    softening length `epsilon`, use
+
+    ```text
+    H = sum_i ||p_i||^2 / (2 m_i)
+        - G sum_{{i<j}} m_i m_j
+            / sqrt(||q_i - q_j||^2 + epsilon^2).
+    ```
+
+    Hamilton's equations define the required field row for body `i`:
+
+    ```text
+    dq_i/dt = p_i / m_i
+    dp_i/dt = -G m_i sum_{{j != i}} m_j (q_i - q_j)
+              / (||q_i - q_j||^2 + epsilon^2)^(3/2).
+    ```
+
+    Each pair contributes once to the energy and equal-and-opposite momentum
+    derivatives to the two bodies.
+
+    ## Input
+
+    Read the variant's `problems.json`. In a compiled bundle it is stored at
+    `input/instances/<NNN>/problems.json`; the ALE runtime supplies the exact
+    path. The file contains:
+
+    - `constants` supplies `gravitational_constant` and `softening`;
+    - `state_layout` defines the four values in each body row;
+    - `labeled_examples` contains 2 fully worked problems for checking signs,
+      shapes, and conventions;
+    - `queries` contains `{query_count}` problems with between 3 and
+      `{max_bodies}` bodies. A query has `query_id`, `masses`, and `state` but
+      no answer.
+
+    Body counts vary by query. Some positions form softened close encounters,
+    and one query is a permutation of another. Always preserve the body order
+    used by that query.
+
+    ## Required output
+
+    Write `results.json` in this form:
+
+    ```json
+    {{
+      "format": "nbody-query-results-v1",
+      "instance_id": "000",
+      "results": [
+        {{
+          "query_id": "query-00",
+          "hamiltonian": 0.0,
+          "field": [
+            [0.0, 0.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0, 0.0]
+          ]
+        }}
+      ]
+    }}
+    ```
+
+    Return exactly one result for every public query ID. Each `field` must have
+    one four-number row per body in the same order as the input. Replace `000`
+    with the input's `instance_id`. All numbers must be finite. Do not add extra
+    keys or submit executable objects. The JSON file must not exceed 4,000,000
+    bytes.
+
+    Complete `software/solve_queries.py` or use your own implementation. A
+    direct double loop over unordered body pairs is sufficient and helps apply
+    equal-and-opposite forces consistently.
+
+    ## Evaluation
+
+    The grader independently recomputes every answer from `problems.json` and
+    checks energies and all field components with absolute and relative
+    tolerance `{tolerance:.8g}`. It also checks query coverage, unique IDs,
+    array shapes and finite values. The query set deliberately includes variable
+    body counts, close encounters, and a permuted counterpart; each of those
+    results is recomputed and checked independently. The score weights are 25%
+    energy, 55% canonical field, and 20% composition and permutation behavior.
+    Every query must pass.
+
+    ## Common mistakes
+
+    - treating momentum as velocity and forgetting division by mass;
+    - reversing the attractive-force sign;
+    - omitting `epsilon^2` or using the wrong power in the force denominator;
+    - double-counting pair potential energy or not applying opposite forces;
+    - assuming a fixed body count, reordering bodies, or rounding too early.
     '''
     starter = '''
     """Starter for variable-N softened gravitational Hamiltonian queries."""
@@ -1105,7 +1270,7 @@ def _build_variable_nbody(
         [
             _file("description.md", description, AGENT),
             _file("task_card.json", _json_bytes(_task_card(task_id, "Solve variable-N gravitational dynamics", "Compute exact softened N-body energies and canonical fields across changing body counts and close encounters.", count, "results.json", "nbody-query-results-v1", str(settings["level"]))), AGENT),
-            _file("main.py", _ale_main(task_id, count, "problems.json", "results.json", "Solve every variable-body softened gravitational Hamiltonian query exactly; preserve query and body ordering in safe JSON."), AGENT, executable=True),
+            _file("main.py", _ale_main(task_id, count, "problems.json", "results.json", _normalized_text(description)), AGENT, executable=True),
             _file("software/solve_queries.py", starter, AGENT, executable=True),
             _file("software/requirements.txt", "numpy>=1.26,<3\n", AGENT),
             _file("reference/grader.py", grader, EVALUATOR, executable=True),
@@ -1116,7 +1281,7 @@ def _build_variable_nbody(
             project,
             task,
             seeds,
-            generator={"query_count": query_count, "labeled_example_count": 2, "body_count_min": 3, "body_count_max": max_bodies, "close_encounter_offset": [0.035 * close_scale, -0.025 * close_scale], "mass_range": [0.45, 2.2], "position_range": [-1.6, 1.6], "momentum_range": [-0.9, 0.9], "permutation_pair": [queries[-2]["query_id"], queries[-1]["query_id"]]},
+            generator={"query_count": query_count, "labeled_example_count": 2, "body_count_min": 3, "body_count_max": max_bodies, "close_encounter_offset": [0.035 * close_scale, -0.025 * close_scale], "mass_range": [0.45, 2.2], "position_range": [-1.6, 1.6], "momentum_range": [-0.9, 0.9], "permutation_pair": [queries[0]["query_id"], queries[-1]["query_id"]]},
             grader={"absolute_tolerance": tolerance, "relative_tolerance": tolerance, "json_byte_limit": 4_000_000, "truth_source": "recomputed from agent-visible query"},
             challenge_axes=["variable body count", "pairwise composition", "softened close encounters", "permutation equivariance", "energy and full vector field"],
             mutant_id="reverse-all-pair-force-signs",
@@ -1309,17 +1474,93 @@ def _build_canonical_recovery(
             ]
         )
 
-    description = '''
+    description = f'''
     # Recover hidden canonical coordinates and nonlinear energy
 
-    Observations are an unknown, well-conditioned linear mixture of two
-    canonical coordinate pairs. Recover both a canonicalizing transform and a
-    coupled quartic scalar Hamiltonian. The decomposition is not graded by raw
-    coefficient equality: the evaluator forms your induced observed-space
-    vector field, probes higher-energy states, and integrates hidden rollouts.
+    ## Goal
 
-    This requires coordinate recovery and nonlinear system identification
-    together. Submit only the bounded `latent-canonical-hamiltonian-v1` JSON.
+    The four measured coordinates `x = [x0, x1, x2, x3]` are an unknown linear
+    mixture of two canonical position-momentum pairs. Recover a linear map from
+    observed to canonical coordinates and a scalar Hamiltonian that together
+    reproduce the observed dynamics.
+
+    Let `z = [q0, q1, p0, p1] = B x`, where the unknown invertible 4-by-4 matrix
+    `B` is `canonical_from_observed`. In canonical coordinates, use
+
+    ```text
+    H(q,p) = 0.5 p^T D p + 0.5 q^T K q
+             + a q0^4/4 + b q1^4/4 + c q0^2 q1^2/2.
+    ```
+
+    `D` and `K` are symmetric positive-definite 2-by-2 matrices. The quartic
+    vector is `[a, b, c]`. Hamilton's equations are
+    `dz/dt = [dH/dp, -dH/dq]`; therefore the derivative predicted in observed
+    coordinates is `dx/dt = inverse(B) dz/dt`.
+
+    ## Input
+
+    Read the variant's `observations.json`. In a compiled bundle it is stored at
+    `input/instances/<NNN>/observations.json`; the ALE runtime supplies the exact
+    path. The file contains:
+
+    - `{train_count}` training observed states and noisy observed derivatives;
+    - `{validation_count}` validation states and derivatives covering a wider
+      range;
+    - the coordinate order, Hamiltonian basis, unknown parameter types, and
+      required output path.
+
+    Each state and derivative is a four-number row. The true canonical states,
+    the mixing matrix, and the Hamiltonian coefficients are not provided.
+
+    This is a joint system-identification problem. One possible strategy is to
+    optimize `B`, `D`, `K`, and `[a,b,c]` together against derivative error,
+    using the validation split to reject solutions that only fit the local
+    training region. Different parameter factorizations are acceptable when
+    they induce the same observed-space vector field. A neural network is not
+    required; any numerical optimization method may be used.
+
+    ## Required output
+
+    Write `recovery.json` with exactly these keys and shapes:
+
+    ```json
+    {{
+      "format": "latent-canonical-hamiltonian-v1",
+      "canonical_from_observed": [[1.0, 0.0, 0.0, 0.0], [0.0, 1.0, 0.0, 0.0], [0.0, 0.0, 1.0, 0.0], [0.0, 0.0, 0.0, 1.0]],
+      "kinetic": [[1.0, 0.0], [0.0, 1.0]],
+      "stiffness": [[1.0, 0.0], [0.0, 1.0]],
+      "quartic": [0.0, 0.0, 0.0]
+    }}
+    ```
+
+    `canonical_from_observed` must be invertible with condition number at most
+    100. `kinetic` (`D`) and `stiffness` (`K`) must be symmetric positive
+    definite. Every coefficient must be finite and have absolute value at most
+    20. The JSON file must not exceed 1,000,000 bytes. Do not submit predictions,
+    code, or a serialized model.
+
+    Complete `software/recover.py` or use your own fitting program, then write
+    the bounded JSON artifact at the path stated in `artifact_contract`.
+
+    ## Evaluation
+
+    The grader does not compare raw coefficients, because equivalent latent
+    factorizations can describe the same dynamics. Instead, it constructs your
+    induced observed-space vector field, measures field MSE on `{hidden_count}`
+    hidden higher-energy states, and integrates `{rollout_count}` hidden
+    trajectories with `{rollout_steps}` time points. Field MSE must be at most
+    `{0.008 * threshold_scale:.8g}` and rollout MSE at most
+    `{0.045 * threshold_scale:.8g}`. The score weights are 45% hidden field,
+    45% rollout, and 10% artifact validity; a failed required check rejects the
+    submission.
+
+    ## Common mistakes
+
+    - assuming the observed coordinates `x` are already canonical;
+    - returning `inverse(B)` when the contract asks for `B`;
+    - computing `dz/dt` but forgetting to transform it back to `dx/dt`;
+    - omitting the mixed-quartic gradient terms or using the wrong sign;
+    - minimizing only local derivative error while hidden rollouts diverge.
     '''
     starter = '''
     """Starter for latent canonical-coordinate and Hamiltonian recovery."""
@@ -1490,7 +1731,7 @@ def _build_canonical_recovery(
         [
             _file("description.md", description, AGENT),
             _file("task_card.json", _json_bytes(_task_card(task_id, "Recover hidden canonical coordinates", "Jointly identify a canonicalizing transform and nonlinear quartic energy from mixed-coordinate observations.", count, "recovery.json", "latent-canonical-hamiltonian-v1", str(settings["level"]))), AGENT),
-            _file("main.py", _ale_main(task_id, count, "observations.json", "recovery.json", "Recover latent canonical coordinates and a nonlinear scalar Hamiltonian; grading uses the induced field, OOD states, and rollouts."), AGENT, executable=True),
+            _file("main.py", _ale_main(task_id, count, "observations.json", "recovery.json", _normalized_text(description)), AGENT, executable=True),
             _file("software/recover.py", starter, AGENT, executable=True),
             _file("software/requirements.txt", "numpy>=1.26,<3\n", AGENT),
             _file("reference/grader.py", grader, EVALUATOR, executable=True),

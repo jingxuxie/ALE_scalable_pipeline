@@ -17,6 +17,18 @@ CASES = (
         ROOT / "generic-affine" / "reviewer_only" / "examples" / "incorrect_submission.json",
     ),
     (
+        "hnn-coupled-identification",
+        ROOT / "hnn-coupled-identification" / "reviewer_only" / "reference" / "grader.py",
+        ROOT / "hnn-coupled-identification" / "reviewer_only" / "examples" / "correct_submission.json",
+        ROOT / "hnn-coupled-identification" / "reviewer_only" / "examples" / "incorrect_submission.json",
+    ),
+    (
+        "hnn-variable-nbody",
+        ROOT / "hnn-variable-nbody" / "reviewer_only" / "reference" / "grader.py",
+        ROOT / "hnn-variable-nbody" / "reviewer_only" / "examples" / "correct_submission.json",
+        ROOT / "hnn-variable-nbody" / "reviewer_only" / "examples" / "incorrect_submission.json",
+    ),
+    (
         "hnn-canonical-recovery",
         ROOT / "hnn-canonical-recovery" / "reviewer_only" / "reference" / "grader.py",
         ROOT / "hnn-canonical-recovery" / "reviewer_only" / "examples" / "correct_submission.json",
@@ -47,8 +59,20 @@ def main() -> int:
     for name, grader, correct, incorrect in CASES:
         correct_process, correct_result = grade(grader, correct)
         incorrect_process, incorrect_result = grade(grader, incorrect)
-        correct_ok = correct_process.returncode == 0 and correct_result.get("passed") is True
-        incorrect_ok = incorrect_process.returncode != 0 and incorrect_result.get("passed") is False
+        correct_metrics = correct_result.get("metrics")
+        incorrect_metrics = incorrect_result.get("metrics")
+        correct_ok = (
+            correct_process.returncode == 0
+            and correct_result.get("passed") is True
+            and isinstance(correct_metrics, (dict, list))
+            and bool(correct_metrics)
+        )
+        incorrect_ok = (
+            incorrect_process.returncode != 0
+            and incorrect_result.get("passed") is False
+            and isinstance(incorrect_metrics, (dict, list))
+            and bool(incorrect_metrics)
+        )
         print(
             f"{name}: correct={'PASS' if correct_ok else 'FAIL'} "
             f"incorrect={'REJECTED' if incorrect_ok else 'ACCEPTED'}"

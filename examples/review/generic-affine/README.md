@@ -4,11 +4,13 @@ This is instance `000` of `generic-hard-affine-recovery`.
 
 ## Participant materials
 
-The [task description](participant/description.md) asks the participant to
-infer a numeric transformation from worked examples. The complete public
-[input](participant/input.json) contains those examples, the query rows, and
-the required JSON output format. The [task card](participant/task_card.json)
-records the runtime and resource contract.
+The full [task description](participant/description.md) states the affine
+equation, explains every input section, gives the exact output JSON shape,
+lists the scoring thresholds, and suggests a least-squares approach. The
+complete public [input](participant/input.json) contains the worked examples,
+query rows, and machine-readable output contract. The
+[task card](participant/task_card.json) records the runtime and resource
+contract.
 
 The hidden answer is not present anywhere under `participant/`.
 
@@ -19,7 +21,7 @@ correct two-number output and no extra JSON fields.
 
 ## Evaluation reference
 
-The `reviewer_only/` directory contains:
+The public `reviewer_only/` directory contains:
 
 - `reference/grader.py`: the exact private grader;
 - `reference/instances/000/evaluation.json`: expected query outputs, metrics,
@@ -38,6 +40,8 @@ Run the shared check from the repository root:
 python examples/review/run_checks.py
 ```
 
-This directory is for review, so it intentionally contains private answers.
-Only `participant/` belongs in a participant-facing package. Because the
-answers are public here, do not reuse this exact instance in an evaluation.
+This directory is for review, so it intentionally exposes answers that would
+normally be private. The golden output is an evaluator oracle, not evidence
+that an independent solver inferred the rule. Only `participant/` belongs in a
+participant-facing package. Instance `000` is permanently retired from live
+evaluation; a real benchmark also needs unpublished seeds and reference data.

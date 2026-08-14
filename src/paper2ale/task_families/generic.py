@@ -1087,8 +1087,12 @@ def _json_bytes(value: Any) -> bytes:
     ).encode("utf-8")
 
 
+def _normalized_text(value: str) -> str:
+    return textwrap.dedent(value).strip()
+
+
 def _text_bytes(value: str) -> bytes:
-    return (textwrap.dedent(value).strip() + "\n").encode("utf-8")
+    return (_normalized_text(value) + "\n").encode("utf-8")
 
 
 def _file(
@@ -1790,7 +1794,7 @@ if __name__ == "__main__":
 '''
 
 
-def _ale_main(task_id: str, count: int) -> str:
+def _ale_main(task_id: str, count: int, description: str) -> str:
     variants = tuple(f"{index:03d}" for index in range(count))
     return f'''
     """ALE adapter for a trusted generic JSON task."""
@@ -1806,6 +1810,7 @@ def _ale_main(task_id: str, count: int) -> str:
     from tasks.linux_runtime import LinuxTaskConfig
 
     VARIANTS = {variants!r}
+    TASK_DESCRIPTION = {description!r}
 
 
     @dataclass
@@ -1817,9 +1822,9 @@ def _ale_main(task_id: str, count: int) -> str:
         @property
         def task_description(self) -> str:
             return (
-                "Read " + str(self.input_dir).rstrip("/") + "/input.json and write "
+                TASK_DESCRIPTION + "\\n\\nRead "
+                + str(self.input_dir).rstrip("/") + "/input.json and write "
                 + str(self.remote_output_dir).rstrip("/") + "/submission.json. "
-                + "The input file contains the complete task and output contract."
             )
 
 
@@ -1927,22 +1932,141 @@ def _task_card(
     }
 
 
-def _description(template_id: str) -> str:
-    detail = {
-        "numeric-affine-v1": "Infer the numeric transformation from public examples, then predict all query outputs.",
-        "table-filter-sort-v1": "Apply the declared filter, stable sort, and projection to every supplied row.",
-        "json-group-aggregate-v1": "Group the supplied records and calculate the declared integer aggregate.",
-    }[template_id]
+def _description(
+    template_id: str,
+    public: Mapping[str, Any],
+    evaluation: Mapping[str, Any],
+) -> str:
+    if template_id == "numeric-affine-v1":
+        examples = public["public_examples"]
+        queries = public["queries"]
+        input_dimension = len(examples[0]["input"])
+        output_dimension = len(examples[0]["output"])
+        example_values = json.dumps([0.0] * output_dimension)
+        thresholds = ", ".join(
+            f'`{metric["id"]}` <= `{metric["threshold"]:.8g}`'
+            for metric in evaluation["metrics"]
+        )
+        required_fraction = float(evaluation["required_pass_fraction"])
+        return f'''
+        # Recover an affine transformation from examples
+
+        ## Goal
+
+        Infer one affine rule from worked numeric examples, then apply that same
+        rule to every unlabeled query. This is a small system-identification
+        problem, not a request to memorize rows. The hidden rule has the form
+
+        ```text
+        y = W x + b
+        ```
+
+        where each input `x` has `{input_dimension}` numbers and each output `y`
+        has `{output_dimension}` numbers. Recover the matrix `W` and intercept
+        `b` well enough to predict held-out inputs. A neural network is neither
+        required nor especially useful; least squares with an intercept is a
+        suitable starting point.
+
+        ## Input
+
+        Read the variant's `input.json`. In a compiled bundle it is stored at
+        `input/instances/<NNN>/input.json`; the ALE runtime supplies the exact
+        variant path. The file contains:
+
+        - `public_examples`: `{len(examples)}` rows with `id`, `input`, and
+          possibly noisy `output` values;
+        - `queries`: `{len(queries)}` rows with `id` and `input`, but no output;
+        - `output_contract`: the required destination and JSON shape;
+        - `context` values that are explicit decoys and must not affect the rule.
+
+        Use the example inputs and outputs to fit all coefficients jointly.
+        Preserve every query ID exactly and compute one prediction vector for
+        each query.
+
+        ## Required output
+
+        Write `submission.json` with exactly one top-level key:
+
+        ```json
+        {{
+          "predictions": [
+            {{"id": "q00000", "values": {example_values}}}
+          ]
+        }}
+        ```
+
+        Each `values` array must contain exactly `{output_dimension}` finite
+        numbers. Include every query ID exactly once; do not include example
+        IDs, extra keys, comments, code, commands, or serialized objects. The
+        maximum file size is `{evaluation["max_submission_bytes"]}` bytes.
+
+        ## Evaluation
+
+        The private evaluator applies the exact affine rule to all public query
+        inputs and compares your values with those references. Required numeric
+        thresholds are {thresholds}. Passing metrics must contribute at least
+        `{required_fraction:.0%}` of the declared metric weight. The grader also
+        enforces strict JSON, the byte limit, exact vector shapes, finite
+        numbers, and complete unique query IDs.
+
+        ## Common mistakes
+
+        - fitting a linear rule without an intercept column;
+        - using the unrelated `context` fields as predictors;
+        - predicting the examples instead of the query rows;
+        - rounding coefficients or predictions too early;
+        - omitting IDs, changing their spelling, or adding extra JSON fields.
+        '''
+    if template_id == "table-filter-sort-v1":
+        return f'''
+        # Filter, sort, and project a typed table
+
+        ## Goal
+
+        Apply the operation declared in `input.json` to every supplied row:
+        first filter by the stated comparison, then perform the stated stable
+        sort, and finally keep only the requested columns. This is an exact
+        data-transformation task; do not infer an unstated rule.
+
+        ## Input and output
+
+        The input contains `{len(public["rows"])}` typed rows plus an `operation`
+        object defining the filter, sort keys and directions, and projection.
+        Write `submission.json` as `{{"rows": [...]}}`. Preserve original data
+        types, apply sort keys in their declared order, and include no extra
+        keys. The file must be at most `{evaluation["max_submission_bytes"]}`
+        bytes.
+
+        ## Evaluation
+
+        The grader recomputes the complete table and requires exact equality,
+        strict JSON, the declared row schema, and the byte limit. Common errors
+        are sorting before filtering, reversing a direction, using an unstable
+        tie-breaker, or projecting columns before the comparison is evaluated.
+        '''
     return f'''
-    # Structured research workflow task
+    # Group and aggregate JSON records
 
-    {detail}
+    ## Goal
 
-    Each variant provides `input/instances/<NNN>/input.json`. The file is the
-    complete participant specification and contains an explicit JSON output
-    contract. Write only the requested bounded data artifact to
-    `output/<NNN>/submission.json`. Submitted Python, commands, pickles, and
-    executable objects are not accepted or loaded by the evaluator.
+    Group all records using the field named in `operation` and calculate the
+    declared integer aggregate for every required group. This is an exact
+    transformation; use only the supplied records and operation.
+
+    ## Input and output
+
+    `input.json` contains `{len(public["records"])}` records and the group,
+    value, and aggregation fields. Write `submission.json` as
+    `{{"result": {{"group-name": 0}}}}`, with exactly the required group keys
+    and finite integer results. Add no extra top-level fields. The file must be
+    at most `{evaluation["max_submission_bytes"]}` bytes.
+
+    ## Evaluation
+
+    The grader independently recomputes every aggregate and requires exact JSON
+    equality, all required keys, and the byte limit. Common mistakes are
+    grouping by the value field, dropping zero or negative values, confusing
+    `count` with `sum`, and omitting groups that are present in the input.
     '''
 
 
@@ -2031,11 +2155,14 @@ def build_task_files(
                 )
             )
 
+    description = _normalized_text(
+        _description(protocol["template_id"], public, evaluation)
+    )
     files.extend(
         [
-            _file("description.md", _description(protocol["template_id"]), AGENT),
+            _file("description.md", description, AGENT),
             _file("task_card.json", _json_bytes(_task_card(task_id, protocol["template_id"], count, task)), AGENT),
-            _file("main.py", _ale_main(task_id, count), AGENT, executable=True),
+            _file("main.py", _ale_main(task_id, count, description), AGENT, executable=True),
             _file("reference/grader.py", _GRADER, EVALUATOR, executable=True),
             _file("author/protocol.json", _json_bytes(protocol), AUTHOR),
             _file(

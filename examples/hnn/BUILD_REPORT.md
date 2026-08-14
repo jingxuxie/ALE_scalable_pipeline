@@ -49,7 +49,7 @@ gates. The builder inventory was reproduced over two runs. Each golden and
 mutant grader execution was also repeated twice and matched in process state,
 stdout, stderr, and parsed score payload.
 
-The full repository suite passed 281 tests with one Windows symlink-capability
+The full repository suite passed 285 tests with one Windows symlink-capability
 skip. The complete release directory and its 21 ZIP archives passed
 manifest-aware validation. A separate generic build produced byte-identical
 build/tree hashes across processes, exercising cross-process compiler identity
