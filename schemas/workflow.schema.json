@@ -1,0 +1,279 @@
+{
+  "$id": "https://paper2ale.local/schemas/workflow.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "artifacts": {
+      "items": {
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "else": {
+              "not": {
+                "required": [
+                  "asset_ref"
+                ]
+              }
+            },
+            "if": {
+              "properties": {
+                "origin": {
+                  "const": "asset"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "asset_ref"
+              ]
+            }
+          },
+          {
+            "else": {
+              "not": {
+                "required": [
+                  "capability_ref"
+                ]
+              }
+            },
+            "if": {
+              "properties": {
+                "origin": {
+                  "const": "trusted_generator"
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "capability_ref"
+              ]
+            }
+          }
+        ],
+        "properties": {
+          "asset_ref": {
+            "additionalProperties": false,
+            "properties": {
+              "asset_id": {
+                "maxLength": 128,
+                "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+                "type": "string"
+              },
+              "relative_path": {
+                "maxLength": 2000,
+                "minLength": 1,
+                "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*\\\\)(?!.*:).+$",
+                "type": "string"
+              }
+            },
+            "required": [
+              "asset_id",
+              "relative_path"
+            ],
+            "type": "object"
+          },
+          "availability": {
+            "enum": [
+              "external",
+              "generated",
+              "hidden",
+              "provided"
+            ]
+          },
+          "capability_ref": {
+            "maxLength": 128,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+            "type": "string"
+          },
+          "description": {
+            "maxLength": 8000,
+            "minLength": 1,
+            "type": "string"
+          },
+          "evidence_ids": {
+            "items": {
+              "maxLength": 128,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+              "type": "string"
+            },
+            "maxItems": 512,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "id": {
+            "maxLength": 128,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+            "type": "string"
+          },
+          "media_type": {
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string"
+          },
+          "origin": {
+            "enum": [
+              "asset",
+              "external",
+              "participant",
+              "trusted_evaluator",
+              "trusted_generator"
+            ]
+          },
+          "role": {
+            "enum": [
+              "input",
+              "intermediate",
+              "output",
+              "reference"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "role",
+          "availability",
+          "media_type",
+          "description",
+          "origin",
+          "evidence_ids"
+        ],
+        "type": "object"
+      },
+      "maxItems": 1024,
+      "minItems": 1,
+      "type": "array"
+    },
+    "evidence_ids": {
+      "items": {
+        "maxLength": 128,
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+        "type": "string"
+      },
+      "maxItems": 512,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "id": {
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "type": "string"
+    },
+    "operations": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "authority": {
+            "enum": [
+              "constructor",
+              "participant",
+              "trusted_evaluator"
+            ]
+          },
+          "description": {
+            "maxLength": 8000,
+            "minLength": 1,
+            "type": "string"
+          },
+          "evidence_ids": {
+            "items": {
+              "maxLength": 128,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+              "type": "string"
+            },
+            "maxItems": 512,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "id": {
+            "maxLength": 128,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+            "type": "string"
+          },
+          "inputs": {
+            "items": {
+              "maxLength": 128,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+              "type": "string"
+            },
+            "maxItems": 512,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "operation_type": {
+            "enum": [
+              "acquire",
+              "aggregate",
+              "analyze",
+              "evaluate",
+              "infer",
+              "preprocess",
+              "simulate",
+              "train",
+              "transform",
+              "validate",
+              "visualize"
+            ]
+          },
+          "outputs": {
+            "items": {
+              "maxLength": 128,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+              "type": "string"
+            },
+            "maxItems": 512,
+            "minItems": 1,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "parameters": {
+            "maxProperties": 128,
+            "type": "object"
+          }
+        },
+        "required": [
+          "id",
+          "operation_type",
+          "authority",
+          "description",
+          "inputs",
+          "outputs",
+          "evidence_ids",
+          "parameters"
+        ],
+        "type": "object"
+      },
+      "maxItems": 1024,
+      "minItems": 1,
+      "type": "array"
+    },
+    "outputs": {
+      "items": {
+        "maxLength": 128,
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+        "type": "string"
+      },
+      "maxItems": 512,
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "schema_version": {
+      "const": "paper2ale.workflow/v2"
+    },
+    "title": {
+      "maxLength": 500,
+      "minLength": 1,
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema_version",
+    "id",
+    "title",
+    "artifacts",
+    "operations",
+    "outputs",
+    "evidence_ids"
+  ],
+  "type": "object"
+}

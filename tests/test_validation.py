@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 import stat
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -75,6 +76,52 @@ class ZipValidationTests(unittest.TestCase):
                 {issue.code for issue in inspect_zip(archive)}, {"unsafe_zip_path"}
             )
 
+    def test_rejects_win32_devices_ads_and_ignored_suffixes(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            archive = Path(temporary) / "unsafe-windows.zip"
+            self._write_zip(
+                archive,
+                [
+                    ("NUL", b"x"),
+                    ("folder/CON.txt", b"x"),
+                    ("payload.json:secret", b"x"),
+                    ("folder/name.", b"x"),
+                    ("folder/name ", b"x"),
+                ],
+            )
+            issues = inspect_zip(archive)
+            unsafe_paths = {
+                issue.path for issue in issues if issue.code == "unsafe_zip_path"
+            }
+            self.assertEqual(
+                unsafe_paths,
+                {
+                    "NUL",
+                    "folder/CON.txt",
+                    "payload.json:secret",
+                    "folder/name.",
+                    "folder/name ",
+                },
+            )
+            with self.assertRaises(PackageValidationError):
+                assert_valid_zip(archive)
+
+    def test_rejects_win32_normalized_zip_member_collisions(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            archive = Path(temporary) / "win32-collision.zip"
+            self._write_zip(
+                archive,
+                [("Docs/first.txt", b"one"), ("docs/second.txt", b"two")],
+            )
+            conflicts = [
+                issue
+                for issue in inspect_zip(archive)
+                if issue.code == "duplicate_zip_member"
+            ]
+            self.assertEqual(len(conflicts), 1)
+            self.assertEqual(conflicts[0].path, "docs/second.txt")
+            self.assertIn("Docs", conflicts[0].message)
+
     def test_rejects_symlink_and_duplicate_members(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             archive = Path(temporary) / "unsafe.zip"
@@ -128,6 +175,34 @@ class PackageDirectoryValidationTests(unittest.TestCase):
             codes = {issue.code for issue in validate_package_dir(root)}
             self.assertIn("unsafe_manifest_path", codes)
             self.assertIn("unmanifested_file", codes)
+
+    @unittest.skipUnless(sys.platform == "win32", "Windows junction semantics")
+    def test_rejects_directory_junction_without_traversing_target(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            base = Path(temporary)
+            root = base / "package"
+            outside = base / "outside"
+            root.mkdir()
+            outside.mkdir()
+            (outside / "secret.txt").write_text("secret", encoding="utf-8")
+            (root / "MANIFEST.sha256").write_text("", encoding="utf-8")
+            junction = root / "linked"
+            result = subprocess.run(
+                ["cmd", "/c", "mklink", "/J", str(junction), str(outside)],
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            if result.returncode:
+                self.skipTest(f"junction creation unavailable: {result.stderr.strip()}")
+            issues = validate_package_dir(root)
+            self.assertIn(
+                "package_reparse_point", {issue.code for issue in issues}
+            )
+            self.assertFalse(
+                any(issue.path == "linked/secret.txt" for issue in issues),
+                "validator must reject the junction itself without walking its target",
+            )
 
 
 if __name__ == "__main__":

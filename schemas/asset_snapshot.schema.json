@@ -1,0 +1,97 @@
+{
+  "$defs": {
+    "asset_file": {
+      "additionalProperties": false,
+      "properties": {
+        "extraction_status": {
+          "enum": [
+            "extracted",
+            "binary",
+            "empty",
+            "omitted_limit"
+          ]
+        },
+        "extractor": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "media_type": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "relative_path": {
+          "minLength": 1,
+          "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*\\\\).+$",
+          "type": "string"
+        },
+        "sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "size_bytes": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "relative_path",
+        "size_bytes",
+        "sha256",
+        "media_type",
+        "extraction_status"
+      ],
+      "type": "object"
+    }
+  },
+  "$id": "https://paper2ale.local/schemas/asset_snapshot.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "asset_id": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+      "type": "string"
+    },
+    "content_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "files": {
+      "items": {
+        "$ref": "#/$defs/asset_file"
+      },
+      "maxItems": 5000,
+      "minItems": 1,
+      "type": "array"
+    },
+    "kind": {
+      "enum": [
+        "document",
+        "repository",
+        "dataset",
+        "file"
+      ]
+    },
+    "metadata": {
+      "type": "object"
+    },
+    "schema_version": {
+      "const": "paper2ale.asset-snapshot/v1"
+    },
+    "size_bytes": {
+      "minimum": 0,
+      "type": "integer"
+    }
+  },
+  "required": [
+    "schema_version",
+    "asset_id",
+    "kind",
+    "content_sha256",
+    "size_bytes",
+    "metadata",
+    "files"
+  ],
+  "type": "object"
+}

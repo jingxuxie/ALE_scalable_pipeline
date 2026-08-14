@@ -113,6 +113,8 @@ class HNNTaskFamilyTests(unittest.TestCase):
             "cfg.reference_dir",
             'metadata["grader_path"]',
             "session.run_command",
+            'score = result.get("score")',
+            "return [float(score)]",
         )
         for task_id, files in self.builds.items():
             with self.subTest(task_id=task_id):
@@ -440,7 +442,21 @@ class HNNTaskFamilyTests(unittest.TestCase):
                     timeout=30,
                 )
                 self.assertEqual(completed.returncode, 0, completed.stdout + completed.stderr)
-                self.assertTrue(json.loads(completed.stdout)["passed"])
+                payload = json.loads(completed.stdout)
+                self.assertTrue(payload["passed"])
+                self.assertIsInstance(payload["metric_scores"], dict)
+                self.assertEqual(
+                    set(payload["metric_scores"]),
+                    set(self.tasks[task_id]["evaluation"]["weights"]),
+                )
+                recomputed = sum(
+                    self.tasks[task_id]["evaluation"]["weights"][name]
+                    * payload["metric_scores"][name]
+                    for name in payload["metric_scores"]
+                )
+                self.assertAlmostEqual(payload["score"], recomputed)
+                self.assertGreaterEqual(payload["score"], 0.0)
+                self.assertLessEqual(payload["score"], 1.0)
 
     def test_builder_rejects_unknown_tasks_and_bad_instance_counts(self) -> None:
         with self.assertRaisesRegex(ValueError, "unsupported HNN task"):

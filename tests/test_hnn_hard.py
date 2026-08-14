@@ -204,7 +204,18 @@ class HNNHardTaskFamilyTests(unittest.TestCase):
                 self.assertEqual(len(parameters["instance_seeds"]), 2)
                 self.assertTrue(parameters["generator_parameters"])
                 self.assertTrue(parameters["grader_parameters"])
-                self.assertEqual(len(parameters["registered_mutants"]), 1)
+                self.assertEqual(
+                    set(parameters["registered_mutants"]),
+                    {
+                        "contract-extra-key",
+                        "contract-missing-format",
+                        {
+                            "hnn-hard-coupled-identification": "remove-all-pair-couplings",
+                            "hnn-hard-variable-nbody": "reverse-all-pair-force-signs",
+                            "hnn-hard-canonical-recovery": "assume-observed-coordinates-are-canonical",
+                        }[task_id],
+                    },
+                )
 
     def test_medium_hard_frontier_change_real_generator_and_grader_knobs(self) -> None:
         projects = {
@@ -225,6 +236,25 @@ class HNNHardTaskFamilyTests(unittest.TestCase):
                 self.assertEqual(card["paper2ale"]["difficulty"], level)
                 self.assertEqual(manifest["level"], level)
             with self.subTest(task_id=task_id):
+                generator_parameters = {
+                    level: json.loads(
+                        builds[level]["author/difficulty_parameters.json"].data
+                    )["generator_parameters"]
+                    for level in builds
+                }
+                public_information_key = (
+                    "labeled_example_count"
+                    if task_id == "hnn-hard-variable-nbody"
+                    else "train_count"
+                )
+                self.assertEqual(
+                    {
+                        parameters[public_information_key]
+                        for parameters in generator_parameters.values()
+                    },
+                    {generator_parameters["medium"][public_information_key]},
+                    "raising difficulty must not add participant-visible labels",
+                )
                 self.assertEqual(
                     len(
                         {
@@ -302,7 +332,18 @@ class HNNHardTaskFamilyTests(unittest.TestCase):
                         self.assertEqual(
                             passed.returncode, 0, passed.stdout + passed.stderr
                         )
-                        self.assertTrue(json.loads(passed.stdout)["passed"])
+                        passed_payload = json.loads(passed.stdout)
+                        self.assertTrue(passed_payload["passed"])
+                        self.assertEqual(
+                            set(passed_payload["metric_scores"]),
+                            set(self.tasks[task_id]["evaluation"]["weights"]),
+                        )
+                        recomputed = sum(
+                            self.tasks[task_id]["evaluation"]["weights"][name]
+                            * passed_payload["metric_scores"][name]
+                            for name in passed_payload["metric_scores"]
+                        )
+                        self.assertAlmostEqual(passed_payload["score"], recomputed)
                         rejected = subprocess.run(
                             [
                                 sys.executable,
@@ -321,7 +362,43 @@ class HNNHardTaskFamilyTests(unittest.TestCase):
                         self.assertNotEqual(
                             rejected.returncode, 0, rejected.stdout + rejected.stderr
                         )
-                        self.assertFalse(json.loads(rejected.stdout)["passed"])
+                        rejected_payload = json.loads(rejected.stdout)
+                        self.assertFalse(rejected_payload["passed"])
+                        self.assertEqual(rejected_payload["score"], 0.0)
+                        contract_mutants = sorted(
+                            (
+                                root
+                                / "example"
+                                / "instances"
+                                / instance_id
+                                / "mutants"
+                            ).glob("*.json")
+                        )
+                        self.assertEqual(len(contract_mutants), 2)
+                        for contract_mutant in contract_mutants:
+                            contract_rejected = subprocess.run(
+                                [
+                                    sys.executable,
+                                    str(grader),
+                                    "--submission",
+                                    str(contract_mutant),
+                                    "--instance",
+                                    instance_id,
+                                ],
+                                cwd=root,
+                                capture_output=True,
+                                text=True,
+                                check=False,
+                                timeout=30,
+                            )
+                            self.assertNotEqual(
+                                contract_rejected.returncode,
+                                0,
+                                contract_rejected.stdout + contract_rejected.stderr,
+                            )
+                            contract_payload = json.loads(contract_rejected.stdout)
+                            self.assertFalse(contract_payload["passed"])
+                            self.assertEqual(contract_payload["score"], 0.0)
 
     def test_local_ale_deployment_is_variant_scoped(self) -> None:
         for task_id, files in self.builds.items():

@@ -1,0 +1,392 @@
+{
+  "map-request_9bca6a38300bfebc880bb5ae2d8e28dc447304da56dc69ffceae75752b5e426b": {
+    "findings": [
+      {
+        "confidence": 0.98,
+        "kind": "verification",
+        "statement": "Held-out affine predictions have an independent numeric verifier.",
+        "support_quote": "verifies held-out predictions against hidden reference values"
+      }
+    ],
+    "schema_version": "paper2ale.evidence-map/v1",
+    "unit_id": "unit_387ceb2e6538e19ca435c0bc8fffcb990db6727fab7dd2ba80e25a6ab5381ec3"
+  },
+  "project-request_a1e6666197e067b7d87bb2c0e1987947e1cdae6d08ec6ac6ce2cd88eab72303f": {
+    "defaults": {
+      "instances": 5,
+      "master_seed": 20260813
+    },
+    "evidence_graph": {
+      "claims": [],
+      "edges": [
+        {
+          "evidence_ids": [
+            "finding_f01c37a2a6f0f468f33c9cc9fbece62acac4be2229c3cd41485cc9aac5665724"
+          ],
+          "kind": "evaluated_by",
+          "source": "infer-affine-map",
+          "target": "verify-predictions"
+        }
+      ],
+      "nodes": [
+        {
+          "evidence_ids": [
+            "finding_f01c37a2a6f0f468f33c9cc9fbece62acac4be2229c3cd41485cc9aac5665724"
+          ],
+          "id": "infer-affine-map",
+          "kind": "participant_operation",
+          "label": "Infer affine map"
+        },
+        {
+          "evidence_ids": [
+            "finding_f01c37a2a6f0f468f33c9cc9fbece62acac4be2229c3cd41485cc9aac5665724"
+          ],
+          "id": "verify-predictions",
+          "kind": "trusted_evaluator_operation",
+          "label": "Verify predictions"
+        }
+      ],
+      "records": [
+        {
+          "confidence": 0.98,
+          "id": "finding_f01c37a2a6f0f468f33c9cc9fbece62acac4be2229c3cd41485cc9aac5665724",
+          "kind": "verification",
+          "source_refs": [
+            "source.orchestration.demo"
+          ],
+          "statement": "Held-out affine predictions have an independent numeric verifier.",
+          "status": "supported"
+        }
+      ]
+    },
+    "project_id": "orchestration-offline-demo",
+    "schema_version": "paper2ale.project/v1",
+    "source_bundle": [
+      {
+        "citation": "Paper2ALE offline orchestration fixture",
+        "id": "source.orchestration.demo",
+        "kind": "paper",
+        "license": "CC0-1.0",
+        "retrieved_at": "2026-08-13",
+        "sha256": "95438768d458e2ce16f6599dcb7f7f6fc26be4d814fea7ef8b2cb6932d1061eb",
+        "uri": "https://example.invalid/offline-affine-workflow",
+        "version": "sha256:95438768d458e2ce16f6599dcb7f7f6fc26be4d814fea7ef8b2cb6932d1061eb",
+        "visibility": "author"
+      }
+    ],
+    "tasks": [
+      {
+        "evaluation": {
+          "gates": [
+            "strict_json",
+            "max_bytes",
+            "shape_match",
+            "finite_numbers",
+            "query_id_match"
+          ],
+          "grader": "reference/grader.py",
+          "metrics": [
+            {
+              "direction": "lower_is_better",
+              "id": "rmse",
+              "threshold": 0.08,
+              "weight": 0.7
+            },
+            {
+              "direction": "lower_is_better",
+              "id": "maximum_error",
+              "threshold": 0.2,
+              "weight": 0.3
+            }
+          ]
+        },
+        "evidence_ids": [
+          "finding_f01c37a2a6f0f468f33c9cc9fbece62acac4be2229c3cd41485cc9aac5665724"
+        ],
+        "family": "generic",
+        "id": "offline-affine-recovery",
+        "instances": 5,
+        "mode": "method_masked_rediscovery",
+        "output_contract": {
+          "filename": "submission.json",
+          "format": "numeric_predictions_json"
+        },
+        "protocol": {
+          "evaluation": {
+            "gates": [
+              "strict_json",
+              "max_bytes",
+              "shape_match",
+              "finite_numbers",
+              "query_id_match"
+            ],
+            "max_submission_bytes": 131072,
+            "metrics": [
+              {
+                "id": "rmse",
+                "primitive": "numeric_rmse",
+                "threshold": 0.08,
+                "weight": 0.7
+              },
+              {
+                "id": "maximum_error",
+                "primitive": "numeric_max_abs",
+                "threshold": 0.2,
+                "weight": 0.3
+              }
+            ],
+            "required_pass_fraction": 1.0
+          },
+          "generator": {
+            "decimals": 6,
+            "high": 2.0,
+            "input_dimension": 2,
+            "low": -2.0,
+            "output_dimension": 2,
+            "primitive": "uniform_numeric_matrix",
+            "public_example_count": 16,
+            "public_noise_std": 0.01,
+            "query_count": 24
+          },
+          "output": {
+            "filename": "submission.json",
+            "primitive": "numeric_predictions_json"
+          },
+          "reference_solver": {
+            "bias": [
+              0.5,
+              -1.0
+            ],
+            "primitive": "affine_transform",
+            "weights": [
+              [
+                2.0,
+                -0.5
+              ],
+              [
+                0.25,
+                1.5
+              ]
+            ]
+          },
+          "schema_version": "paper2ale.generic-protocol/v1",
+          "template_id": "numeric-affine-v1"
+        },
+        "resource_budget": {
+          "cpu_seconds": 30,
+          "disk_mb": 16,
+          "memory_mb": 512
+        },
+        "summary": "Infer a bounded affine map from examples and predict held-out queries.",
+        "tags": [
+          "offline",
+          "generic",
+          "affine",
+          "paper-blind"
+        ],
+        "title": "Recover a noisy affine transformation",
+        "workflow_nodes": [
+          "infer-affine-map"
+        ]
+      }
+    ]
+  },
+  "reduce-request_35242f05ff5ca67892fae0a5c308f6d284268fc28702f2870a8cc9f5e2b1e39d": {
+    "batch_id": "reduction_5b1c13e582cb0a1feef0c3ac516d15f4da74867d6abf30d0954725abcb832350",
+    "facts": [
+      {
+        "finding_ids": [
+          "finding_f01c37a2a6f0f468f33c9cc9fbece62acac4be2229c3cd41485cc9aac5665724"
+        ],
+        "statement": "Held-out predictions can be checked with hidden numeric references."
+      }
+    ],
+    "schema_version": "paper2ale.evidence-reduce/v1",
+    "summary": "A bounded affine workflow has independently verifiable held-out predictions.",
+    "unit_ids": [
+      "unit_387ceb2e6538e19ca435c0bc8fffcb990db6727fab7dd2ba80e25a6ab5381ec3"
+    ]
+  },
+  "synthesis-request_8b9cc1a0dd386da140d48992e13bd8cde194bf126766a1ac223b17b951e2d7fd": {
+    "reduction_ids": [
+      "reduction_5b1c13e582cb0a1feef0c3ac516d15f4da74867d6abf30d0954725abcb832350"
+    ],
+    "schema_version": "paper2ale.workflow-synthesis/v1",
+    "unresolved": [],
+    "workflows": [
+      {
+        "artifacts": [
+          {
+            "availability": "provided",
+            "capability_ref": "generic.numeric-affine-v1.input",
+            "description": "Bounded public examples and query vectors.",
+            "evidence_ids": [
+              "finding_f01c37a2a6f0f468f33c9cc9fbece62acac4be2229c3cd41485cc9aac5665724"
+            ],
+            "id": "input-examples",
+            "media_type": "application/json",
+            "origin": "trusted_generator",
+            "role": "input"
+          },
+          {
+            "availability": "generated",
+            "description": "Held-out affine predictions.",
+            "evidence_ids": [
+              "finding_f01c37a2a6f0f468f33c9cc9fbece62acac4be2229c3cd41485cc9aac5665724"
+            ],
+            "id": "predictions",
+            "media_type": "application/json",
+            "origin": "participant",
+            "role": "output"
+          },
+          {
+            "availability": "generated",
+            "description": "Trusted numeric verification result.",
+            "evidence_ids": [
+              "finding_f01c37a2a6f0f468f33c9cc9fbece62acac4be2229c3cd41485cc9aac5665724"
+            ],
+            "id": "metric-report",
+            "media_type": "application/json",
+            "origin": "trusted_evaluator",
+            "role": "intermediate"
+          }
+        ],
+        "evidence_ids": [
+          "finding_f01c37a2a6f0f468f33c9cc9fbece62acac4be2229c3cd41485cc9aac5665724"
+        ],
+        "id": "offline-affine-workflow",
+        "operations": [
+          {
+            "authority": "participant",
+            "description": "Infer the affine map and predict the queries.",
+            "evidence_ids": [
+              "finding_f01c37a2a6f0f468f33c9cc9fbece62acac4be2229c3cd41485cc9aac5665724"
+            ],
+            "id": "infer-affine-map",
+            "inputs": [
+              "input-examples"
+            ],
+            "operation_type": "infer",
+            "outputs": [
+              "predictions"
+            ],
+            "parameters": {
+              "protocol": {
+                "evaluation": {
+                  "gates": [
+                    "strict_json",
+                    "max_bytes",
+                    "shape_match",
+                    "finite_numbers",
+                    "query_id_match"
+                  ],
+                  "max_submission_bytes": 131072,
+                  "metrics": [
+                    {
+                      "id": "rmse",
+                      "primitive": "numeric_rmse",
+                      "threshold": 0.08,
+                      "weight": 0.7
+                    },
+                    {
+                      "id": "maximum_error",
+                      "primitive": "numeric_max_abs",
+                      "threshold": 0.2,
+                      "weight": 0.3
+                    }
+                  ],
+                  "required_pass_fraction": 1.0
+                },
+                "generator": {
+                  "decimals": 6,
+                  "high": 2.0,
+                  "input_dimension": 2,
+                  "low": -2.0,
+                  "output_dimension": 2,
+                  "primitive": "uniform_numeric_matrix",
+                  "public_example_count": 16,
+                  "public_noise_std": 0.01,
+                  "query_count": 24
+                },
+                "output": {
+                  "filename": "submission.json",
+                  "primitive": "numeric_predictions_json"
+                },
+                "reference_solver": {
+                  "bias": [
+                    0.5,
+                    -1.0
+                  ],
+                  "primitive": "affine_transform",
+                  "weights": [
+                    [
+                      2.0,
+                      -0.5
+                    ],
+                    [
+                      0.25,
+                      1.5
+                    ]
+                  ]
+                },
+                "schema_version": "paper2ale.generic-protocol/v1",
+                "template_id": "numeric-affine-v1"
+              }
+            }
+          },
+          {
+            "authority": "trusted_evaluator",
+            "description": "Compare predictions with evaluator-owned references.",
+            "evidence_ids": [
+              "finding_f01c37a2a6f0f468f33c9cc9fbece62acac4be2229c3cd41485cc9aac5665724"
+            ],
+            "id": "verify-predictions",
+            "inputs": [
+              "predictions"
+            ],
+            "operation_type": "evaluate",
+            "outputs": [
+              "metric-report"
+            ],
+            "parameters": {
+              "evaluation": {
+                "gates": [
+                  "strict_json",
+                  "max_bytes",
+                  "shape_match",
+                  "finite_numbers",
+                  "query_id_match"
+                ],
+                "max_submission_bytes": 131072,
+                "metrics": [
+                  {
+                    "id": "rmse",
+                    "primitive": "numeric_rmse",
+                    "threshold": 0.08,
+                    "weight": 0.7
+                  },
+                  {
+                    "id": "maximum_error",
+                    "primitive": "numeric_max_abs",
+                    "threshold": 0.2,
+                    "weight": 0.3
+                  }
+                ],
+                "required_pass_fraction": 1.0
+              },
+              "output": {
+                "filename": "submission.json",
+                "primitive": "numeric_predictions_json"
+              }
+            }
+          }
+        ],
+        "outputs": [
+          "predictions"
+        ],
+        "schema_version": "paper2ale.workflow/v2",
+        "title": "Infer and verify an affine transformation"
+      }
+    ]
+  }
+}

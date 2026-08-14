@@ -10,6 +10,7 @@ import math
 from pathlib import Path
 import sqlite3
 import tempfile
+import threading
 import time
 from typing import Any, Iterator, Mapping
 
@@ -84,6 +85,92 @@ def _lease_seconds(value: float) -> float:
     return lease_s
 
 
+class StageOwnershipError(RuntimeError):
+    """Raised when a stage mutation is attempted without current ownership."""
+
+
+class StageLeaseLostError(StageOwnershipError):
+    """Raised when a heartbeat can no longer prove stage ownership."""
+
+
+class StageLeaseHeartbeat:
+    """Periodically renew one running stage lease on its owning worker.
+
+    The background thread only records renewal failure. Callers must invoke
+    :meth:`check` at interruption-safe boundaries and before committing work.
+    """
+
+    def __init__(
+        self,
+        store: "StageStateStore",
+        stage_key: str,
+        owner: str,
+        *,
+        lease_s: float,
+        interval_s: float,
+    ) -> None:
+        self._store = store
+        self.stage_key = stage_key
+        self.owner = owner
+        self.lease_s = _lease_seconds(lease_s)
+        self.interval_s = _lease_seconds(interval_s)
+        if self.interval_s >= self.lease_s:
+            raise ValueError("heartbeat interval_s must be shorter than lease_s")
+        self._stop = threading.Event()
+        self._lock = threading.Lock()
+        self._failure: BaseException | None = None
+        self._thread: threading.Thread | None = None
+
+    def start(self) -> "StageLeaseHeartbeat":
+        with self._lock:
+            if self._thread is not None:
+                raise RuntimeError("stage lease heartbeat is already started")
+            thread = threading.Thread(
+                target=self._run,
+                name="paper2ale-stage-lease-heartbeat",
+                daemon=True,
+            )
+            self._thread = thread
+        thread.start()
+        return self
+
+    def _run(self) -> None:
+        while not self._stop.wait(self.interval_s):
+            try:
+                self._store.renew(
+                    self.stage_key,
+                    self.owner,
+                    lease_s=self.lease_s,
+                )
+            except BaseException as error:
+                with self._lock:
+                    self._failure = error
+                self._stop.set()
+                return
+
+    def check(self) -> None:
+        with self._lock:
+            failure = self._failure
+        if failure is not None:
+            raise StageLeaseLostError(
+                f"lost ownership of stage lease {self.stage_key}: "
+                f"{type(failure).__name__}: {failure}"
+            ) from failure
+
+    def stop(self) -> None:
+        """Stop renewal without hiding a recorded failure.
+
+        ``stop`` is deliberately non-raising so cleanup cannot mask a build
+        exception. Call :meth:`check` explicitly when failure must be surfaced.
+        """
+
+        self._stop.set()
+        with self._lock:
+            thread = self._thread
+        if thread is not None and thread is not threading.current_thread():
+            thread.join()
+
+
 class StageStateStore:
     """SQLite WAL store with expiring leases for independent workers."""
 
@@ -154,8 +241,34 @@ class StageStateStore:
                 (lease_until, now, stage_key, owner, now),
             )
             if cursor.rowcount != 1:
-                raise RuntimeError(f"cannot renew unowned or expired stage {stage_key}")
+                raise StageOwnershipError(
+                    f"cannot renew unowned or expired stage {stage_key}"
+                )
         return lease_until
+
+    def heartbeat(
+        self,
+        stage_key: str,
+        owner: str,
+        *,
+        lease_s: float = 300.0,
+        interval_s: float | None = None,
+    ) -> StageLeaseHeartbeat:
+        """Create an ownership-checked periodic renewal handle."""
+
+        normalized_lease = _lease_seconds(lease_s)
+        normalized_interval = (
+            normalized_lease / 3.0
+            if interval_s is None
+            else _lease_seconds(interval_s)
+        )
+        return StageLeaseHeartbeat(
+            self,
+            stage_key,
+            owner,
+            lease_s=normalized_lease,
+            interval_s=normalized_interval,
+        )
 
     def finish(self, stage_key: str, owner: str, outputs: Mapping[str, Any]) -> None:
         encoded = json.dumps(
@@ -172,7 +285,7 @@ class StageStateStore:
                 (encoded, time.time(), stage_key, owner),
             )
             if cursor.rowcount != 1:
-                raise RuntimeError(f"cannot finish unowned stage {stage_key}")
+                raise StageOwnershipError(f"cannot finish unowned stage {stage_key}")
 
     def fail(self, stage_key: str, owner: str, error: str) -> None:
         with self._connect() as connection:
@@ -182,7 +295,9 @@ class StageStateStore:
                 (str(error)[-8000:], time.time(), stage_key, owner),
             )
             if cursor.rowcount != 1:
-                raise RuntimeError(f"cannot fail unowned or non-running stage {stage_key}")
+                raise StageOwnershipError(
+                    f"cannot fail unowned or non-running stage {stage_key}"
+                )
 
     def get(self, stage_key: str) -> dict[str, Any] | None:
         with self._connect() as connection:

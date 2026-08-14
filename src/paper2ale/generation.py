@@ -10,24 +10,28 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 import hashlib
+from importlib import resources
 import json
 import math
 import os
 from pathlib import Path
-import sysconfig
 import tempfile
 from typing import Any, Mapping, Sequence
 
 from .difficulty import LEVEL_NAMES, apply_difficulty_override
 from .extraction import build_extraction_request
 from .providers import CompletionProvider, CompletionRequest
-from .schema import canonical_json_bytes, require_valid_project
+from .schema import canonical_json_bytes, require_valid_project, validate_project
 from .source_ingest import IngestedSource, load_json_object, source_bundle
-from .task_families import task_family
+from .task_families import (
+    registered_capability_catalog,
+    registered_task_families,
+    task_family,
+)
 
 
 _SOURCE_SCHEMA_DIR = Path(__file__).resolve().parents[2] / "schemas"
-_INSTALLED_SCHEMA_DIR = Path(sysconfig.get_path("data")) / "paper2ale" / "schemas"
+_INSTALLED_SCHEMA_DIR = Path(str(resources.files("paper2ale").joinpath("schemas")))
 DEFAULT_SCHEMA_DIR = (
     _SOURCE_SCHEMA_DIR
     if (_SOURCE_SCHEMA_DIR / "project.schema.json").is_file()
@@ -147,6 +151,60 @@ def load_project_output_schema(
             )
         },
     )
+    # One-shot generation may propose only families with a reviewed candidate
+    # compiler.  Fixed families are authored-project fixtures: letting a model
+    # select one would attach canned executable semantics to arbitrary model-
+    # authored evidence.  The provider also may not author workflow_binding;
+    # generate_project attaches a caller-supplied, locally trusted binding only
+    # after the response has crossed the provider trust boundary.
+    capabilities = _generation_capabilities()
+    task_properties = task_core.get("properties")
+    if not isinstance(task_properties, dict):
+        raise ValueError("task schema must define object properties")
+    task_properties["family"] = {"enum": sorted(capabilities)}
+    task_properties["protocol"] = {"type": "object"}
+    task_properties["workflow_binding"] = False
+    family_specs = registered_task_families()
+    conditions: list[dict[str, Any]] = []
+    for family_name, capability in sorted(capabilities.items()):
+        then: dict[str, Any] = {}
+        task_ids = capability.get("task_ids", [])
+        if task_ids:
+            then.setdefault("properties", {})["id"] = {"enum": task_ids}
+        family_schema = family_specs[family_name].protocol_schema()
+        if family_schema is not None:
+            then.setdefault("properties", {})["protocol"] = family_schema
+            then["required"] = ["protocol"]
+        else:
+            then["not"] = {"required": ["protocol"]}
+        conditions.append(
+            {
+                "if": {
+                    "properties": {"family": {"const": family_name}},
+                    "required": ["family"],
+                },
+                "then": then,
+            }
+        )
+    existing_conditions = task_core.get("allOf", [])
+    if not isinstance(existing_conditions, list):
+        raise ValueError("task schema allOf must be an array")
+    # The shipped publication schema requires a persisted generic binding.
+    # That is correct for a finished project but impossible at the untrusted
+    # provider boundary, where bindings are explicitly forbidden.  Remove only
+    # that requirement in the provider-facing copy.
+    for condition in existing_conditions:
+        if not isinstance(condition, dict):
+            continue
+        then = condition.get("then")
+        if not isinstance(then, dict):
+            continue
+        required = then.get("required")
+        if isinstance(required, list):
+            then["required"] = [
+                item for item in required if item != "workflow_binding"
+            ]
+    task_core["allOf"] = [*existing_conditions, *conditions]
     definitions = {
         **project_defs,
         "evidence_graph": evidence_core,
@@ -160,6 +218,24 @@ def load_project_output_schema(
     return project_core
 
 
+def _generation_capabilities() -> dict[str, dict[str, Any]]:
+    """Capabilities an untrusted one-shot provider is allowed to propose."""
+
+    families = registered_task_families()
+    capabilities = registered_capability_catalog()
+    supported = {
+        name: capability
+        for name, capability in capabilities.items()
+        if families[name].candidate_validator is not None
+    }
+    if not supported:
+        raise ValueError(
+            "one-shot generation has no registered reviewed candidate compiler; "
+            "use 'paper2ale orchestrate' to mine and bind workflow candidates"
+        )
+    return supported
+
+
 def _evidence_document(
     sources: Sequence[IngestedSource],
     *,
@@ -170,6 +246,7 @@ def _evidence_document(
         "schema_version": "paper2ale.extracted-sources/v1",
         "requested_project_id": project_id,
         "requested_difficulty": difficulty,
+        "trusted_compiler_capabilities": _generation_capabilities(),
         "documents": [
             {
                 "source_id": source.source_ref["id"],
@@ -232,7 +309,10 @@ def prepare_generation_request(
         raise ValueError("timeout_s must be positive and finite")
     if difficulty is not None and difficulty not in LEVEL_NAMES:
         raise ValueError(f"difficulty must be one of {', '.join(LEVEL_NAMES)}")
-    require_valid_project(
+    # Validate the caller-controlled project identity and pinned source bundle
+    # without treating this request-construction placeholder as a completed
+    # project.  Finished provider output is still required to contain a task.
+    placeholder_issues = validate_project(
         {
             "schema_version": "paper2ale.project/v1",
             "project_id": project_id,
@@ -241,6 +321,17 @@ def prepare_generation_request(
             "tasks": [],
         }
     )
+    identity_issues = tuple(
+        issue
+        for issue in placeholder_issues
+        if not (issue.path == "/tasks" and issue.code == "invalid_value")
+    )
+    if identity_issues:
+        details = "\n".join(
+            f"- {issue.path or '/'}: [{issue.code}] {issue.message}"
+            for issue in identity_issues
+        )
+        raise ValueError(f"invalid generation identity or source bundle:\n{details}")
     schema = load_project_output_schema(schema_dir) if output_schema is None else output_schema
     bound_schema = _bound_output_schema(
         schema,
@@ -273,20 +364,67 @@ def _validate_generated_project(
     expected_project_id: str,
     expected_sources: Sequence[IngestedSource],
     require_tasks: bool,
+    trusted_workflow_bindings: Mapping[str, Mapping[str, Any]] | None,
 ) -> dict[str, Any]:
-    project = require_valid_project(_strict_json_copy(data, name="provider response"))
-    if project["project_id"] != expected_project_id:
+    prepared = _strict_json_copy(data, name="provider response")
+    if not isinstance(prepared, dict):
+        raise TypeError("provider response must be a project object")
+    if prepared.get("project_id") != expected_project_id:
         raise ValueError(
             f"generated project_id must equal requested project id {expected_project_id!r}"
         )
-    if canonical_json_bytes(project["source_bundle"]) != canonical_json_bytes(
+    if canonical_json_bytes(prepared.get("source_bundle")) != canonical_json_bytes(
         source_bundle(expected_sources)
     ):
         raise ValueError("generated project source_bundle must exactly match pinned sources")
-    if require_tasks and not project["tasks"]:
+    raw_tasks = prepared.get("tasks")
+    if not isinstance(raw_tasks, list):
+        raise ValueError("generated project tasks must be an array")
+    if require_tasks and not raw_tasks:
         raise ValueError("generated project must contain at least one task")
+    trusted = {} if trusted_workflow_bindings is None else dict(
+        trusted_workflow_bindings
+    )
+    task_ids: list[str] = []
+    for task in raw_tasks:
+        if not isinstance(task, dict):
+            raise ValueError("generated project tasks must contain only objects")
+        task_id = task.get("id")
+        if not isinstance(task_id, str) or not task_id:
+            raise ValueError("generated task id must be a nonempty string")
+        task_ids.append(task_id)
+        if "workflow_binding" in task:
+            raise ValueError(
+                "one-shot providers may not supply workflow_binding; use "
+                "'paper2ale orchestrate' to mine and bind workflow candidates locally"
+            )
+        spec = task_family(str(task.get("family", "")))
+        if spec.candidate_validator is None:
+            raise ValueError(
+                f"one-shot generation rejects authored-only task family {spec.name!r}; "
+                "use a reviewed authored project for that family or run "
+                "'paper2ale orchestrate'"
+            )
+        binding = trusted.get(task_id)
+        if not isinstance(binding, Mapping):
+            raise ValueError(
+                f"generated task {task_id!r} lacks a locally trusted workflow binding; "
+                "use 'paper2ale orchestrate' to mine and bind candidates end to end"
+            )
+        task["workflow_binding"] = _strict_json_copy(
+            binding, name=f"trusted workflow binding for {task_id!r}"
+        )
+    if len(set(task_ids)) != len(task_ids):
+        raise ValueError("generated task IDs must be unique")
+    unused_bindings = sorted(set(trusted) - set(task_ids))
+    if unused_bindings:
+        raise ValueError(
+            "trusted workflow bindings contain unknown task IDs: "
+            + ", ".join(unused_bindings)
+        )
+    project = require_valid_project(prepared)
     for task in project["tasks"]:
-        task_family(str(task["family"]))
+        task_family(str(task["family"])).validate_task(task, require_binding=True)
     return project
 
 
@@ -374,11 +512,24 @@ def generate_project(
     require_tasks: bool = True,
     overwrite: bool = False,
     difficulty: str | None = None,
+    trusted_workflow_bindings: Mapping[str, Mapping[str, Any]] | None = None,
 ) -> GenerationResult:
-    """Generate, validate, and atomically publish one compiler input project."""
+    """Generate and publish only locally bound compiler input.
+
+    The completion provider is untrusted and cannot author workflow bindings or
+    select fixed authored-only families.  A caller must supply bindings produced
+    by a trusted local workflow/candidate stage.  The CLI deliberately does not
+    accept such bindings; use ``paper2ale orchestrate`` for the supported end-to-
+    end path.
+    """
 
     output_path = Path(destination)
     _check_destination(output_path, sources=sources, overwrite=overwrite)
+    if require_tasks and trusted_workflow_bindings is None:
+        raise ValueError(
+            "one-shot generate cannot establish trusted workflow bindings; use "
+            "'paper2ale orchestrate' for end-to-end task generation"
+        )
     request = prepare_generation_request(
         sources,
         project_id=project_id,
@@ -405,6 +556,7 @@ def generate_project(
         expected_project_id=project_id,
         expected_sources=sources,
         require_tasks=require_tasks,
+        trusted_workflow_bindings=trusted_workflow_bindings,
     )
     if difficulty is not None:
         project = apply_supported_difficulty(project, difficulty)

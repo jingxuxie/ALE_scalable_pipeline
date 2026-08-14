@@ -68,6 +68,15 @@ class ProviderTests(unittest.TestCase):
                     with self.assertRaisesRegex(ValueError, message):
                         ReplayProvider(path)
 
+    def test_replay_file_size_is_bounded_before_parsing(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "replay.json"
+            path.write_text('{"request-1":{"payload":"large"}}', encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "exceeds the 8-byte limit"):
+                ReplayProvider(path, max_bytes=8)
+            with self.assertRaisesRegex(ValueError, "positive integer"):
+                ReplayProvider(path, max_bytes=0)
+
     def test_request_is_a_deep_snapshot_and_rejects_nan(self) -> None:
         schema = {"type": "object", "properties": {"x": {"type": "number"}}}
         request = CompletionRequest(

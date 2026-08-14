@@ -1,0 +1,3 @@
+A bounded research workflow receives vectors, applies an unknown affine
+transformation, and reports transformed vectors. A valid reproduction can be
+checked independently on held-out inputs by recomputing numerical error.

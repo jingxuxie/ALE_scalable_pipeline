@@ -1,0 +1,391 @@
+{
+  "$defs": {
+    "asset_spec": {
+      "additionalProperties": false,
+      "properties": {
+        "asset_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "auto",
+            "document",
+            "repository",
+            "dataset",
+            "file"
+          ]
+        },
+        "metadata": {
+          "type": "object"
+        },
+        "path": {
+          "description": "Local operator path.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "asset_id",
+        "path"
+      ],
+      "type": "object"
+    },
+    "paper_profile": {
+      "additionalProperties": false,
+      "properties": {
+        "analytic_oracle_possible": {
+          "type": "boolean"
+        },
+        "code_license_known": {
+          "type": "boolean"
+        },
+        "contradictions_resolved": {
+          "type": "boolean"
+        },
+        "data_license_known": {
+          "type": "boolean"
+        },
+        "evidence_coverage": {
+          "maximum": 1,
+          "minimum": 0,
+          "type": "number"
+        },
+        "independent_verification_possible": {
+          "type": "boolean"
+        },
+        "license_status": {
+          "enum": [
+            "known",
+            "unknown",
+            "restricted",
+            "incompatible"
+          ]
+        },
+        "paper_id": {
+          "maxLength": 128,
+          "minLength": 1,
+          "type": "string"
+        },
+        "provenance_complete": {
+          "type": "boolean"
+        },
+        "public_code": {
+          "type": "boolean"
+        },
+        "public_data": {
+          "type": "boolean"
+        },
+        "readable": {
+          "type": "boolean"
+        },
+        "resources_bounded": {
+          "type": "boolean"
+        },
+        "scientific_quality": {
+          "maximum": 1,
+          "minimum": 0,
+          "type": "number"
+        },
+        "synthetic_data_possible": {
+          "type": "boolean"
+        },
+        "title": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "type": "string"
+        },
+        "workflow_reconstructable": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "evidence_coverage",
+        "independent_verification_possible",
+        "license_status",
+        "paper_id",
+        "provenance_complete",
+        "readable",
+        "scientific_quality",
+        "title"
+      ],
+      "type": "object"
+    },
+    "source_spec": {
+      "additionalProperties": false,
+      "properties": {
+        "metadata": {
+          "additionalProperties": false,
+          "properties": {
+            "asset_id": {
+              "maxLength": 128,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$",
+              "type": "string"
+            },
+            "citation": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "id": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "kind": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "license": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "retrieved_at": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "sha256": {
+              "pattern": "^[0-9a-f]{64}$",
+              "type": "string"
+            },
+            "uri": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "version": {
+              "minLength": 1,
+              "type": "string"
+            },
+            "visibility": {
+              "minLength": 1,
+              "type": "string"
+            }
+          },
+          "required": [
+            "id",
+            "kind",
+            "uri",
+            "version",
+            "license",
+            "visibility"
+          ],
+          "type": "object"
+        },
+        "path": {
+          "description": "Local operator path.",
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "path",
+        "metadata"
+      ],
+      "type": "object"
+    },
+    "staged_config": {
+      "additionalProperties": false,
+      "properties": {
+        "max_concurrency": {
+          "maximum": 64,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_facts_per_reduction": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_findings_per_unit": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_reductions": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_total_chars": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_units": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_unresolved": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_workflows": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "parameters": {
+          "type": "object"
+        },
+        "reduce_batch_size": {
+          "minimum": 1,
+          "type": "integer"
+        },
+        "require_workflows": {
+          "const": true
+        },
+        "timeout_s": {
+          "exclusiveMinimum": 0,
+          "type": "number"
+        }
+      },
+      "type": "object"
+    },
+    "triage_policy": {
+      "additionalProperties": false,
+      "properties": {
+        "minimum_evidence_coverage": {
+          "maximum": 1,
+          "minimum": 0,
+          "type": "number"
+        },
+        "minimum_scientific_quality": {
+          "maximum": 1,
+          "minimum": 0,
+          "type": "number"
+        },
+        "require_bounded_resources": {
+          "type": "boolean"
+        },
+        "require_independent_verification": {
+          "type": "boolean"
+        },
+        "require_known_paper_license": {
+          "type": "boolean"
+        },
+        "require_public_code_or_data": {
+          "type": "boolean"
+        }
+      },
+      "type": "object"
+    }
+  },
+  "$id": "https://paper2ale.local/schemas/orchestration_manifest.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "allow_unresolved": {
+      "type": "boolean"
+    },
+    "allowed_candidate_decisions": {
+      "items": {
+        "enum": [
+          "eligible",
+          "manual_review",
+          "missing_artifacts",
+          "no_viable_task",
+          "rejected"
+        ]
+      },
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "allowed_families": {
+      "items": {
+        "enum": [
+          "generic"
+        ]
+      },
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "allowed_paper_decisions": {
+      "items": {
+        "enum": [
+          "eligible",
+          "manual_review",
+          "missing_artifacts",
+          "no_viable_task",
+          "rejected"
+        ]
+      },
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "assets": {
+      "items": {
+        "$ref": "#/$defs/asset_spec"
+      },
+      "maxItems": 256,
+      "type": "array"
+    },
+    "difficulty": {
+      "enum": [
+        null,
+        "easy",
+        "medium",
+        "hard",
+        "frontier"
+      ]
+    },
+    "max_candidates": {
+      "minimum": 1,
+      "type": "integer"
+    },
+    "max_final_context_chars": {
+      "minimum": 1,
+      "type": "integer"
+    },
+    "output_path": {
+      "description": "Local operator path.",
+      "minLength": 1,
+      "type": "string"
+    },
+    "overwrite": {
+      "type": "boolean"
+    },
+    "paper": {
+      "$ref": "#/$defs/paper_profile"
+    },
+    "parameters": {
+      "type": "object"
+    },
+    "project_id": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9](?:[A-Za-z0-9._-]*[A-Za-z0-9_-])?$",
+      "type": "string"
+    },
+    "release": {
+      "type": "boolean"
+    },
+    "schema_version": {
+      "const": "paper2ale.orchestration-manifest/v1"
+    },
+    "sources": {
+      "items": {
+        "$ref": "#/$defs/source_spec"
+      },
+      "minItems": 1,
+      "type": "array"
+    },
+    "staged_config": {
+      "$ref": "#/$defs/staged_config"
+    },
+    "timeout_s": {
+      "exclusiveMinimum": 0,
+      "type": "number"
+    },
+    "triage_policy": {
+      "$ref": "#/$defs/triage_policy"
+    }
+  },
+  "required": [
+    "output_path",
+    "paper",
+    "project_id",
+    "schema_version",
+    "sources"
+  ],
+  "title": "paper2ale end-to-end orchestration manifest",
+  "type": "object"
+}

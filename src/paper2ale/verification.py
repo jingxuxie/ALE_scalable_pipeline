@@ -12,7 +12,9 @@ from __future__ import annotations
 from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass
 import hashlib
+import inspect
 import json
+import math
 import os
 from pathlib import Path
 import re
@@ -22,6 +24,7 @@ import sys
 import tempfile
 import threading
 import time
+from types import CodeType
 from typing import Any, BinaryIO
 
 from .packaging import (
@@ -30,13 +33,106 @@ from .packaging import (
     write_manifest,
     write_projection,
 )
+from .schema import SOURCE_KINDS
 
 
 MAX_SUBPROCESS_SECONDS = 30.0
 MAX_STDOUT_BYTES = 64 * 1024
 MAX_STDERR_BYTES = 64 * 1024
 _MEBIBYTE = 1024 * 1024
-VERIFICATION_VERSION = "paper2ale.verification/v2"
+VERIFICATION_VERSION = "paper2ale.verification/v4"
+
+
+def _stable_identity_value(value: Any) -> Any:
+    """Return a path-free JSON value for callable implementation hashing."""
+
+    if value is None or isinstance(value, (str, int, bool)):
+        return value
+    if isinstance(value, float):
+        return {"float_hex": value.hex()}
+    if isinstance(value, bytes):
+        return {"bytes_hex": value.hex()}
+    if isinstance(value, CodeType):
+        return {
+            "argcount": value.co_argcount,
+            "posonlyargcount": value.co_posonlyargcount,
+            "kwonlyargcount": value.co_kwonlyargcount,
+            "nlocals": value.co_nlocals,
+            "stacksize": value.co_stacksize,
+            "flags": value.co_flags,
+            "code": value.co_code.hex(),
+            "consts": [_stable_identity_value(item) for item in value.co_consts],
+            "names": list(value.co_names),
+            "varnames": list(value.co_varnames),
+            "freevars": list(value.co_freevars),
+            "cellvars": list(value.co_cellvars),
+        }
+    if isinstance(value, (tuple, list)):
+        return [_stable_identity_value(item) for item in value]
+    if isinstance(value, Mapping):
+        return {
+            str(key): _stable_identity_value(item)
+            for key, item in sorted(value.items(), key=lambda pair: str(pair[0]))
+        }
+    return {
+        "type_module": type(value).__module__,
+        "type_qualname": type(value).__qualname__,
+    }
+
+
+def _callable_implementation_identity(value: Callable[..., Any]) -> dict[str, str]:
+    """Identify trusted callable code without recording local filesystem paths."""
+
+    module = str(getattr(value, "__module__", type(value).__module__))
+    qualname = str(getattr(value, "__qualname__", type(value).__qualname__))
+    source_file = inspect.getsourcefile(value)
+    module_sha256: str | None = None
+    if source_file:
+        try:
+            module_bytes = Path(source_file).read_bytes()
+            normalized_module = module_bytes.replace(b"\r\n", b"\n").replace(
+                b"\r", b"\n"
+            )
+            module_sha256 = hashlib.sha256(normalized_module).hexdigest()
+        except OSError:
+            module_sha256 = None
+    try:
+        callable_source = inspect.getsource(value)
+    except (OSError, TypeError):
+        callable_source = None
+    target = value if hasattr(value, "__code__") else getattr(value, "__call__", None)
+    code = getattr(target, "__code__", None)
+    if callable_source is None and code is None:
+        raise TypeError(
+            f"callable {module}.{qualname} has no stable inspectable implementation"
+        )
+    closure = getattr(target, "__closure__", None)
+    closure_values: list[Any] = []
+    for cell in closure or ():
+        try:
+            closure_values.append(_stable_identity_value(cell.cell_contents))
+        except ValueError:
+            closure_values.append({"empty_cell": True})
+    payload = {
+        "module_sha256": module_sha256,
+        "callable_source": callable_source,
+        "code": _stable_identity_value(code),
+        "defaults": _stable_identity_value(getattr(target, "__defaults__", None)),
+        "kwdefaults": _stable_identity_value(getattr(target, "__kwdefaults__", None)),
+        "closure": closure_values,
+    }
+    encoded = json.dumps(
+        payload,
+        ensure_ascii=False,
+        allow_nan=False,
+        separators=(",", ":"),
+        sort_keys=True,
+    ).encode("utf-8")
+    return {
+        "module": module,
+        "qualname": qualname,
+        "implementation_sha256": hashlib.sha256(encoded).hexdigest(),
+    }
 
 
 @dataclass(frozen=True, slots=True)
@@ -216,6 +312,84 @@ def _grader_payload(result: BoundedProcessResult) -> Mapping[str, Any] | None:
     return value if isinstance(value, Mapping) else None
 
 
+def _declared_weights(task: Mapping[str, Any]) -> dict[str, float]:
+    evaluation = task.get("evaluation", {})
+    if not isinstance(evaluation, Mapping):
+        return {}
+    raw_weights = evaluation.get("weights")
+    if isinstance(raw_weights, Mapping):
+        return {str(name): float(value) for name, value in raw_weights.items()}
+    raw_metrics = evaluation.get("metrics")
+    if isinstance(raw_metrics, Sequence) and not isinstance(raw_metrics, (str, bytes)):
+        return {
+            str(item["id"]): float(item["weight"])
+            for item in raw_metrics
+            if isinstance(item, Mapping) and "id" in item and "weight" in item
+        }
+    return {}
+
+
+def _score_contract(
+    payload: Mapping[str, Any] | None,
+    task: Mapping[str, Any],
+) -> tuple[bool, dict[str, Any]]:
+    """Verify that grader output implements the blueprint's weighted score."""
+
+    weights = _declared_weights(task)
+    failures: list[str] = []
+    if payload is None:
+        return False, {"failures": ["grader did not emit a JSON object"]}
+    score = payload.get("score")
+    if (
+        isinstance(score, bool)
+        or not isinstance(score, (int, float))
+        or not math.isfinite(float(score))
+        or not 0.0 <= float(score) <= 1.0
+    ):
+        failures.append("score must be a finite number in [0, 1]")
+        numeric_score = None
+    else:
+        numeric_score = float(score)
+    raw_components = payload.get("metric_scores")
+    components: dict[str, float] = {}
+    if not isinstance(raw_components, Mapping):
+        failures.append("metric_scores must be an object")
+    else:
+        if set(raw_components) != set(weights):
+            failures.append("metric_scores keys must exactly match declared weights")
+        for name, value in raw_components.items():
+            if (
+                isinstance(value, bool)
+                or not isinstance(value, (int, float))
+                or not math.isfinite(float(value))
+                or not 0.0 <= float(value) <= 1.0
+            ):
+                failures.append(f"metric score {name!r} must be finite and in [0, 1]")
+            else:
+                components[str(name)] = float(value)
+    passed = payload.get("passed") is True
+    hard_gates_passed = payload.get("hard_gates_passed", passed)
+    if not isinstance(hard_gates_passed, bool):
+        failures.append("hard_gates_passed must be boolean when reported")
+        hard_gates_passed = False
+    expected = (
+        sum(weights[name] * components.get(name, 0.0) for name in weights)
+        if hard_gates_passed
+        else 0.0
+    )
+    if numeric_score is not None and not math.isclose(
+        numeric_score, expected, rel_tol=1e-9, abs_tol=1e-9
+    ):
+        failures.append("score does not equal the gate-conditioned weighted metric sum")
+    return not failures, {
+        "declared_weights": weights,
+        "reported_score": numeric_score,
+        "recomputed_score": expected,
+        "hard_gates_passed": hard_gates_passed,
+        "failures": failures,
+    }
+
+
 def _instance_ids(files: Sequence[BuildFile]) -> tuple[str, ...]:
     identifiers: set[str] = set()
     for item in files:
@@ -230,6 +404,8 @@ class _PreparedCase:
     reference_submission: Path
     mutant_submission: Path
     preparation: BoundedProcessResult | None = None
+    alternative_submissions: tuple[tuple[str, Path], ...] = ()
+    additional_mutants: tuple[tuple[str, Path], ...] = ()
 
 
 class _PreparationError(RuntimeError):
@@ -379,7 +555,28 @@ def _prepare_bundled_json(root: Path, instance_id: str, _: float) -> _PreparedCa
         raise _PreparationError(
             "bundled hard-task golden or mutant JSON artifact is missing"
         )
-    return _PreparedCase(reference, mutant)
+    mutant_directory = directory / "mutants"
+    additional = (
+        tuple(
+            (path.stem, path)
+            for path in sorted(mutant_directory.glob("*.json"))
+            if path.is_file() and not path.is_symlink()
+        )
+        if mutant_directory.is_dir() and not mutant_directory.is_symlink()
+        else ()
+    )
+    visible_baseline = directory / "visible_baseline.json"
+    alternatives = (
+        (("visible-information-baseline", visible_baseline),)
+        if visible_baseline.is_file() and not visible_baseline.is_symlink()
+        else ()
+    )
+    return _PreparedCase(
+        reference,
+        mutant,
+        alternative_submissions=alternatives,
+        additional_mutants=additional,
+    )
 
 
 @dataclass(frozen=True, slots=True)
@@ -413,6 +610,16 @@ _REGISTERED: dict[tuple[str, str], _VerificationSpec] = {
         "assume-observed-coordinates-are-canonical",
         _prepare_bundled_json,
     ),
+}
+
+# Declarative generic task IDs are intentionally dynamic.  They are still
+# publication-verifiable because every accepted template compiles the same
+# trusted evaluator/golden/mutant contract and cannot inject executable code.
+_FAMILY_DEFAULTS: dict[str, _VerificationSpec] = {
+    "generic": _VerificationSpec(
+        "template-specific-realistic-mutant",
+        _prepare_bundled_json,
+    )
 }
 
 
@@ -454,13 +661,33 @@ def verification_catalog_identity() -> dict[str, Any]:
 
     return {
         "version": VERIFICATION_VERSION,
+        "runtime": {
+            "publication_verifier": _callable_implementation_identity(
+                verify_task_publication
+            ),
+            "bounded_subprocess": _callable_implementation_identity(
+                _run_bounded_subprocess
+            ),
+            "grader_runner": _callable_implementation_identity(_run_grader),
+            "grader_payload": _callable_implementation_identity(_grader_payload),
+            "score_contract": _callable_implementation_identity(_score_contract),
+        },
         "tasks": [
             {
                 "family": family,
                 "task_id": task_id,
                 "mutant_id": spec.mutant_id,
+                "prepare": _callable_implementation_identity(spec.prepare),
             }
             for (family, task_id), spec in sorted(_REGISTERED.items())
+        ],
+        "family_defaults": [
+            {
+                "family": family,
+                "mutant_id": spec.mutant_id,
+                "prepare": _callable_implementation_identity(spec.prepare),
+            }
+            for family, spec in sorted(_FAMILY_DEFAULTS.items())
         ],
     }
 
@@ -487,6 +714,52 @@ def _run_grader(
         cwd=root,
         timeout_seconds=timeout,
     )
+
+
+def _payload_sha256(payload: Mapping[str, Any] | None) -> str | None:
+    if payload is None:
+        return None
+    encoded = json.dumps(
+        payload,
+        ensure_ascii=False,
+        allow_nan=False,
+        separators=(",", ":"),
+        sort_keys=True,
+    ).encode("utf-8")
+    return hashlib.sha256(encoded).hexdigest()
+
+
+def _run_repeated_grader(
+    root: Path,
+    submission: Path,
+    instance_id: str,
+    timeout: float,
+) -> tuple[BoundedProcessResult, Mapping[str, Any] | None, dict[str, Any]]:
+    """Run a grader twice and compare stable process bytes and JSON payloads."""
+
+    first = _run_grader(root, submission, instance_id, timeout)
+    repeated = _run_grader(root, submission, instance_id, timeout)
+    first_payload = _grader_payload(first)
+    repeated_payload = _grader_payload(repeated)
+    first_summary = first.summary()
+    repeated_summary = repeated.summary()
+    byte_identical = first.stdout == repeated.stdout and first.stderr == repeated.stderr
+    process_state_identical = first_summary == repeated_summary
+    first_payload_sha256 = _payload_sha256(first_payload)
+    repeated_payload_sha256 = _payload_sha256(repeated_payload)
+    payload_identical = first_payload_sha256 == repeated_payload_sha256
+    identical = byte_identical and process_state_identical and payload_identical
+    return first, first_payload, {
+        "runs_compared": 2,
+        "identical": identical,
+        "byte_identical": byte_identical,
+        "process_state_identical": process_state_identical,
+        "payload_identical": payload_identical,
+        "first_payload_sha256": first_payload_sha256,
+        "repeated_payload_sha256": repeated_payload_sha256,
+        "first_run": first_summary,
+        "repeated_run": repeated_summary,
+    }
 
 
 def _snapshot(files: Sequence[BuildFile]) -> tuple[tuple[str, str, bool, str], ...]:
@@ -532,6 +805,12 @@ def _provenance_check(project: Mapping[str, Any]) -> dict[str, Any]:
 
     sources = project.get("source_bundle")
     failures: list[dict[str, str]] = []
+    snapshots = project.get("asset_snapshots", [])
+    asset_ids = {
+        str(snapshot.get("asset_id"))
+        for snapshot in snapshots
+        if isinstance(snapshot, Mapping) and snapshot.get("asset_id")
+    } if isinstance(snapshots, list) else set()
     if not isinstance(sources, list) or not sources:
         failures.append({"source_id": "", "reason": "source_bundle is empty"})
         sources = []
@@ -550,23 +829,55 @@ def _provenance_check(project: Mapping[str, Any]) -> dict[str, Any]:
                     {"source_id": source_id, "reason": f"missing exact {field}"}
                 )
         kind = source.get("kind")
-        if kind == "paper" and not re.fullmatch(r"[0-9a-f]{64}", str(source.get("sha256", ""))):
+        if kind not in SOURCE_KINDS:
+            failures.append(
+                {
+                    "source_id": source_id,
+                    "reason": (
+                        f"unknown source kind {kind!r}; expected one of "
+                        f"{sorted(SOURCE_KINDS)}"
+                    ),
+                }
+            )
+        elif kind == "paper" and not re.fullmatch(r"[0-9a-f]{64}", str(source.get("sha256", ""))):
             failures.append(
                 {"source_id": source_id, "reason": "paper bytes lack a lowercase SHA-256 lock"}
             )
-        if kind == "code" and not re.fullmatch(r"[0-9a-f]{40}", str(source.get("version", ""))):
+        elif kind == "code" and not re.fullmatch(r"[0-9a-f]{40}", str(source.get("version", ""))):
             failures.append(
                 {"source_id": source_id, "reason": "code version is not an exact Git commit"}
             )
+        elif kind in {"document", "file"} and not re.fullmatch(
+            r"[0-9a-f]{64}", str(source.get("sha256", ""))
+        ):
+            failures.append(
+                {
+                    "source_id": source_id,
+                    "reason": f"{kind} bytes lack a lowercase SHA-256 lock",
+                }
+            )
+        elif kind in {"dataset", "repository"}:
+            asset_id = source.get("asset_id")
+            if not isinstance(asset_id, str) or asset_id not in asset_ids:
+                failures.append(
+                    {
+                        "source_id": source_id,
+                        "reason": f"{kind} source lacks a linked verified asset snapshot",
+                    }
+                )
     return {
         "status": "passed" if not failures else "failed",
         "details": {
             "source_count": len(sources),
             "requirements": [
+                f"source kind is exactly one of {sorted(SOURCE_KINDS)}",
                 "nonempty URI, version, license, citation, and retrieval date",
                 "paper byte SHA-256",
                 "exact 40-hex code commit",
+                "document/file byte SHA-256",
+                "dataset/repository linkage to a verified file-tree snapshot",
             ],
+            "resolved_asset_count": len(asset_ids),
             "failures": failures,
         },
     }
@@ -580,10 +891,11 @@ def verify_task_publication(
     builder: Callable[..., Sequence[BuildFile]],
     master_seed: int,
     instances: int | None,
+    build_context: Any | None = None,
 ) -> dict[str, Any] | None:
     """Run publication gates for a registered task, or return ``None``.
 
-    Resource results are intentionally smoke evidence.  They measure this
+    Publication-smoke results intentionally measure only this
     verifier's wall clock and the generated in-memory file bytes; they do not
     measure peak memory and are not a full participant-training benchmark.
     """
@@ -591,9 +903,9 @@ def verify_task_publication(
     task_id = str(task.get("id", ""))
     family = str(task.get("family", ""))
     key = (family, task_id)
-    if key not in _REGISTERED:
+    spec = _REGISTERED.get(key, _FAMILY_DEFAULTS.get(family))
+    if spec is None:
         return None
-    spec = _REGISTERED[key]
     started = time.perf_counter()
     materialized = tuple(files)
     identifiers = _instance_ids(materialized)
@@ -605,12 +917,17 @@ def verify_task_publication(
     original_archive_sha256: str | None = None
     repeated_archive_sha256: str | None = None
     try:
+        builder_keywords: dict[str, Any] = {
+            "master_seed": master_seed,
+            "instances": instances,
+        }
+        if build_context is not None:
+            builder_keywords["build_context"] = build_context
         repeated = tuple(
             builder(
                 dict(project),
                 dict(task),
-                master_seed=master_seed,
-                instances=instances,
+                **builder_keywords,
             )
         )
         repeated_count = len(repeated)
@@ -641,6 +958,8 @@ def verify_task_publication(
 
     reference_results: list[dict[str, Any]] = []
     mutant_results: list[dict[str, Any]] = []
+    runtime_execution_pairs = 0
+    runtime_mismatches: list[dict[str, str]] = []
     with tempfile.TemporaryDirectory(prefix=f"paper2ale-verify-{task_id}-") as temporary:
         root = Path(temporary)
         try:
@@ -668,52 +987,132 @@ def verify_task_publication(
                 continue
             try:
                 prepared = spec.prepare(root, instance_id, timeout)
-                reference_process = _run_grader(
-                    root,
-                    prepared.reference_submission,
-                    instance_id,
-                    timeout,
+                reference_process, reference_payload, reference_reproduction = (
+                    _run_repeated_grader(
+                        root,
+                        prepared.reference_submission,
+                        instance_id,
+                        timeout,
+                    )
                 )
-                reference_payload = _grader_payload(reference_process)
+                runtime_execution_pairs += 1
+                if not reference_reproduction["identical"]:
+                    runtime_mismatches.append(
+                        {"instance_id": instance_id, "role": "reference"}
+                    )
+                reference_score_valid, reference_score_details = _score_contract(
+                    reference_payload, task
+                )
                 reference_passed = (
                     reference_process.returncode == 0
                     and reference_payload is not None
                     and reference_payload.get("passed") is True
+                    and reference_score_valid
                     and not reference_process.stderr_overflow
+                    and reference_reproduction["identical"]
+                )
+                alternative_results: list[dict[str, Any]] = []
+                for alternative_id, alternative_submission in prepared.alternative_submissions:
+                    (
+                        alternative_process,
+                        alternative_payload,
+                        alternative_reproduction,
+                    ) = _run_repeated_grader(
+                        root, alternative_submission, instance_id, timeout
+                    )
+                    runtime_execution_pairs += 1
+                    if not alternative_reproduction["identical"]:
+                        runtime_mismatches.append(
+                            {
+                                "instance_id": instance_id,
+                                "role": "alternative",
+                                "submission_id": alternative_id,
+                            }
+                        )
+                    alternative_score_valid, alternative_score_details = _score_contract(
+                        alternative_payload, task
+                    )
+                    alternative_passed = (
+                        alternative_process.returncode == 0
+                        and alternative_payload is not None
+                        and alternative_payload.get("passed") is True
+                        and alternative_score_valid
+                        and not alternative_process.timed_out
+                        and not alternative_process.stdout_overflow
+                        and not alternative_process.stderr_overflow
+                        and alternative_process.reader_error is None
+                        and alternative_reproduction["identical"]
+                    )
+                    alternative_results.append(
+                        {
+                            "alternative_id": alternative_id,
+                            "passed": alternative_passed,
+                            "grader": alternative_process.summary(),
+                            "score_contract": alternative_score_details,
+                            "reproducibility": alternative_reproduction,
+                        }
+                    )
+                reference_passed = reference_passed and all(
+                    item["passed"] for item in alternative_results
                 )
                 reference_entry: dict[str, Any] = {
                     "instance_id": instance_id,
                     "passed": reference_passed,
                     "grader": reference_process.summary(),
+                    "score_contract": reference_score_details,
+                    "reproducibility": reference_reproduction,
+                    "alternative_implementations": alternative_results,
                 }
                 if prepared.preparation is not None:
                     reference_entry["reference_preparation"] = prepared.preparation.summary()
                 reference_results.append(reference_entry)
 
-                mutant_process = _run_grader(
-                    root,
-                    prepared.mutant_submission,
-                    instance_id,
-                    timeout,
+                mutant_suite = (
+                    (spec.mutant_id, prepared.mutant_submission),
+                    *prepared.additional_mutants,
                 )
-                mutant_payload = _grader_payload(mutant_process)
-                rejected = (
-                    mutant_process.returncode not in (None, 0)
-                    and mutant_payload is not None
-                    and mutant_payload.get("passed") is False
-                    and not mutant_process.timed_out
-                    and not mutant_process.stdout_overflow
-                    and not mutant_process.stderr_overflow
-                    and mutant_process.reader_error is None
-                )
-                mutant_results.append(
-                    {
-                        "instance_id": instance_id,
-                        "mutant_id": spec.mutant_id,
-                        "rejected": rejected,
-                        "grader": mutant_process.summary(),
-                    }
-                )
+                for mutant_id, mutant_submission in mutant_suite:
+                    mutant_process, mutant_payload, mutant_reproduction = (
+                        _run_repeated_grader(
+                            root,
+                            mutant_submission,
+                            instance_id,
+                            timeout,
+                        )
+                    )
+                    runtime_execution_pairs += 1
+                    if not mutant_reproduction["identical"]:
+                        runtime_mismatches.append(
+                            {
+                                "instance_id": instance_id,
+                                "role": "mutant",
+                                "submission_id": mutant_id,
+                            }
+                        )
+                    mutant_score_valid, mutant_score_details = _score_contract(
+                        mutant_payload, task
+                    )
+                    rejected = (
+                        mutant_process.returncode not in (None, 0)
+                        and mutant_payload is not None
+                        and mutant_payload.get("passed") is False
+                        and mutant_score_valid
+                        and not mutant_process.timed_out
+                        and not mutant_process.stdout_overflow
+                        and not mutant_process.stderr_overflow
+                        and mutant_process.reader_error is None
+                        and mutant_reproduction["identical"]
+                    )
+                    mutant_results.append(
+                        {
+                            "instance_id": instance_id,
+                            "mutant_id": mutant_id,
+                            "rejected": rejected,
+                            "grader": mutant_process.summary(),
+                            "score_contract": mutant_score_details,
+                            "reproducibility": mutant_reproduction,
+                        }
+                    )
             except _PreparationError as error:
                 preparation = None if error.process is None else error.process.summary()
                 reference_results.append(
@@ -763,9 +1162,12 @@ def verify_task_publication(
     )
     mutants_rejected = (
         instance_set_complete
-        and len(mutant_results) == len(identifiers)
+        and len(mutant_results) >= len(identifiers)
+        and {result["instance_id"] for result in mutant_results} == set(identifiers)
         and all(result["rejected"] for result in mutant_results)
     )
+    runtime_outputs_reproducible = not runtime_mismatches
+    all_reproducible = reproducible and runtime_outputs_reproducible
 
     total_elapsed = time.perf_counter() - started
     disk_budget_bytes = None if disk_mb is None else int(disk_mb * _MEBIBYTE)
@@ -793,11 +1195,14 @@ def verify_task_publication(
             "status": "passed" if mutants_rejected else "failed",
             "details": {
                 "registered_mutant": spec.mutant_id,
-                "required_rejections": len(identifiers),
+                "registered_mutants": sorted(
+                    {result["mutant_id"] for result in mutant_results}
+                ),
+                "required_rejections": len(mutant_results),
                 "instances": mutant_results,
             },
         },
-        "resource_budget": {
+        "publication_smoke_budget": {
             "status": resource_status,
             "details": {
                 "evidence_kind": "publication_smoke_test",
@@ -809,11 +1214,11 @@ def verify_task_publication(
                 "disk_bytes_budget": disk_budget_bytes,
                 "within_disk_budget": within_disk,
                 "peak_memory_bytes": None,
-                "limitations": "Smoke evidence only: wall time covers trusted reference/mutant verification and a repeated builder run; peak memory is not measured and full participant training is not benchmarked.",
+                "limitations": "Publication smoke only: wall time covers trusted reference/mutant verification and a repeated builder run; peak memory is not measured. This is not a claim about participant solve time, CPU utilization, training cost, or temporary solve disk usage.",
             },
         },
         "reproducibility": {
-            "status": "passed" if reproducible else "failed",
+            "status": "passed" if all_reproducible else "failed",
             "details": {
                 "builder_runs_compared": 2,
                 "byte_identical": reproducible,
@@ -827,6 +1232,10 @@ def verify_task_publication(
                 "repeated_file_count": repeated_count,
                 "mismatch_paths": mismatch_paths,
                 "error": reproduction_error,
+                "grader_runs_per_submission": 2,
+                "grader_execution_pairs_compared": runtime_execution_pairs,
+                "runtime_output_reproducible": runtime_outputs_reproducible,
+                "runtime_mismatches": runtime_mismatches,
             },
         },
     }

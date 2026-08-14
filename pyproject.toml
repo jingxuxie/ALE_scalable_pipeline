@@ -4,11 +4,11 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "paper2ale"
-version = "0.2.0"
+version = "0.3.0"
 description = "A provenance-first compiler for paper-grounded, paper-blind ALE tasks"
 readme = "README.md"
 requires-python = ">=3.11"
-dependencies = ["numpy>=1.26", "pypdf>=5.0"]
+dependencies = ["numpy>=1.26,<3", "pypdf>=5,<7"]
 
 [project.scripts]
 paper2ale = "paper2ale.cli:main"
@@ -19,10 +19,5 @@ package-dir = {"" = "src"}
 [tool.setuptools.packages.find]
 where = ["src"]
 
-[tool.setuptools.data-files]
-"paper2ale/schemas" = [
-  "schemas/project.schema.json",
-  "schemas/evidence_graph.schema.json",
-  "schemas/task_blueprint.schema.json",
-  "schemas/difficulty_profile.schema.json",
-]
+[tool.setuptools.package-data]
+paper2ale = ["schemas/*.json"]

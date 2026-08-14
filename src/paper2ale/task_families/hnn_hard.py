@@ -60,6 +60,30 @@ def _file(
     )
 
 
+def _contract_mutant_files(
+    instance_id: str, golden: dict[str, Any]
+) -> list[BuildFile]:
+    """Add format-level mutants independently of the scientific bug mutant."""
+
+    extra_key = json.loads(json.dumps(golden))
+    extra_key["unexpected"] = "must be rejected"
+    missing_format = json.loads(json.dumps(golden))
+    missing_format.pop("format", None)
+    root = f"example/instances/{instance_id}/mutants"
+    return [
+        _file(
+            f"{root}/contract-extra-key.json",
+            _json_bytes(extra_key),
+            EVALUATOR,
+        ),
+        _file(
+            f"{root}/contract-missing-format.json",
+            _json_bytes(missing_format),
+            EVALUATOR,
+        ),
+    ]
+
+
 def _seed(master_seed: int, task_id: str, index: int, purpose: str = "instance") -> int:
     material = f"hnn-hard-v1\0{master_seed}\0{task_id}\0{index}\0{purpose}".encode()
     return int.from_bytes(hashlib.sha256(material).digest()[:8], "big")
@@ -127,6 +151,7 @@ def _ale_main(
 
     from dataclasses import dataclass
     import json
+    import math
     import shlex
 
     import cua_bench as cb
@@ -205,7 +230,16 @@ def _ale_main(
             result = json.loads(stdout[begin:end + 1]) if begin >= 0 and end >= begin else {{}}
         except (TypeError, ValueError, json.JSONDecodeError):
             result = {{}}
-        return [1.0 if result.get("passed") else 0.0]
+        score = result.get("score")
+        if (
+            result.get("passed") is not True
+            or isinstance(score, bool)
+            or not isinstance(score, (int, float))
+            or not math.isfinite(float(score))
+            or not 0.0 <= float(score) <= 1.0
+        ):
+            return [0.0]
+        return [float(score)]
 
 
     if __name__ == "__main__":
@@ -227,10 +261,12 @@ def _difficulty_settings(project: dict[str, Any], task: dict[str, Any]) -> dict[
     hidden_case_count = int(evaluator["hidden_case_count"])
     required_fraction = float(evaluator["required_pass_fraction"])
 
-    # Each derived value is normalized so the built-in hard profile is 1.0.
-    # The mappings make medium/hard/frontier differ in data density, noise,
-    # OOD range, horizon, cardinality, close encounters, and score tolerance.
-    sample_scale = (input_scale / 1.5) * ((1.0 - 0.25 * masked_fraction) / 0.875)
+    # Keep public sample counts fixed across levels.  Increasing training data
+    # at the same time as noise/OOD difficulty can accidentally make a nominally
+    # harder task easier and destroys paired calibration.  Difficulty changes
+    # the challenge and evaluator axes below while all RNG streams retain a
+    # shared prefix across levels.
+    sample_scale = 1.0
     ood_scale = (input_scale / 1.5) ** 0.45 * (
         (1.0 + 0.05 * adversarial_count) / 1.2
     )
@@ -298,7 +334,11 @@ def _author_files(
         "challenge_axes": challenge_axes,
         "generator_parameters": generator,
         "grader_parameters": grader,
-        "registered_mutants": [mutant_id],
+        "registered_mutants": [
+            mutant_id,
+            "contract-extra-key",
+            "contract-missing-format",
+        ],
     }
     provenance = {
         "schema_version": "paper2ale.provenance/v1",
@@ -418,37 +458,55 @@ def _build_coupled(
         instance_id = f"{index:03d}"
         seed = _seed(master_seed, task_id, index)
         seeds.append(seed)
-        rng = np.random.default_rng(seed)
+        truth_rng = np.random.default_rng(
+            _seed(master_seed, task_id, index, "truth")
+        )
+        train_rng = np.random.default_rng(
+            _seed(master_seed, task_id, index, "train")
+        )
+        validation_rng = np.random.default_rng(
+            _seed(master_seed, task_id, index, "validation")
+        )
+        hidden_rng = np.random.default_rng(
+            _seed(master_seed, task_id, index, "hidden")
+        )
+        rollout_rng = np.random.default_rng(
+            _seed(master_seed, task_id, index, "rollout")
+        )
         dof = 3
-        diagonal = rng.uniform(0.75, 1.35, size=dof)
+        diagonal = truth_rng.uniform(0.75, 1.35, size=dof)
         inverse_mass = np.diag(diagonal)
-        inverse_mass[0, 1] = inverse_mass[1, 0] = rng.uniform(0.08, 0.16)
-        inverse_mass[1, 2] = inverse_mass[2, 1] = rng.uniform(-0.13, -0.06)
-        onsite = rng.uniform(0.8, 1.5, size=dof)
+        inverse_mass[0, 1] = inverse_mass[1, 0] = truth_rng.uniform(0.08, 0.16)
+        inverse_mass[1, 2] = inverse_mass[2, 1] = truth_rng.uniform(-0.13, -0.06)
+        onsite = truth_rng.uniform(0.8, 1.5, size=dof)
         couplings = np.zeros((dof, dof))
         for left, right in ((0, 1), (1, 2), (0, 2)):
-            couplings[left, right] = couplings[right, left] = rng.uniform(0.35, 0.7)
+            couplings[left, right] = couplings[right, left] = truth_rng.uniform(0.35, 0.7)
 
-        def sample(number: int, q_limit: float, p_limit: float) -> np.ndarray:
+        def sample(random, number: int, q_limit: float, p_limit: float) -> np.ndarray:
             return np.concatenate(
                 (
-                    rng.uniform(-q_limit, q_limit, size=(number, dof)),
-                    rng.uniform(-p_limit, p_limit, size=(number, dof)),
+                    random.uniform(-q_limit, q_limit, size=(number, dof)),
+                    random.uniform(-p_limit, p_limit, size=(number, dof)),
                 ),
                 axis=-1,
             )
 
-        train_states = sample(train_count, 0.9, 0.7)
-        validation_states = sample(validation_count, 1.2, 0.9)
+        train_states = sample(train_rng, train_count, 0.9, 0.7)
+        validation_states = sample(validation_rng, validation_count, 1.2, 0.9)
         noise = (0.004 + 0.001 * index) * noise_scale
         train_derivatives = _periodic_field(
             train_states, inverse_mass, onsite, couplings
-        ) + rng.normal(scale=noise, size=train_states.shape)
+        ) + train_rng.normal(scale=noise, size=train_states.shape)
         validation_derivatives = _periodic_field(
             validation_states, inverse_mass, onsite, couplings
-        ) + rng.normal(scale=noise, size=validation_states.shape)
-        hidden_states = sample(hidden_count, hidden_q_limit, 1.6 * ood_scale)
-        rollout_initials = sample(rollout_count, 2.4 * ood_scale, 0.9 * ood_scale)
+        ) + validation_rng.normal(scale=noise, size=validation_states.shape)
+        hidden_states = sample(
+            hidden_rng, hidden_count, hidden_q_limit, 1.6 * ood_scale
+        )
+        rollout_initials = sample(
+            rollout_rng, rollout_count, 2.4 * ood_scale, 0.9 * ood_scale
+        )
         rollout_times = np.linspace(0.0, 5.0 * horizon_scale, rollout_steps)
         public = {
             "schema_version": 1,
@@ -503,6 +561,7 @@ def _build_coupled(
                 _file(f"reference/instances/{instance_id}/truth.json", _json_bytes(truth), EVALUATOR),
                 _file(f"example/instances/{instance_id}/golden.json", _json_bytes(golden), EVALUATOR),
                 _file(f"example/instances/{instance_id}/mutant.json", _json_bytes(mutant), EVALUATOR),
+                *_contract_mutant_files(instance_id, golden),
             ]
         )
 
@@ -657,7 +716,29 @@ def _build_coupled(
                 errors.append("hidden rollout MSE exceeds threshold")
         except Exception as error:
             errors.append(f"{type(error).__name__}: {error}")
-        print(json.dumps({"passed": not errors, "instance": args.instance, "metrics": metrics, "errors": errors}, indent=2))
+        passed = not errors
+        thresholds = truth.get("thresholds", {})
+        metric_scores = {
+            "hidden_field": max(
+                0.0,
+                1.0 - metrics.get("field_mse", float("inf"))
+                / max(float(thresholds.get("field_mse_max", 0.0)), 1e-30),
+            ),
+            "nonlinear_rollout": max(
+                0.0,
+                1.0 - metrics.get("rollout_mse", float("inf"))
+                / max(float(thresholds.get("rollout_mse_max", 0.0)), 1e-30),
+            ),
+            "artifact_safety": 1.0 if passed else 0.0,
+        }
+        score = (
+            0.45 * metric_scores["hidden_field"]
+            + 0.45 * metric_scores["nonlinear_rollout"]
+            + 0.1 * metric_scores["artifact_safety"]
+            if passed
+            else 0.0
+        )
+        print(json.dumps({"passed": passed, "score": score, "instance": args.instance, "metrics": metrics, "metric_scores": metric_scores, "errors": errors}, indent=2))
         return 0 if not errors else 1
 
 
@@ -670,7 +751,7 @@ def _build_coupled(
             _file("task_card.json", _json_bytes(_task_card(task_id, "Identify a coupled nonlinear Hamiltonian", "Recover coupled periodic dynamics and generalize far outside the labeled state range.", count, "model.json", "coupled-periodic-hamiltonian-v1", str(settings["level"]))), AGENT),
             _file("main.py", _ale_main(task_id, count, "data.json", "model.json", "Identify the full coupled periodic Hamiltonian from noisy labeled derivatives; hidden evaluation uses wide-angle states and nonlinear rollouts."), AGENT, executable=True),
             _file("software/fit_model.py", starter, AGENT, executable=True),
-            _file("software/requirements.txt", "numpy>=1.26\n", AGENT),
+            _file("software/requirements.txt", "numpy>=1.26,<3\n", AGENT),
             _file("reference/grader.py", grader, EVALUATOR, executable=True),
         ]
     )
@@ -729,16 +810,27 @@ def _build_variable_nbody(
         instance_id = f"{index:03d}"
         seed = _seed(master_seed, task_id, index)
         seeds.append(seed)
-        rng = np.random.default_rng(seed)
-        gravitational_constant = float(rng.uniform(0.65, 1.35))
-        softening = float(rng.uniform(0.025, 0.055))
+        truth_rng = np.random.default_rng(
+            _seed(master_seed, task_id, index, "truth")
+        )
+        example_rng = np.random.default_rng(
+            _seed(master_seed, task_id, index, "examples")
+        )
+        query_rng = np.random.default_rng(
+            _seed(master_seed, task_id, index, "hidden")
+        )
+        permutation_rng = np.random.default_rng(
+            _seed(master_seed, task_id, index, "permutation")
+        )
+        gravitational_constant = float(truth_rng.uniform(0.65, 1.35))
+        softening = float(truth_rng.uniform(0.025, 0.055))
 
-        def make_problem(query_id: str, body_count: int, close: bool = False) -> dict[str, Any]:
-            masses = rng.uniform(0.45, 2.2, size=body_count)
-            positions = rng.uniform(-1.6, 1.6, size=(body_count, 2))
+        def make_problem(random, query_id: str, body_count: int, close: bool = False) -> dict[str, Any]:
+            masses = random.uniform(0.45, 2.2, size=body_count)
+            positions = random.uniform(-1.6, 1.6, size=(body_count, 2))
             if close and body_count >= 2:
                 positions[1] = positions[0] + close_scale * np.array([0.035, -0.025])
-            momenta = rng.uniform(-0.9, 0.9, size=(body_count, 2))
+            momenta = random.uniform(-0.9, 0.9, size=(body_count, 2))
             momenta -= np.mean(momenta, axis=0, keepdims=True)
             state = np.concatenate((positions, momenta), axis=-1)
             return {
@@ -747,7 +839,10 @@ def _build_variable_nbody(
                 "state": state.tolist(),
             }
 
-        examples = [make_problem(f"example-{number}", 2 + number) for number in range(2)]
+        examples = [
+            make_problem(example_rng, f"example-{number}", 2 + number)
+            for number in range(2)
+        ]
         labeled_examples = []
         for problem in examples:
             energy, field = _nbody_energy_field(
@@ -764,14 +859,15 @@ def _build_variable_nbody(
             )
         queries = [
             make_problem(
+                query_rng,
                 f"query-{number:02d}",
                 3 + number % (max_bodies - 2),
                 close=number % 4 == 1,
             )
             for number in range(query_count - 1)
         ]
-        base = queries[-1]
-        permutation = rng.permutation(len(base["masses"]))
+        base = queries[0]
+        permutation = permutation_rng.permutation(len(base["masses"]))
         queries.append(
             {
                 "query_id": f"query-{query_count - 1:02d}-permuted",
@@ -832,6 +928,7 @@ def _build_variable_nbody(
                 _file(f"reference/instances/{instance_id}/policy.json", _json_bytes({"absolute_tolerance": tolerance, "relative_tolerance": tolerance, "required_query_count": len(queries)}), EVALUATOR),
                 _file(f"example/instances/{instance_id}/golden.json", _json_bytes(golden), EVALUATOR),
                 _file(f"example/instances/{instance_id}/mutant.json", _json_bytes(mutant), EVALUATOR),
+                *_contract_mutant_files(instance_id, golden),
             ]
         )
 
@@ -977,7 +1074,27 @@ def _build_variable_nbody(
             metrics = {"max_energy_absolute_error": max_energy_error, "max_field_absolute_error": max_field_error}
         except Exception as error:
             errors.append(f"{type(error).__name__}: {error}")
-        print(json.dumps({"passed": not errors, "instance": args.instance, "metrics": metrics, "errors": errors}, indent=2))
+        passed = not errors
+        tolerance = max(float(policy.get("absolute_tolerance", 0.0)), 1e-30)
+        metric_scores = {
+            "energy": max(
+                0.0,
+                1.0 - metrics.get("max_energy_absolute_error", float("inf")) / tolerance,
+            ),
+            "canonical_field": max(
+                0.0,
+                1.0 - metrics.get("max_field_absolute_error", float("inf")) / tolerance,
+            ),
+            "composition_and_equivariance": 1.0 if passed else 0.0,
+        }
+        score = (
+            0.25 * metric_scores["energy"]
+            + 0.55 * metric_scores["canonical_field"]
+            + 0.2 * metric_scores["composition_and_equivariance"]
+            if passed
+            else 0.0
+        )
+        print(json.dumps({"passed": passed, "score": score, "instance": args.instance, "metrics": metrics, "metric_scores": metric_scores, "errors": errors}, indent=2))
         return 0 if not errors else 1
 
 
@@ -990,7 +1107,7 @@ def _build_variable_nbody(
             _file("task_card.json", _json_bytes(_task_card(task_id, "Solve variable-N gravitational dynamics", "Compute exact softened N-body energies and canonical fields across changing body counts and close encounters.", count, "results.json", "nbody-query-results-v1", str(settings["level"]))), AGENT),
             _file("main.py", _ale_main(task_id, count, "problems.json", "results.json", "Solve every variable-body softened gravitational Hamiltonian query exactly; preserve query and body ordering in safe JSON."), AGENT, executable=True),
             _file("software/solve_queries.py", starter, AGENT, executable=True),
-            _file("software/requirements.txt", "numpy>=1.26\n", AGENT),
+            _file("software/requirements.txt", "numpy>=1.26,<3\n", AGENT),
             _file("reference/grader.py", grader, EVALUATOR, executable=True),
         ]
     )
@@ -1059,43 +1176,57 @@ def _build_canonical_recovery(
         instance_id = f"{index:03d}"
         seed = _seed(master_seed, task_id, index)
         seeds.append(seed)
-        rng = np.random.default_rng(seed)
-        raw = rng.normal(size=(4, 4))
+        truth_rng = np.random.default_rng(
+            _seed(master_seed, task_id, index, "truth")
+        )
+        train_rng = np.random.default_rng(
+            _seed(master_seed, task_id, index, "train")
+        )
+        validation_rng = np.random.default_rng(
+            _seed(master_seed, task_id, index, "validation")
+        )
+        hidden_rng = np.random.default_rng(
+            _seed(master_seed, task_id, index, "hidden")
+        )
+        rollout_rng = np.random.default_rng(
+            _seed(master_seed, task_id, index, "rollout")
+        )
+        raw = truth_rng.normal(size=(4, 4))
         orthogonal, _ = np.linalg.qr(raw)
-        scales = np.diag(rng.uniform(0.7, 1.4, size=4))
+        scales = np.diag(truth_rng.uniform(0.7, 1.4, size=4))
         shear = np.eye(4)
-        shear[0, 2] = rng.uniform(0.18, 0.35)
-        shear[1, 3] = rng.uniform(-0.3, -0.16)
+        shear[0, 2] = truth_rng.uniform(0.18, 0.35)
+        shear[1, 3] = truth_rng.uniform(-0.3, -0.16)
         observed_from_canonical = orthogonal @ scales @ shear
         canonical_from_observed = np.linalg.inv(observed_from_canonical)
         kinetic = np.array(
             [
-                [rng.uniform(0.75, 1.3), rng.uniform(-0.13, 0.13)],
-                [0.0, rng.uniform(0.8, 1.35)],
+                [truth_rng.uniform(0.75, 1.3), truth_rng.uniform(-0.13, 0.13)],
+                [0.0, truth_rng.uniform(0.8, 1.35)],
             ]
         )
         kinetic[1, 0] = kinetic[0, 1]
         stiffness = np.array(
             [
-                [rng.uniform(0.8, 1.5), rng.uniform(-0.22, 0.22)],
-                [0.0, rng.uniform(0.9, 1.6)],
+                [truth_rng.uniform(0.8, 1.5), truth_rng.uniform(-0.22, 0.22)],
+                [0.0, truth_rng.uniform(0.9, 1.6)],
             ]
         )
         stiffness[1, 0] = stiffness[0, 1]
-        quartic = rng.uniform(0.18, 0.55, size=3)
+        quartic = truth_rng.uniform(0.18, 0.55, size=3)
 
-        def sample(number: int, q_limit: float, p_limit: float) -> np.ndarray:
+        def sample(random, number: int, q_limit: float, p_limit: float) -> np.ndarray:
             canonical = np.concatenate(
                 (
-                    rng.uniform(-q_limit, q_limit, size=(number, 2)),
-                    rng.uniform(-p_limit, p_limit, size=(number, 2)),
+                    random.uniform(-q_limit, q_limit, size=(number, 2)),
+                    random.uniform(-p_limit, p_limit, size=(number, 2)),
                 ),
                 axis=-1,
             )
             return canonical @ observed_from_canonical.T
 
-        train_states = sample(train_count, 0.8, 0.75)
-        validation_states = sample(validation_count, 1.1, 0.95)
+        train_states = sample(train_rng, train_count, 0.8, 0.75)
+        validation_states = sample(validation_rng, validation_count, 1.1, 0.95)
         noise = (0.0035 + 0.0005 * index) * noise_scale
         train_derivatives = _latent_field(
             train_states,
@@ -1103,16 +1234,20 @@ def _build_canonical_recovery(
             kinetic,
             stiffness,
             quartic,
-        ) + rng.normal(scale=noise, size=train_states.shape)
+        ) + train_rng.normal(scale=noise, size=train_states.shape)
         validation_derivatives = _latent_field(
             validation_states,
             canonical_from_observed,
             kinetic,
             stiffness,
             quartic,
-        ) + rng.normal(scale=noise, size=validation_states.shape)
-        hidden_states = sample(hidden_count, hidden_q_limit, 1.35 * ood_scale)
-        rollout_initials = sample(rollout_count, 1.45 * ood_scale, 1.0 * ood_scale)
+        ) + validation_rng.normal(scale=noise, size=validation_states.shape)
+        hidden_states = sample(
+            hidden_rng, hidden_count, hidden_q_limit, 1.35 * ood_scale
+        )
+        rollout_initials = sample(
+            rollout_rng, rollout_count, 1.45 * ood_scale, 1.0 * ood_scale
+        )
         times = np.linspace(0.0, 3.5 * horizon_scale, rollout_steps)
         public = {
             "schema_version": 1,
@@ -1170,6 +1305,7 @@ def _build_canonical_recovery(
                 _file(f"reference/instances/{instance_id}/truth.json", _json_bytes(truth), EVALUATOR),
                 _file(f"example/instances/{instance_id}/golden.json", _json_bytes(golden), EVALUATOR),
                 _file(f"example/instances/{instance_id}/mutant.json", _json_bytes(mutant), EVALUATOR),
+                *_contract_mutant_files(instance_id, golden),
             ]
         )
 
@@ -1321,7 +1457,29 @@ def _build_canonical_recovery(
                 errors.append("hidden transformed rollout MSE exceeds threshold")
         except Exception as error:
             errors.append(f"{type(error).__name__}: {error}")
-        print(json.dumps({"passed": not errors, "instance": args.instance, "metrics": metrics, "errors": errors}, indent=2))
+        passed = not errors
+        thresholds = truth.get("thresholds", {})
+        metric_scores = {
+            "hidden_induced_field": max(
+                0.0,
+                1.0 - metrics.get("field_mse", float("inf"))
+                / max(float(thresholds.get("field_mse_max", 0.0)), 1e-30),
+            ),
+            "transformed_rollout": max(
+                0.0,
+                1.0 - metrics.get("rollout_mse", float("inf"))
+                / max(float(thresholds.get("rollout_mse_max", 0.0)), 1e-30),
+            ),
+            "artifact_structure": 1.0 if passed else 0.0,
+        }
+        score = (
+            0.45 * metric_scores["hidden_induced_field"]
+            + 0.45 * metric_scores["transformed_rollout"]
+            + 0.1 * metric_scores["artifact_structure"]
+            if passed
+            else 0.0
+        )
+        print(json.dumps({"passed": passed, "score": score, "instance": args.instance, "metrics": metrics, "metric_scores": metric_scores, "errors": errors}, indent=2))
         return 0 if not errors else 1
 
 
@@ -1334,7 +1492,7 @@ def _build_canonical_recovery(
             _file("task_card.json", _json_bytes(_task_card(task_id, "Recover hidden canonical coordinates", "Jointly identify a canonicalizing transform and nonlinear quartic energy from mixed-coordinate observations.", count, "recovery.json", "latent-canonical-hamiltonian-v1", str(settings["level"]))), AGENT),
             _file("main.py", _ale_main(task_id, count, "observations.json", "recovery.json", "Recover latent canonical coordinates and a nonlinear scalar Hamiltonian; grading uses the induced field, OOD states, and rollouts."), AGENT, executable=True),
             _file("software/recover.py", starter, AGENT, executable=True),
-            _file("software/requirements.txt", "numpy>=1.26\n", AGENT),
+            _file("software/requirements.txt", "numpy>=1.26,<3\n", AGENT),
             _file("reference/grader.py", grader, EVALUATOR, executable=True),
         ]
     )
@@ -1366,9 +1524,11 @@ def build_task_files(
     *,
     master_seed: int,
     instances: int | None = None,
+    build_context: Any | None = None,
 ) -> list[BuildFile]:
     """Build one registered hard HNN task without touching the smoke family."""
 
+    del build_context  # Built-in HNN fixtures use analytic trusted generators.
     if not isinstance(project, dict) or not isinstance(task, dict):
         raise TypeError("project and task must be dictionaries")
     task_id = task.get("id") or task.get("task_id")

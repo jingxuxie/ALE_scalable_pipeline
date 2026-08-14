@@ -123,6 +123,66 @@ class ProjectValidationTests(unittest.TestCase):
             path.write_text(json.dumps(project), encoding="utf-8")
             self.assertEqual(load_project(path), project)
 
+    def test_project_requires_at_least_one_task(self) -> None:
+        project = valid_project()
+        project["tasks"] = []
+        issues = validate_project(project)
+        self.assertTrue(
+            any(
+                issue.code == "invalid_value" and issue.path == "/tasks"
+                for issue in issues
+            )
+        )
+        with self.assertRaisesRegex(ValueError, "tasks must contain at least one"):
+            require_valid_project(project)
+
+    def test_resolved_asset_snapshots_are_content_bound(self) -> None:
+        project = valid_project()
+        files = [
+            {
+                "relative_path": "data/train.csv",
+                "size_bytes": 3,
+                "sha256": hashlib.sha256(b"a,b").hexdigest(),
+                "media_type": "text/csv",
+                "extraction_status": "extracted",
+                "extractor": "utf-8-text/v1",
+            }
+        ]
+        tree = [
+            {
+                "relative_path": item["relative_path"],
+                "size_bytes": item["size_bytes"],
+                "sha256": item["sha256"],
+            }
+            for item in files
+        ]
+        project["asset_snapshots"] = [
+            {
+                "schema_version": "paper2ale.asset-snapshot/v1",
+                "asset_id": "dataset.snapshot",
+                "kind": "dataset",
+                "content_sha256": hashlib.sha256(
+                    canonical_json_bytes(tree)
+                ).hexdigest(),
+                "size_bytes": 3,
+                "metadata": {"license": "test-only"},
+                "files": files,
+            }
+        ]
+        project["source_bundle"][0]["asset_id"] = "dataset.snapshot"
+        self.assertEqual(validate_project(project), [])
+
+        project["asset_snapshots"][0]["files"][0]["sha256"] = "0" * 64
+        codes = {issue.code for issue in validate_project(project)}
+        self.assertIn("asset_digest_mismatch", codes)
+
+    def test_asset_snapshot_rejects_local_paths_and_unknown_links(self) -> None:
+        project = valid_project()
+        project["source_bundle"][0]["asset_id"] = "missing.snapshot"
+        self.assertIn(
+            "unknown_reference", {issue.code for issue in validate_project(project)}
+        )
+
     def test_top_level_is_strict(self) -> None:
         project = valid_project()
         project["surprise"] = True
@@ -149,6 +209,20 @@ class ProjectValidationTests(unittest.TestCase):
         project["source_bundle"][0]["sha256"] = "A" * 64
         issues = validate_project(project)
         self.assertTrue(any(issue.code == "invalid_sha256" for issue in issues))
+
+    def test_source_kind_is_a_strict_enum(self) -> None:
+        for invalid_kind in ("paper ", "data", "unknown", 1):
+            with self.subTest(kind=invalid_kind):
+                project = valid_project()
+                project["source_bundle"][0]["kind"] = invalid_kind
+                issues = validate_project(project)
+                self.assertTrue(
+                    any(
+                        issue.code == "invalid_source_kind"
+                        and issue.path == "/source_bundle/0/kind"
+                        for issue in issues
+                    )
+                )
 
     def test_referential_integrity(self) -> None:
         project = valid_project()

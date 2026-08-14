@@ -34,6 +34,7 @@ from paper2ale.source_ingest import (  # noqa: E402
     EvidenceChunk,
     ingest_source,
     ingest_sources,
+    normalize_source_metadata,
 )
 
 
@@ -63,7 +64,7 @@ def generated_project(
     if include_tasks:
         tasks.append(
             {
-                "id": "generated-task",
+                "id": "hnn-symplectic-gradient",
                 "title": "Generated task",
                 "mode": "specification_preserving",
                 "family": family,
@@ -121,7 +122,38 @@ def generated_project(
     }
 
 
+def generated_compilable_project(
+    source_ref: dict,
+    *,
+    include_provider_binding: bool = False,
+) -> tuple[dict, dict]:
+    """Return a generic proposal plus its separately trusted local binding."""
+
+    project = json.loads(
+        (REPOSITORY_ROOT / "examples" / "generic" / "project.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    project["project_id"] = "generated-project"
+    project["source_bundle"] = [source_ref]
+    for record in project["evidence_graph"]["records"]:
+        record["source_refs"] = [source_ref["id"]]
+    task = project["tasks"][0]
+    binding = task.pop("workflow_binding")
+    if include_provider_binding:
+        task["workflow_binding"] = binding
+    return project, binding
+
+
 class SourceIngestionTests(unittest.TestCase):
+    def test_source_metadata_rejects_unknown_kind(self) -> None:
+        for invalid_kind in ("paper ", "data", "unknown"):
+            with self.subTest(kind=invalid_kind):
+                metadata = source_metadata()
+                metadata["kind"] = invalid_kind
+                with self.assertRaisesRegex(ValueError, "kind must be one of"):
+                    normalize_source_metadata(metadata)
+
     def test_text_is_hashed_chunked_and_pinned(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             path = Path(temporary) / "paper.txt"
@@ -207,6 +239,17 @@ class RequestTests(unittest.TestCase):
         self.assertTrue(references)
         self.assertTrue(all(reference.startswith("#/") for reference in references))
         self.assertFalse(any(".schema.json" in reference for reference in references))
+        task_schema = schema["$defs"]["task_blueprint"]
+        self.assertEqual(task_schema["properties"]["family"], {"enum": ["generic"]})
+        self.assertFalse(task_schema["properties"]["workflow_binding"])
+        self.assertNotIn(
+            "workflow_binding",
+            {
+                required
+                for condition in task_schema["allOf"]
+                for required in condition.get("then", {}).get("required", [])
+            },
+        )
 
     def test_request_binds_project_sources_and_excludes_local_paths(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
@@ -260,15 +303,20 @@ class GenerationTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
             _, sources = self.make_source(root)
-            project = generated_project(sources[0].source_dict())
+            proposal, binding = generated_compilable_project(
+                sources[0].source_dict()
+            )
+            project = json.loads(json.dumps(proposal))
+            project["tasks"][0]["workflow_binding"] = binding
             output = root / "nested" / "project.json"
-            provider = MockProvider([project])
+            provider = MockProvider([proposal])
             result = generate_project(
                 sources,
                 provider,
                 output,
                 project_id="generated-project",
                 schema_dir=REPOSITORY_ROOT / "schemas",
+                trusted_workflow_bindings={project["tasks"][0]["id"]: binding},
             )
 
             self.assertEqual(load_project(output), project)
@@ -295,7 +343,9 @@ class GenerationTests(unittest.TestCase):
             self.assertEqual(provider.requests, [])
             self.assertEqual(output.read_bytes(), b"existing")
 
-            rewritten = generated_project(sources[0].source_dict())
+            rewritten, binding = generated_compilable_project(
+                sources[0].source_dict()
+            )
             rewritten["source_bundle"][0]["version"] = "unrequested-latest"
             with self.assertRaisesRegex(ValueError, "exactly match"):
                 generate_project(
@@ -305,6 +355,9 @@ class GenerationTests(unittest.TestCase):
                     project_id="generated-project",
                     schema_dir=REPOSITORY_ROOT / "schemas",
                     overwrite=True,
+                    trusted_workflow_bindings={
+                        rewritten["tasks"][0]["id"]: binding
+                    },
                 )
             self.assertEqual(output.read_bytes(), b"existing")
 
@@ -312,25 +365,22 @@ class GenerationTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
             _, sources = self.make_source(root)
-            cases = (
-                (
-                    generated_project(
-                        sources[0].source_dict(), project_id="different-project"
-                    ),
-                    "project_id",
-                ),
-                (
-                    generated_project(sources[0].source_dict(), include_tasks=False),
-                    "at least one task",
-                ),
-                (
-                    generated_project(
-                        sources[0].source_dict(), family="unregistered-family"
-                    ),
-                    "unsupported task family",
-                ),
+            different, binding = generated_compilable_project(
+                sources[0].source_dict()
             )
-            for index, (project, message) in enumerate(cases):
+            different["project_id"] = "different-project"
+            empty = generated_project(
+                sources[0].source_dict(), include_tasks=False
+            )
+            unknown = generated_project(
+                sources[0].source_dict(), family="unregistered-family"
+            )
+            cases = (
+                (different, {different["tasks"][0]["id"]: binding}, "project_id"),
+                (empty, {}, "at least one task"),
+                (unknown, {unknown["tasks"][0]["id"]: {}}, "unsupported task family"),
+            )
+            for index, (project, bindings, message) in enumerate(cases):
                 with self.subTest(message=message), self.assertRaisesRegex(
                     ValueError, message
                 ):
@@ -340,12 +390,17 @@ class GenerationTests(unittest.TestCase):
                         root / f"project-{index}.json",
                         project_id="generated-project",
                         schema_dir=REPOSITORY_ROOT / "schemas",
+                        trusted_workflow_bindings=bindings,
                     )
+
+            proposal, binding = generated_compilable_project(
+                sources[0].source_dict()
+            )
 
             class LengthProvider:
                 def complete(self, request):
                     return CompletionResponse(
-                        data=generated_project(sources[0].source_dict()),
+                        data=proposal,
                         finish_reason="length",
                     )
 
@@ -356,7 +411,75 @@ class GenerationTests(unittest.TestCase):
                     root / "length.json",
                     project_id="generated-project",
                     schema_dir=REPOSITORY_ROOT / "schemas",
+                    trusted_workflow_bindings={
+                        proposal["tasks"][0]["id"]: binding
+                    },
                 )
+
+    def test_untrusted_binding_and_authored_only_family_are_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            _, sources = self.make_source(root)
+            injected, binding = generated_compilable_project(
+                sources[0].source_dict(), include_provider_binding=True
+            )
+            task_id = injected["tasks"][0]["id"]
+            with self.assertRaisesRegex(ValueError, "may not supply workflow_binding"):
+                generate_project(
+                    sources,
+                    MockProvider([injected]),
+                    root / "injected.json",
+                    project_id="generated-project",
+                    schema_dir=REPOSITORY_ROOT / "schemas",
+                    trusted_workflow_bindings={task_id: binding},
+                )
+            self.assertFalse((root / "injected.json").exists())
+
+            fixed = generated_project(sources[0].source_dict())
+            with self.assertRaisesRegex(ValueError, "authored-only task family 'hnn'"):
+                generate_project(
+                    sources,
+                    MockProvider([fixed]),
+                    root / "fixed.json",
+                    project_id="generated-project",
+                    schema_dir=REPOSITORY_ROOT / "schemas",
+                    trusted_workflow_bindings={fixed["tasks"][0]["id"]: binding},
+                )
+            self.assertFalse((root / "fixed.json").exists())
+
+            proposal, binding = generated_compilable_project(
+                sources[0].source_dict()
+            )
+            tampered = json.loads(json.dumps(binding))
+            tampered["binding_id"] = "binding_" + "0" * 64
+            with self.assertRaisesRegex(ValueError, "binding_id"):
+                generate_project(
+                    sources,
+                    MockProvider([proposal]),
+                    root / "tampered.json",
+                    project_id="generated-project",
+                    schema_dir=REPOSITORY_ROOT / "schemas",
+                    trusted_workflow_bindings={
+                        proposal["tasks"][0]["id"]: tampered
+                    },
+                )
+            self.assertFalse((root / "tampered.json").exists())
+
+    def test_missing_local_binding_fails_before_calling_provider(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            _, sources = self.make_source(root)
+            proposal, _ = generated_compilable_project(sources[0].source_dict())
+            provider = MockProvider([proposal])
+            with self.assertRaisesRegex(ValueError, "paper2ale orchestrate"):
+                generate_project(
+                    sources,
+                    provider,
+                    root / "project.json",
+                    project_id="generated-project",
+                    schema_dir=REPOSITORY_ROOT / "schemas",
+                )
+            self.assertEqual(provider.requests, [])
 
     def test_provider_errors_are_sanitized(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
@@ -367,6 +490,9 @@ class GenerationTests(unittest.TestCase):
                 def complete(self, request):
                     raise RuntimeError("secret-token-123")
 
+            proposal, binding = generated_compilable_project(
+                sources[0].source_dict()
+            )
             with self.assertRaises(GenerationProviderError) as raised:
                 generate_project(
                     sources,
@@ -374,6 +500,9 @@ class GenerationTests(unittest.TestCase):
                     root / "project.json",
                     project_id="generated-project",
                     schema_dir=REPOSITORY_ROOT / "schemas",
+                    trusted_workflow_bindings={
+                        proposal["tasks"][0]["id"]: binding
+                    },
                 )
             self.assertNotIn("secret-token-123", str(raised.exception))
 
@@ -396,7 +525,9 @@ class GenerationTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
             _, sources = self.make_source(root)
-            project = generated_project(sources[0].source_dict())
+            project, binding = generated_compilable_project(
+                sources[0].source_dict()
+            )
             request = prepare_generation_request(
                 sources,
                 project_id="generated-project",
@@ -412,6 +543,7 @@ class GenerationTests(unittest.TestCase):
                 root / "replay-project.json",
                 project_id="generated-project",
                 schema_dir=REPOSITORY_ROOT / "schemas",
+                trusted_workflow_bindings={project["tasks"][0]["id"]: binding},
             )
             self.assertEqual(replay_result.finish_reason, "replay")
 
@@ -422,6 +554,7 @@ class GenerationTests(unittest.TestCase):
                 root / "command-project.json",
                 project_id="generated-project",
                 schema_dir=REPOSITORY_ROOT / "schemas",
+                trusted_workflow_bindings={project["tasks"][0]["id"]: binding},
             )
             self.assertEqual(command_result.finish_reason, "stop")
 
@@ -445,13 +578,13 @@ class GenerateCliTests(unittest.TestCase):
         )
         return source_path, metadata_path, project, str(replay_path)
 
-    def test_cli_replay_generation_and_optional_build(self) -> None:
+    def test_cli_generate_fails_closed_and_recommends_orchestrate(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
             source, metadata, _, replay = self.fixture(root)
             output = root / "project.json"
-            stdout = io.StringIO()
-            with redirect_stdout(stdout):
+            stderr = io.StringIO()
+            with redirect_stderr(stderr):
                 status = main(
                     (
                         "generate",
@@ -468,15 +601,15 @@ class GenerateCliTests(unittest.TestCase):
                         str(REPOSITORY_ROOT / "schemas"),
                     )
                 )
-            self.assertEqual(status, 0)
-            self.assertEqual(json.loads(stdout.getvalue())["status"], "validated_candidate")
-            self.assertTrue(output.is_file())
+            self.assertEqual(status, 2)
+            self.assertIn("paper2ale orchestrate", stderr.getvalue())
+            self.assertFalse(output.exists())
 
             built = SimpleNamespace(to_dict=lambda: {"build_id": "build-test"})
             second_output = root / "second-project.json"
-            stdout = io.StringIO()
-            with patch("paper2ale.cli.build_project", return_value=built) as build, redirect_stdout(
-                stdout
+            stderr = io.StringIO()
+            with patch("paper2ale.cli.build_project", return_value=built) as build, redirect_stderr(
+                stderr
             ):
                 status = main(
                     (
@@ -496,12 +629,10 @@ class GenerateCliTests(unittest.TestCase):
                         "--build-force",
                     )
                 )
-            self.assertEqual(status, 0)
-            self.assertEqual(json.loads(stdout.getvalue())["build"]["build_id"], "build-test")
-            self.assertEqual(Path(build.call_args.args[0]), second_output.resolve())
-            self.assertFalse(build.call_args.kwargs["resume"])
-            self.assertTrue(build.call_args.kwargs["force"])
-            self.assertIsNone(build.call_args.kwargs["difficulty_level"])
+            self.assertEqual(status, 2)
+            self.assertIn("paper2ale orchestrate", stderr.getvalue())
+            build.assert_not_called()
+            self.assertFalse(second_output.exists())
 
     def test_cli_command_argv_and_positive_limits(self) -> None:
         parser = _parser()
@@ -528,8 +659,8 @@ class GenerateCliTests(unittest.TestCase):
             source, metadata, project, _ = self.fixture(root)
             output = root / "command.json"
             envelope = json.dumps({"data": project}, separators=(",", ":"))
-            stdout = io.StringIO()
-            with redirect_stdout(stdout):
+            stderr = io.StringIO()
+            with redirect_stderr(stderr):
                 status = main(
                     (
                         "generate",
@@ -549,8 +680,9 @@ class GenerateCliTests(unittest.TestCase):
                         str(REPOSITORY_ROOT / "schemas"),
                     )
                 )
-            self.assertEqual(status, 0)
-            self.assertTrue(output.is_file())
+            self.assertEqual(status, 2)
+            self.assertIn("paper2ale orchestrate", stderr.getvalue())
+            self.assertFalse(output.exists())
 
     def test_cli_propagates_difficulty_and_calibrates_trials(self) -> None:
         built = SimpleNamespace(to_dict=lambda: {"build_id": "difficulty-build"})
@@ -576,6 +708,10 @@ class GenerateCliTests(unittest.TestCase):
                     "level": "hard",
                     "passed": index < 40,
                     "model": "test-model",
+                    "agent": "test-agent",
+                    "trial_id": f"trial-{index:03d}",
+                    "seed": index,
+                    "attempt": 0,
                 }
                 for index in range(100)
             ]

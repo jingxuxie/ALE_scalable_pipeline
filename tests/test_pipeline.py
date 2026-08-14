@@ -6,6 +6,7 @@ from pathlib import Path
 import shutil
 import sys
 import tempfile
+import threading
 import unittest
 from unittest.mock import patch
 import zipfile
@@ -15,10 +16,22 @@ REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPOSITORY_ROOT / "src"))
 
 from paper2ale.packaging import BuildFile  # noqa: E402
+from paper2ale.assets import (  # noqa: E402
+    AssetCache,
+    asset_bundle_digest,
+    snapshot_asset,
+)
 from paper2ale.pipeline import (  # noqa: E402
     _build_task_in_memory,
+    audit_project,
     build_project,
+    publish_project,
     validate_archive,
+)
+from paper2ale.state import (  # noqa: E402
+    StageLeaseLostError,
+    StageOwnershipError,
+    StageStateStore,
 )
 
 
@@ -118,6 +131,39 @@ def fake_builder(
     ]
 
 
+def fake_ale_builder(
+    project: dict,
+    task: dict,
+    *,
+    master_seed: int,
+    instances: int | None = None,
+) -> list[BuildFile]:
+    task_id = str(task["id"])
+    return [
+        BuildFile(
+            "task_card.json",
+            json.dumps({"taskId": f"research_workflows/{task_id}"}).encode(),
+            "agent",
+        ),
+        BuildFile("main.py", b"print('task')\n", "agent", True),
+        BuildFile("description.md", b"# Test task\n", "agent"),
+        BuildFile("input/instances/000/input.json", b"{}\n", "agent"),
+        BuildFile("software/runner.py", b"print('run')\n", "agent", True),
+        BuildFile(
+            "reference/instances/000/evaluation.json",
+            b'{"expected":42}\n',
+            "evaluator",
+        ),
+        BuildFile(
+            "reference/grader.py",
+            b"raise SystemExit(0)\n",
+            "evaluator",
+            True,
+        ),
+        BuildFile("author/provenance.json", b'{"trusted":true}\n', "author"),
+    ]
+
+
 class PipelineBuildTests(unittest.TestCase):
     def write_project(self, root: Path, task_ids: tuple[str, ...] = ("task-a",)) -> Path:
         path = root / "project.json"
@@ -171,6 +217,95 @@ class PipelineBuildTests(unittest.TestCase):
                     (parallel_root / relative).read_bytes(),
                     relative,
                 )
+
+    def test_empty_project_fails_audit_and_release_closed(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            project_path = self.write_project(root, ())
+            audit = audit_project(project_path)
+            self.assertFalse(audit["preflight_passed"])
+            self.assertFalse(audit["publication_ready"])
+            self.assertEqual(audit["tasks"], [])
+            with self.assertRaisesRegex(ValueError, "tasks must contain at least one"):
+                publish_project(project_path, root / "out", jobs=1, resume=False)
+
+    def test_maximum_length_ids_use_short_portable_physical_paths(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            project = project_document(("t" * 128,))
+            project["project_id"] = "p" * 128
+            project_path = root / "project.json"
+            project_path.write_text(json.dumps(project), encoding="utf-8")
+            with patch(
+                "paper2ale.pipeline._builder_for",
+                return_value=fake_ale_builder,
+            ):
+                first = build_project(
+                    project_path,
+                    root / "out",
+                    jobs=1,
+                    resume=False,
+                )
+            task = first.tasks[0]
+            self.assertRegex(Path(first.root).parent.name, r"^p-[0-9a-f]{24}$")
+            self.assertRegex(task.directory, r"^t-[0-9a-f]{24}$")
+            self.assertLessEqual(max(len(part) for part in Path(first.root).parts), 64)
+            for archive in task.archives.values():
+                self.assertEqual(
+                    validate_archive(
+                        Path(first.root) / "tasks" / task.directory / archive["path"]
+                    ),
+                    (),
+                )
+            self.assertIn("ale_local", task.archives)
+            with patch(
+                "paper2ale.pipeline._builder_for",
+                return_value=fake_ale_builder,
+            ):
+                resumed = build_project(
+                    project_path,
+                    root / "out",
+                    jobs=1,
+                    resume=True,
+                )
+            self.assertTrue(resumed.resumed)
+            self.assertEqual(resumed.tasks[0].directory, task.directory)
+
+    def test_deep_ale_layout_is_validated_and_kept_as_zip(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            project_path = self.write_project(root)
+            with patch(
+                "paper2ale.pipeline._builder_for",
+                return_value=fake_ale_builder,
+            ):
+                result = build_project(
+                    project_path,
+                    root / "a-reasonably-long-publication-output-directory",
+                    jobs=1,
+                    resume=False,
+                )
+            task_root = Path(result.root) / "tasks" / "task-a"
+            deployment_zip = task_root / "bundles" / "task-a.ale-local.zip"
+            self.assertTrue(deployment_zip.is_file())
+            self.assertFalse((task_root / "deploy").exists())
+            self.assertEqual(validate_archive(deployment_zip), ())
+            with zipfile.ZipFile(deployment_zip) as archive:
+                self.assertIn(
+                    "task-data/research_workflows/task-a/000/"
+                    "reference/instances/000/evaluation.json",
+                    archive.namelist(),
+                )
+
+    @unittest.skipUnless(sys.platform == "win32", "Windows path-length semantics")
+    def test_long_output_root_fails_before_materialization_with_actionable_error(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            project_path = self.write_project(root)
+            output = root / ("long-output-" + "x" * 140)
+            with self.assertRaisesRegex(ValueError, "shorter --out"):
+                self.build(project_path, output, jobs=1, resume=False)
+            self.assertFalse(any(output.rglob("profiles")))
 
     def test_profiles_permissions_manifests_and_truthful_qa(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
@@ -228,13 +363,31 @@ class PipelineBuildTests(unittest.TestCase):
 
             self.assertTrue(task.qa["preflight_passed"])
             self.assertFalse(task.qa["publication_ready"])
+            self.assertTrue(result.preflight_passed)
+            self.assertFalse(result.publication_ready)
+            self.assertEqual(
+                result.to_dict()["status"], "candidate_not_publication_ready"
+            )
             for check in (
                 "runtime_reference",
                 "mutation_resistance",
-                "resource_budget",
+                "publication_smoke_budget",
                 "reproducibility",
             ):
                 self.assertEqual(task.qa["checks"][check]["status"], "not_run")
+
+    def test_publish_refuses_a_preflight_only_task(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            project_path = self.write_project(root)
+            with patch("paper2ale.pipeline._builder_for", return_value=fake_builder):
+                with self.assertRaisesRegex(ValueError, "not publication-ready"):
+                    publish_project(
+                        project_path,
+                        root / "release",
+                        jobs=1,
+                        resume=False,
+                    )
 
     def test_task_fingerprint_includes_executable_mode(self) -> None:
         project = project_document(("task-a",))
@@ -274,6 +427,21 @@ class PipelineBuildTests(unittest.TestCase):
         with patch("paper2ale.pipeline._builder_for", return_value=leaking_builder):
             with self.assertRaisesRegex(ValueError, "private sentinel"):
                 _build_task_in_memory(project, task, 0, 1)
+
+    def test_fixed_family_cannot_be_relabelled_with_unreviewed_sources(self) -> None:
+        project = json.loads(
+            (
+                REPOSITORY_ROOT / "examples" / "hnn" / "project.json"
+            ).read_text(encoding="utf-8")
+        )
+        project["source_bundle"][0]["version"] = "different-paper"
+        with self.assertRaisesRegex(ValueError, "exact reviewed paper/code"):
+            _build_task_in_memory(
+                project,
+                project["tasks"][0],
+                int(project["defaults"]["master_seed"]),
+                1,
+            )
 
     def test_tampered_or_missing_archive_is_not_resumed_and_force_rebuilds(self) -> None:
         for mutation in ("tamper", "missing"):
@@ -329,6 +497,108 @@ class PipelineBuildTests(unittest.TestCase):
             self.assertTrue(Path(first.root).is_dir())
             self.assertTrue(Path(second.root).is_dir())
 
+    def test_compiler_registry_implementation_changes_build_identity(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            project_path = self.write_project(root)
+            identity_v1 = {
+                "schema_version": "paper2ale.compiler-registry/v1",
+                "families": [{"family": "hnn", "implementation": "a" * 64}],
+            }
+            identity_v2 = {
+                "schema_version": "paper2ale.compiler-registry/v1",
+                "families": [{"family": "hnn", "implementation": "b" * 64}],
+            }
+            with patch(
+                "paper2ale.pipeline._builder_for", return_value=fake_builder
+            ), patch(
+                "paper2ale.pipeline.registered_compiler_identity",
+                return_value=identity_v1,
+            ):
+                first = build_project(
+                    project_path, root / "out", jobs=1, resume=False
+                )
+            with patch(
+                "paper2ale.pipeline._builder_for", return_value=fake_builder
+            ), patch(
+                "paper2ale.pipeline.registered_compiler_identity",
+                return_value=identity_v2,
+            ):
+                second = build_project(
+                    project_path, root / "out", jobs=1, resume=False
+                )
+            self.assertNotEqual(first.build_id, second.build_id)
+
+    def test_snapshot_bound_asset_cache_reaches_trusted_builder(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            source = root / "dataset.json"
+            source.write_bytes(b'{"paper_value":17}\n')
+            cache = AssetCache(root / "cache")
+            snapshot = snapshot_asset(
+                source,
+                asset_id="paper-dataset",
+                kind="dataset",
+                cache=cache,
+            )
+            project = project_document(("task-a",))
+            project["asset_snapshots"] = [snapshot.to_dict()]
+            project_path = root / "project.json"
+            project_path.write_text(json.dumps(project), encoding="utf-8")
+
+            def asset_builder(
+                project,
+                task,
+                *,
+                master_seed,
+                instances=None,
+                build_context,
+            ):
+                data = build_context.read_asset(
+                    "paper-dataset", "dataset.json"
+                )
+                return [BuildFile("input/dataset.json", data, "agent")]
+
+            with patch(
+                "paper2ale.pipeline._builder_for", return_value=asset_builder
+            ):
+                result = build_project(
+                    project_path,
+                    root / "out",
+                    jobs=1,
+                    resume=False,
+                    asset_cache=cache,
+                )
+            catalog = json.loads(
+                (Path(result.root) / "catalog.json").read_text(encoding="utf-8")
+            )
+            self.assertEqual(
+                catalog["asset_bundle_digest"],
+                asset_bundle_digest((snapshot,)),
+            )
+            self.assertRegex(catalog["asset_bundle_digest"], r"^[0-9a-f]{64}$")
+            agent_root = (
+                Path(result.root)
+                / "tasks"
+                / result.tasks[0].directory
+                / "profiles"
+                / "agent"
+            )
+            self.assertEqual(
+                (agent_root / "input" / "dataset.json").read_bytes(),
+                b'{"paper_value":17}\n',
+            )
+            with patch(
+                "paper2ale.pipeline._builder_for", return_value=asset_builder
+            ):
+                with self.assertRaisesRegex(RuntimeError, "no AssetCache"):
+                    build_project(
+                        project_path,
+                        root / "without-cache",
+                        jobs=1,
+                        resume=False,
+                    )
+
     def test_no_resume_refuses_existing_and_force_quarantines_valid_build(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
@@ -365,6 +635,139 @@ class PipelineBuildTests(unittest.TestCase):
             ):
                 with self.assertRaisesRegex(ValueError, "archive.*failed validation"):
                     build_project(project_path, root / "out", resume=False)
+
+    def test_long_build_heartbeat_renews_before_worker_completion(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            project_path = self.write_project(root)
+            renewed = threading.Event()
+            renewals: list[tuple[str, str]] = []
+            original_renew = StageStateStore.renew
+
+            def observed_renew(store, stage_key, owner, *, lease_s=300.0):
+                result = original_renew(
+                    store, stage_key, owner, lease_s=lease_s
+                )
+                renewals.append((stage_key, owner))
+                renewed.set()
+                return result
+
+            def waits_for_heartbeat(project, task, *, master_seed, instances=None):
+                if not renewed.wait(1.0):
+                    raise AssertionError("worker completed without a lease renewal")
+                return fake_builder(
+                    project,
+                    task,
+                    master_seed=master_seed,
+                    instances=instances,
+                )
+
+            with patch(
+                "paper2ale.pipeline._builder_for",
+                return_value=waits_for_heartbeat,
+            ), patch(
+                "paper2ale.pipeline._BUILD_HEARTBEAT_INTERVAL_SECONDS",
+                0.01,
+            ), patch(
+                "paper2ale.pipeline._BUILD_HEARTBEAT_POLL_SECONDS",
+                0.005,
+            ), patch.object(
+                StageStateStore,
+                "renew",
+                new=observed_renew,
+            ):
+                result = build_project(
+                    project_path,
+                    root / "out",
+                    jobs=1,
+                    resume=False,
+                )
+
+            self.assertTrue(Path(result.root).is_dir())
+            # At least one background pulse plus the synchronous pre-commit
+            # ownership check must have occurred under the same owner.
+            self.assertGreaterEqual(len(renewals), 2)
+            self.assertEqual(len({owner for _, owner in renewals}), 1)
+
+    def test_lease_loss_aborts_without_waiting_and_fail_does_not_mask_it(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            project_path = self.write_project(root)
+            worker_started = threading.Event()
+            release_worker = threading.Event()
+            renewal_attempted = threading.Event()
+            build_finished = threading.Event()
+            outcome: list[BaseException] = []
+
+            def blocking_builder(project, task, *, master_seed, instances=None):
+                worker_started.set()
+                release_worker.wait(2.0)
+                return fake_builder(
+                    project,
+                    task,
+                    master_seed=master_seed,
+                    instances=instances,
+                )
+
+            def lose_lease(store, stage_key, owner, *, lease_s=300.0):
+                renewal_attempted.set()
+                raise StageOwnershipError("simulated lease theft")
+
+            def cannot_record_failure(store, stage_key, owner, error):
+                raise StageOwnershipError("cannot fail stolen stage")
+
+            def run_build() -> None:
+                try:
+                    build_project(
+                        project_path,
+                        root / "out",
+                        jobs=1,
+                        resume=False,
+                    )
+                except BaseException as error:
+                    outcome.append(error)
+                finally:
+                    build_finished.set()
+
+            with patch(
+                "paper2ale.pipeline._builder_for",
+                return_value=blocking_builder,
+            ), patch(
+                "paper2ale.pipeline._BUILD_HEARTBEAT_INTERVAL_SECONDS",
+                0.01,
+            ), patch(
+                "paper2ale.pipeline._BUILD_HEARTBEAT_POLL_SECONDS",
+                0.005,
+            ), patch.object(
+                StageStateStore,
+                "renew",
+                new=lose_lease,
+            ), patch.object(
+                StageStateStore,
+                "fail",
+                new=cannot_record_failure,
+            ):
+                thread = threading.Thread(target=run_build, daemon=True)
+                thread.start()
+                self.assertTrue(worker_started.wait(1.0))
+                self.assertTrue(renewal_attempted.wait(1.0))
+                # The build must unwind while its worker is still blocked.
+                self.assertTrue(build_finished.wait(1.0))
+                self.assertFalse(release_worker.is_set())
+                release_worker.set()
+                thread.join(1.0)
+
+            self.assertFalse(thread.is_alive())
+            self.assertEqual(len(outcome), 1)
+            self.assertIsInstance(outcome[0], StageLeaseLostError)
+            self.assertIn("simulated lease theft", str(outcome[0]))
+            self.assertTrue(
+                any(
+                    "cannot fail stolen stage" in note
+                    for note in getattr(outcome[0], "__notes__", ())
+                )
+            )
+            self.assertEqual(list((root / "out").rglob("catalog.json")), [])
 
 
 class ArchiveManifestTests(unittest.TestCase):
