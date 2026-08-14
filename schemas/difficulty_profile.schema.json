@@ -1,0 +1,237 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://paper2ale.local/schemas/difficulty_profile.schema.json",
+  "title": "paper2ale difficulty profile",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "id",
+    "version",
+    "levels"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "paper2ale.difficulty/v1"
+    },
+    "id": {
+      "$ref": "#/$defs/profile_id"
+    },
+    "version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "description": {
+      "type": "string"
+    },
+    "levels": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 4,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/level"
+      }
+    }
+  },
+  "$defs": {
+    "profile_id": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9._-]+$"
+    },
+    "level_name": {
+      "enum": [
+        "easy",
+        "medium",
+        "hard",
+        "frontier"
+      ]
+    },
+    "generator": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "required": [
+        "instance_count"
+      ],
+      "properties": {
+        "instance_count": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 64
+        },
+        "input_complexity_scale": {
+          "type": "number",
+          "minimum": 0.25,
+          "maximum": 4
+        },
+        "noise_scale": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 3
+        },
+        "masked_fraction": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 0.95
+        },
+        "constraint_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 128
+        }
+      }
+    },
+    "evaluator": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "hidden_case_count": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10000
+        },
+        "threshold_scale": {
+          "type": "number",
+          "minimum": 0.1,
+          "maximum": 4
+        },
+        "rollout_horizon_scale": {
+          "type": "number",
+          "minimum": 0.25,
+          "maximum": 8
+        },
+        "required_pass_fraction": {
+          "type": "number",
+          "minimum": 0.5,
+          "maximum": 1
+        },
+        "adversarial_case_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1024
+        }
+      }
+    },
+    "target_band": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "metric",
+        "lower",
+        "upper",
+        "confidence",
+        "min_trials"
+      ],
+      "properties": {
+        "metric": {
+          "const": "pass_rate"
+        },
+        "lower": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "upper": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "confidence": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "exclusiveMaximum": 1
+        },
+        "min_trials": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "level": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "generator",
+        "evaluator",
+        "target_band"
+      ],
+      "properties": {
+        "name": {
+          "$ref": "#/$defs/level_name"
+        },
+        "generator": {
+          "$ref": "#/$defs/generator"
+        },
+        "evaluator": {
+          "$ref": "#/$defs/evaluator"
+        },
+        "target_band": {
+          "$ref": "#/$defs/target_band"
+        }
+      }
+    },
+    "selection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "profile_id",
+        "profile_version",
+        "level"
+      ],
+      "properties": {
+        "profile_id": {
+          "$ref": "#/$defs/profile_id"
+        },
+        "profile_version": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "level": {
+          "$ref": "#/$defs/level_name"
+        },
+        "generator_overrides": {
+          "$ref": "#/$defs/generator_overrides"
+        },
+        "evaluator_overrides": {
+          "$ref": "#/$defs/evaluator"
+        }
+      }
+    },
+    "generator_overrides": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "instance_count": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 64
+        },
+        "input_complexity_scale": {
+          "type": "number",
+          "minimum": 0.25,
+          "maximum": 4
+        },
+        "noise_scale": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 3
+        },
+        "masked_fraction": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 0.95
+        },
+        "constraint_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 128
+        }
+      }
+    }
+  }
+}
