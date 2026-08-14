@@ -1,0 +1,20 @@
+{
+  "schema_version": "paper2ale.review-example/v1",
+  "task_id": "hnn-hard-canonical-recovery",
+  "instance_id": "000",
+  "source_project_id": "hnn-hard-grounded-suite",
+  "source_build_id": "build_6f3d22026d0d82ec98f250c2b46c1c8d7d5633f3b5c16136cb325867c9158305",
+  "source_task_build_id": "task-build_b898028188fd78012ab82acef34a76ac2a5efc464ae8572c98e102db9eb9ea12",
+  "warning": "reviewer_only contains hidden answers and must not be given to participants",
+  "files": [
+    {"path": "participant/description.md", "visibility": "participant", "size_bytes": 568, "sha256": "39c367e996e83416e77d02034facc69795971eff55051aa7e219b7ebea9c6c33"},
+    {"path": "participant/observations.json", "visibility": "participant", "size_bytes": 121996, "sha256": "63d40245d4bb4702e1ff0b19d4487004d0a9e96e5c1ec8b740dfcb20b3601b16"},
+    {"path": "participant/starter/recover.py", "visibility": "participant", "size_bytes": 1093, "sha256": "c51ba8824c7a2ea355c01df4d34659f5e567f695c2eb9814d7404215af9582ed"},
+    {"path": "participant/starter/requirements.txt", "visibility": "participant", "size_bytes": 15, "sha256": "99f43573522565d7c480efd1f954892948033915df6a4e685327e995d3396eb6"},
+    {"path": "participant/task_card.json", "visibility": "participant", "size_bytes": 802, "sha256": "67a1cf9cadffacfbe52ee87bf0976932b6b1bc40d655c2c8519213bc34cc1a5c"},
+    {"path": "reviewer_only/examples/correct_submission.json", "visibility": "reviewer_only", "size_bytes": 956, "sha256": "fb80bcffc6dfc6128f6f8661c1e385b544605e6688230d50226cd9483d41a6ba"},
+    {"path": "reviewer_only/examples/incorrect_submission.json", "visibility": "reviewer_only", "size_bytes": 700, "sha256": "819dd85cb72bd7b4bdea740a507005ac6d9f207c36535b210ec61169b8f22851"},
+    {"path": "reviewer_only/reference/grader.py", "visibility": "reviewer_only", "size_bytes": 6148, "sha256": "99b2e1b1866f5c72f9330f6d8cb760a69eea7a210dab9de82e76b9a5b61a8cdb"},
+    {"path": "reviewer_only/reference/instances/000/truth.json", "visibility": "reviewer_only", "size_bytes": 25396, "sha256": "9966d890eb01c1bf9696496d0b6edef15c43cf0b166c0f0c71ed228cd9361fac"}
+  ]
+}
