@@ -1,0 +1,33 @@
+{
+  "category": "research_workflows",
+  "paper2ale": {
+    "entrypoint": "main.py",
+    "family": "generic",
+    "familyTaskId": "generic-hard-affine-recovery",
+    "instanceCount": 5,
+    "instancePattern": "input/instances/<NNN>/",
+    "paperBlind": true,
+    "runtime": {
+      "dependencies": [],
+      "language": "python",
+      "minimumVersion": "3.11"
+    },
+    "schemaVersion": 1,
+    "submission": {
+      "executable": false,
+      "format": "numeric_predictions_json",
+      "path": "output/<NNN>/submission.json"
+    },
+    "templateId": "numeric-affine-v1"
+  },
+  "summary": "A paper-blind task compiled from a bounded trusted protocol.",
+  "taskId": "research_workflows/generic-hard-affine-recovery",
+  "title": "Recover a numeric transformation",
+  "vm": {
+    "disk_gb": 50,
+    "memory_gb": 8,
+    "snapshot": "cpu-free-ubuntu",
+    "timeout_s": 30,
+    "vcpus": 2
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "schema_version": "paper2ale.review-example/v1",
+  "task_id": "generic-hard-affine-recovery",
+  "instance_id": "000",
+  "source_project_id": "generic-affine-demo",
+  "source_build_id": "build_73367a43f8f79044e2ec9864b4cc2025251c21236bbfab187f4451ce444bd187",
+  "source_task_build_id": "task-build_29ef8077e8fe6fea53a8602c85008de2a009257ee9cd0f581d19eb06c298c85c",
+  "warning": "reviewer_only contains hidden answers and must not be given to participants",
+  "files": [
+    {"path": "participant/description.md", "visibility": "participant", "size_bytes": 468, "sha256": "88c2f4c218a021d0795417843d8e2853d74da18e5b932080122ea77efce772e2"},
+    {"path": "participant/input.json", "visibility": "participant", "size_bytes": 35907, "sha256": "5462401f50bd5a070970920d01601211ed8db381f9bc5be7e0202399fab2631c"},
+    {"path": "participant/task_card.json", "visibility": "participant", "size_bytes": 890, "sha256": "1a3702f3b11cad331c122b46e7a0e5729ff7fdba619a3e0d284affdf6dfcf3cf"},
+    {"path": "reviewer_only/examples/correct_submission.json", "visibility": "reviewer_only", "size_bytes": 16816, "sha256": "b95443a314dbc1e63c9964a1098f5b118bea19cb7d63ff20245d18c68dce3db5"},
+    {"path": "reviewer_only/examples/incorrect_submission.json", "visibility": "reviewer_only", "size_bytes": 17574, "sha256": "67f8c61d3986276b5074ffa9514b9399c9dea1e97a19c01da186c9f842539d39"},
+    {"path": "reviewer_only/reference/grader.py", "visibility": "reviewer_only", "size_bytes": 6809, "sha256": "15ffd47e104d1f52777598d04506ea073c8b734be543677cf0414cebd229f82f"},
+    {"path": "reviewer_only/reference/instances/000/evaluation.json", "visibility": "reviewer_only", "size_bytes": 19665, "sha256": "b83ec32224adcaf0adcd924d3ae841023172edf26a002f91d960859f145a0d4b"}
+  ]
+}

@@ -116,6 +116,7 @@ system. See [the difficulty guide](docs/DIFFICULTY.md).
 
 | Example | Purpose |
 | --- | --- |
+| [Concrete review examples](examples/review/README.md) | Includes complete participant inputs, hidden evaluation references, correct answers, and deliberately incorrect answers for easy review. |
 | [Offline orchestration](examples/orchestration/README.md) | Checks paper suitability, finds the research steps, chooses tasks, builds them, and runs final checks from a deterministic replay. |
 | [Generic compiler](examples/generic/README.md) | Builds a hard affine-recovery task from an allowlisted declarative protocol. |
 | [HNN smoke suite](examples/hnn/README.md) | Provides three fast, grounded Hamiltonian Neural Networks workflow tasks. |

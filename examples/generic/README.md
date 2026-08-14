@@ -5,6 +5,9 @@ paper-specific Python family. The task protocol selects only allowlisted
 generator, solver, output, metric, and gate primitives. The participant sees
 worked examples and queries; evaluator-owned files retain exact answers.
 
+For a browsable generated instance with public inputs and reviewer-only grading
+references, see the [generic affine review example](../review/generic-affine/README.md).
+
 ```powershell
 paper2ale inspect examples/generic/project.json
 paper2ale audit examples/generic/project.json

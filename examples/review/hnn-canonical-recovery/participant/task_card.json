@@ -1,0 +1,27 @@
+{
+  "category": "physical_sciences",
+  "paper2ale": {
+    "difficulty": "hard",
+    "entrypoint": "main.py",
+    "family": "hnn_hard",
+    "familyTaskId": "hnn-hard-canonical-recovery",
+    "instanceCount": 2,
+    "instancePattern": "input/instances/<NNN>/",
+    "schemaVersion": 1,
+    "submission": {
+      "executable": false,
+      "format": "latent-canonical-hamiltonian-v1",
+      "path": "output/<NNN>/recovery.json"
+    }
+  },
+  "summary": "Jointly identify a canonicalizing transform and nonlinear quartic energy from mixed-coordinate observations.",
+  "taskId": "physical_sciences/hnn-hard-canonical-recovery",
+  "title": "Recover hidden canonical coordinates",
+  "vm": {
+    "disk_gb": 200,
+    "memory_gb": 16,
+    "snapshot": "cpu-free-ubuntu",
+    "timeout_s": 1800,
+    "vcpus": 4
+  }
+}
