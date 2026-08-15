@@ -57,6 +57,10 @@ paper2ale publish examples/generic/project.json --out dist --jobs 2
 
 ## Using your own paper
 
+For an interactive one-paper Codex authoring session focused on genuinely hard,
+long-workflow tasks, use the [Codex hard-task extraction guide](docs/CODEX_TASK_EXTRACTION.md)
+and copy-paste [session prompt](prompts/codex_task_extraction/v1/SESSION_PROMPT.md).
+
 1. Create an orchestration manifest that names the paper, local code or data,
    provenance, licenses, and suitability information.
 2. Resolve and hash the source assets.
@@ -155,6 +159,7 @@ bundles.
 - [Difficulty](docs/DIFFICULTY.md): controls and empirical calibration.
 - [Threat model](docs/THREAT_MODEL.md): publication gates and failure modes.
 - [Extending Paper2ALE](docs/EXTENDING.md): providers, capabilities, and task families.
+- [Codex hard-task extraction](docs/CODEX_TASK_EXTRACTION.md): author and verify long paper-derived workflows in an interactive session.
 - [Changelog](CHANGELOG.md): version history.
 
 ## Development

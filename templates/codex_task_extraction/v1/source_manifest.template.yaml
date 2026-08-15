@@ -1,0 +1,77 @@
+schema_version: paper2ale.codex-source-manifest/v1
+
+paper:
+  paper_id: "<stable-paper-id>"
+  title: "<author-only-title>"
+  local_path: "<authoring-only-local-path>"
+  public_url: "<url>"
+  version: "<published-version/arxiv-version/etc>"
+  sha256: "<64-lowercase-hex>"
+  license: "<license-or-unknown>"
+  retrieved_at: "<YYYY-MM-DD>"
+  citation: "<citation>"
+
+supplements: []
+
+repositories:
+  - repository_id: "<repo-id>"
+    official: true
+    url: "<url>"
+    local_path: "<authoring-only-local-path>"
+    commit: "<40-hex-commit>"
+    tree_sha256: "<64-lowercase-hex-if-computed>"
+    license: "<license>"
+    retrieved_at: "<YYYY-MM-DD>"
+    role: "<official implementation>"
+
+datasets:
+  - dataset_id: "<dataset-id>"
+    url: "<url-or-null>"
+    local_path: "<authoring-only-local-path>"
+    version: "<version>"
+    sha256_or_tree_sha256: "<digest>"
+    license: "<license>"
+    redistribution: "<allowed/restricted/unknown>"
+    role: "<training/evaluation/etc>"
+
+environments:
+  - environment_id: "<environment-id>"
+    type: "<lockfile/container/manual>"
+    path_or_digest: "<path-or-digest>"
+    python: "<version>"
+    packages:
+      - "<package==version>"
+    system_dependencies: []
+
+source_execution:
+  commands:
+    - command: "<command>"
+      working_directory: "<authoring-only-path>"
+      environment_id: "<environment-id>"
+      exit_code: null
+      runtime_seconds: null
+      stdout_log: "<path>"
+      stderr_log: "<path>"
+      outputs:
+        - "<path>"
+  observed_artifacts:
+    - path: "<path>"
+      sha256: "<digest>"
+      purpose: "<purpose>"
+
+conflicts:
+  - conflict_id: "<conflict-id>"
+    topic: "<topic>"
+    paper_statement: "<statement>"
+    code_behavior: "<behavior>"
+    observed_behavior: "<behavior>"
+    resolution: "<unresolved/paper/code/observed/benchmark-choice>"
+    rationale: "<rationale>"
+
+license_and_privacy_decision:
+  participant_assets_redistributable: false
+  restricted_assets:
+    - "<asset>"
+  sensitive_or_personal_data_present: false
+  decision: "<eligible/manual-review/rejected>"
+  notes: "<notes>"

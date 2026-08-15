@@ -1,0 +1,134 @@
+schema_version: paper2ale.codex-evaluation-spec/v1
+
+task_id: "<task-id>"
+
+visibility: "private"
+
+hard_gates:
+  - gate_id: "required-artifacts"
+    description: "All required files exist and are regular files."
+    implementation: "<trusted grader function>"
+  - gate_id: "schema"
+    description: "Artifacts parse and match declared schemas, IDs and shapes."
+    implementation: "<trusted grader function>"
+  - gate_id: "finite-values"
+    description: "Numeric outputs contain no NaN or infinity."
+    implementation: "<trusted grader function>"
+  - gate_id: "resource-and-security"
+    description: "Execution and artifacts satisfy resource, path and access policy."
+    implementation: "<trusted grader function>"
+
+metrics:
+  - metric_id: "<primary-behavioral-metric>"
+    description: "<what is recomputed>"
+    direction: "<higher_is_better/lower_is_better>"
+    weight: 0.5
+    hidden_inputs:
+      - "hidden_inputs/<file>"
+    reference:
+      type: "<oracle/baseline/range>"
+      path: "reference/<file>"
+    scoring:
+      type: "<piecewise_linear/logistic/rank/required_fraction>"
+      parameters:
+        excellent: "<private value>"
+        minimum: "<private value>"
+    tolerance:
+      type: "abs_and_rel"
+      absolute: "<private value>"
+      relative: "<private value>"
+      derivation: "<conditioning/repeated-reference/etc>"
+
+  - metric_id: "<secondary-metric>"
+    description: "<description>"
+    direction: "<higher_is_better/lower_is_better>"
+    weight: 0.3
+    hidden_inputs:
+      - "hidden_inputs/<file>"
+    scoring:
+      type: "<type>"
+      parameters: {}
+
+  - metric_id: "evidence-consistency"
+    description: "Structured claims and reported values match recomputed artifacts."
+    direction: "higher_is_better"
+    weight: 0.2
+    scoring:
+      type: "fraction_correct"
+      parameters: {}
+
+score_contract:
+  hard_gate_failure_score: 0.0
+  metric_weights_sum_to_one: true
+  score_range:
+    minimum: 0.0
+    maximum: 1.0
+  pass_rule:
+    type: "<total_score_and_mandatory_submetrics>"
+    total_score_threshold: "<private value>"
+    mandatory_metric_thresholds:
+      "<metric-id>": "<private value>"
+
+stochastic_policy:
+  stochastic: false
+  hidden_seed_count: 1
+  aggregation: "<mean/median/quantile/required_fraction>"
+  confidence_or_variance_rule: null
+  baseline_relative: false
+
+hidden_suite:
+  ordinary_cases:
+    count: "<count>"
+    source: "<trusted generator/private asset>"
+  distribution_shift_cases:
+    count: "<count>"
+    description: "<private>"
+  adversarial_cases:
+    count: "<count>"
+    description: "<private>"
+  anti_hardcoding_cases:
+    count: "<count>"
+    description: "<private>"
+
+valid_solutions:
+  - id: "privileged-oracle"
+    path: "reference/<artifact-or-command>"
+    expected: "pass"
+  - id: "clean-room-reference"
+    path: "../author/reference_solver/"
+    expected: "pass"
+  - id: "alternative-valid"
+    path: "../author/alternative_solver/"
+    expected: "<pass/not-available>"
+
+mutations:
+  - mutant_id: "mutant-001"
+    category: "<wrong-sign/wrong-split/etc>"
+    path: "mutants/<path>"
+    expected: "fail"
+  - mutant_id: "mutant-002"
+    category: "<category>"
+    path: "mutants/<path>"
+    expected: "fail"
+
+metamorphic_tests:
+  - test_id: "<invariance-or-consistency-test>"
+    applicability: "<applicable/not-applicable>"
+    implementation: "<trusted grader function>"
+    expected_relation: "<relation>"
+
+determinism:
+  repeated_grader_runs: 2
+  require_identical_parsed_scores: true
+  require_identical_process_status: true
+
+leakage_and_security:
+  participant_must_not_access:
+    - "private/"
+    - "author/"
+    - "source paper"
+    - "official source repository"
+  network_policy: "<off/allowlist>"
+  path_and_symlink_checks: true
+  output_size_limit_bytes: "<limit>"
+  executable_submission_sandbox: "<description-or-not-applicable>"

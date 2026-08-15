@@ -1,0 +1,162 @@
+schema_version: paper2ale.codex-task-spec/v1
+
+task:
+  task_id: "<neutral-task-id>"
+  title: "<paper-blind-title>"
+  status: "needs_agent_calibration"
+  task_mode: "<mode>"
+  derivation_type: "<reported_workflow_slice/grounded_extension/etc>"
+  target_claim_leaf_id: "<leaf-id>"
+  summary: >
+    <One paragraph describing the professional outcome without revealing the
+    source paper or answer.>
+
+workflow_subgraph:
+  operation_ids:
+    - "<op-id>"
+  public_input_artifact_ids:
+    - "<artifact-id>"
+  participant_output_artifact_ids:
+    - "<artifact-id>"
+  private_rubric_artifact_ids:
+    - "<artifact-id>"
+  meaningful_operation_count: 4
+  dependency_depth: 3
+  branch_count: 1
+  tool_count: 1
+
+participant:
+  task_description_path: "participant/TASK.md"
+  visible_inputs:
+    - id: "<input-id>"
+      path: "participant/input/<file>"
+      format: "<format>"
+      purpose: "<purpose>"
+      source: "<derived/synthetic/public-asset/starter>"
+      redistribution_status: "<allowed>"
+  starter_software:
+    - path: "participant/software/<path>"
+      purpose: "<purpose>"
+      removed_solution_components:
+        - "<component>"
+  environment:
+    os: "<os>"
+    cpu_count: 4
+    memory_gb: 16
+    gpu: null
+    wall_time_minutes: 60
+    disk_gb: 20
+    network:
+      enabled: false
+      allowlist: []
+    packages:
+      - "<package==version>"
+  required_outputs:
+    - id: "<output-id>"
+      path: "output/<file>"
+      format: "<format>"
+      schema_or_shape: "<schema>"
+      purpose: "<purpose>"
+      required: true
+  public_success_criteria:
+    - "<qualitative criterion visible to participant>"
+  constraints:
+    - "<constraint>"
+  prohibited_dependencies:
+    - "source paper"
+    - "official source repository"
+    - "private evaluator files"
+    - "undeclared network access"
+
+paper_blindness:
+  neutralized_identifiers:
+    - "<paper name/method acronym/source filename>"
+  withheld_author_information:
+    - "<exact hidden tests/thresholds/reference values>"
+  leakage_checks:
+    - "<check>"
+  source_lookup_should_not_solve_task: true
+
+specification_closure:
+  decisions:
+    - decision: "<solution-critical choice>"
+      status: "<disclosed/inferable/evaluator_method_agnostic/invalid_hidden_dependency>"
+      public_location_or_rationale: "<TASK.md/input/evaluator freedom>"
+  all_closed: false
+  paper_blind_review:
+    reviewer_has_seen_source: false
+    task_restatement_correct: false
+    material_ambiguities: []
+    status: "<pass/fail/not-run>"
+  unresolved_items:
+    - "<must be empty before acceptance>"
+
+intrinsic_difficulty:
+  provisional_label: "structurally_hard_candidate"
+  challenge_sources:
+    - "<challenge source 1>"
+    - "<challenge source 2>"
+  non_difficulty_factors:
+    - "formatting"
+    - "hidden threshold"
+    - "raw output volume"
+  shortcut_tests:
+    - name: "<obvious shortcut>"
+      result: "<rejected/passes>"
+      evidence: "<path/log>"
+  expected_human_workflow: "<estimated expert effort and steps>"
+  agent_calibration:
+    status: "not_run"
+    exact_task_build_id: null
+    pinned_agent_systems: []
+
+private_evaluation:
+  evaluation_spec_path: "private/evaluation_spec.yaml"
+  hidden_input_paths:
+    - "private/hidden_inputs/<file>"
+  reference_paths:
+    - "private/reference/<file>"
+  grader_paths:
+    - "private/grader/<file>"
+  exact_thresholds_private: true
+  exact_weights_private: true
+
+reference_generation:
+  privileged_oracle:
+    path: "<author/private path>"
+    may_use_source_information: true
+    last_run_status: "<pass/fail/not-run>"
+  public_input_reference_solver:
+    path: "author/reference_solver/"
+    reads_only_participant_package: true
+    declared_environment_only: true
+    last_run_status: "<pass/fail/not-run>"
+    score: null
+    runtime_seconds: null
+  alternative_solver:
+    path: "author/alternative_solver/"
+    available: false
+    independence_notes: "<notes>"
+
+instance_generation:
+  supported: true
+  trusted_generator: "<name/path>"
+  private_seed_policy: "<HMAC/server-secret/other>"
+  varying_factors:
+    - "<seed/data/system/parameters/noise/fault>"
+  invariants_preserved:
+    - "<scientific phenomenon>"
+  public_review_instances_retired: true
+
+provenance:
+  source_manifest_path: "../../authoring/source_manifest.yaml"
+  evidence_map_path: "../../authoring/evidence_map.yaml"
+  workflow_graph_path: "../../authoring/workflow_graph.yaml"
+  candidate_record_path: "../../authoring/task_candidates.yaml"
+
+release:
+  verification_report_path: "author/verification_report.md"
+  checklist_complete: false
+  decision: "<accepted_for_collaborator_review/needs_scientific_review/needs_agent_calibration/no_viable_hard_task/rejected_...>"
+  blocking_issues:
+    - "<must be empty for collaborator review>"
