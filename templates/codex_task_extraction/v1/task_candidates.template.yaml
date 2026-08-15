@@ -1,0 +1,59 @@
+schema_version: paper2ale.codex-task-candidates/v1
+
+paper_id: "<stable-paper-id>"
+
+candidates:
+  - candidate_id: "candidate-01"
+    title: "<neutral task title>"
+    target_leaf_id: "leaf-1"
+    task_mode: "<mode>"
+    derivation_type: "<reported_workflow_slice/grounded_extension/etc>"
+    participant_operation_ids:
+      - "op-prepare"
+      - "op-implement"
+      - "op-run"
+      - "op-evaluate"
+    participant_output_artifact_ids:
+      - "artifact-model"
+      - "artifact-predictions"
+      - "artifact-metrics"
+      - "artifact-report"
+    intermediate_private_rubric_artifact_ids:
+      - "artifact-preprocessed-data"
+    structural_challenge:
+      meaningful_operation_count: 4
+      dependency_depth: 3
+      branch_count: 1
+      tool_count: 1
+      required_artifact_count: 4
+      challenge_sources:
+        - "<nontrivial-implementation>"
+        - "<hidden-generalization>"
+    shortcut_audit:
+      clone_and_run_source: "<fails/passes/not-applicable>"
+      one_formula_or_single_library_call: "<fails/passes>"
+      hardcode_public_examples: "<fails/passes>"
+      fabricate_reported_metrics: "<fails/passes>"
+      notes: "<notes>"
+    verification:
+      oracle_possible: true
+      public_input_solver_possible: true
+      behavioral_hidden_evaluation_possible: true
+      realistic_mutants_possible: true
+      tolerance_strategy: "<strategy>"
+    resources:
+      estimated_reference_runtime_minutes: 20
+      estimated_memory_gb: 4
+      bounded: true
+    specification_closure_risk: "<low/medium/high>"
+    leakage_risk: "<low/medium/high>"
+    expected_human_effort: "<for-example-4-to-12-hours>"
+    provisional_difficulty: "structurally_hard_candidate"
+    decision: "<select/reject/manual-review>"
+    decision_reason: "<reason>"
+
+selected_candidate_ids:
+  - "candidate-01"
+
+selection_rationale: >
+  Prefer one coherent, verifiable long workflow over several smaller tasks.

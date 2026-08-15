@@ -1,0 +1,50 @@
+schema_version: paper2ale.codex-evidence-map/v1
+
+paper_id: "<stable-paper-id>"
+
+records:
+  - evidence_id: "evidence-001"
+    type: "<claim/equation/protocol/data/metric/result/limitation/code/config/trace>"
+    statement: "<atomic evidence statement>"
+    origin_class: "<paper_reported/code_present/config_present/dynamically_observed/author_inferred/benchmark_choice/grounded_extension>"
+    source:
+      source_id: "<paper/repository/dataset/trace-id>"
+      locator_type: "<page/section/equation/table/figure/path-lines/config-key/trace-event>"
+      locator:
+        page: null
+        section: null
+        equation: null
+        table: null
+        figure: null
+        path: null
+        start_line: null
+        end_line: null
+        config_key: null
+        trace_event: null
+    exact_quote_or_value: "<short supporting excerpt or value>"
+    confidence: "<high/medium/low>"
+    corroborating_evidence_ids: []
+    conflicting_evidence_ids: []
+    used_by_claim_ids:
+      - "<claim-id>"
+    used_by_operation_ids:
+      - "<operation-id>"
+    participant_requirement_allowed: true
+    notes: "<notes>"
+
+coverage:
+  paper_sections_reviewed:
+    - "<section>"
+  repository_paths_reviewed:
+    - "<path>"
+  configurations_reviewed:
+    - "<path>"
+  dynamic_runs_reviewed:
+    - "<run-id>"
+  known_gaps:
+    - "<gap>"
+
+validation:
+  every_record_has_locator: false
+  low_confidence_hidden_requirements: []
+  unresolved_conflicts: []

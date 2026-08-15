@@ -1,0 +1,117 @@
+schema_version: paper2ale.codex-workflow-graph/v1
+
+paper:
+  paper_id: "<stable-paper-id>"
+  title: "<author-only-paper-title>"
+  source_manifest_path: "authoring/source_manifest.yaml"
+
+claim_tree:
+  root:
+    id: "claim-root"
+    question: "<broad research question>"
+    children:
+      - id: "claim-branch-1"
+        question: "<sub-question>"
+        children:
+          - id: "leaf-1"
+            type: "finding_leaf"
+            statement: "<concrete result or hypothesis to test>"
+            scientific_importance: "<central/supporting/diagnostic>"
+            supporting_artifact_ids:
+              - "artifact-metrics"
+            reported_evidence_ids:
+              - "evidence-001"
+            private_instance_potential: "<high/medium/low>"
+
+workflow:
+  artifacts:
+    - id: "artifact-public-input"
+      role: "input"
+      origin: "asset"
+      visibility: "participant"
+      format: "<format>"
+      provenance_ids:
+        - "evidence-010"
+
+    - id: "artifact-intermediate"
+      role: "intermediate"
+      origin: "participant"
+      visibility: "private_rubric"
+      format: "<format>"
+      provenance_ids:
+        - "evidence-011"
+
+    - id: "artifact-final-output"
+      role: "output"
+      origin: "participant"
+      visibility: "participant_output"
+      format: "<format>"
+      supports_claim_leaf_ids:
+        - "leaf-1"
+
+  operations:
+    - id: "op-prepare"
+      name: "<prepare or inspect data>"
+      authority: "participant"
+      inputs:
+        - "artifact-public-input"
+      outputs:
+        - "artifact-intermediate"
+      tool: "<python/tool>"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 5
+      provenance_ids:
+        - "evidence-020"
+      origin_class: "paper_reported"
+
+    - id: "op-evaluate"
+      name: "<evaluate result>"
+      authority: "participant"
+      inputs:
+        - "artifact-intermediate"
+      outputs:
+        - "artifact-final-output"
+      tool: "<python/tool>"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 10
+      provenance_ids:
+        - "evidence-021"
+      origin_class: "code_present"
+
+  edges:
+    - from: "artifact-public-input"
+      to: "op-prepare"
+      type: "consumed_by"
+    - from: "op-prepare"
+      to: "artifact-intermediate"
+      type: "produces"
+    - from: "artifact-intermediate"
+      to: "op-evaluate"
+      type: "consumed_by"
+    - from: "op-evaluate"
+      to: "artifact-final-output"
+      type: "produces"
+
+leaf_workflow_links:
+  - leaf_id: "leaf-1"
+    target_artifact_ids:
+      - "artifact-final-output"
+    backward_slice_operation_ids:
+      - "op-prepare"
+      - "op-evaluate"
+    backward_slice_artifact_ids:
+      - "artifact-public-input"
+      - "artifact-intermediate"
+      - "artifact-final-output"
+    closure_status: "<closed/has-gap>"
+    closure_notes: "<notes>"
+
+conflicts:
+  - id: "conflict-001"
+    paper_evidence_ids: []
+    code_evidence_ids: []
+    observed_evidence_ids: []
+    resolution: "<unresolved/paper/code/observed/benchmark-choice>"
+    rationale: "<do not silently reconcile>"

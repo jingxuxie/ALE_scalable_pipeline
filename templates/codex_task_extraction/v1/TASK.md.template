@@ -1,0 +1,58 @@
+# <Neutral task title>
+
+## Objective
+
+<Describe the professional outcome. Do not mention the source paper or reveal
+the expected answer.>
+
+## Provided files
+
+| Path | Description |
+| --- | --- |
+| `input/<file>` | <What it contains and how it should be interpreted> |
+| `software/<path>` | <Starter code, interface or environment support> |
+
+## Required work
+
+<Describe the multi-step workflow the participant owns. State necessary
+scientific definitions, conventions and constraints. Do not require guessing
+an undisclosed paper-specific choice.>
+
+## Required outputs
+
+Write all deliverables under `output/`.
+
+| Path | Format/schema | Purpose |
+| --- | --- | --- |
+| `output/<file>` | <format and schema> | <purpose> |
+
+Outputs must be generated from the provided inputs. Self-reported metrics may be
+included for communication, but evaluation will recompute relevant metrics from
+the submitted artifacts.
+
+## Environment and limits
+
+- Operating system: <OS>
+- CPU/GPU: <resources>
+- Memory: <limit>
+- Wall time: <limit>
+- Network: <disabled or exact policy>
+- Available packages/tools: <list>
+
+## Public success criteria
+
+<Describe qualitative dimensions such as correctness on held-out data,
+robustness, reproducibility, constraint satisfaction, or evidence consistency.
+Do not reveal exact hidden cases, private thresholds, reference values or score
+weights.>
+
+## Constraints
+
+- <constraint>
+- <constraint>
+
+## Reproducibility
+
+Provide an entry point such as `output/run.sh`, `output/run.py`, or another
+declared command when rerunning the submitted workflow is part of the task.
+Document any participant-controlled random seeds.
