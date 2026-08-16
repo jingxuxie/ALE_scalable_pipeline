@@ -1,0 +1,50 @@
+schema_version: paper2ale.codex-pilot-evaluator/v2
+
+candidate_id: "<candidate-id>"
+visibility: screening_private
+purpose: difficulty_falsification
+
+participant_snapshot_sha256: "<64-lowercase-hex>"
+
+structural_gate:
+  required_outputs:
+    - "<path>"
+  parser_or_interface: "<minimal trusted check>"
+  hard_failure_score: 0.0
+
+primary_metric:
+  metric_id: "<metric-id>"
+  description: "<behavior that distinguishes a useful result>"
+  direction: "<higher_is_better/lower_is_better>"
+  scoring:
+    type: "<piecewise_linear/rank/baseline_relative/etc>"
+    excellent: "<value>"
+    minimum: "<value>"
+  baseline_relative: true
+
+hidden_cases:
+  ordinary:
+    - case_id: ordinary-01
+      source: "<trusted generator/private asset>"
+      reference: "<path or oracle command>"
+  shifted:
+    - case_id: shifted-01
+      shift_dimension: "<regime/data/system/noise/etc>"
+      source: "<trusted generator/private asset>"
+      reference: "<path or oracle command>"
+
+score_contract:
+  range: [0.0, 1.0]
+  pass_threshold: "<screening-private>"
+  aggregation: "<mean/worst-case mix/etc>"
+
+reliability:
+  oracle_check_passed: false
+  deterministic_repeat_passed: false
+  b0_expected_low: true
+  known_limitations:
+    - "Not release-hardened; sufficient only to reject high-scoring easy candidates."
+
+security_scope:
+  production_sandbox_required: false
+  author_must_still_isolate_source_and_private_files: true

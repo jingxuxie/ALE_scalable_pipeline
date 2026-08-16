@@ -1,0 +1,107 @@
+schema_version: paper2ale.codex-candidate-screen/v2
+
+paper_id: "<stable-paper-id>"
+participant_draft_root: "screening/participant_draft"
+
+candidates:
+  - candidate_id: candidate-01
+    title: "<neutral-title>"
+    target_claim_leaf_id: "<leaf-id>"
+    archetype: "<debugging_and_repair/etc>"
+    outcome_target: >
+      <Behavioral or professional outcome, not a prescribed implementation.>
+
+    workflow_boundary:
+      public_input_artifact_ids:
+        - "<artifact-id>"
+      participant_operation_ids:
+        - "<operation-id>"
+      participant_output_artifact_ids:
+        - "<artifact-id>"
+      private_rubric_artifact_ids:
+        - "<artifact-id>"
+
+    decision_burden:
+      consequential_decisions:
+        - decision_id: decision-01
+          question: "<choice participant must make>"
+          plausible_options:
+            - "<option-a>"
+            - "<option-b>"
+          observable_evidence:
+            - "<public diagnostic or experiment>"
+          wrong_choice_consequence: "<hidden or public outcome degradation>"
+          correct_choice_disclosed: false
+      feedback_loops:
+        - loop_id: loop-01
+          run_step: "<run or experiment>"
+          diagnostic_step: "<inspect evidence>"
+          revision_step: "<change method/configuration/code>"
+          measurable_improvement: "<metric>"
+      consequential_decision_count: 1
+      feedback_loop_count: 1
+      independent_challenge_sources:
+        - "<diagnosis>"
+        - "<hidden-shift-generalization>"
+
+    method_disclosure_audit:
+      reference_steps:
+        - step_id: reference-step-01
+          description: "<major solver step>"
+          classification: "<public_definition/public_recipe/inferable/method_free/hidden_dependency>"
+          public_location_or_rationale: "<TASK.md/input/evaluator freedom>"
+      total_reference_steps: 1
+      public_recipe_steps: 0
+      recipe_disclosure_ratio: 0.0
+      task_md_mirrors_reference_solver: false
+      short_direct_implementation_feasible: false
+      hidden_dependency_count: 0
+
+    shortcut_screen:
+      one_formula_or_standard_call:
+        result: "<rejects/passes/not-applicable>"
+        evidence: "<path-or-note>"
+      direct_recipe:
+        result: "<rejects/passes/not-run>"
+        score: null
+        evidence: "<path-or-note>"
+      clone_and_run_source:
+        result: "<rejects/passes/not-applicable>"
+        evidence: "<path-or-note>"
+      hardcode_public_example:
+        result: "<rejects/passes/not-run>"
+        evidence: "<path-or-note>"
+      fabricated_metrics:
+        result: "<rejects/passes/not-run>"
+        evidence: "<path-or-note>"
+
+    minimal_pilot:
+      participant_snapshot_sha256: "<64-lowercase-hex>"
+      pilot_evaluator_sha256: "<64-lowercase-hex>"
+      primary_metric: "<metric>"
+      ordinary_hidden_cases: 1
+      shifted_hidden_cases: 1
+      b0_score: null
+      b1_score: null
+      difficulty_pilot_path: "screening/difficulty_pilot.yaml"
+
+    specification:
+      closed_for_pilot: false
+      method_freedom: "<description>"
+      unresolved_hidden_dependencies: []
+      source_identity_required_by_participant: false
+
+    feasibility:
+      plausible_clean_room_solution: true
+      expected_participant_runtime_minutes: "<estimate>"
+      expected_reference_runtime_minutes: "<estimate>"
+      resource_bounded: true
+      machine_verifiable: true
+
+    screen_status: "<screen_candidate/rejected_recipe_task/rejected_shortcut/rejected_pilot_too_easy/needs_difficulty_pilot/hardening_candidate>"
+    decision_reason: "<evidence-based reason>"
+
+selected_candidate_id: null
+selection_rationale: >
+  Select at most one candidate. Operation count, output count, mutant count, and
+  authoring effort are not hardness evidence.

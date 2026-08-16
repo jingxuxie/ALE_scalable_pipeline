@@ -1,0 +1,167 @@
+schema_version: paper2ale.codex-workflow-graph/v2
+
+paper:
+  paper_id: "<stable-paper-id>"
+  title: "<author-only-title>"
+
+claim_tree:
+  root:
+    id: claim-root
+    question: "<central research question>"
+    children:
+      - id: claim-branch-01
+        question: "<sub-question>"
+        children:
+          - id: leaf-01
+            type: finding_leaf
+            statement: "<concrete target result>"
+            scientific_importance: "<central/supporting/diagnostic>"
+            evidence_ids:
+              - evidence-001
+            private_instance_potential: "<high/medium/low>"
+
+workflow:
+  artifacts:
+    - id: artifact-input
+      role: input
+      origin: "<source/derived/synthetic/workspace>"
+      visibility: participant
+      format: "<format>"
+      provenance_ids:
+        - evidence-010
+
+    - id: artifact-diagnostic
+      role: diagnostic
+      origin: participant
+      visibility: participant_or_private_rubric
+      format: "<format>"
+
+    - id: artifact-final
+      role: output
+      origin: participant
+      visibility: participant_output
+      format: "<format>"
+      supports_claim_leaf_ids:
+        - leaf-01
+
+  operations:
+    - id: op-run-baseline
+      name: "<run supplied baseline>"
+      authority: participant
+      inputs:
+        - artifact-input
+      outputs:
+        - artifact-diagnostic
+      tool: "<tool>"
+      meaningful_operation: true
+      estimated_machine_runtime_minutes: 5
+      provenance_ids:
+        - evidence-020
+
+    - id: op-produce-final
+      name: "<produce final deliverables>"
+      authority: participant
+      inputs:
+        - artifact-input
+        - artifact-diagnostic
+      outputs:
+        - artifact-final
+      tool: "<tool>"
+      meaningful_operation: true
+      estimated_machine_runtime_minutes: 10
+      provenance_ids:
+        - evidence-021
+
+  decisions:
+    - id: decision-01
+      question: "<consequential choice>"
+      authority: participant
+      plausible_options:
+        - "<option-a>"
+        - "<option-b>"
+      informed_by_artifact_ids:
+        - artifact-diagnostic
+      affects_operation_ids:
+        - op-produce-final
+      correct_choice_disclosed: false
+      evaluator_method_agnostic: true
+      wrong_choice_consequence: "<measurable degradation>"
+
+  diagnostics:
+    - id: diagnostic-01
+      artifact_id: artifact-diagnostic
+      reveals: "<information useful for a decision>"
+      actionable: true
+      misleading_failure_modes:
+        - "<failure mode>"
+
+  feedback_loops:
+    - id: loop-01
+      run_operation_ids:
+        - op-run-baseline
+      diagnostic_ids:
+        - diagnostic-01
+      decision_ids:
+        - decision-01
+      revision_operation_ids:
+        - op-produce-final
+      exit_criterion: "<public criterion>"
+
+  failure_states:
+    - id: failure-01
+      description: "<realistic inadequate behavior>"
+      observable_symptom_artifact_ids:
+        - artifact-diagnostic
+      likely_causes:
+        - "<cause-a>"
+        - "<cause-b>"
+      resolved_by_decision_ids:
+        - decision-01
+
+  edges:
+    - from: artifact-input
+      to: op-run-baseline
+      type: consumed_by
+    - from: op-run-baseline
+      to: artifact-diagnostic
+      type: produces
+    - from: artifact-diagnostic
+      to: decision-01
+      type: informs
+    - from: decision-01
+      to: op-produce-final
+      type: configures
+    - from: op-produce-final
+      to: artifact-final
+      type: produces
+
+leaf_workflow_links:
+  - leaf_id: leaf-01
+    participant_operation_ids:
+      - op-run-baseline
+      - op-produce-final
+    participant_decision_ids:
+      - decision-01
+    feedback_loop_ids:
+      - loop-01
+    target_artifact_ids:
+      - artifact-final
+    closure_status: "<closed/has-gap>"
+    closure_notes: "<notes>"
+
+difficulty_summary:
+  meaningful_operation_count: 2
+  consequential_decision_count: 1
+  feedback_loop_count: 1
+  integration_module_count: 1
+  hidden_shift_present: true
+  recipe_disclosure_ratio: 0.0
+  note: >
+    Graph counts are descriptive only. Fresh-agent pilot outcomes determine
+    whether the candidate enters hardening.
+
+conflicts:
+  - id: conflict-001
+    evidence_ids: []
+    resolution: "<unresolved/paper/code/observed/benchmark-choice>"
+    rationale: "<do not silently reconcile>"

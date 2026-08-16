@@ -1,0 +1,89 @@
+# <Neutral professional task title>
+
+## Objective
+
+<Describe the professional outcome and why it matters. State what must work on
+new inputs. Do not reveal the source paper or prescribe the complete reference
+algorithm.>
+
+## Supplied workspace
+
+The participant package contains:
+
+```text
+input/          # data, configuration, or cases
+workspace/      # runnable but incomplete, inadequate, or faulty project
+public_checks/  # structural checks and small non-secret sanity tests
+```
+
+Describe the important files, interfaces, and current observable behavior.
+State any known public limitation that a professional would reasonably receive.
+Do not enumerate private faults or the hidden solution.
+
+## Required work
+
+Own the complete workflow needed to achieve the objective. This may include:
+
+- inspecting and diagnosing the workspace;
+- selecting or adapting an approach;
+- implementing and integrating changes;
+- running experiments or comparisons;
+- using diagnostics to revise the solution;
+- producing evidence-linked deliverables.
+
+<Add task-specific responsibilities, phrased as outcomes rather than a recipe.>
+
+## Required deliverables
+
+| Path | Format/interface | Purpose |
+| --- | --- | --- |
+| `output/<artifact>` | `<schema/interface>` | `<purpose>` |
+| `output/<artifact>` | `<schema/interface>` | `<purpose>` |
+
+Every required artifact must be generated from the supplied inputs. Reports or
+claims must cite machine-readable evidence produced by the submission.
+
+## Public success dimensions
+
+The private evaluator uses unpublished cases, but the meaning of success is
+public. It evaluates dimensions such as:
+
+- <primary outcome or baseline-relative improvement>;
+- <robustness under a stated class of input shifts>;
+- <consistency between code, generated artifacts, and conclusions>;
+- <resource or stability objective when professionally relevant>.
+
+Exact private cases, score weights, references, and pass thresholds are not
+published.
+
+## Method freedom and scientific conventions
+
+State definitions needed to interpret the data, units, signs, schemas, and
+interfaces. State which methodological choices are free.
+
+Do **not** include solution-like pseudocode for choices that the evaluator can
+judge behaviorally. When one exact convention is part of the data semantics,
+disclose that convention clearly.
+
+## Environment and constraints
+
+- Operating system: <OS>
+- Available languages/packages: <versions>
+- CPU/GPU/memory: <limits>
+- Wall time and storage: <limits>
+- Network policy: <policy>
+- Input/output access policy: <policy>
+
+The source paper, official source solution, hidden evaluator, and undeclared
+external data are unavailable and unnecessary.
+
+## Public checks
+
+Run:
+
+```text
+<public-check-command>
+```
+
+Public checks validate interfaces and small sanity properties. They do not
+reveal private answers or certify final scientific performance.
