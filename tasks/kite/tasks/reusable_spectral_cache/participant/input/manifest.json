@@ -1,0 +1,54 @@
+{
+  "moment_count": 384,
+  "probe_count": 4,
+  "public_queries_file": "public_queries.csv",
+  "schema_version": "spectral-cache-input/v1",
+  "systems": [
+    {
+      "dimension": 311,
+      "edges_file": "systems/sys_alpha/edges.csv",
+      "file_sha256": {
+        "edges": "3a71ae68805158f9b9d390549101f035f4310312fae56f7f8698469b869f1de6",
+        "onsite": "c66c4b71fc90835230d193482997a5f84791fe6fb31484b79b960e9cf76cc6c1",
+        "probes": "c6a186aceb62d64f0b7b3b29752d7391ff36d51b153865d7e21031cf9f719738"
+      },
+      "onsite_file": "systems/sys_alpha/onsite.csv",
+      "probe_count": 4,
+      "probes_file": "systems/sys_alpha/probes.csv",
+      "spectral_lower": -3.653617222938225,
+      "spectral_upper": 4.1945354913592645,
+      "system_id": "sys_alpha"
+    },
+    {
+      "dimension": 529,
+      "edges_file": "systems/sys_beta/edges.csv",
+      "file_sha256": {
+        "edges": "e70cd2bbcf17ddfa8eaf0757bb143e7bfd7864a445266c27fcf830c409557f96",
+        "onsite": "ba046f4e766a062b58ca4e311c8647492344c6eafc4f1544b6e8da7e95cba87b",
+        "probes": "da0d4ba4dcf4bc74b529b139be34d023879b2900c035ec85e3ebb65803a5d6bd"
+      },
+      "onsite_file": "systems/sys_beta/onsite.csv",
+      "probe_count": 4,
+      "probes_file": "systems/sys_beta/probes.csv",
+      "spectral_lower": -5.8175380877097,
+      "spectral_upper": 5.991532465547196,
+      "system_id": "sys_beta"
+    },
+    {
+      "dimension": 769,
+      "edges_file": "systems/sys_gamma/edges.csv",
+      "file_sha256": {
+        "edges": "570cfb09d552699bc1f53daffd751f77844ce12bd383c233c22f9f7040e879bc",
+        "onsite": "e12d053a69a9473d959fb8af67970a9524408114cc2f7220d903f3ff945d7945",
+        "probes": "5178a5713567287d0b5f13610f305dc38645b806bc9bfa2896a30c989dcba7b4"
+      },
+      "onsite_file": "systems/sys_gamma/onsite.csv",
+      "probe_count": 4,
+      "probes_file": "systems/sys_gamma/probes.csv",
+      "spectral_lower": -4.760086729422408,
+      "spectral_upper": 4.907026871367285,
+      "system_id": "sys_gamma"
+    }
+  ],
+  "units": "arbitrary but consistent energy units"
+}

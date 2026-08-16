@@ -1,0 +1,425 @@
+{
+  "elapsed_seconds": 61.32459329999983,
+  "gates": [
+    {
+      "details": {
+        "network_used": false,
+        "numpy": "2.3.5",
+        "platform": "win32",
+        "python": "3.12.13",
+        "python_executable": "C:\\Users\\Jingxu\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+        "shell_used": false
+      },
+      "elapsed_seconds": 5.599998985417187e-06,
+      "name": "environment",
+      "passed": true
+    },
+    {
+      "details": {
+        "alternative_solver": {
+          "bytes": 19562,
+          "import_roots": [
+            "__future__",
+            "argparse",
+            "hashlib",
+            "json",
+            "math",
+            "numpy",
+            "pathlib",
+            "typing"
+          ],
+          "sha256": "1fe134fa2715ed8477bd599cd8d8ccf7654ca9d5ce2ff80e1ec75363b5861a3b"
+        },
+        "json_files_parsed": [
+          "author/oracle/manifest.json",
+          "author/oracle/public_reference/public_rotated_multispecies/diagnostics.json",
+          "author/oracle/public_reference/public_scalar_diatomic/diagnostics.json",
+          "author/verification_logs/alternative_evaluation.json",
+          "author/verification_logs/alternative_evaluation_repeat.json",
+          "author/verification_logs/mutant_advanced_branch_evaluation.json",
+          "author/verification_logs/mutant_caroli_no_dagger_evaluation.json",
+          "author/verification_logs/mutant_dos_factor_evaluation.json",
+          "author/verification_logs/mutant_eta_real_shift_evaluation.json",
+          "author/verification_logs/mutant_nan_evaluation.json",
+          "author/verification_logs/mutant_omit_periodic_evaluation.json",
+          "author/verification_logs/mutant_partial_evaluation.json",
+          "author/verification_logs/mutant_results.json",
+          "author/verification_logs/mutant_stale_public_evaluation.json",
+          "author/verification_logs/mutant_wrong_sp_sign_evaluation.json",
+          "author/verification_logs/oracle_artifacts_evaluation.json",
+          "author/verification_logs/oracle_check.json",
+          "author/verification_logs/public_alternative_evaluation.json",
+          "author/verification_logs/public_reference_evaluation.json",
+          "author/verification_logs/reference_evaluation.json",
+          "author/verification_logs/reference_evaluation_repeat.json",
+          "author/verification_logs/security_network_probe.json",
+          "author/verification_logs/security_oversized_probe.json",
+          "author/verification_logs/security_private_path_probe.json",
+          "author/verification_logs/verification_summary.json",
+          "participant/input/public_rotated_multispecies.json",
+          "participant/input/public_scalar_diatomic.json",
+          "participant/input/schema.json",
+          "private/hidden_inputs/hidden_cutoff_edge.json",
+          "private/hidden_inputs/hidden_energy_shift_base.json",
+          "private/hidden_inputs/hidden_energy_shift_shifted.json",
+          "private/hidden_inputs/hidden_heterogeneous_s_sp.json",
+          "private/hidden_inputs/hidden_ordinary_permutation.json",
+          "private/hidden_inputs/hidden_ordinary_rotation.json",
+          "private/hidden_inputs/hidden_site_permutation_base.json",
+          "private/hidden_inputs/hidden_site_permutation_permuted.json",
+          "private/hidden_inputs/hidden_strong_defect.json",
+          "private/hidden_inputs/hidden_weak_contact.json",
+          "private/reference/hidden_cutoff_edge/diagnostics.json",
+          "private/reference/hidden_energy_shift_base/diagnostics.json",
+          "private/reference/hidden_energy_shift_shifted/diagnostics.json",
+          "private/reference/hidden_heterogeneous_s_sp/diagnostics.json",
+          "private/reference/hidden_ordinary_permutation/diagnostics.json",
+          "private/reference/hidden_ordinary_rotation/diagnostics.json",
+          "private/reference/hidden_site_permutation_base/diagnostics.json",
+          "private/reference/hidden_site_permutation_permuted/diagnostics.json",
+          "private/reference/hidden_strong_defect/diagnostics.json",
+          "private/reference/hidden_weak_contact/diagnostics.json"
+        ],
+        "metadata_placeholder_checks": [
+          "author/task_spec.yaml",
+          "author/verification_report.md",
+          "private/evaluation_spec.yaml"
+        ],
+        "python_sources_parsed": [
+          "author/alternative_solver/solve.py",
+          "author/oracle/generate_assets.py",
+          "author/oracle/generate_mutants.py",
+          "author/oracle/run_mutant_calibration.py",
+          "author/reference_solver/solve.py",
+          "participant/software/io_utils.py",
+          "participant/software/solution.py",
+          "private/grader/__init__.py",
+          "private/grader/evaluate.py",
+          "private/grader/science.py",
+          "private/mutants/mutant_advanced_branch.py",
+          "private/mutants/mutant_caroli_no_dagger.py",
+          "private/mutants/mutant_dos_factor.py",
+          "private/mutants/mutant_eta_real_shift.py",
+          "private/mutants/mutant_nan.py",
+          "private/mutants/mutant_omit_periodic.py",
+          "private/mutants/mutant_partial.py",
+          "private/mutants/mutant_stale_public.py",
+          "private/mutants/mutant_wrong_sp_sign.py",
+          "scripts/verify.py"
+        ],
+        "reference_solver": {
+          "bytes": 30154,
+          "import_roots": [
+            "__future__",
+            "argparse",
+            "hashlib",
+            "json",
+            "math",
+            "numpy",
+            "pathlib",
+            "re",
+            "sys",
+            "typing"
+          ],
+          "sha256": "8fb34432b1e72195c8b04626ade9ab922c01fbb2060c5579aa78fe61215ff259"
+        }
+      },
+      "elapsed_seconds": 0.1267361999998684,
+      "name": "syntax_and_solver_static_audit",
+      "passed": true
+    },
+    {
+      "details": {
+        "forbidden_identifier_hits": {},
+        "participant_bytes": 39093,
+        "participant_files": [
+          "TASK.md",
+          "input/public_rotated_multispecies.json",
+          "input/public_scalar_diatomic.json",
+          "input/schema.json",
+          "software/io_utils.py",
+          "software/solution.py"
+        ],
+        "private_author_hash_count": 101,
+        "schema_bounds": {
+          "cells_max": 10,
+          "energy_grid_max": 64,
+          "eta_max": 10,
+          "phase_grid_max": 64,
+          "sites_max": 8,
+          "species_max": 8
+        }
+      },
+      "elapsed_seconds": 0.05596009999862872,
+      "name": "participant_package_and_leakage",
+      "passed": true
+    },
+    {
+      "details": {
+        "case_count": 12,
+        "hidden_case_count": 10,
+        "log": "author/verification_logs/oracle_check.json",
+        "measured_total_oracle_seconds": 0.3487034999852767,
+        "public_case_count": 2
+      },
+      "elapsed_seconds": 0.6784081999940099,
+      "name": "deterministic_privileged_oracle",
+      "passed": true
+    },
+    {
+      "details": {
+        "aggregate_expanded_output_bytes": 687809,
+        "aggregate_output_bytes": 471275,
+        "case_count": 10,
+        "elapsed_seconds": 0.30042230000253767,
+        "log": "author/verification_logs/oracle_artifacts_evaluation.json",
+        "score": 1.0
+      },
+      "elapsed_seconds": 0.30107090000092285,
+      "name": "privileged_oracle_artifact_evaluation",
+      "passed": true
+    },
+    {
+      "details": {
+        "case_count": 12,
+        "hidden_count": 10,
+        "invariant_maxima": {
+          "max_hermiticity_residual": 0.0,
+          "max_surface_residual": 1.968552123949753e-15
+        },
+        "metamorphic_checks": {
+          "global_energy_shift": {
+            "band_shift_residual": 3.552713678800501e-15,
+            "dos_total_residual": 7.993605777301127e-15,
+            "energy_grid_shift_residual": 8.881784197001252e-16,
+            "h0_shift_residual": 0.0,
+            "h1_residual": 0.0,
+            "ldos_cells_residual": 4.440892098500626e-15,
+            "phase_grid_residual": 0.0,
+            "sigma_left_residual": 1.7319479184152442e-14,
+            "sigma_right_residual": 3.776586443654626e-14,
+            "transmission_residual": 1.1102230246251565e-15
+          },
+          "site_list_permutation": {
+            "bands_residual": 7.105427357601002e-15,
+            "dos_total_residual": 2.6645352591003757e-15,
+            "h0_permutation_residual": 0.0,
+            "h1_permutation_residual": 0.0,
+            "ldos_cells_residual": 2.6645352591003757e-15,
+            "sigma_left_permutation_residual": 3.4593672944354596e-13,
+            "sigma_right_permutation_residual": 1.1445101716976963e-13,
+            "transmission_residual": 1.2212453270876722e-15
+          }
+        },
+        "public_count": 2,
+        "seed_count": 12
+      },
+      "elapsed_seconds": 0.006470599997555837,
+      "name": "metamorphic_and_scientific_invariants",
+      "passed": true
+    },
+    {
+      "details": {
+        "alternative": {
+          "aggregate_expanded_output_bytes": 78834,
+          "aggregate_output_bytes": 56536,
+          "case_count": 2,
+          "clean_room_inventory": [
+            "output/solution.py",
+            "participant/TASK.md",
+            "participant/input/public_rotated_multispecies.json",
+            "participant/input/public_scalar_diatomic.json",
+            "participant/input/schema.json",
+            "participant/software/io_utils.py",
+            "participant/software/solution.py",
+            "public_inputs/public_rotated_multispecies.json",
+            "public_inputs/public_scalar_diatomic.json"
+          ],
+          "elapsed_seconds": 1.7931604999976116,
+          "log": "author/verification_logs/public_alternative_evaluation.json",
+          "score": 1.0
+        },
+        "reference": {
+          "aggregate_expanded_output_bytes": 78816,
+          "aggregate_output_bytes": 81816,
+          "case_count": 2,
+          "clean_room_inventory": [
+            "output/solution.py",
+            "participant/TASK.md",
+            "participant/input/public_rotated_multispecies.json",
+            "participant/input/public_scalar_diatomic.json",
+            "participant/input/schema.json",
+            "participant/software/io_utils.py",
+            "participant/software/solution.py",
+            "public_inputs/public_rotated_multispecies.json",
+            "public_inputs/public_scalar_diatomic.json"
+          ],
+          "elapsed_seconds": 0.6204262000028393,
+          "log": "author/verification_logs/public_reference_evaluation.json",
+          "score": 1.0
+        }
+      },
+      "elapsed_seconds": 2.445117000002938,
+      "name": "public_clean_room_solvers",
+      "passed": true
+    },
+    {
+      "details": {
+        "alternative": {
+          "aggregate_expanded_output_bytes": 687904,
+          "aggregate_output_bytes": 479703,
+          "case_count": 10,
+          "deterministic_repeat": true,
+          "elapsed_seconds": [
+            14.926934400005848,
+            14.726435900003708
+          ],
+          "logs": [
+            "author/verification_logs/alternative_evaluation.json",
+            "author/verification_logs/alternative_evaluation_repeat.json"
+          ],
+          "score": 1.0
+        },
+        "reference": {
+          "aggregate_expanded_output_bytes": 687816,
+          "aggregate_output_bytes": 702816,
+          "case_count": 10,
+          "deterministic_repeat": true,
+          "elapsed_seconds": [
+            2.492012700000487,
+            2.5417724999933853
+          ],
+          "logs": [
+            "author/verification_logs/reference_evaluation.json",
+            "author/verification_logs/reference_evaluation_repeat.json"
+          ],
+          "score": 1.0
+        }
+      },
+      "elapsed_seconds": 34.69032349999907,
+      "name": "hidden_evaluator_and_repeat",
+      "passed": true
+    },
+    {
+      "details": {
+        "count": 9,
+        "ordinary_unpacked": true,
+        "source_sha256": {
+          "mutant_advanced_branch.py": "27d3d1961270a87806da0f74239314a7b383c22f7294c211173c610d4456ff05",
+          "mutant_caroli_no_dagger.py": "c2b648b5842e887682f9f0d2bf49f0b85503f23240b990d8499264eb628c93f4",
+          "mutant_dos_factor.py": "a66bbff935c61811ce88deb75a6181302cd2caba5e75196387f6fa549a5a39d2",
+          "mutant_eta_real_shift.py": "3b61129fad0481a2f36ee20855d47c14e1ed55c3be4071b2d206ade841eb6d68",
+          "mutant_nan.py": "f1ac5b084fc20c4b3124ca77b21b78978cf4ea81c0c3dab65bdaa1046ed11296",
+          "mutant_omit_periodic.py": "90fa4f37ca9be9f2a61f50cfc490b722804097940c68872dd5aee01f1a306d96",
+          "mutant_partial.py": "33312ea3f0b3d4b06aa15087228d786e2154cfc3f8f66b0dbc2104a338d810ce",
+          "mutant_stale_public.py": "c05d41c3d432a0233df5f5196756c04040ca7e1f0fc019a2e723aca2ee62360c",
+          "mutant_wrong_sp_sign.py": "251de43c96768d820a395c30d833b488ee765103e3494c7528e7595528c9b18b"
+        }
+      },
+      "elapsed_seconds": 0.0889954999947804,
+      "name": "ordinary_mutant_source_audit",
+      "passed": true
+    },
+    {
+      "details": {
+        "all_rejected": true,
+        "count": 9,
+        "results": {
+          "mutant_advanced_branch.py": {
+            "elapsed_seconds": 2.535183199994208,
+            "hard_gates_passed": true,
+            "log": "author/verification_logs/mutant_advanced_branch_evaluation.json",
+            "passed": false,
+            "total_score": 0.5416
+          },
+          "mutant_caroli_no_dagger.py": {
+            "elapsed_seconds": 2.465310400002636,
+            "hard_gates_passed": true,
+            "log": "author/verification_logs/mutant_caroli_no_dagger_evaluation.json",
+            "passed": false,
+            "total_score": 0.8138666666666665
+          },
+          "mutant_dos_factor.py": {
+            "elapsed_seconds": 2.4838585999968927,
+            "hard_gates_passed": true,
+            "log": "author/verification_logs/mutant_dos_factor_evaluation.json",
+            "passed": false,
+            "total_score": 0.7877333333333334
+          },
+          "mutant_eta_real_shift.py": {
+            "elapsed_seconds": 2.592323099997884,
+            "hard_gates_passed": true,
+            "log": "author/verification_logs/mutant_eta_real_shift_evaluation.json",
+            "passed": false,
+            "total_score": 0.38560000000000005
+          },
+          "mutant_nan.py": {
+            "elapsed_seconds": 2.5042818000001716,
+            "hard_gates_passed": false,
+            "log": "author/verification_logs/mutant_nan_evaluation.json",
+            "passed": false,
+            "total_score": 0.0
+          },
+          "mutant_omit_periodic.py": {
+            "elapsed_seconds": 2.2159147999991546,
+            "hard_gates_passed": true,
+            "log": "author/verification_logs/mutant_omit_periodic_evaluation.json",
+            "passed": false,
+            "total_score": 0.194
+          },
+          "mutant_partial.py": {
+            "elapsed_seconds": 2.4636948999977903,
+            "hard_gates_passed": false,
+            "log": "author/verification_logs/mutant_partial_evaluation.json",
+            "passed": false,
+            "total_score": 0.0
+          },
+          "mutant_stale_public.py": {
+            "elapsed_seconds": 2.5290081999992253,
+            "hard_gates_passed": true,
+            "log": "author/verification_logs/mutant_stale_public_evaluation.json",
+            "passed": false,
+            "total_score": 0.38560000000000005
+          },
+          "mutant_wrong_sp_sign.py": {
+            "elapsed_seconds": 2.525228500002413,
+            "hard_gates_passed": true,
+            "log": "author/verification_logs/mutant_wrong_sp_sign_evaluation.json",
+            "passed": false,
+            "total_score": 0.20260000000000003
+          }
+        }
+      },
+      "elapsed_seconds": 22.32231010000396,
+      "name": "mutant_evaluator_rejection",
+      "passed": true
+    },
+    {
+      "details": {
+        "network": {
+          "failure": "submission uses forbidden network/process/dynamic facilities: import socket",
+          "rejected": true
+        },
+        "oversized_artifact": {
+          "failure": "hidden_cutoff_edge: diagnostics.json exceeds 65536 bytes",
+          "rejected": true
+        },
+        "private_path": {
+          "failure": "submission contains forbidden source/private indicators: private/reference",
+          "rejected": true
+        },
+        "symlink_artifact": {
+          "reason": "OSError: [WinError 1314] \u5ba2\u6237\u7aef\u6ca1\u6709\u6240\u9700\u7684\u7279\u6743\u3002: 'E:\\\\Desktop2026.2.1\\\\ALE\\\\scalable_pipeline\\\\tasks\\\\nanonet\\\\tasks\\\\periodic-orbital-transport\\\\private\\\\reference\\\\hidden_cutoff_edge\\\\diagnostics.json' -> 'C:\\\\Users\\\\Jingxu\\\\AppData\\\\Local\\\\Temp\\\\periodic-security-probes-83iyax0g\\\\symlink_artifacts\\\\hidden_cutoff_edge\\\\diagnostics.json'",
+          "static_policy_present": true,
+          "supported_by_host": false
+        }
+      },
+      "elapsed_seconds": 0.6088651000027312,
+      "name": "evaluator_security_and_size_probes",
+      "passed": true
+    }
+  ],
+  "passed": true,
+  "schema_version": "periodic-orbital-transport-verification/v1",
+  "task_root": "E:\\Desktop2026.2.1\\ALE\\scalable_pipeline\\tasks\\nanonet\\tasks\\periodic-orbital-transport"
+}

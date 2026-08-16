@@ -1,0 +1,32 @@
+{
+  "case_id": "case_amber",
+  "critical_curve_span": 0.7450624000000001,
+  "derivation_type": "grounded_extension",
+  "generator_family": "clustered-gamma-gap finite-size crossover",
+  "invariants": {
+    "affine_energy_invariance": true,
+    "bounded_gap_ratio": true,
+    "common_size_crossing": true,
+    "realization_cluster_is_sampling_unit": true,
+    "weak_control_mean_exceeds_strong_control_mean": true
+  },
+  "numeric_conditioning": {
+    "affine_energy_offset": -4.75,
+    "affine_energy_scale": 1.625,
+    "maximum_absolute_energy_coordinate": 283.29649523721486,
+    "maximum_absolute_shift_offset": 0.7312500000000739,
+    "maximum_ratio_perturbation": 7.69717622972621e-13,
+    "maximum_shift_offset_over_span": 0.003806063444693458,
+    "minimum_absolute_shift_offset": 0.44999999999999996,
+    "minimum_keep_boundary_margin": 0.0003991334831994209,
+    "minimum_keep_boundary_margin_over_span": 3.3441944355272093e-06,
+    "minimum_keep_boundary_margin_ulps": 45640598204.5,
+    "minimum_selected_gap": 9.955846635989474e-06,
+    "minimum_selected_gap_over_span": 5.807525924601661e-08,
+    "minimum_selected_gap_ulps": 569221595.25,
+    "selected_index_prefix_exactly_preserved": true
+  },
+  "physical_case_input_bytes": 1447319,
+  "schema_version": "spectral-scaling-truth-summary/v1",
+  "weak_minus_strong_minimum": 0.14486137322948833
+}

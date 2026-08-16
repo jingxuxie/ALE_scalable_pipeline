@@ -1,0 +1,24 @@
+{
+  "clique_topology": "branched",
+  "experiment_id": "amber-array",
+  "injected_nonlocal_pairs": [
+    [
+      0,
+      5
+    ],
+    [
+      1,
+      4
+    ],
+    [
+      0,
+      3
+    ]
+  ],
+  "maximum_eigenvalue": 1.0,
+  "minimum_eigenvalue": 0.591463970014506,
+  "minimum_pauli_support_probability": 6.448569438808605e-06,
+  "minimum_probability": 7.889593352123144e-07,
+  "normalization_error": 1.1102230246251565e-16,
+  "schema_version": "spectral-correlation-audit-truth-summary/v1"
+}

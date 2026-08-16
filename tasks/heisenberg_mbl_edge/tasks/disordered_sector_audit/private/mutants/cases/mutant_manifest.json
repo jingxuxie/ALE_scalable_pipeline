@@ -1,0 +1,89 @@
+{
+  "mutants": [
+    {
+      "category": "operator normalization",
+      "expected": "reject",
+      "expected_metric": "spectral_packet",
+      "mutant_id": "pauli_scale",
+      "path": "cases/pauli_scale/solution.py"
+    },
+    {
+      "category": "input-parameter handling",
+      "expected": "reject",
+      "expected_metric": "spectral_packet",
+      "mutant_id": "unit_exchange",
+      "path": "cases/unit_exchange/solution.py"
+    },
+    {
+      "category": "Hamiltonian topology",
+      "expected": "reject",
+      "expected_metric": "spectral_packet",
+      "mutant_id": "open_boundary",
+      "path": "cases/open_boundary/solution.py"
+    },
+    {
+      "category": "energy convention",
+      "expected": "reject",
+      "expected_metric": "spectral_packet",
+      "mutant_id": "wrong_energy_normalization",
+      "path": "cases/wrong_energy_normalization/solution.py"
+    },
+    {
+      "category": "packet selection",
+      "expected": "reject",
+      "expected_metric": "spectral_packet",
+      "mutant_id": "one_sided_packet",
+      "path": "cases/one_sided_packet/solution.py"
+    },
+    {
+      "category": "observable substitution",
+      "expected": "reject",
+      "expected_metric": "entanglement_participation",
+      "mutant_id": "shannon_entanglement",
+      "path": "cases/shannon_entanglement/solution.py"
+    },
+    {
+      "category": "logarithm convention",
+      "expected": "reject",
+      "expected_metric": "entanglement_participation",
+      "mutant_id": "log2_entanglement",
+      "path": "cases/log2_entanglement/solution.py"
+    },
+    {
+      "category": "participation definition",
+      "expected": "reject",
+      "expected_metric": "entanglement_participation",
+      "mutant_id": "s2_ipr",
+      "path": "cases/s2_ipr/solution.py"
+    },
+    {
+      "category": "magnetization moment",
+      "expected": "reject",
+      "expected_metric": "magnetization",
+      "mutant_id": "mz_second_moment",
+      "path": "cases/mz_second_moment/solution.py"
+    },
+    {
+      "category": "realization weighting",
+      "expected": "reject",
+      "expected_metric": "realization_aggregation",
+      "mutant_id": "naive_aggregation",
+      "path": "cases/naive_aggregation/solution.py"
+    },
+    {
+      "category": "cluster uncertainty",
+      "expected": "reject",
+      "expected_metric": "realization_aggregation",
+      "mutant_id": "sem_over_states",
+      "path": "cases/sem_over_states/solution.py"
+    },
+    {
+      "category": "fabricated evidence",
+      "expected": "reject",
+      "expected_metric": "evidence_consistency",
+      "mutant_id": "stale_evidence",
+      "path": "cases/stale_evidence/solution.py"
+    }
+  ],
+  "schema_version": "sector-audit-mutants/v1"
+}

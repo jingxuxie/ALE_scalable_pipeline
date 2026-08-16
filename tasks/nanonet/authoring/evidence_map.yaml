@@ -1,0 +1,636 @@
+schema_version: paper2ale.codex-evidence-map/v1
+
+paper_id: "arxiv-2010.07463v1"
+
+records:
+  - evidence_id: "evidence-paper-framework-purpose"
+    type: "claim"
+    statement: "The reported framework connects atomic coordinates and two-center tight-binding integrals to Hamiltonian construction, electronic structure, and open-boundary transport."
+    origin_class: "paper_reported"
+    source:
+      source_id: "paper"
+      locator_type: "page"
+      locator: {page: 1, section: "Abstract and Program Summary", equation: null, table: null, figure: null, path: null, start_line: null, end_line: null, config_key: null, trace_event: null}
+    exact_quote_or_value: "Input: atomic coordinates and tight-binding parameters; outputs include Hamiltonians, Green functions, bands, DOS, and transmission."
+    confidence: "high"
+    corroborating_evidence_ids: ["evidence-paper-architecture", "evidence-repo-hamiltonian-assembly"]
+    conflicting_evidence_ids: []
+    used_by_claim_ids: ["claim-root"]
+    used_by_operation_ids: ["op-enumerate-neighbors", "op-assemble-orbital-blocks", "op-assemble-h0-h1", "op-compute-bloch-bands", "op-solve-retarded-surfaces", "op-compute-transport-observables"]
+    participant_requirement_allowed: true
+    notes: "Supports selecting a backward workflow slice rather than asking for a single plotted value."
+
+  - evidence_id: "evidence-paper-algorithm-1"
+    type: "protocol"
+    statement: "Algorithm 1 builds a basis-offset map, a kd-tree over coordinates, enumerates neighboring sites, and fills orbital-resolved Hamiltonian elements."
+    origin_class: "paper_reported"
+    source:
+      source_id: "paper"
+      locator_type: "page"
+      locator: {page: 3, section: "2.1 Construction of Hamiltonian matrices", equation: null, table: null, figure: null, path: null, start_line: null, end_line: null, config_key: null, trace_event: null}
+    exact_quote_or_value: "Algorithm 1: Computing Hamiltonian matrix for a cluster of atoms."
+    confidence: "high"
+    corroborating_evidence_ids: ["evidence-repo-hamiltonian-assembly"]
+    conflicting_evidence_ids: []
+    used_by_claim_ids: ["claim-branch-coordinate-to-hamiltonian"]
+    used_by_operation_ids: ["op-enumerate-neighbors", "op-assemble-orbital-blocks", "op-assemble-h0-h1"]
+    participant_requirement_allowed: true
+    notes: "The benchmark replaces the implementation-specific kd-tree with a small, exact enumeration while preserving the scientific dependency."
+
+  - evidence_id: "evidence-paper-algorithm-2"
+    type: "protocol"
+    statement: "Algorithm 2 constructs inter-cell coupling Hamiltonians by translating cell coordinates, searching external neighbors, and evaluating orbital matrix elements."
+    origin_class: "paper_reported"
+    source:
+      source_id: "paper"
+      locator_type: "page"
+      locator: {page: 4, section: "2.1 Construction of Hamiltonian matrices", equation: null, table: null, figure: null, path: null, start_line: null, end_line: null, config_key: null, trace_event: null}
+    exact_quote_or_value: "Algorithm 2: Computing coupling Hamiltonians for periodically translated cells."
+    confidence: "high"
+    corroborating_evidence_ids: ["evidence-repo-periodic-couplings"]
+    conflicting_evidence_ids: []
+    used_by_claim_ids: ["claim-branch-coordinate-to-hamiltonian", "claim-leaf-periodic-bands-dos-transmission"]
+    used_by_operation_ids: ["op-enumerate-neighbors", "op-assemble-h0-h1"]
+    participant_requirement_allowed: true
+    notes: "Grounds the public same-cell and +1-cell H0/H1 construction."
+
+  - evidence_id: "evidence-paper-slater-koster"
+    type: "equation"
+    statement: "The reported Hamiltonian elements use angularly dependent two-center integrals in the Slater-Koster tradition."
+    origin_class: "paper_reported"
+    source:
+      source_id: "paper"
+      locator_type: "page"
+      locator: {page: 4, section: "2.1 Construction of Hamiltonian matrices", equation: null, table: null, figure: null, path: null, start_line: null, end_line: null, config_key: null, trace_event: null}
+    exact_quote_or_value: "Angular dependence is evaluated from two-center integrals rather than an exhaustive formula table."
+    confidence: "high"
+    corroborating_evidence_ids: ["evidence-repo-diatomic-elements", "evidence-benchmark-explicit-contract"]
+    conflicting_evidence_ids: []
+    used_by_claim_ids: ["claim-branch-coordinate-to-hamiltonian"]
+    used_by_operation_ids: ["op-assemble-orbital-blocks"]
+    participant_requirement_allowed: true
+    notes: "The grounded extension publishes the complete s/p directional formulas, including signs, so no paper lookup is needed."
+
+  - evidence_id: "evidence-paper-architecture"
+    type: "trace"
+    statement: "Figure 7 presents a pipeline from coordinates and two-center integrals through H0/H+1/H-1 to bands, Green functions, self-energies, DOS, and transmission."
+    origin_class: "paper_reported"
+    source:
+      source_id: "paper"
+      locator_type: "figure"
+      locator: {page: 8, section: "3.1 Software Architecture", equation: null, table: null, figure: 7, path: null, start_line: null, end_line: null, config_key: null, trace_event: null}
+    exact_quote_or_value: "Figure 7 generic control flow links Atomic coordinates and Two-center integrals to Hamiltonian matrices and physical quantities."
+    confidence: "high"
+    corroborating_evidence_ids: ["evidence-paper-framework-purpose"]
+    conflicting_evidence_ids: []
+    used_by_claim_ids: ["claim-root", "claim-leaf-periodic-bands-dos-transmission"]
+    used_by_operation_ids: ["op-assemble-h0-h1", "op-compute-bloch-bands", "op-solve-retarded-surfaces", "op-compute-transport-observables"]
+    participant_requirement_allowed: true
+    notes: "Direct evidence that the selected long-horizon workflow is coherent rather than an artificial concatenation."
+
+  - evidence_id: "evidence-paper-bloch-hamiltonian"
+    type: "equation"
+    statement: "The periodic Hamiltonian is reported as H(k)=H0+H-1 exp(-ik)+H1 exp(ik)."
+    origin_class: "paper_reported"
+    source:
+      source_id: "paper"
+      locator_type: "section"
+      locator: {page: 9, section: "4.2 Complex band structure", equation: null, table: null, figure: null, path: null, start_line: null, end_line: null, config_key: null, trace_event: null}
+    exact_quote_or_value: "H(k) = H0 + H-1 e^(-ik) + H1 e^(ik)."
+    confidence: "high"
+    corroborating_evidence_ids: ["evidence-repo-periodic-couplings", "evidence-benchmark-explicit-contract"]
+    conflicting_evidence_ids: []
+    used_by_claim_ids: ["claim-leaf-periodic-bands-dos-transmission"]
+    used_by_operation_ids: ["op-compute-bloch-bands"]
+    participant_requirement_allowed: true
+    notes: "The public phase convention removes length units by supplying theta directly."
+
+  - evidence_id: "evidence-paper-lead-self-energies"
+    type: "equation"
+    statement: "Equation (8) derives separate left and right semi-infinite lead self-energies from propagating and decaying modes."
+    origin_class: "paper_reported"
+    source:
+      source_id: "paper"
+      locator_type: "equation"
+      locator: {page: 9, section: "4.3 Self-energies for periodic leads", equation: 8, table: null, figure: null, path: null, start_line: null, end_line: null, config_key: null, trace_event: null}
+    exact_quote_or_value: "Separate Sigma_L and Sigma_R are formed from mode-selected lead eigenspaces."
+    confidence: "high"
+    corroborating_evidence_ids: ["evidence-repo-surface-self-energy"]
+    conflicting_evidence_ids: ["evidence-conflict-surface-order"]
+    used_by_claim_ids: ["claim-leaf-periodic-bands-dos-transmission"]
+    used_by_operation_ids: ["op-solve-retarded-surfaces"]
+    participant_requirement_allowed: true
+    notes: "The evaluator permits any stable causal surface algorithm rather than requiring the paper's modal method."
+
+  - evidence_id: "evidence-paper-retarded-green-function"
+    type: "equation"
+    statement: "Open-boundary observables are derived from a retarded Green function of the form [E I - H - Sigma]^{-1}."
+    origin_class: "paper_reported"
+    source:
+      source_id: "paper"
+      locator_type: "equation"
+      locator: {page: 2, section: "1 Introduction", equation: 2, table: null, figure: null, path: null, start_line: null, end_line: null, config_key: null, trace_event: null}
+    exact_quote_or_value: "G = [(E+i0+)I-H-Sigma]^-1."
+    confidence: "high"
+    corroborating_evidence_ids: ["evidence-paper-transport-observables", "evidence-repo-recursive-green-function"]
+    conflicting_evidence_ids: ["evidence-conflict-damping"]
+    used_by_claim_ids: ["claim-leaf-periodic-bands-dos-transmission"]
+    used_by_operation_ids: ["op-build-finite-device", "op-solve-retarded-surfaces", "op-compute-transport-observables"]
+    participant_requirement_allowed: true
+    notes: "The benchmark makes the positive finite eta explicit."
+
+  - evidence_id: "evidence-paper-transport-observables"
+    type: "equation"
+    statement: "Equations (10) and (11) connect the retarded Green function to density of states and coherent Caroli transmission."
+    origin_class: "paper_reported"
+    source:
+      source_id: "paper"
+      locator_type: "equation"
+      locator: {page: 9, section: "4.4 Green's functions", equation: "10-11", table: null, figure: null, path: null, start_line: null, end_line: null, config_key: null, trace_event: null}
+    exact_quote_or_value: "The paper lists a trace DOS expression and T(epsilon)=Tr[G^dagger Gamma_R G Gamma_L]."
+    confidence: "high"
+    corroborating_evidence_ids: ["evidence-repo-silicon-example", "evidence-benchmark-explicit-contract"]
+    conflicting_evidence_ids: ["evidence-conflict-dos-normalization"]
+    used_by_claim_ids: ["claim-leaf-periodic-bands-dos-transmission"]
+    used_by_operation_ids: ["op-compute-transport-observables"]
+    participant_requirement_allowed: true
+    notes: "The public task fixes spinless normalization and cell-resolved traces."
+
+  - evidence_id: "evidence-paper-figure-9"
+    type: "result"
+    statement: "Figure 9 reports band structure, density of states, and electron transmission for a hydrogen-passivated silicon nanowire with 77 atoms in its primitive cell."
+    origin_class: "paper_reported"
+    source:
+      source_id: "paper"
+      locator_type: "figure"
+      locator: {page: 10, section: "5.1 Silicon nanowire example", equation: null, table: null, figure: 9, path: null, start_line: null, end_line: null, config_key: null, trace_event: null}
+    exact_quote_or_value: "77 atoms; neighbor cutoff 2.4 Angstrom; period 5.50 Angstrom; 20 k points; 100 energies from 2.1 to 2.6 eV; damp 0.001j."
+    confidence: "high"
+    corroborating_evidence_ids: ["evidence-repo-silicon-example"]
+    conflicting_evidence_ids: ["evidence-limitation-missing-silicon-assets", "evidence-conflict-damping", "evidence-conflict-dos-normalization"]
+    used_by_claim_ids: ["claim-leaf-periodic-bands-dos-transmission"]
+    used_by_operation_ids: ["op-enumerate-neighbors", "op-assemble-h0-h1", "op-compute-bloch-bands", "op-solve-retarded-surfaces", "op-compute-transport-observables"]
+    participant_requirement_allowed: false
+    notes: "This concrete result is the target leaf, but its exact values and identifiers are not participant requirements."
+
+  - evidence_id: "evidence-paper-block-structure"
+    type: "result"
+    statement: "For the 446-by-446 silicon nanowire Hamiltonian, the reported decomposition yields blocks of sizes 131, 97, 121, and 97; a separate 1888-by-1888 example yields 51 blocks."
+    origin_class: "paper_reported"
+    source:
+      source_id: "paper"
+      locator_type: "figure"
+      locator: {page: 7, section: "2.4 Sorting and block-tridiagonal representation", equation: null, table: null, figure: 3, path: null, start_line: null, end_line: null, config_key: null, trace_event: null}
+    exact_quote_or_value: "446 -> [131,97,121,97]; 1888 -> 51 blocks."
+    confidence: "high"
+    corroborating_evidence_ids: ["evidence-paper-performance"]
+    conflicting_evidence_ids: []
+    used_by_claim_ids: ["claim-leaf-block-structure-performance"]
+    used_by_operation_ids: []
+    participant_requirement_allowed: false
+    notes: "Grounds a rejected optimization candidate; fixed expected block sizes would be too easy and source-dependent."
+
+  - evidence_id: "evidence-paper-performance"
+    type: "metric"
+    statement: "Figure 11 attributes transport scaling to Hamiltonian formation, lead self-energies, recursive Green functions, and block-structure detection."
+    origin_class: "paper_reported"
+    source:
+      source_id: "paper"
+      locator_type: "figure"
+      locator: {page: 12, section: "6 Software performance", equation: null, table: null, figure: 11, path: null, start_line: null, end_line: null, config_key: null, trace_event: null}
+    exact_quote_or_value: "Block-recursive transport scales with the sum of block-size cubes; unsplit dense recursion grows cubically."
+    confidence: "medium"
+    corroborating_evidence_ids: ["evidence-paper-block-structure"]
+    conflicting_evidence_ids: []
+    used_by_claim_ids: ["claim-leaf-block-structure-performance"]
+    used_by_operation_ids: []
+    participant_requirement_allowed: false
+    notes: "Hardware timings were not reproduced and are not used by the selected evaluator."
+
+  - evidence_id: "evidence-repo-hamiltonian-assembly"
+    type: "code"
+    statement: "The official implementation allocates orbital Hamiltonian matrices, enumerates site neighbors, maps site/orbital pairs to matrix indices, and fills onsite and intersite entries."
+    origin_class: "code_present"
+    source:
+      source_id: "nanonet-official-current"
+      locator_type: "path-lines"
+      locator: {page: null, section: null, equation: null, table: null, figure: null, path: "nanonet/tb/hamiltonian.py", start_line: 222, end_line: 277, config_key: null, trace_event: null}
+    exact_quote_or_value: "Hamiltonian.initialize loops over nodes, neighbor lists, and each site's orbitals."
+    confidence: "high"
+    corroborating_evidence_ids: ["evidence-paper-algorithm-1"]
+    conflicting_evidence_ids: []
+    used_by_claim_ids: ["claim-branch-coordinate-to-hamiltonian"]
+    used_by_operation_ids: ["op-enumerate-neighbors", "op-assemble-orbital-blocks", "op-assemble-h0-h1"]
+    participant_requirement_allowed: true
+    notes: "Static inspection only; provider code was not imported or executed."
+
+  - evidence_id: "evidence-repo-diatomic-elements"
+    type: "code"
+    statement: "The official diatomic element routine selects unordered atom-pair parameters and computes directional orbital coupling from the intersite vector and orbital quantum numbers."
+    origin_class: "code_present"
+    source:
+      source_id: "nanonet-official-current"
+      locator_type: "path-lines"
+      locator: {page: null, section: null, equation: null, table: null, figure: null, path: "nanonet/tb/diatomic_matrix_element.py", start_line: 222, end_line: 301, config_key: null, trace_event: null}
+    exact_quote_or_value: "me(atom1,ll1,atom2,ll2,coords) evaluates two-center angular dependence and a parity prefactor."
+    confidence: "high"
+    corroborating_evidence_ids: ["evidence-paper-slater-koster"]
+    conflicting_evidence_ids: []
+    used_by_claim_ids: ["claim-branch-coordinate-to-hamiltonian"]
+    used_by_operation_ids: ["op-assemble-orbital-blocks"]
+    participant_requirement_allowed: true
+    notes: "The participant contract specializes the general routine to a complete explicit s/sp model."
+
+  - evidence_id: "evidence-repo-periodic-couplings"
+    type: "code"
+    statement: "Periodic boundary construction creates translated topology, evaluates inter-cell matrix contributions, and diagonalizes the resulting Bloch Hamiltonian."
+    origin_class: "code_present"
+    source:
+      source_id: "nanonet-official-current"
+      locator_type: "path-lines"
+      locator: {page: null, section: null, equation: null, table: null, figure: null, path: "nanonet/tb/hamiltonian.py", start_line: 279, end_line: 389, config_key: null, trace_event: null}
+    exact_quote_or_value: "set_periodic_bc, get_hamiltonian_periodic_bc, and diagonalize_periodic_bc implement the periodic branch."
+    confidence: "high"
+    corroborating_evidence_ids: ["evidence-paper-algorithm-2", "evidence-paper-bloch-hamiltonian"]
+    conflicting_evidence_ids: []
+    used_by_claim_ids: ["claim-leaf-periodic-bands-dos-transmission"]
+    used_by_operation_ids: ["op-assemble-h0-h1", "op-compute-bloch-bands"]
+    participant_requirement_allowed: true
+    notes: "Static inspection only."
+
+  - evidence_id: "evidence-repo-surface-self-energy"
+    type: "code"
+    statement: "The official transport package linearizes a lead eigenproblem, selects left/right modal subspaces, forms lead self-energies, and optionally iterates them."
+    origin_class: "code_present"
+    source:
+      source_id: "nanonet-official-current"
+      locator_type: "path-lines"
+      locator: {page: null, section: null, equation: null, table: null, figure: null, path: "nanonet/negf/greens_functions.py", start_line: 147, end_line: 260, config_key: null, trace_event: null}
+    exact_quote_or_value: "surface_greens_function(E,h_l,h_0,h_r) returns two cropped contact self-energy matrices."
+    confidence: "high"
+    corroborating_evidence_ids: ["evidence-paper-lead-self-energies"]
+    conflicting_evidence_ids: ["evidence-conflict-surface-order"]
+    used_by_claim_ids: ["claim-leaf-periodic-bands-dos-transmission"]
+    used_by_operation_ids: ["op-solve-retarded-surfaces"]
+    participant_requirement_allowed: true
+    notes: "Algorithm choice is not imposed on participants."
+
+  - evidence_id: "evidence-repo-recursive-green-function"
+    type: "code"
+    statement: "The official recursive Green-function routine performs block sweeps for retarded and correlation Green functions and accepts boundary self-energies."
+    origin_class: "code_present"
+    source:
+      source_id: "nanonet-official-current"
+      locator_type: "path-lines"
+      locator: {page: null, section: null, equation: null, table: null, figure: null, path: "nanonet/negf/recursive_greens_functions.py", start_line: 32, end_line: 282, config_key: null, trace_event: null}
+    exact_quote_or_value: "recursive_gf computes transmission-relevant and diagonal Green-function blocks."
+    confidence: "high"
+    corroborating_evidence_ids: ["evidence-paper-retarded-green-function"]
+    conflicting_evidence_ids: ["evidence-conflict-damping"]
+    used_by_claim_ids: ["claim-leaf-periodic-bands-dos-transmission"]
+    used_by_operation_ids: ["op-compute-transport-observables"]
+    participant_requirement_allowed: true
+    notes: "The public task allows dense or recursive device inversion because outcomes, not implementation identity, are scored."
+
+  - evidence_id: "evidence-repo-silicon-example"
+    type: "config"
+    statement: "The official silicon example runs an energy loop, computes two lead self-energies, invokes recursive Green functions, and derives DOS and Caroli transmission."
+    origin_class: "code_present"
+    source:
+      source_id: "nanonet-official-current"
+      locator_type: "path-lines"
+      locator: {page: null, section: null, equation: null, table: null, figure: null, path: "examples/si_nw_transmission.py", start_line: 27, end_line: 72, config_key: null, trace_event: null}
+    exact_quote_or_value: "energy=linspace(2.1,2.5,50), damp=0.001j, followed by surface, recursive-GF, DOS, and transmission calculations."
+    confidence: "high"
+    corroborating_evidence_ids: ["evidence-paper-figure-9"]
+    conflicting_evidence_ids: ["evidence-conflict-damping", "evidence-conflict-dos-normalization"]
+    used_by_claim_ids: ["claim-leaf-periodic-bands-dos-transmission"]
+    used_by_operation_ids: ["op-solve-retarded-surfaces", "op-compute-transport-observables"]
+    participant_requirement_allowed: false
+    notes: "The numerical grid differs from the paper's printed 100-point 2.1-2.6 eV grid, reinforcing the decision not to require exact reproduction."
+
+  - evidence_id: "evidence-conflict-damping"
+    type: "limitation"
+    statement: "The official recursive routine multiplies damp by i although examples pass an already imaginary value, converting nominal broadening into a real shift."
+    origin_class: "code_present"
+    source:
+      source_id: "nanonet-official-current"
+      locator_type: "path-lines"
+      locator: {page: null, section: null, equation: null, table: null, figure: null, path: "nanonet/negf/recursive_greens_functions.py", start_line: 100, end_line: 101, config_key: null, trace_event: null}
+    exact_quote_or_value: "The diagonal update contains energy + 1j*damp while the example sets damp=0.001j."
+    confidence: "high"
+    corroborating_evidence_ids: ["evidence-repo-silicon-example"]
+    conflicting_evidence_ids: ["evidence-paper-retarded-green-function"]
+    used_by_claim_ids: []
+    used_by_operation_ids: ["op-solve-retarded-surfaces", "op-compute-transport-observables"]
+    participant_requirement_allowed: false
+    notes: "Resolved by the benchmark's real positive eta and z=E+i*eta convention."
+
+  - evidence_id: "evidence-conflict-surface-order"
+    type: "limitation"
+    statement: "The surface routine's documented return names and final returned variable order are inconsistent or at least orientation-ambiguous."
+    origin_class: "code_present"
+    source:
+      source_id: "nanonet-official-current"
+      locator_type: "path-lines"
+      locator: {page: null, section: null, equation: null, table: null, figure: null, path: "nanonet/negf/greens_functions.py", start_line: 168, end_line: 260, config_key: null, trace_event: null}
+    exact_quote_or_value: "The docstring lists sgf_l,sgf_r; line 260 returns sgf_r,sgf_l."
+    confidence: "high"
+    corroborating_evidence_ids: []
+    conflicting_evidence_ids: ["evidence-paper-lead-self-energies"]
+    used_by_claim_ids: []
+    used_by_operation_ids: ["op-solve-retarded-surfaces"]
+    participant_requirement_allowed: false
+    notes: "Resolved by explicit outward-coupling matrices in TASK.md."
+
+  - evidence_id: "evidence-conflict-dos-normalization"
+    type: "limitation"
+    statement: "The paper equation and example code use incompatible DOS factors and the example averages over the number of blocks."
+    origin_class: "paper_reported"
+    source:
+      source_id: "paper"
+      locator_type: "equation"
+      locator: {page: 9, section: "4.4 Green's functions", equation: 10, table: null, figure: null, path: null, start_line: null, end_line: null, config_key: null, trace_event: null}
+    exact_quote_or_value: "Equation (10) implies -2 Im Tr(G)/pi; the example uses -Tr(Im G_block)/number_of_blocks."
+    confidence: "high"
+    corroborating_evidence_ids: ["evidence-repo-silicon-example"]
+    conflicting_evidence_ids: ["evidence-paper-transport-observables"]
+    used_by_claim_ids: []
+    used_by_operation_ids: ["op-compute-transport-observables"]
+    participant_requirement_allowed: false
+    notes: "Resolved by the explicitly disclosed spinless total and per-cell definitions."
+
+  - evidence_id: "evidence-limitation-missing-silicon-assets"
+    type: "limitation"
+    statement: "The inspected paper PDF does not contain the supplementary silicon coordinate file or the full silicon/hydrogen parameter tables needed for an exact Figure 9 reconstruction."
+    origin_class: "dynamically_observed"
+    source:
+      source_id: "paper-render-audit"
+      locator_type: "trace-event"
+      locator: {page: 9, section: "5 NanoNET illustrative examples", equation: null, table: null, figure: 9, path: "authoring/sources/2010.07463.pdf", start_line: null, end_line: null, config_key: null, trace_event: "14-page visual and text inspection on 2026-08-15"}
+    exact_quote_or_value: "Page 9 states that silicon primitive-cell coordinates are in Supplementary material; no supplement was supplied."
+    confidence: "high"
+    corroborating_evidence_ids: ["evidence-paper-figure-9"]
+    conflicting_evidence_ids: []
+    used_by_claim_ids: ["claim-leaf-periodic-bands-dos-transmission"]
+    used_by_operation_ids: []
+    participant_requirement_allowed: false
+    notes: "This is why exact paper-number reproduction is rejected rather than made artificially difficult."
+
+  - evidence_id: "evidence-benchmark-explicit-contract"
+    type: "config"
+    statement: "The selected grounded extension discloses basis order, inclusive neighbor rule, all s/p hopping signs, H0/H1 orientation, Bloch phase, finite-device assembly, retarded Dyson equations, contact orientation, observables, and artifact schemas."
+    origin_class: "benchmark_choice"
+    source:
+      source_id: "participant-package"
+      locator_type: "path-lines"
+      locator: {page: null, section: null, equation: null, table: null, figure: null, path: "tasks/periodic-orbital-transport/participant/TASK.md", start_line: 39, end_line: 392, config_key: null, trace_event: null}
+    exact_quote_or_value: "Public contract version periodic-orbital-device/v1 and output version periodic-orbital-transport-output/v1."
+    confidence: "high"
+    corroborating_evidence_ids: ["evidence-paper-algorithm-1", "evidence-paper-algorithm-2", "evidence-paper-bloch-hamiltonian", "evidence-paper-transport-observables"]
+    conflicting_evidence_ids: []
+    used_by_claim_ids: ["claim-leaf-periodic-bands-dos-transmission"]
+    used_by_operation_ids: ["op-enumerate-neighbors", "op-assemble-orbital-blocks", "op-assemble-h0-h1", "op-compute-bloch-bands", "op-build-finite-device", "op-solve-retarded-surfaces", "op-compute-transport-observables", "op-report-diagnostics"]
+    participant_requirement_allowed: true
+    notes: "No source paper or official repository is required to infer a solution-critical convention."
+
+  - evidence_id: "evidence-oracle-generated-suite"
+    type: "trace"
+    statement: "The privileged generator deterministically produced two public and ten hidden cases spanning scalar, rotated, permuted, heterogeneous s/sp, cutoff-edge, weak-contact, strong-defect, and metamorphic families."
+    origin_class: "dynamically_observed"
+    source:
+      source_id: "oracle-generation-run"
+      locator_type: "trace-event"
+      locator: {page: null, section: null, equation: null, table: null, figure: null, path: "tasks/periodic-orbital-transport/author/oracle/manifest.json", start_line: null, end_line: null, config_key: "cases", trace_event: "generate_assets.py completed with 12 cases and --check passed"}
+    exact_quote_or_value: "12 cases total; 2 public; 10 hidden; basis sizes 2-12; device cells 4-7; eta 0.04-0.12."
+    confidence: "high"
+    corroborating_evidence_ids: ["evidence-reference-evaluator-pass", "evidence-alternative-evaluator-pass"]
+    conflicting_evidence_ids: []
+    used_by_claim_ids: ["claim-leaf-periodic-bands-dos-transmission"]
+    used_by_operation_ids: ["op-enumerate-neighbors", "op-assemble-orbital-blocks", "op-assemble-h0-h1", "op-compute-bloch-bands", "op-build-finite-device", "op-solve-retarded-surfaces", "op-compute-transport-observables", "op-report-diagnostics"]
+    participant_requirement_allowed: false
+    notes: "Exact hidden seeds, cases, and reference values remain private."
+
+  - evidence_id: "evidence-oracle-surface-validation"
+    type: "metric"
+    statement: "All generated lead couplings have nonzero numerical rank and privileged retarded surface solutions satisfy the nonlinear Dyson equation to near machine precision."
+    origin_class: "dynamically_observed"
+    source:
+      source_id: "oracle-generation-run"
+      locator_type: "config-key"
+      locator: {page: null, section: null, equation: null, table: null, figure: null, path: "tasks/periodic-orbital-transport/author/oracle/manifest.json", start_line: null, end_line: null, config_key: "cases[*].oracle_checks", trace_event: "post-generation validation"}
+    exact_quote_or_value: "Maximum recorded surface residual is 1.968552123949753e-15; every H1 numerical-rank fraction is 1.0 in the generated suite."
+    confidence: "high"
+    corroborating_evidence_ids: ["evidence-alternative-evaluator-pass"]
+    conflicting_evidence_ids: []
+    used_by_claim_ids: ["claim-leaf-periodic-bands-dos-transmission"]
+    used_by_operation_ids: ["op-assemble-h0-h1", "op-solve-retarded-surfaces"]
+    participant_requirement_allowed: false
+    notes: "Guards against trivial disconnected leads and unconverged oracle values."
+
+  - evidence_id: "evidence-metamorphic-energy-shift"
+    type: "metric"
+    statement: "A rigid global onsite and energy-grid shift changes H0 and bands by the same scalar while leaving H1, self-energies at corresponding energies, DOS, LDOS, and transmission invariant."
+    origin_class: "dynamically_observed"
+    source:
+      source_id: "oracle-generation-run"
+      locator_type: "config-key"
+      locator: {page: null, section: null, equation: null, table: null, figure: null, path: "tasks/periodic-orbital-transport/author/oracle/manifest.json", start_line: null, end_line: null, config_key: "metamorphic_pairs[0]", trace_event: "global_energy_shift"}
+    exact_quote_or_value: "Largest reported residual is 3.776586443654626e-14 for sigma_right."
+    confidence: "high"
+    corroborating_evidence_ids: ["evidence-oracle-generated-suite"]
+    conflicting_evidence_ids: []
+    used_by_claim_ids: ["claim-leaf-periodic-bands-dos-transmission"]
+    used_by_operation_ids: ["op-assemble-h0-h1", "op-compute-bloch-bands", "op-solve-retarded-surfaces", "op-compute-transport-observables"]
+    participant_requirement_allowed: false
+    notes: "Private metamorphic relation; the public task states qualitative invariance expectations without revealing cases."
+
+  - evidence_id: "evidence-metamorphic-site-permutation"
+    type: "metric"
+    statement: "Permuting the site list induces a basis permutation of Hamiltonians and self-energies while preserving basis-invariant bands, DOS, LDOS by cell, and transmission."
+    origin_class: "dynamically_observed"
+    source:
+      source_id: "oracle-generation-run"
+      locator_type: "config-key"
+      locator: {page: null, section: null, equation: null, table: null, figure: null, path: "tasks/periodic-orbital-transport/author/oracle/manifest.json", start_line: null, end_line: null, config_key: "metamorphic_pairs[1]", trace_event: "site_list_permutation"}
+    exact_quote_or_value: "Largest reported residual is 3.4593672944354596e-13 for sigma_left after basis permutation."
+    confidence: "high"
+    corroborating_evidence_ids: ["evidence-oracle-generated-suite"]
+    conflicting_evidence_ids: []
+    used_by_claim_ids: ["claim-leaf-periodic-bands-dos-transmission"]
+    used_by_operation_ids: ["op-enumerate-neighbors", "op-assemble-orbital-blocks", "op-assemble-h0-h1", "op-compute-bloch-bands", "op-solve-retarded-surfaces", "op-compute-transport-observables"]
+    participant_requirement_allowed: false
+    notes: "Detects hard-coding of site or species order."
+
+  - evidence_id: "evidence-reference-evaluator-pass"
+    type: "metric"
+    statement: "The clean-room reference solver passed every hidden case and every mandatory metric with total score 1.0."
+    origin_class: "dynamically_observed"
+    source:
+      source_id: "reference-evaluation-run"
+      locator_type: "trace-event"
+      locator: {page: null, section: null, equation: null, table: null, figure: null, path: "tasks/periodic-orbital-transport/author/verification_logs/reference_evaluation.json", start_line: null, end_line: null, config_key: "total_score", trace_event: "private evaluator execution over 10 hidden cases"}
+    exact_quote_or_value: "passed=true; total_score=1.0; case_count=10; aggregate serialized output=702816 bytes."
+    confidence: "high"
+    corroborating_evidence_ids: ["evidence-oracle-generated-suite", "evidence-alternative-evaluator-pass"]
+    conflicting_evidence_ids: []
+    used_by_claim_ids: ["claim-leaf-periodic-bands-dos-transmission"]
+    used_by_operation_ids: ["op-enumerate-neighbors", "op-assemble-orbital-blocks", "op-assemble-h0-h1", "op-compute-bloch-bands", "op-build-finite-device", "op-solve-retarded-surfaces", "op-compute-transport-observables", "op-report-diagnostics"]
+    participant_requirement_allowed: false
+    notes: "The solver is self-contained and uses only participant-visible instance semantics plus NumPy."
+
+  - evidence_id: "evidence-alternative-evaluator-pass"
+    type: "metric"
+    statement: "An independently structured fixed-point surface solver also passed all ten hidden cases with total score 1.0."
+    origin_class: "dynamically_observed"
+    source:
+      source_id: "alternative-evaluation-run"
+      locator_type: "trace-event"
+      locator: {page: null, section: null, equation: null, table: null, figure: null, path: "tasks/periodic-orbital-transport/author/verification_logs/alternative_evaluation.json", start_line: null, end_line: null, config_key: "total_score", trace_event: "private evaluator execution over 10 hidden cases"}
+    exact_quote_or_value: "passed=true; total_score=1.0; maximum observed absolute disagreement: self-energy 3.17107661829854e-10, DOS 1.32263977548064e-10, transmission 1.71757885691903e-11."
+    confidence: "high"
+    corroborating_evidence_ids: ["evidence-reference-evaluator-pass", "evidence-oracle-surface-validation"]
+    conflicting_evidence_ids: []
+    used_by_claim_ids: ["claim-leaf-periodic-bands-dos-transmission"]
+    used_by_operation_ids: ["op-solve-retarded-surfaces", "op-compute-transport-observables"]
+    participant_requirement_allowed: false
+    notes: "Supports nonzero behavioral tolerances and method freedom."
+
+  - evidence_id: "evidence-paper-complex-band-equation"
+    type: "equation"
+    statement: "Equation (7) proposes a linearized eigenproblem for complex Bloch factors at fixed energy, followed by mode classification for lead self-energies."
+    origin_class: "paper_reported"
+    source:
+      source_id: "paper"
+      locator_type: "equation"
+      locator: {page: 9, section: "4.2 Complex band structure", equation: 7, table: null, figure: null, path: null, start_line: null, end_line: null, config_key: null, trace_event: null}
+    exact_quote_or_value: "The complex band parameter is lambda=exp(ik), obtained from a two-block linearization."
+    confidence: "medium"
+    corroborating_evidence_ids: ["evidence-repo-surface-self-energy"]
+    conflicting_evidence_ids: []
+    used_by_claim_ids: ["claim-leaf-periodic-bands-dos-transmission"]
+    used_by_operation_ids: ["op-linearize-quadratic-eigenproblem", "op-classify-left-right-modes", "op-form-modal-self-energies"]
+    participant_requirement_allowed: false
+    notes: "The printed lower-right block appears to omit an inverse, so this candidate branch was rejected rather than silently repaired."
+
+  - evidence_id: "evidence-paper-bismuth-example"
+    type: "result"
+    statement: "The bulk-bismuth example constructs a spinful sp3 basis, classifies three neighbor shells, applies spin-orbit coupling, and reports bands along a high-symmetry path in Figure 10."
+    origin_class: "paper_reported"
+    source:
+      source_id: "paper"
+      locator_type: "figure"
+      locator: {page: 12, section: "5.2 Bulk Bi crystal example", equation: null, table: null, figure: 10, path: null, start_line: null, end_line: null, config_key: null, trace_event: null}
+    exact_quote_or_value: "Figure 10 reports the bulk-bismuth band structure; pages 10-11 print the basis, distance classifier, parameters, and k path."
+    confidence: "high"
+    corroborating_evidence_ids: ["evidence-paper-framework-purpose"]
+    conflicting_evidence_ids: []
+    used_by_claim_ids: ["claim-leaf-bismuth-band-structure"]
+    used_by_operation_ids: ["op-build-spinful-basis", "op-classify-neighbor-shells", "op-assemble-spin-orbit-hamiltonian", "op-compute-high-symmetry-bands"]
+    participant_requirement_allowed: false
+    notes: "Grounds a rejected source-trivia-dominated reproduction candidate."
+
+  - evidence_id: "evidence-repo-block-decomposition"
+    type: "code"
+    statement: "The official block module computes sparsity profiles, greedily grows constrained blocks, and recursively selects cuts using a sum-of-cubes objective."
+    origin_class: "code_present"
+    source:
+      source_id: "nanonet-official-current"
+      locator_type: "path-lines"
+      locator: {page: null, section: null, equation: null, table: null, figure: null, path: "nanonet/tb/block_tridiagonalization.py", start_line: 146, end_line: 625, config_key: null, trace_event: null}
+    exact_quote_or_value: "find_optimal_cut, compute_blocks_optimized, split_into_subblocks, compute_edge, and compute_blocks form the decomposition path."
+    confidence: "high"
+    corroborating_evidence_ids: ["evidence-paper-block-structure", "evidence-paper-performance"]
+    conflicting_evidence_ids: []
+    used_by_claim_ids: ["claim-leaf-block-structure-performance"]
+    used_by_operation_ids: ["op-extract-sparsity-profiles", "op-select-recursive-cuts", "op-validate-block-transport"]
+    participant_requirement_allowed: false
+    notes: "Static review found local optimization and limited direct optimized-path testing."
+
+  - evidence_id: "evidence-repo-site-sorting"
+    type: "code"
+    statement: "The official package provides lexicographic, projection, and potential-like coordinate sorting procedures whose permutations change matrix bandwidth without changing physical content."
+    origin_class: "code_present"
+    source:
+      source_id: "nanonet-official-current"
+      locator_type: "path-lines"
+      locator: {page: null, section: null, equation: null, table: null, figure: null, path: "nanonet/tb/sorting_algorithms.py", start_line: 17, end_line: 106, config_key: null, trace_event: null}
+    exact_quote_or_value: "sort_lexico, sort_projection, and sort_capacitance return coordinate orderings."
+    confidence: "high"
+    corroborating_evidence_ids: ["evidence-paper-block-structure"]
+    conflicting_evidence_ids: []
+    used_by_claim_ids: ["claim-leaf-block-structure-performance"]
+    used_by_operation_ids: ["op-order-sites"]
+    participant_requirement_allowed: false
+    notes: "Grounds the rejected ordering/decomposition candidate."
+
+  - evidence_id: "evidence-version-pinning"
+    type: "config"
+    statement: "The current official checkout and nearest pre-paper commit are pinned separately, preventing later source drift from silently changing provenance."
+    origin_class: "dynamically_observed"
+    source:
+      source_id: "git-static-audit"
+      locator_type: "trace-event"
+      locator: {page: null, section: null, equation: null, table: null, figure: null, path: "authoring/source_manifest.yaml", start_line: null, end_line: null, config_key: "repositories", trace_event: "git rev-parse and git show on 2026-08-15"}
+    exact_quote_or_value: "current=0c71da6c53129fcc0794efa7f35610ed9f44e135; pre-paper=50d02856b5bcfcf9a91de6d46ebd54bf24938797."
+    confidence: "high"
+    corroborating_evidence_ids: []
+    conflicting_evidence_ids: []
+    used_by_claim_ids: []
+    used_by_operation_ids: []
+    participant_requirement_allowed: false
+    notes: "Neither source snapshot is exposed to or required by participants."
+
+coverage:
+  paper_sections_reviewed:
+    - "Abstract and Program Summary"
+    - "1 Introduction"
+    - "2.1 Construction of Hamiltonian matrices"
+    - "2.4 Sorting and block-tridiagonal representation"
+    - "3 NanoNET framework"
+    - "4 Extracting physical quantities"
+    - "5.1 Silicon nanowire example"
+    - "5.2 Bulk Bi crystal example"
+    - "6 Software performance"
+    - "7 Conclusions"
+    - "Appendix and references"
+  repository_paths_reviewed:
+    - "nanonet/tb/hamiltonian.py"
+    - "nanonet/tb/diatomic_matrix_element.py"
+    - "nanonet/tb/block_tridiagonalization.py"
+    - "nanonet/tb/sorting_algorithms.py"
+    - "nanonet/tb/structure_designer.py"
+    - "nanonet/negf/greens_functions.py"
+    - "nanonet/negf/recursive_greens_functions.py"
+    - "examples/si_nw_band_structure.py"
+    - "examples/si_nw_transmission.py"
+    - "examples/si_nw_transmission_blocks.py"
+    - "examples/bi_bulk.py"
+    - "test/test_greens_functions.py"
+    - "test/test_block_tridiagonalization.py"
+    - "test/test_matrix_splitting_from_aux_functions.py"
+    - "pyproject.toml"
+    - "LICENSE"
+  configurations_reviewed:
+    - "participant/input/schema.json"
+    - "participant/input/public_scalar_diatomic.json"
+    - "participant/input/public_rotated_multispecies.json"
+    - "author/oracle/manifest.json"
+    - "private/evaluator constants and hidden-suite inventory"
+  dynamic_runs_reviewed:
+    - "privileged oracle generation and deterministic --check"
+    - "trusted scalar/sp3/Bloch/nonnormal/finite-slab science checks"
+    - "clean-room reference evaluator run over 10 hidden cases"
+    - "alternative solver evaluator run over 10 hidden cases"
+    - "global-energy-shift and site-permutation metamorphic checks"
+  known_gaps:
+    - "The supplementary silicon coordinates and complete paper-era Si/H parameter tables were not available from the PDF."
+    - "Paper hardware performance results were not reproduced because they are outside the selected scientific task."
+    - "The current repository substantially postdates the paper; the pre-paper commit is pinned but not executed."
+    - "No frontier-agent calibration has been run on the exact released task build."
+
+validation:
+  every_record_has_locator: true
+  low_confidence_hidden_requirements: []
+  unresolved_conflicts:
+    - "conflict-greedy-optimality is unresolved but belongs only to a rejected candidate and creates no selected-task requirement."

@@ -1,0 +1,15 @@
+{
+  "cases": [],
+  "evaluator_error": null,
+  "hard_gates": {
+    "failures": [
+      "submission uses forbidden network/process/dynamic facilities: import socket"
+    ],
+    "passed": false
+  },
+  "metrics": {},
+  "mode": "execute",
+  "passed": false,
+  "schema_version": "periodic-orbital-transport-evaluation/v1",
+  "total_score": 0.0
+}

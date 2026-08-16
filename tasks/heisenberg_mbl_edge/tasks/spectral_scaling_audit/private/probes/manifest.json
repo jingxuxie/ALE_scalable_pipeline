@@ -1,0 +1,193 @@
+{
+  "description": "Deliberately invalid private robustness submissions; never participant-visible.",
+  "probe_count": 14,
+  "probes": [
+    {
+      "category": "malformed",
+      "expected_failure_fragments": [
+        "analyzer execution failed",
+        "SyntaxError"
+      ],
+      "expected_passed": false,
+      "expected_score": 0.0,
+      "id": "malformed_source",
+      "purpose": "Syntax errors fail closed before participant code can run.",
+      "source_bytes": 13,
+      "source_sha256": "e5c39b5d9e483c96898f2970978fee4d8e5a3814e685d9ab37365a5aa333b5ad",
+      "submission": "cases/malformed_source"
+    },
+    {
+      "category": "malformed",
+      "expected_failure_fragments": [
+        "realization_stats.csv header mismatch"
+      ],
+      "expected_passed": false,
+      "expected_score": 0.0,
+      "id": "malformed_csv",
+      "purpose": "A required CSV with the wrong header is rejected.",
+      "source_bytes": 916,
+      "source_sha256": "436a77b62f94c0eb577ca32679d15e78b7e7f85a9e4eded6152e6c994a5ea0fd",
+      "submission": "cases/malformed_csv"
+    },
+    {
+      "category": "nonfinite",
+      "expected_failure_fragments": [
+        "mean_r is not finite"
+      ],
+      "expected_passed": false,
+      "expected_score": 0.0,
+      "id": "nan_statistic",
+      "purpose": "NaN cannot cross a numeric artifact boundary.",
+      "source_bytes": 1271,
+      "source_sha256": "d63440fc9bcdafd2a33b07005c5a6ae0001c2193f8cd2a2877675bb3167a522a",
+      "submission": "cases/nan_statistic"
+    },
+    {
+      "category": "nonfinite",
+      "expected_failure_fragments": [
+        "mean_r is not finite"
+      ],
+      "expected_passed": false,
+      "expected_score": 0.0,
+      "id": "infinite_statistic",
+      "purpose": "Infinity cannot cross a numeric artifact boundary.",
+      "source_bytes": 1271,
+      "source_sha256": "48ec570e429ad96e93f14fd65c7060bafebd5dbc86fa145ec49348b6f66868a0",
+      "submission": "cases/infinite_statistic"
+    },
+    {
+      "category": "partial",
+      "expected_failure_fragments": [
+        "output inventory mismatch"
+      ],
+      "expected_passed": false,
+      "expected_score": 0.0,
+      "id": "partial_artifacts",
+      "purpose": "Missing required artifacts are a hard failure.",
+      "source_bytes": 479,
+      "source_sha256": "44ecc0b62d35e011eba22c0279460cee9eafe1de860fee7d8d5f502feba38ebc",
+      "submission": "cases/partial_artifacts"
+    },
+    {
+      "category": "inventory",
+      "expected_failure_fragments": [
+        "output inventory mismatch"
+      ],
+      "expected_passed": false,
+      "expected_score": 0.0,
+      "id": "extra_artifact",
+      "purpose": "Unexpected artifacts are rejected along with missing ones.",
+      "source_bytes": 1026,
+      "source_sha256": "a9ab50128c8dd68514c29e63ef59ee56e965127519b58903626667aee3d8174a",
+      "submission": "cases/extra_artifact"
+    },
+    {
+      "category": "oversize",
+      "expected_failure_fragments": [
+        "analyzer is oversized"
+      ],
+      "expected_passed": false,
+      "expected_score": 0.0,
+      "id": "oversized_source",
+      "purpose": "The analyzer source-size gate rejects files larger than 250000 bytes.",
+      "source_bytes": 250136,
+      "source_sha256": "5baac0be35ea26b9cb8995e253500cca6eff1303c540f44dd2b012a58d168292",
+      "submission": "cases/oversized_source"
+    },
+    {
+      "category": "oversize",
+      "expected_failure_fragments": [
+        "output byte limit exceeded"
+      ],
+      "expected_passed": false,
+      "expected_score": 0.0,
+      "id": "oversized_output",
+      "purpose": "The per-case output byte limit is enforced before parsing.",
+      "source_bytes": 1109,
+      "source_sha256": "bf16ca55989af027f202a0c1baa38b1a472ad275e8caeb1a500096869f021ff0",
+      "submission": "cases/oversized_output"
+    },
+    {
+      "category": "security",
+      "expected_failure_fragments": [
+        "audit denied filesystem access: open"
+      ],
+      "expected_passed": false,
+      "expected_score": 0.0,
+      "id": "private_path_read",
+      "purpose": "Traversal from a mounted hidden input cannot read the private reference tree.",
+      "source_bytes": 486,
+      "source_sha256": "ef51a1b1c1db74ae1f6bd8a2f80c77d2f27c35a64aeda3fb9375c12ca91bec70",
+      "submission": "cases/private_path_read"
+    },
+    {
+      "category": "security",
+      "expected_failure_fragments": [
+        "audit denied filesystem access: open"
+      ],
+      "expected_passed": false,
+      "expected_score": 0.0,
+      "id": "input_mutation",
+      "purpose": "Mounted input data remain read-only to participant code.",
+      "source_bytes": 435,
+      "source_sha256": "6c08d65a06541ca653a69095e2a688933985fd4ac0ce5f7a46345739f9cd7d36",
+      "submission": "cases/input_mutation"
+    },
+    {
+      "category": "security",
+      "expected_failure_fragments": [
+        "audit denied filesystem access: open"
+      ],
+      "expected_passed": false,
+      "expected_score": 0.0,
+      "id": "output_parent_escape",
+      "purpose": "Writes cannot escape the designated output directory.",
+      "source_bytes": 438,
+      "source_sha256": "f6d10a27b2154c44bef8b29146d33b4810056c60909d9db62325c94c9ffe9825",
+      "submission": "cases/output_parent_escape"
+    },
+    {
+      "category": "security",
+      "expected_failure_fragments": [
+        "audit denied import: socket"
+      ],
+      "expected_passed": false,
+      "expected_score": 0.0,
+      "id": "network_import",
+      "purpose": "Network-capable modules are outside the allowed import surface.",
+      "source_bytes": 30,
+      "source_sha256": "fd1084c21937a19fc16a9155799015623cf6bec0355f515ee1fbff0d2b8e5f8b",
+      "submission": "cases/network_import"
+    },
+    {
+      "category": "security",
+      "expected_failure_fragments": [
+        "audit denied import: subprocess"
+      ],
+      "expected_passed": false,
+      "expected_score": 0.0,
+      "id": "process_import",
+      "purpose": "Process-spawning modules are outside the allowed import surface.",
+      "source_bytes": 56,
+      "source_sha256": "8fabe962164877731a53c1f3e572e821348fe740503b90679b1b219344574a29",
+      "submission": "cases/process_import"
+    },
+    {
+      "category": "security",
+      "expected_failure_fragments": [
+        "audit denied capability: compile"
+      ],
+      "expected_passed": false,
+      "expected_score": 0.0,
+      "id": "dynamic_exec",
+      "purpose": "Runtime compilation and dynamic execution are denied.",
+      "source_bytes": 387,
+      "source_sha256": "bb0b77f8f37fe5c816bba19e980659e329646e053c3395edfbacae4a1281fa54",
+      "submission": "cases/dynamic_exec"
+    }
+  ],
+  "schema_version": "spectral-scaling-probes/v1",
+  "submission_inventory": [
+    "output/analyze.py"
+  ]
+}

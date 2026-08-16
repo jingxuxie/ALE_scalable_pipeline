@@ -1,0 +1,201 @@
+schema_version: paper2ale.codex-session/v1
+
+session:
+  paper_id: arxiv-1907.13022v2
+  paper_path_or_url: authoring/sources/1907.13022v2.pdf
+  supplement_path_or_url: authoring/sources/1907.13022v2.pdf
+  official_code_hint: authoring/sources/Juqst.jl
+  data_hint: authoring/sources/EfficientLearningDataSet
+  output_root: tasks/quantum_noise
+  preferred_task_count: 2
+  maximum_task_count: 2
+  priority: hard_only
+  overwrite: false
+
+source_policy:
+  find_official_code: true
+  find_official_data: true
+  pin_exact_versions: true
+  record_licenses: true
+  permit_unofficial_forks: false
+  allow_synthetic_inputs_when_grounded: true
+  allow_paper_only_reconstruction: true
+  execute_untrusted_source_without_review: false
+
+task_policy:
+  allowed_modes:
+    - masked_workflow_completion
+    - debugging_and_repair
+    - method_selection
+    - method_masked_rediscovery
+    - comparison_and_ablation
+    - transfer
+    - audit
+    - optimization
+  prefer_one_strong_task: true
+  use_leaf_as_target_not_default_task_boundary: true
+  minimum_meaningful_operations: 4
+  minimum_dependency_depth: 3
+  minimum_independent_challenge_sources: 2
+  require_private_generalization_test: true
+  require_multiple_output_artifacts_when_natural: true
+  reject_easy_and_medium_final_tasks: true
+  retain_intermediate_results_as_private_rubrics: true
+
+participant_environment:
+  os: ubuntu-24.04
+  cpu_count: 4
+  memory_gb: 8
+  gpu: null
+  wall_time_minutes: 12
+  disk_gb: 20
+  network:
+    enabled: false
+    allowlist: []
+  allowed_languages:
+    - python
+  required_packages:
+    - python==3.12.13
+    - numpy==2.3.5
+  prohibited_packages:
+    - scipy
+  task_profiles:
+    spectral-correlation-audit-v1:
+      memory_gb: 8
+      wall_time_seconds_per_input: 45
+      allowed_imports: participant/TASK.md allowlist
+    local-junction-noise-model-v1:
+      memory_gb: 4
+      wall_time_seconds_per_input: 45
+      total_evaluator_wall_time_minutes: 12
+      allowed_packages:
+        - Python standard library
+        - numpy==2.3.5
+  final_version_pin_status: matched_current_participant_contracts
+
+verification_policy:
+  require_privileged_oracle: true
+  require_public_input_reference_solver: true
+  require_alternative_valid_solution_when_practical: true
+  require_realistic_mutants: true
+  minimum_mutant_categories: 5
+  require_metamorphic_tests_when_applicable: true
+  require_repeated_deterministic_evaluator_runs: true
+  numeric_comparison: calibrated_abs_and_rel_tolerance
+  stochastic_comparison: multi_seed_or_multi_instance
+  scientific_metrics_use_continuous_scores: true
+  exact_hidden_thresholds_private: true
+
+difficulty_policy:
+  provisional_label_after_all_verification_gates: structurally_hard_candidate
+  current_label: structurally_hard_candidate
+  require_shortcut_audit: true
+  require_clean_room_run: true
+  require_frontier_agent_calibration_for_frontier_claim: true
+
+task_verification_state:
+  local-junction-noise-model-v1:
+    exact_task_build_sha256: 9716962c4c4f3338ef2b66a7aea69e10289c8575db33edd64cbadb81e8a62573
+    exact_public_tree_sha256: f095d644815187489501b6a83567f01888b929b47164156f140b9bc6f0841834
+    final_verifier_status: pass_nine_of_nine_independently_reproduced_checkout_stable
+    final_verifier_runtime_seconds: 68.8558793
+    provenance_path_resolution: pass_task_root_relative
+    external_paper_blind_review: pass
+    superseded_build_evidence:
+      exact_public_tree_sha256: b9b686697e4a8016ac4efd3fae5a15b6cb1a98c24c17da64e63b97ddfe0f1401
+      verifier_status: pass_before_later_adversarial_gap_discovery
+      verifier_runtime_seconds: 33.185
+    retracted_metadata_failure_build_evidence:
+      exact_public_tree_sha256: bbd9e2d2e63de9d70ee21d2566608542426a0a1ae2f4b8120a08add9795b058e
+      builder_verifier_status: pass_eight_of_eight_groups
+      builder_verifier_runtime_seconds: 68.4066709
+      independent_post_freeze_status: fail_seven_of_eight_transient_trusted_oracle_metadata
+    retracted_crlf_build_evidence:
+      exact_task_build_sha256: b006df370e1038ac1e6cf7deeea1cc824110366807f6523223ca408612c196b0
+      exact_public_tree_sha256: bbd9e2d2e63de9d70ee21d2566608542426a0a1ae2f4b8120a08add9795b058e
+      independent_verifier_runtime_seconds: 69.5395319
+      verifier_status: pass_nine_of_nine_before_clean_checkout_line_ending_audit
+      invalidation_reason: fifty_six_generated_text_fixtures_were_crlf_despite_lf_gitattributes
+      provisional_scores:
+        privileged_oracle: 1.0
+        clean_room_reference: 0.9260558303777712
+        alternative_valid_solver: 0.92743224417822
+      provisional_mutants_rejected: 11
+      provisional_metamorphic_and_invariant_checks: 9
+      provisional_whole_task_idempotence_file_count: 92
+    verified_scores:
+      privileged_oracle: 1.0
+      clean_room_reference: 0.9260558303777712
+      alternative_valid_solver: 0.92743224417822
+    verified_mutants_rejected: 11
+    verified_metamorphic_and_invariant_checks: 9
+    verified_whole_task_idempotence_file_count: 92
+    checkout_stability:
+      total_files: 92
+      crlf_files: 0
+      invalid_utf8_files: 0
+      cache_files: 0
+    provisional_difficulty: structurally_hard_candidate
+    release_status: needs_agent_calibration
+  spectral-correlation-audit-v1:
+    exact_task_build_sha256: 0bba762f4be56c68c2b20c5147c99d37b716f47ae74a8cff88f7f2271e796a1b
+    exact_participant_projection_sha256: eaeef52ee4dc8f7c97ef26d0bb2070a42feb3d50ec21da9499be2dbe817fa1d2
+    exact_participant_validator_sha256: 97188585dcef4bce2e7f89ff12505ac945af731e0674c74cb8e0d58f5df24ef3
+    final_verifier_status: pass_ten_of_ten_independently_reproduced_checkout_stable
+    final_verifier_runtime_seconds: 78.0011323
+    external_paper_blind_review: pass_current_post_remediation_participant_only_projection
+    provenance_path_resolution: pass_task_root_relative
+    superseded_build_evidence:
+      exact_task_build_sha256: 155f2f9c0769a6811753797a3624a27e8bfd9f362e015c15342bff2c52b7cff7
+      verifier_status: pass_before_later_adversarial_gap_discovery
+      verifier_runtime_seconds: 57.4177597
+    retracted_provisional_build_evidence:
+      exact_task_build_sha256: 58feb1090f58ca4f51b8771a39a2b091aac8c71b7b158cf54d124c9db5756786
+      exact_participant_projection_sha256: 9b3b8ca87613f2edb4166c498417cfa3b7bef8758be520ccc7c1d7978c74587c
+      exact_participant_validator_sha256: 97188585dcef4bce2e7f89ff12505ac945af731e0674c74cb8e0d58f5df24ef3
+      builder_verifier_runtime_seconds: 78.1725914
+      independent_verifier_runtime_seconds: 78.0853764
+      verifier_status: pass_ten_of_ten_before_private_documentation_contradiction
+      invalidation_reasons:
+        - private_mutant_status_documentation_contradiction_changes_full_task_hash
+        - generated_text_fixtures_were_crlf_despite_lf_gitattributes
+      provisional_scores:
+        privileged_oracle: 1.0
+        clean_room_reference: 0.996904859452196
+        alternative_valid_solver: 0.996904859477264
+      provisional_mutants_rejected: 14
+      provisional_metamorphic_and_invariant_checks: 7
+      provisional_hard_malformed_and_security_cases_rejected: 28
+      provisional_contract_bypass_probes_rejected: 3
+      provisional_valid_policy_variants_accepted: 6
+    verified_scores:
+      privileged_oracle: 1.0
+      clean_room_reference: 0.996904859452196
+      alternative_valid_solver: 0.996904859477264
+    verified_mutants:
+      mandatory_scientific_rejected: 13
+      hard_linked_ranking_rejected: 1
+    verified_metamorphic_and_invariant_checks: 7
+    verified_hard_malformed_and_security_cases_rejected: 28
+    verified_contract_bypass_probes_rejected: 3
+    verified_valid_policy_variants_accepted: 6
+    checkout_stability:
+      total_files: 42
+      crlf_files: 0
+      cache_files: 0
+    provisional_difficulty: structurally_hard_candidate
+    release_status: needs_agent_calibration
+
+release_policy:
+  default_status_without_agent_calibration: needs_agent_calibration
+  fail_on_specification_gap: true
+  fail_on_reference_solver_failure: true
+  fail_on_mutant_acceptance: true
+  fail_on_hidden_information_leakage: true
+  allow_no_viable_task_outcome: true
+
+session_result:
+  verification_status: pass_all_checkout_stable_local_verification_and_paper_blind_gates
+  release_status: needs_agent_calibration
+  frontier_hard_claim: false
+  collaborator_scientific_review_ready: true

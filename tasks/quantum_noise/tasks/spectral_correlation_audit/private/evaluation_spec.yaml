@@ -1,0 +1,312 @@
+schema_version: paper2ale.codex-evaluation-spec/v1
+
+task_id: spectral-correlation-audit-v1
+visibility: private
+
+hard_gates:
+  - gate_id: executable-source
+    description: Submission contains exactly one bounded regular UTF-8 analyze.py with link count one and valid Python syntax; runtime capabilities are checked behaviorally by the isolated runner.
+    implementation: private/grader/core.py::validate_source
+  - gate_id: isolated-execution
+    description: Every hidden invocation exits within the time and streamed console limits under the audit-hook defense-in-depth runner with a scrubbed environment, immutable policy roots, and protected-tree postconditions.
+    implementation: private/grader/core.py::run_analyzer and private/grader/guarded_runner.py
+  - gate_id: artifact-inventory-and-size
+    description: Exactly six bounded regular runtime artifacts with link count one are produced inside the initially absent output root.
+    implementation: private/grader/core.py::inspect_output
+  - gate_id: strict-schema-and-finite-values
+    description: CSV and JSON artifacts have exact identities, Cartesian-product rows, shapes, bounds, and finite numeric values.
+    implementation: private/grader/core.py::parse_output
+  - gate_id: simplex-validity
+    description: Recovered and local distributions are nonnegative and normalized to the disclosed tolerance.
+    implementation: private/grader/core.py::parse_output
+
+mandatory_contract_gates:
+  description: >
+    Schema-valid outputs must also obey the exact linked mathematical contract.
+    These gates are separate from the sampling-tolerant latent-truth metrics and
+    cannot be offset by a high aggregate score.
+  gates:
+    - gate_id: exact-xor-counts-and-linked-transform
+      description: Every corrected integer count, pooled probability, and unnormalized WHT value agrees with direct recomputation from raw rows.
+      implementation: private/grader/core.py::score_case
+    - gate_id: canonical-bounded-decay-fit
+      description: Mode zero is exactly A=lambda=1 and every nonzero fitted pair attains the disclosed bounded least-squares global minimum and consistent RMSE.
+      implementation: private/grader/core.py::score_case
+    - gate_id: inverse-and-simplex-linkage
+      description: Raw probabilities equal the normalized inverse WHT and recovered probabilities equal its Euclidean simplex projection.
+      implementation: private/grader/core.py::score_case
+    - gate_id: dependence-local-and-summary-linkage
+      description: Dependence rows, local-model probabilities, distances, diagnostics, and summary fields agree with recomputation from the recovered distribution.
+      implementation: private/grader/core.py::score_case
+    - gate_id: global-nonlocal-ranking-linkage
+      description: Ranking values cross-reference dependence.csv and contain the global top-k eligible pairs under the disclosed ordering.
+      implementation: private/grader/core.py::parse_output and private/grader/core.py::score_case
+
+metrics:
+  - metric_id: xor-aggregation-and-transform
+    description: Corrected integer counts, pooled probabilities, and unnormalized character spectra are recomputed directly from hidden raw rows.
+    direction: higher_is_better
+    weight: 0.15
+    hidden_inputs:
+      - hidden_inputs/case_amber/
+      - hidden_inputs/case_indigo/
+      - hidden_inputs/case_sable/
+      - hidden_inputs/case_verdant/
+    scoring:
+      type: exact_counts_and_piecewise_tolerance_ratio
+      parameters:
+        excellent_ratio: 1.0
+        zero_ratio: 25.0
+    tolerance:
+      type: max_abs_or_rel
+      absolute: 2.0e-10
+      relative: 2.0e-9
+      derivation: CSV round-trip and direct dense-character-transform disagreement
+
+  - metric_id: decay-fit-and-hidden-length-prediction
+    description: Fitted amplitudes and eigenvalues are compared with latent truth and used to predict noiseless histograms beyond the supplied length grid.
+    direction: higher_is_better
+    weight: 0.20
+    reference:
+      type: trusted-generator-truth
+      path: reference/case_*/truth.npz
+    scoring:
+      type: weighted_piecewise_errors
+      parameters:
+        eigenvalue_rmse_excellent: 0.010
+        eigenvalue_rmse_bad: 0.070
+        amplitude_rmse_excellent: 0.015
+        amplitude_rmse_bad: 0.090
+        prediction_hellinger_excellent: 0.012
+        prediction_hellinger_bad: 0.080
+    tolerance:
+      type: calibrated_sampling_error
+      derivation: finite-shot oracle and independent Gauss-Newton solver agreement over four hidden cases
+
+  - metric_id: simplex-distribution-recovery
+    description: Raw inverse, Euclidean projection consistency, and total variation from latent error truth are scored.
+    direction: higher_is_better
+    weight: 0.20
+    reference:
+      type: trusted-generator-truth
+      path: reference/case_*/truth.npz
+    scoring:
+      type: linked_consistency_and_piecewise_total_variation
+      parameters:
+        total_variation_excellent: 0.025
+        total_variation_bad: 0.115
+    tolerance:
+      type: max_abs_or_rel
+      absolute: 5.0e-9
+      relative: 5.0e-7
+      derivation: two independent simplex projection algorithms and floating-point transform conditioning
+
+  - metric_id: dependence-diagnostics
+    description: MI, all-rest CMI, Pearson correlation, and clique membership are compared with truth and recomputed from the submitted distribution.
+    direction: higher_is_better
+    weight: 0.20
+    scoring:
+      type: linked_truth_and_consistency_errors
+      parameters:
+        mi_mean_abs_excellent: 0.0015
+        mi_mean_abs_bad: 0.012
+        cmi_mean_abs_excellent: 0.0010
+        cmi_mean_abs_bad: 0.009
+        pearson_rmse_excellent: 0.025
+        pearson_rmse_bad: 0.18
+    tolerance:
+      type: max_abs_or_rel
+      absolute: 5.0e-8
+      relative: 5.0e-6
+      derivation: direct marginal recomputation and alternative solver disagreement
+
+  - metric_id: local-model-adequacy
+    description: Junction-tree distribution, natural-log JS distance, TV distance, and simplex diagnostic are recomputed from submitted artifacts and compared with truth.
+    direction: higher_is_better
+    weight: 0.15
+    scoring:
+      type: linked_consistency_and_piecewise_total_variation
+      parameters:
+        local_total_variation_excellent: 0.030
+        local_total_variation_bad: 0.130
+    tolerance:
+      type: max_abs_or_rel
+      absolute: 5.0e-8
+      relative: 5.0e-6
+      derivation: clique-tree arithmetic and independent valid implementation disagreement
+
+  - metric_id: nonlocal-interaction-ranking
+    description: CMI-weighted nDCG and top-k overlap are evaluated against latent-distribution nonlocal pairs.
+    direction: higher_is_better
+    weight: 0.10
+    scoring:
+      type: weighted_ndcg_and_overlap
+      parameters:
+        ndcg_weight: 0.70
+        overlap_weight: 0.30
+
+score_contract:
+  hard_gate_failure_score: 0.0
+  metric_weights_sum_to_one: true
+  score_range:
+    minimum: 0.0
+    maximum: 1.0
+  pass_rule:
+    type: total_score_and_mandatory_submetrics
+    total_score_threshold: 0.84
+    mandatory_metric_thresholds:
+      xor-aggregation-and-transform: 0.98
+      decay-fit-and-hidden-length-prediction: 0.90
+      simplex-distribution-recovery: 0.70
+      dependence-diagnostics: 0.86
+      local-model-adequacy: 0.88
+      nonlocal-interaction-ranking: 0.45
+
+stochastic_policy:
+  stochastic: true
+  hidden_seed_count: 4
+  aggregation: 0.75_times_case_mean_plus_0.25_times_case_minimum
+  confidence_or_variance_rule: scientific thresholds calibrated against sampling error and two valid implementations
+  baseline_relative: false
+
+hidden_suite:
+  ordinary_cases:
+    count: 2
+    source: trusted synthetic XOR-convolution generator with private seeds
+  distribution_shift_cases:
+    count: 2
+    description: eight-bit inputs with altered irregular lengths, nuisance amplitudes, correlation structure, and shot allocation
+  adversarial_attribute_cases:
+    count: 2
+    description: two hidden cases omit length zero and require genuine two-parameter fitting
+    overlaps_primary_classes: true
+  anti_hardcoding_cases:
+    count: 4
+    description: every hidden experiment identity, histogram, and latent parameter differs from the retired public instance
+  topology_coverage:
+    chain_cases: 3
+    branched_cases: 1
+    description: the branched running-intersection tree has a clique node of degree three and is not a sliding-chain instance
+  physicality_invariant:
+    description: every observed binary error distribution is the disclosed independent two-thirds visibility thinning of a nonnegative normalized Pauli-support distribution
+    implementation: author/oracle/generate.py and scripts/verify.py::privileged_truth_oracle
+
+valid_solutions:
+  - id: privileged-truth-oracle
+    path: ../author/oracle/generate.py
+    expected: generator truth saturates every continuous scientific component; only the documented noisy-sample bounded-fit contract exception is permitted for the latent truth record
+  - id: canonical-reference-submission
+    path: reference/canonical_submission/analyze.py
+    expected: pass
+  - id: clean-room-reference
+    path: ../author/reference_solver/
+    expected: pass
+  - id: alternative-valid
+    path: ../author/alternative_solver/
+    expected: pass
+
+mutations:
+  - mutant_id: ignore-target-mask
+    category: xor-correction
+    path: mutants/manifest.json
+    expected: fail-scientifically
+  - mutant_id: normalized-forward-transform
+    category: transform-normalization
+    path: mutants/manifest.json
+    expected: fail-scientifically
+  - mutant_id: ordinal-length-fit
+    category: length-semantics
+    path: mutants/manifest.json
+    expected: fail-scientifically
+  - mutant_id: unit-nuisance-amplitude
+    category: nuisance-model
+    path: mutants/manifest.json
+    expected: fail-scientifically
+  - mutant_id: unnormalized-inverse
+    category: inverse-normalization
+    path: mutants/manifest.json
+    expected: fail-scientifically
+  - mutant_id: independent-bit-collapse
+    category: correlation-omission
+    path: mutants/manifest.json
+    expected: fail-scientifically
+  - mutant_id: omit-clique-separators
+    category: local-model-factorization
+    path: mutants/manifest.json
+    expected: fail-scientifically
+  - mutant_id: mi-reported-as-cmi
+    category: wrong-dependence-metric
+    path: mutants/manifest.json
+    expected: fail-scientifically
+  - mutant_id: covariance-as-correlation
+    category: wrong-correlation-normalization
+    path: mutants/manifest.json
+    expected: fail-scientifically
+  - mutant_id: ascending-cmi-ranking
+    category: wrong-ranking-direction
+    path: mutants/manifest.json
+    expected: fail-hard-linked-ranking-contract
+  - mutant_id: js-divergence-not-distance
+    category: wrong-distance
+    path: mutants/manifest.json
+    expected: fail-scientifically
+  - mutant_id: uniform-stale-analysis
+    category: anti-hardcoding
+    path: mutants/manifest.json
+    expected: fail-scientifically
+  - mutant_id: reversed-unit-significance
+    category: bit-convention
+    path: mutants/manifest.json
+    expected: fail-scientifically
+  - mutant_id: chain-topology-assumption
+    category: topology-hardcoding
+    path: mutants/manifest.json
+    expected: fail-scientifically
+
+metamorphic_tests:
+  - test_id: common-target-xor-invariance
+    applicability: applicable
+    implementation: scripts/verify.py::metamorphic_checks
+    expected_relation: XORing the same mask into target and observed fields leaves every runtime artifact unchanged.
+  - test_id: row-split-and-order-invariance
+    applicability: applicable
+    implementation: scripts/verify.py::metamorphic_checks
+    expected_relation: Splitting count rows and reversing their order leaves semantic arrays unchanged.
+  - test_id: uniform-count-scaling
+    applicability: applicable
+    implementation: scripts/verify.py::metamorphic_checks
+    expected_relation: Multiplying all counts by a common integer leaves probabilities and all downstream artifacts unchanged.
+  - test_id: transform-involution
+    applicability: applicable
+    implementation: scripts/verify.py::metamorphic_checks
+    expected_relation: Applying the unnormalized transform twice multiplies a vector by the state count.
+  - test_id: physical-visibility-roundtrip
+    applicability: applicable
+    implementation: scripts/verify.py::metamorphic_checks
+    expected_relation: Applying the independent two-thirds visibility map and its inverse recovers a normalized nonnegative Pauli-support probe distribution.
+  - test_id: clique-marginal-preservation
+    applicability: applicable
+    implementation: scripts/verify.py::metamorphic_checks
+    expected_relation: The reconstructed junction-tree distribution preserves every submitted clique marginal.
+
+determinism:
+  repeated_grader_runs: 2
+  require_identical_parsed_scores: true
+  require_identical_process_status: true
+
+leakage_and_security:
+  participant_must_not_access:
+    - private hidden inputs, references, thresholds, weights, seeds, or mutants
+    - author evidence, oracle, or reference solvers
+    - source paper or official repositories
+  network_policy: off
+  path_symlink_reparse_and_hardlink_checks: true
+  protected_source_input_and_case_root_postconditions: true
+  low_level_capability_probes:
+    - mutable imported-module policy dependencies
+    - absolute and parent-traversal reads
+    - relative os.open and dir_fd mutation when supported
+    - exec, ctypes, link, truncate, ftruncate, input mutation, and case-root mutation
+    - bounded console output
+  output_size_limit_bytes: 8000000
+  executable_submission_sandbox: local Python audit-hook defense in depth; real ALE OS/container sandbox required before scored deployment

@@ -1,0 +1,394 @@
+schema_version: paper2ale.codex-task-spec/v1
+
+task:
+  task_id: "spectral-scaling-audit-v1"
+  title: "Finite-Size Spectral Crossover Audit"
+  status: "needs_agent_calibration"
+  task_mode: "audit"
+  derivation_type: "reported_workflow_slice_with_grounded_extension"
+  target_claim_leaf_id: "leaf-gap-ratio-fss-audit"
+  summary: >
+    Build a deterministic, paper-blind analyzer that starts from shuffled raw
+    eigenvalue packets, reconstructs adjacent-gap statistics at the independent
+    realization level, infers an energy-dependent finite-size crossover curve,
+    audits fit-window and minimum-size sensitivity, estimates cluster-aware
+    uncertainty, predicts held-out coordinates, and emits machine-checkable
+    evidence. The scientific claim is deliberately limited to finite-size
+    crossover evidence and is not a thermodynamic phase-transition assertion.
+
+workflow_subgraph:
+  operation_ids:
+    - "op-ssa-parse"
+    - "op-ssa-gap"
+    - "op-ssa-bin"
+    - "op-ssa-fit"
+    - "op-ssa-stability"
+    - "op-ssa-uncertainty"
+    - "op-ssa-report"
+  public_input_artifact_ids:
+    - "artifact-ssa-public-manifest"
+    - "artifact-ssa-public-eigenvalues"
+    - "artifact-ssa-public-packets"
+    - "artifact-ssa-public-queries"
+    - "artifact-ssa-public-grid"
+  participant_output_artifact_ids:
+    - "artifact-ssa-analysis-source"
+    - "artifact-ssa-realization-stats"
+    - "artifact-ssa-packet-stats"
+    - "artifact-ssa-transition"
+    - "artifact-ssa-stability"
+    - "artifact-ssa-predictions"
+    - "artifact-ssa-claims"
+  private_rubric_artifact_ids:
+    - "artifact-ssa-selected-packets"
+    - "artifact-ssa-gap-values"
+    - "artifact-ssa-realization-stats"
+    - "artifact-ssa-packet-stats"
+    - "artifact-ssa-uncertainty-summary"
+  meaningful_operation_count: 7
+  dependency_depth: 6
+  branch_count: 3
+  tool_count: 1
+
+participant:
+  task_description_path: "participant/TASK.md"
+  visible_inputs:
+    - id: "artifact-ssa-public-manifest"
+      path: "participant/input/manifest.json"
+      format: "JSON"
+      purpose: "Authoritative case identity, file inventory, schemas, resources, and grid summary."
+      source: "benchmark-authored synthetic retired instance"
+      redistribution_status: "allowed within the benchmark package"
+    - id: "artifact-ssa-public-packets"
+      path: "participant/input/packets.csv"
+      format: "CSV"
+      purpose: "Packet-to-realization metadata, normalized targets, extrema, selection counts, and flat-array slices."
+      source: "benchmark-authored synthetic retired instance"
+      redistribution_status: "allowed within the benchmark package"
+    - id: "artifact-ssa-public-eigenvalues"
+      path: "participant/input/eigenvalues.npz"
+      format: "NumPy NPZ with a scalar schema string and one finite float64 energy array"
+      purpose: "Shuffled raw eigenvalue packets from which all spectral statistics must be reconstructed."
+      source: "benchmark-authored synthetic retired instance"
+      redistribution_status: "allowed within the benchmark package"
+    - id: "artifact-ssa-public-queries"
+      path: "participant/input/queries.csv"
+      format: "CSV"
+      purpose: "Held-out target, size, and control coordinates requiring predictions."
+      source: "benchmark-authored synthetic retired instance"
+      redistribution_status: "allowed within the benchmark package"
+    - id: "artifact-ssa-public-grid"
+      path: "participant/input/analysis_grid.json"
+      format: "JSON"
+      purpose: "Required minimum-size and fit-window sweep, primary variant, bootstrap minimum, and interval level."
+      source: "benchmark-authored synthetic retired instance"
+      redistribution_status: "allowed within the benchmark package"
+  starter_software:
+    - path: "participant/software/validate_submission.py"
+      purpose: "Validate the exact one-file submission, run it with a bounded subprocess on the retired case, independently reconstruct raw/group statistics, and check key coverage, schemas, claims, and public scientific consistency."
+      removed_solution_components:
+        - "packet selection and adjacent-gap calculation"
+        - "realization-first aggregation"
+        - "finite-size crossover inference and held-out prediction"
+        - "stability analysis and cluster-aware uncertainty"
+        - "evidence-linked claims"
+    - path: "participant/software/README.md"
+      purpose: "Document the public validator entry point and its intentionally limited guarantees."
+      removed_solution_components: []
+  environment:
+    os: "cross-platform CPython environment"
+    cpu_count: 4
+    memory_gb: 8
+    gpu: null
+    per_case_wall_time_seconds: 180
+    wall_time_minutes: 20
+    disk_gb: 1
+    network:
+      enabled: false
+      allowlist: []
+    packages:
+      - "Python 3.11+"
+      - "numpy==2.3.5"
+      - "Python standard library subset documented in participant/TASK.md"
+  required_outputs:
+    - id: "artifact-ssa-analysis-source"
+      path: "output/analyze.py"
+      format: "UTF-8 Python source"
+      schema_or_shape: "The only submitted single-link regular file; at most 250000 bytes."
+      purpose: "Executable analyzer invoked with --input and --output on fresh cases."
+      required: true
+    - id: "artifact-ssa-realization-stats"
+      path: "<invocation-output>/realization_stats.csv"
+      format: "CSV"
+      schema_or_shape: "Exactly the seven columns and one row per packet documented in participant/TASK.md."
+      purpose: "Realization-level adjacent-gap evidence."
+      required: true
+    - id: "artifact-ssa-packet-stats"
+      path: "<invocation-output>/packet_stats.csv"
+      format: "CSV"
+      schema_or_shape: "Exactly the eight columns and one row per observed target-size-control group documented in participant/TASK.md."
+      purpose: "Disorder-mean group statistics and realization-level SEM."
+      required: true
+    - id: "artifact-ssa-transition"
+      path: "<invocation-output>/transition.csv"
+      format: "CSV"
+      schema_or_shape: "Exactly the ten columns and one row per target documented in participant/TASK.md."
+      purpose: "Finite-size crossover coordinates, exponent estimates, intervals, and fit diagnostics."
+      required: true
+    - id: "artifact-ssa-stability"
+      path: "<invocation-output>/stability.csv"
+      format: "CSV"
+      schema_or_shape: "Exactly the nine columns and full target-by-grid coverage documented in participant/TASK.md."
+      purpose: "Minimum-size and fit-window sensitivity evidence."
+      required: true
+    - id: "artifact-ssa-predictions"
+      path: "<invocation-output>/predictions.csv"
+      format: "CSV"
+      schema_or_shape: "Exactly query_id, mean_r, se_r with one row per public query ID."
+      purpose: "Behavioral predictions at held-out size/control coordinates."
+      required: true
+    - id: "artifact-ssa-claims"
+      path: "<invocation-output>/claims.json"
+      format: "JSON"
+      schema_or_shape: "Exact spectral-scaling-claims/v1 object documented in participant/TASK.md."
+      purpose: "Finite-size-only claims whose counts and summaries must agree with recomputed evidence."
+      required: true
+  public_success_criteria:
+    - "Reconstruct every realization and grouped statistic from raw packets using per-realization targeting and sorting."
+    - "Treat realizations, not individual level gaps, as independent sampling units."
+    - "Predict unseen target-size-control coordinates and resolve an energy-dependent crossover curve and positive scaling exponent."
+    - "Complete every public fit-window and minimum-size stability variant."
+    - "Report cluster-aware statistical uncertainty combined with fit-choice sensitivity."
+    - "Remain invariant or covariant under the harmless coordinate and permutation transformations stated in the task."
+    - "Keep structured claims consistent with independently recomputed CSV evidence."
+  constraints:
+    - "Submit exactly output/analyze.py; each invocation must create exactly the six documented artifacts."
+    - "The submission, output directory, and produced artifacts must not be symlinks, hard links, junction/reparse aliases, or special files."
+    - "Each case invocation has a 180-second wall-time limit and a 4000000-byte output limit."
+    - "Every case is oracle-tested against the disclosed reference workflow within 180 seconds; the manifest output allowance is at least 512*(P+G+T+T*S+Q)+8192 bytes."
+    - "Public cardinality bounds cap targets, sizes, controls, realizations, packets, packet spectra, flat eigenvalues, queries, stability variants, bootstrap replicates, identifier and field bytes, physical JSON/NPZ bytes, and total input bytes."
+    - "Every manifest-directed filename is a distinct bounded filename safe under POSIX and Windows rules; a case contains exactly five single-link regular files."
+    - "The eigenvalue archive is physically preflighted before NumPy loading: exactly two bounded ZIP/NPY members, no duplicate/normalized-name ambiguity, native-endian float64 energies, exact payload lengths, and declared compression/dtype/shape limits."
+    - "Packet sizes, query sizes, and analysis min_sizes are bounded by 1000000; CSV integer fields are 1--20 unsigned ASCII decimal digits, each CSV field is at most 128 UTF-8 bytes, and JSON integers reject Booleans and numeric strings."
+    - "Raw energies, extrema, and shift energies have absolute value at most 1e100; observed/query controls and canonical halfwidths have absolute value at most 1e6, with halfwidths in [0.4,1e6]."
+    - "The diagnostic shift remains within 0.005 of the true target-energy span and is not the selection center; the true target energy is reconstructed from target, e_min, and e_max."
+    - "The disclosed float64 proof bounds abs(x) by 2e36 (2.1e36 round cap), training abs(z) by 1+8 eps, query abs(z) by 2, condition number by 1e12, coefficient magnitude by 1e6, weighted residual-square sum by 1e35, and the raw pre-clip query polynomial by 2e7."
+    - "bootstrap_seed is bounded so every target-derived seed bootstrap_seed+1009*t remains an unsigned 64-bit integer."
+    - "The full hidden suite must fit four CPU cores, 8 GB RAM, and 20 minutes."
+    - "The analyzer must be deterministic for a fixed case."
+    - "The analyzer may read only its case and its own source and may write only its designated output directory."
+    - "The analyzer must not depend on retired-case IDs, filenames beyond the manifest contract, or retired-case numeric answers."
+    - "Conclusions are limited to finite-size crossover evidence."
+  prohibited_dependencies:
+    - "source paper"
+    - "official source repository"
+    - "private evaluator files"
+    - "author files"
+    - "undeclared network access"
+    - "SciPy, pandas, or compiled extensions other than NumPy"
+
+paper_blindness:
+  neutralized_identifiers:
+    - "paper title, authors, arXiv identifier, DOI, and figure labels"
+    - "model-specific Heisenberg-chain and many-body-localization terminology"
+    - "reported critical-field and exponent values"
+    - "paper/source filenames and source-method implementation details"
+  withheld_author_information:
+    - "exact fresh hidden cases, fixed private seeds, case tokens, and family parameters"
+    - "private analytic truth and oracle outputs"
+    - "exact metric weights, scoring knots, pass thresholds, and mandatory submetric floors"
+    - "mutant implementations and adversarial probe payloads"
+  leakage_checks:
+    - "Participant projection is scanned for source identifiers, private paths, hidden case IDs, and reference values."
+    - "No paper, source archive, author solver, private evaluator, hidden input, or oracle artifact is present under participant/."
+    - "The visible generated case is permanently retired from hidden scoring."
+    - "Guarded execution denies reads outside the case, analyzer directory, and Python runtime."
+  source_lookup_should_not_solve_task: true
+
+specification_closure:
+  decisions:
+    - decision: "Which files and columns are authoritative for one case"
+      status: "disclosed"
+      public_location_or_rationale: "participant/TASK.md Input contract and manifest.json publish the exact five-file inventory, four distinct bounded manifest-directed filenames safe under POSIX and Windows rules, exact ordered v1 packet/query column arrays, scalar lexemes, and per-field byte limits."
+    - decision: "How physical archive structure is validated without unsafe allocation"
+      status: "disclosed"
+      public_location_or_rationale: "participant/TASK.md publishes the physical ZIP and NPY member inventory, normalized/original filename equality, compression, header, payload, dtype, endianness, shape, expansion, and pre-load checks; valid cases are preflighted before participant execution and before np.load."
+    - decision: "How offsets, packet boundaries, realization scope, normalized target energy, and distance ties are interpreted"
+      status: "disclosed"
+      public_location_or_rationale: "participant/TASK.md Input contract and Packet statistic define consecutive row-order slices, one packet per scoped realization, the true E_target formula, the 0.005-span nuisance-shift bound, stable distance-tie handling, strict selected gaps, and ratio count."
+    - decision: "How eigenvalues are selected, ordered, and converted to adjacent-gap ratios"
+      status: "disclosed"
+      public_location_or_rationale: "participant/TASK.md specifies nearest keep_count selection, ascending sort, all internal ratios, and absence of exact degeneracies."
+    - decision: "What constitutes an independent sampling unit"
+      status: "disclosed"
+      public_location_or_rationale: "participant/TASK.md scopes realization_id to one target-size-control group, guarantees one complete packet/block per key, and gives the unweighted group mean and ddof=1 SEM formulas."
+    - decision: "How floating coordinates are canonicalized into keys"
+      status: "disclosed"
+      public_location_or_rationale: "participant/TASK.md Group statistic and canonical keys requires round(float(value),10), integer size/count fields, and guarantees no collisions."
+    - decision: "Scaling coordinate and physical parameter signs"
+      status: "disclosed"
+      public_location_or_rationale: "participant/TASK.md defines x = (control-h_c)*size**(1/nu), nu > 0, and decreasing mean_r with control."
+    - decision: "A complete reproducible crossover fitting algorithm, weighting, selected-row window, tie rules, and optimizer"
+      status: "disclosed"
+      public_location_or_rationale: "participant/TASK.md Required finite-size reference analysis sections 1-3 fully specify the preliminary center, the affine-covariant halfwidth*(1+1e-12) membership test, weighted/rescaled cubic, RMSE, endpoint clipping before spacing, h_c-outer/nu-inner loop order, initially-unset incumbent and seed-as-grid-center semantics, first-exact-tie rule, global grid, two refinements, and stability searches. This is a sufficient public solution path; genuinely equivalent estimators remain behaviorally acceptable."
+    - decision: "Required minimum-size and fit-window variants"
+      status: "disclosed"
+      public_location_or_rationale: "analysis_grid.json supplies every required min_size and halfwidth pair plus the primary pair; participant/TASK.md defines ten-decimal canonical halfwidth use in every calculation, Cartesian coverage, selection boundaries, and guaranteed support."
+    - decision: "Meanings of fit_score, stable, validation_rmse, n_groups, and fit_ok"
+      status: "disclosed"
+      public_location_or_rationale: "participant/TASK.md Weighted cubic and Stability fields and transition score give exact formulas, selected-group count, thresholds, and guaranteed fit_ok behavior."
+    - decision: "Uncertainty resampling unit and interval content"
+      status: "disclosed"
+      public_location_or_rationale: "participant/TASK.md Realization-cluster bootstrap and intervals specifies complete-block resampling, per-target seed derivation, replicate-outer/group-inner draw order, local-search clipping/loop/tie order, successful-fit policy, interval quantiles, and quadrature combination with stability spread."
+    - decision: "Exact uncertainty estimator and random-number implementation sufficient for reference-equivalent output"
+      status: "disclosed"
+      public_location_or_rationale: "participant/TASK.md publishes the uint64-safe seed bound and target derivation, replicate count, draw order, local search, quantile interpolation, exact 0.68 interval level, interval formulas, and lower-bound convention; behaviorally comparable independent estimators are additionally permitted."
+    - decision: "How held-out queries are predicted"
+      status: "disclosed"
+      public_location_or_rationale: "participant/TASK.md Query predictions specifies evaluation of the primary fitted cubic, clipping, and the complete predictive-SE formula; query IDs/domains and exact coverage are guaranteed."
+    - decision: "Required runtime artifacts, schemas, keys, ranges, and completeness"
+      status: "disclosed"
+      public_location_or_rationale: "participant/TASK.md Output schemas and claims.json contract"
+    - decision: "Definitions of claim counts and low/high-control summaries"
+      status: "disclosed"
+      public_location_or_rationale: "participant/TASK.md claims.json section defines exact JSON types, scoped counts, global extreme controls, unweighted group aggregation, absent-edge handling, and phase direction."
+    - decision: "Required permutation invariance and coordinate covariance"
+      status: "disclosed"
+      public_location_or_rationale: "participant/TASK.md invocation constraints, canonical keys, deterministic reference order, and Qualitative success criteria state row/packet/ID invariance, target-mirror and shard equivariance, affine-control covariance only for commuting canonical maps whose transformed halfwidths stay in [0.4,1e6], and affine-energy invariance only for maps satisfying the disclosed magnitude, chunk, 0.005 shift, 2**20-ULP gap/cutoff, exact selected-order, and 1e-10 ratio-perturbation predicate."
+    - decision: "Why every disclosed floating-point calculation is defined"
+      status: "disclosed"
+      public_location_or_rationale: "participant/TASK.md Float64 domain section gives the nu/control/size proof for abs(x)<=2e36, the 2.1e36 round cap, training/query z bounds, finite weighted matrix/vector checks, rank/condition/coefficients/residual-square limits, and the 2e7 raw-polynomial check before clipping."
+    - decision: "Scientific scope of the final claim"
+      status: "disclosed"
+      public_location_or_rationale: "The objective and constraints explicitly limit conclusions to finite-size evidence and reject a thermodynamic claim."
+    - decision: "Execution environment, imports, network, time, memory, and output limits"
+      status: "disclosed"
+      public_location_or_rationale: "participant/TASK.md Environment and bounds fixes Python 3.11+, NumPy 2.3.5, v1 wall_time_seconds=180, states every supplied case is oracle-tested inside it, publishes all cardinality/physical-input/preload/numeric-width/magnitude limits, and gives an output-cap sufficiency formula in addition to CPU, RAM, suite-time, import, and network limits."
+  all_closed: true
+  paper_blind_review:
+    reviewer_has_seen_source: false
+    task_restatement_correct: true
+    material_ambiguities: []
+    status: "pass"
+    reviewed_snapshot:
+      participant_task_sha256: "9e578bff82c161fb5a6effa9b35417f26e53e9ba3ac503cf0ae4708fa29762c2"
+      public_validator_sha256: "2079a06958294cf580cc707d230cc6acd583b1b03d6c8c45c573460a8478e99b"
+      public_readme_sha256: "0980bf232343a1b6814f3b96e745e82d2d31a8a2a7c2762691d41d68cfe9d5c8"
+      independent_review_count: 2
+  unresolved_items: []
+
+intrinsic_difficulty:
+  provisional_label: "structurally_hard_candidate"
+  challenge_sources:
+    - "Reconstructing correctly targeted and sorted spectra from shuffled flat packets."
+    - "Hierarchical realization-first statistics under unequal cluster sampling."
+    - "Nonlinear finite-size scaling across targets with held-out interpolation and extrapolation."
+    - "Joint fit-window/minimum-size stability analysis rather than one preferred fit."
+    - "Cluster-aware uncertainty combined with systematic fit-choice sensitivity."
+    - "Fresh shifted and reshaped families plus affine, mirror, sharding, and permutation transformations."
+    - "Six mutually constrained evidence artifacts and a guarded executable interface."
+  non_difficulty_factors:
+    - "exact formatting beyond a professional machine-readable schema"
+    - "undisclosed paper constants or trivia"
+    - "hidden threshold tightness"
+    - "raw output volume"
+    - "production-scale diagonalization or excessive compute"
+  shortcut_tests:
+    - name: "Use diagnostic shift_energy as the requested selection center"
+      result: "rejected"
+      evidence: "Pre-verifier final-core calibration and private/mutants/cases/use_shift_energy/"
+    - name: "Pool every gap as an independent observation"
+      result: "rejected"
+      evidence: "author/verification_report.md and private/mutants/cases/pool_gaps/"
+    - name: "Fit one constant crossing or omit size scaling"
+      result: "rejected"
+      evidence: "author/verification_report.md and private/mutants/cases/constant_edge/"
+    - name: "Hard-code the retired public case"
+      result: "rejected"
+      evidence: "author/verification_report.md and private/mutants/cases/hardcoded_public/"
+    - name: "Fabricate claims while ignoring intermediate evidence"
+      result: "rejected"
+      evidence: "author/verification_report.md and private/mutants/cases/fabricated_claims/"
+  expected_human_workflow: >
+    Approximately 8 to 16 expert hours: inspect schemas; implement packet
+    reconstruction and hierarchical statistics; design and debug a constrained
+    scaling fit; add stability and cluster-aware uncertainty; implement held-out
+    prediction and evidence reporting; and validate invariants across fresh
+    cases. No single formula or library call completes the dependency chain.
+  agent_calibration:
+    status: "not_run"
+    exact_task_build_id: null
+    pinned_agent_systems: []
+
+private_evaluation:
+  evaluation_spec_path: "private/evaluation_spec.yaml"
+  hidden_input_paths:
+    - "private/hidden_inputs/case_amber/"
+    - "private/hidden_inputs/case_indigo/"
+    - "private/hidden_inputs/case_sable/"
+    - "private/hidden_inputs/case_verdant/"
+  reference_paths:
+    - "private/reference/suite.json"
+    - "private/reference/case_amber/"
+    - "private/reference/case_indigo/"
+    - "private/reference/case_sable/"
+    - "private/reference/case_verdant/"
+  grader_paths:
+    - "private/grader/grade.py"
+    - "private/grader/core.py"
+    - "private/grader/guarded_runner.py"
+  exact_thresholds_private: true
+  exact_weights_private: true
+
+reference_generation:
+  privileged_oracle:
+    path: "author/oracle/generate.py"
+    may_use_source_information: true
+    last_run_status: "pre_verifier_calibration_pass"
+  public_input_reference_solver:
+    path: "author/reference_solver/"
+    reads_only_participant_package: true
+    declared_environment_only: true
+    last_run_status: "pre_verifier_calibration_pass"
+    score: 0.8996699182281552
+    runtime_seconds: null
+  alternative_solver:
+    path: "author/alternative_solver/"
+    available: true
+    last_run_status: "pre_verifier_calibration_pass"
+    score: 0.8723372222137469
+    independence_notes: "A separately implemented monotone-crossing/local-slope strategy uses a distinct estimator while matching only the public diagnostics and output contract. These scores are replacement-build pre-verifier calibration evidence, not an authoritative verification ledger."
+
+instance_generation:
+  supported: true
+  trusted_generator: "author/oracle/generate.py"
+  private_seed_policy: "Deterministic unpublished seeds, separated from the retired public seed and retained only in author/private projections for this reviewed build."
+  varying_factors:
+    - "size and control grids"
+    - "critical-curve center, curvature, asymmetry, and target dependence"
+    - "scaling exponent and target-dependent tilt"
+    - "finite-size correction strength and sign"
+    - "realization counts and sampling imbalance"
+    - "missing extreme grid cells"
+    - "packet ordering, energy affine transforms, identifiers, and query coordinates"
+  invariants_preserved:
+    - "Every adjacent-gap ratio is finite and bounded in [0,1]."
+    - "Weak-control mean gap ratio exceeds strong-control mean gap ratio."
+    - "Finite-size curves exhibit a resolved common crossover in the sampled control range."
+    - "The crossover coordinate varies with normalized target."
+    - "Complete realizations are the independent sampling units."
+    - "Positive affine energy changes preserve ratio statistics."
+  public_review_instances_retired: true
+
+provenance:
+  source_manifest_path: "../../authoring/source_manifest.yaml"
+  evidence_map_path: "../../authoring/evidence_map.yaml"
+  workflow_graph_path: "../../authoring/workflow_graph.yaml"
+  candidate_record_path: "../../authoring/task_candidates.yaml"
+
+release:
+  verification_report_path: "author/verification_report.md"
+  checklist_complete: true
+  decision: "needs_agent_calibration"
+  blocking_issues:
+    - "Pinned frontier-agent calibration has not been performed; authoritative collaborator disposition is ledger-controlled outside build identity."

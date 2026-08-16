@@ -1,0 +1,185 @@
+schema_version: paper2ale.codex-evaluation-spec/v1
+
+task_id: spinful-packet-dynamics
+visibility: private
+
+hard_gates:
+  - gate_id: required-artifacts
+    description: Exactly four required regular, non-symlink artifacts exist.
+    implementation: private/grader/grade.py:validate_submission_tree
+  - gate_id: safe-schema
+    description: NPZ, CSV, and JSON parse safely and match all declared IDs, shapes, dtypes, and rows.
+    implementation: private/grader/grade.py:safe_basis/parse_*
+  - gate_id: finite-values
+    description: Every submitted numeric value is finite.
+    implementation: private/grader/grade.py
+  - gate_id: resource-and-staleness
+    description: Archive expansion, total bytes, paths, and instance IDs satisfy policy.
+    implementation: private/grader/grade.py
+
+metrics:
+  - metric_id: recurrence-basis
+    description: Submitted Chebyshev vectors agree with an independently generated private reference.
+    direction: higher_is_better
+    weight: 0.30
+    reference:
+      type: oracle
+      path: reference/basis.npz
+    scoring:
+      type: inverse_normalized_rms
+      parameters:
+        absolute_tolerance: 2.0e-10
+        relative_tolerance: 2.0e-8
+  - metric_id: hidden-time-contraction
+    description: The submitted basis reproduces spin and spatial observables at private times.
+    direction: higher_is_better
+    weight: 0.25
+    hidden_inputs:
+      - hidden_inputs/private_times.json
+    reference:
+      type: oracle
+      path: reference_hidden/hidden_trajectories.csv
+    scoring:
+      type: inverse_normalized_rms
+      parameters:
+        absolute_tolerance: 2.0e-8
+        relative_tolerance: 1.0e-7
+  - metric_id: public-trajectories
+    description: Public trajectories match the oracle and are internally reproducible from the submitted basis.
+    direction: higher_is_better
+    weight: 0.20
+    scoring:
+      type: minimum_of_reference_and_internal_consistency
+  - metric_id: ensemble-aggregation
+    description: Model means and population standard deviations match recomputation from realization trajectories.
+    direction: higher_is_better
+    weight: 0.12
+    scoring:
+      type: minimum_of_reference_and_internal_consistency
+  - metric_id: evidence-consistency
+    description: Bound validation, model contrasts, and categorical conclusions match recomputed evidence.
+    direction: higher_is_better
+    weight: 0.13
+    scoring:
+      type: numeric_and_categorical_consistency
+
+score_contract:
+  hard_gate_failure_score: 0.0
+  metric_weights_sum_to_one: true
+  score_range:
+    minimum: 0.0
+    maximum: 1.0
+  pass_rule:
+    type: total_score_and_mandatory_submetrics
+    total_score_threshold: 0.96
+    mandatory_exact_categorical_match: true
+    mandatory_metric_thresholds:
+      recurrence-basis: 0.90
+      hidden-time-contraction: 0.90
+      public-trajectories: 0.90
+      ensemble-aggregation: 0.90
+      evidence-consistency: 0.90
+
+stochastic_policy:
+  stochastic: false
+  hidden_seed_count: 1
+  aggregation: deterministic_explicit_realizations
+  confidence_or_variance_rule: null
+  baseline_relative: false
+
+hidden_suite:
+  ordinary_cases:
+    count: 4
+    source: trusted private-time list
+  distribution_shift_cases:
+    count: 2
+    description: Off-grid times near later public evolution.
+  adversarial_cases:
+    count: 1
+    description: Correct public rows paired with a non-reusable basis.
+  anti_hardcoding_cases:
+    count: 6
+    description: All private contraction times are absent from participant input.
+
+valid_solutions:
+  - id: privileged-oracle
+    path: reference/
+    expected: pass
+  - id: clean-room-reference
+    path: ../author/reference_solver/
+    expected: pass
+  - id: alternative-valid
+    path: ../author/alternative_solver/
+    expected: pass
+
+mutations:
+  - mutant_id: wrong_soc_sign
+    category: wrong-sign
+    path: mutants/manifest.json
+    expected: fail
+  - mutant_id: conjugate_peierls_phase
+    category: wrong-phase
+    path: mutants/manifest.json
+    expected: fail
+  - mutant_id: swap_soc_axes
+    category: coordinate-order
+    path: mutants/manifest.json
+    expected: fail
+  - mutant_id: omit_ising_disorder
+    category: omitted-interaction
+    path: mutants/manifest.json
+    expected: fail
+  - mutant_id: swap_initial_spin
+    category: spin-index
+    path: mutants/manifest.json
+    expected: fail
+  - mutant_id: unnormalized_packet
+    category: normalization
+    path: mutants/manifest.json
+    expected: fail
+  - mutant_id: first_order_recurrence
+    category: recurrence
+    path: mutants/manifest.json
+    expected: fail
+  - mutant_id: real_bessel_coefficients
+    category: propagation-phase
+    path: mutants/manifest.json
+    expected: fail
+
+metamorphic_tests:
+  - test_id: global-phase
+    applicability: applicable
+    implementation: scripts/verify.py
+    expected_relation: Basis gains one global phase and all observables are invariant.
+  - test_id: uniform-energy-shift
+    applicability: applicable
+    implementation: scripts/verify.py
+    expected_relation: Shifted center keeps the basis and observables unchanged.
+  - test_id: Hamiltonian-scaling-time
+    applicability: applicable
+    implementation: scripts/verify.py
+    expected_relation: Scaling H by s and evaluating at t/s preserves observables.
+  - test_id: coordinate-translation
+    applicability: applicable
+    implementation: scripts/verify.py
+    expected_relation: Spin observables are invariant and moments transform analytically.
+  - test_id: norm-and-zero-soc
+    applicability: applicable
+    implementation: scripts/verify.py
+    expected_relation: Norm is conserved; an up spin stays polarized when SOC is zero.
+
+determinism:
+  repeated_grader_runs: 2
+  require_identical_parsed_scores: true
+  require_identical_process_status: true
+
+leakage_and_security:
+  participant_must_not_access:
+    - private/
+    - author/
+    - source paper
+    - official source repository
+  network_policy: "off"
+  path_and_symlink_checks: true
+  output_size_limit_bytes: 20971520
+  executable_submission_sandbox: not applicable; evaluator never executes submission content

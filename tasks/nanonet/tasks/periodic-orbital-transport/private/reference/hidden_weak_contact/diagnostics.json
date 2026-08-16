@@ -1,0 +1,9 @@
+{
+  "basis_size": 8,
+  "device_cells": 7,
+  "input_sha256": "21134b52d532b72aaf3e42a27aff7389681709d65cde7e731872a12fba986524",
+  "max_hermiticity_residual": 0.0,
+  "max_surface_residual": 9.76584647474217e-16,
+  "model_id": "hidden_weak_contact",
+  "schema_version": "periodic-orbital-transport-output/v1"
+}

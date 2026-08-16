@@ -1,0 +1,32 @@
+{
+  "case_id": "case_verdant",
+  "critical_curve_span": 0.6562175999999997,
+  "derivation_type": "grounded_extension",
+  "generator_family": "clustered-gamma-gap finite-size crossover",
+  "invariants": {
+    "affine_energy_invariance": true,
+    "bounded_gap_ratio": true,
+    "common_size_crossing": true,
+    "realization_cluster_is_sampling_unit": true,
+    "weak_control_mean_exceeds_strong_control_mean": true
+  },
+  "numeric_conditioning": {
+    "affine_energy_offset": -4.75,
+    "affine_energy_scale": 1.625,
+    "maximum_absolute_energy_coordinate": 345.95524349808005,
+    "maximum_absolute_shift_offset": 0.7312500000000668,
+    "maximum_ratio_perturbation": 6.473710456589288e-13,
+    "maximum_shift_offset_over_span": 0.0038108796091850276,
+    "minimum_absolute_shift_offset": 0.44999999999999996,
+    "minimum_keep_boundary_margin": 0.00019374501722069226,
+    "minimum_keep_boundary_margin_over_span": 1.57335246114524e-06,
+    "minimum_keep_boundary_margin_ulps": 22154589524.0,
+    "minimum_selected_gap": 1.747270707141979e-05,
+    "minimum_selected_gap_over_span": 1.1657301292018352e-07,
+    "minimum_selected_gap_ulps": 998995119.0,
+    "selected_index_prefix_exactly_preserved": true
+  },
+  "physical_case_input_bytes": 1291778,
+  "schema_version": "spectral-scaling-truth-summary/v1",
+  "weak_minus_strong_minimum": 0.14409450592857553
+}

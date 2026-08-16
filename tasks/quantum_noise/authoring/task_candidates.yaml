@@ -1,0 +1,467 @@
+schema_version: paper2ale.codex-task-candidates/v1
+
+paper_id: arxiv-1907.13022v2
+
+artifact_list_semantics:
+  participant_output_artifact_ids: exact task-spec participant outputs
+  task_spec_private_rubric_artifact_ids: exact task-spec private rubric list
+  intermediate_private_rubric_artifact_ids: >-
+    Evaluator-scored or evaluator-inspected workflow intermediates. This field is
+    intentionally distinct from task-spec hidden input/truth artifacts and may
+    omit evaluator-internal conceptual artifacts that are never submitted.
+
+candidates:
+  - candidate_id: candidate-spectral-correlation-audit
+    title: Spectral correlation audit from randomized count decays
+    final_mapping:
+      task_slug: spectral_correlation_audit
+      task_id: spectral-correlation-audit-v1
+    target_leaf_id: claim-leaf-long-range-correlations-and-local-model-mismatch
+    task_mode: audit
+    derivation_type: reported_workflow_slice_with_grounded_hidden_generalization
+    participant_operation_ids:
+      - op-xor-correct-and-aggregate-counts
+      - op-transform-length-histograms
+      - op-fit-nuisance-decays
+      - op-reconstruct-simplex-distribution
+      - op-compute-dependence-diagnostics
+      - op-reconstruct-local-clique-tree-model
+      - op-rank-nonlocal-interactions
+    participant_output_artifact_ids:
+      - artifact-hidden-generalizing-spectral-analyzer
+    intermediate_private_rubric_artifact_ids:
+      - artifact-aggregated-histograms
+      - artifact-transformed-spectra
+      - artifact-fitted-decays
+      - artifact-simplex-distribution
+      - artifact-dependence-table
+      - artifact-local-model-audit
+    task_spec_private_rubric_artifact_ids:
+      - artifact-aggregated-histograms
+      - artifact-transformed-spectra
+      - artifact-fitted-decays
+      - artifact-simplex-distribution
+      - artifact-dependence-table
+      - artifact-local-model-audit
+    structural_challenge:
+      meaningful_operation_count: 7
+      dependency_depth: 7
+      branch_count: 4
+      tool_count: 2
+      required_artifact_count: 7
+      challenge_sources:
+        - robust multi-mode nonlinear estimation with nuisance SPAM amplitudes and finite counts
+        - hidden channels constrained to the paper's Pauli-support-to-observed physicality map
+        - transform, bit-order, simplex, marginal, and dependence conventions across linked stages
+        - local graphical-model reconstruction and residual nonlocal-interaction ranking
+        - hidden shifts in labels, bit order, length grids, shot totals, SPAM, and correlation structure
+    shortcut_audit:
+      clone_and_run_source: shortcut_rejected_by_neutral_synthetic_interface
+      one_formula_or_single_library_call: shortcut_rejected_by_fourteen_stage_specific_mutants
+      hardcode_public_examples: shortcut_rejected_by_hidden_dimensions_grids_targets_and_stale_mutant
+      fabricate_reported_metrics: shortcut_rejected_by_evaluator_recomputation_and_mandatory_gates
+      source_reported_values: irrelevant_to_hidden_synthetic_instances
+      notes: >-
+        The official source does not implement the participant CLI and contains
+        incompatible JSD behavior. The checkout-stable final build rejects fourteen
+        schema-valid scientific mutants, three high-scoring contract-bypass
+        probes, and a fabricated-summary probe. Its documentation accurately
+        classifies thirteen mandatory scientific rejects and one hard ranking reject.
+    verification:
+      oracle_possible: true
+      public_input_solver_possible: true
+      behavioral_hidden_evaluation_possible: true
+      realistic_mutants_possible: true
+      tolerance_strategy: >-
+        Structural validity uses tight numerical floors; scientific scores use
+        hidden multi-instance reconstruction, held-out behavior, dependence,
+        and evidence-consistency errors calibrated from valid solvers and mutants.
+      privileged_oracle_status: pass_score_1.0
+      clean_room_solver_status: pass_score_0.996904859452196
+      alternative_solver_status: pass_score_0.996904859477264
+      paper_blind_review_status: pass_current_post_remediation_participant_only_projection
+      private_evaluator_status: pass_repeated_deterministic_behavioral_grades
+      mutant_status: pass_thirteen_mandatory_scientific_plus_one_hard_ranking_rejected
+      metamorphic_status: pass_seven_checks
+      malformed_and_security_status: pass_twenty_eight_hard_cases_and_three_contract_bypass_probes_rejected
+      leakage_and_package_nonmutation_status: pass
+      evidence_path: tasks/spectral_correlation_audit/author/verification_report.md
+      exact_task_build_sha256: 0bba762f4be56c68c2b20c5147c99d37b716f47ae74a8cff88f7f2271e796a1b
+      exact_participant_projection_sha256: eaeef52ee4dc8f7c97ef26d0bb2070a42feb3d50ec21da9499be2dbe817fa1d2
+      exact_participant_validator_sha256: 97188585dcef4bce2e7f89ff12505ac945af731e0674c74cb8e0d58f5df24ef3
+      final_corrected_build_verifier_status: pass_ten_of_ten_independently_reproduced_checkout_stable
+      final_independent_verifier_runtime_seconds: 78.0011323
+      superseded_build_evidence:
+        exact_task_build_sha256: 155f2f9c0769a6811753797a3624a27e8bfd9f362e015c15342bff2c52b7cff7
+        privileged_oracle_score: 1.0
+        clean_room_solver_score: 0.9882582447147051
+        alternative_solver_score: 0.9882582448924182
+        unified_verification_runtime_seconds: 57.4177597
+        status: superseded_by_later_adversarial_gap_discovery
+      retracted_provisional_build_evidence:
+        exact_task_build_sha256: 58feb1090f58ca4f51b8771a39a2b091aac8c71b7b158cf54d124c9db5756786
+        exact_participant_projection_sha256: 9b3b8ca87613f2edb4166c498417cfa3b7bef8758be520ccc7c1d7978c74587c
+        exact_participant_validator_sha256: 97188585dcef4bce2e7f89ff12505ac945af731e0674c74cb8e0d58f5df24ef3
+        privileged_oracle_score: 1.0
+        clean_room_solver_score: 0.996904859452196
+        alternative_solver_score: 0.996904859477264
+        builder_verifier_runtime_seconds: 78.1725914
+        independent_verifier_runtime_seconds: 78.0853764
+        status: retracted_after_private_mutant_status_documentation_contradiction
+    resources:
+      estimated_reference_runtime_minutes: 5
+      estimated_memory_gb: 2
+      bounded: true
+      measured_status: measured_on_checkout_stable_build_except_peak_memory
+      unified_verification_runtime_seconds: 78.0011323
+      clean_room_construction_runtime_seconds: 0.0517079
+      public_validator_runtime_seconds: 0.3327325
+      canonical_two_grade_runtime_seconds: 2.942888
+      alternative_construction_runtime_seconds: 0.0562577
+      alternative_two_grade_runtime_seconds: 8.4287589
+      provenance_path_resolution: pass_task_root_relative
+      peak_memory_status: not_instrumented
+    specification_closure_risk: closed_by_current_post_remediation_participant_only_review
+    leakage_risk: verified_low_with_behavioral_hash_and_lf_backstops
+    expected_human_effort: 8-to-16-hours for a domain-capable numerical scientist
+    provisional_difficulty: structurally_hard_candidate
+    release_status: needs_agent_calibration
+    decision: selected_verified_pending_scientific_review_and_agent_calibration
+    decision_reason: >-
+      This is a coherent seven-operation backward slice from raw counts through
+      a SPAM-robust spectral reconstruction to scientific model-mismatch evidence.
+      It has multiple independent failure modes and supports hidden behavioral evaluation.
+
+  - candidate_id: candidate-scalable-local-noise-model
+    title: Scalable local noise model reconstruction and audit
+    final_mapping:
+      task_slug: scalable_local_noise_model
+      task_id: local-junction-noise-model-v1
+    target_leaf_id: claim-leaf-bounded-local-grf-scalability
+    task_mode: masked_workflow_completion
+    derivation_type: grounded_extension_of_reported_local_grf_workflow
+    participant_operation_ids:
+      - op-parse-local-count-tables
+      - op-reconcile-overlapping-marginals
+      - op-construct-normalized-junction-model
+      - op-answer-partial-assignment-queries
+      - op-predict-validation-interactions
+      - op-rank-missed-interactions
+      - op-report-model-diagnostics
+    participant_output_artifact_ids:
+      - artifact-junction-tree-factor-model
+      - artifact-query-results
+      - artifact-validation-audit
+      - artifact-model-diagnostics
+    intermediate_private_rubric_artifact_ids:
+      - artifact-parsed-local-instance
+      - artifact-reconciled-local-marginals
+      - artifact-unranked-validation-scores
+    task_spec_private_rubric_artifact_ids:
+      - artifact-hidden-local-noise-instances
+      - artifact-latent-local-factor-models
+      - artifact-hidden-query-probabilities
+      - artifact-injected-interaction-labels
+    structural_challenge:
+      meaningful_operation_count: 7
+      dependency_depth: 6
+      branch_count: 4
+      tool_count: 2
+      required_artifact_count: 4
+      challenge_sources:
+        - statistically inconsistent overlapping local count tables requiring disclosed reconciliation
+        - exact normalized clique-tree construction under ordered binary scope conventions
+        - arbitrary partial-evidence inference without full-state enumeration
+        - held-out parity prediction and ranking of injected nonlocal interactions
+        - hidden topology, width, label, table-order, sample-size, and anomaly shifts
+    shortcut_audit:
+      clone_and_run_source: shortcut_rejected_source_helper_is_14_qubit_enumerative_and_interface_incompatible
+      one_formula_or_single_library_call: shortcut_rejected_by_context_query_and_audit_mutants
+      hardcode_public_examples: shortcut_rejected_by_hidden_identity_layout_and_stale_output_gates
+      fabricate_reported_metrics: shortcut_rejected_by_evaluator_recomputation
+      full_state_enumeration: shortcut_rejected_by_47_to_88_variable_hidden_scale
+      notes: >-
+        The public problem narrows the model family to junction trees so exact
+        behavior is verifiable while preserving bounded-width algorithmic difficulty.
+        An independent post-freeze run exposed flaky trusted-oracle metadata
+        parsing in an earlier build. The generator was isolated, and corrected
+        full-task build b006df370e1038ac1e6cf7deeea1cc824110366807f6523223ca408612c196b0
+        then passed an independent nine-of-nine verifier run, rejecting eleven
+        implemented mutants and passing two independent valid solvers. A later
+        clean-checkout audit found 56 generated text fixtures used CRLF despite
+        repository LF normalization, so that build was retracted. LF-stable build
+        9716962c4c4f3338ef2b66a7aea69e10289c8575db33edd64cbadb81e8a62573
+        subsequently passed an independent nine-of-nine rerun with zero CRLF or
+        cache files. Its q* distributions are generic classical benchmark models
+        and are not asserted to be physical observed-error channels of a Pauli process.
+    verification:
+      oracle_possible: true
+      public_input_solver_possible: true
+      behavioral_hidden_evaluation_possible: true
+      realistic_mutants_possible: true
+      tolerance_strategy: >-
+        Evaluate induced probabilities, separator consistency, hidden query
+        error, predictive parity error, anomaly ranking, and report consistency;
+        use calibrated absolute and relative tolerances for numeric serialization.
+      privileged_oracle_status: pass_score_1.0
+      clean_room_solver_status: pass_score_0.9260558303777712
+      alternative_solver_status: pass_score_0.92743224417822
+      paper_blind_review_status: pass_fresh_external_participant_only_review
+      private_evaluator_status: pass_repeated_deterministic_behavioral_grades
+      mutant_status: pass_eleven_of_eleven_rejected
+      metamorphic_status: pass_nine_invariants
+      leakage_and_security_status: pass
+      evidence_path: tasks/scalable_local_noise_model/author/verification_report.md
+      exact_task_build_sha256: 9716962c4c4f3338ef2b66a7aea69e10289c8575db33edd64cbadb81e8a62573
+      exact_public_tree_sha256: f095d644815187489501b6a83567f01888b929b47164156f140b9bc6f0841834
+      final_corrected_build_verifier_status: pass_nine_of_nine_independently_reproduced_checkout_stable
+      final_independent_verifier_runtime_seconds: 68.8558793
+      superseded_build_evidence:
+        exact_public_tree_sha256: b9b686697e4a8016ac4efd3fae5a15b6cb1a98c24c17da64e63b97ddfe0f1401
+        privileged_oracle_score: 1.0
+        clean_room_solver_score: 0.9260558303777712
+        alternative_solver_score: 0.92743224417822
+        unified_verification_runtime_seconds: 33.185
+        status: superseded_by_later_adversarial_gap_discovery
+      retracted_metadata_failure_build_evidence:
+        exact_public_tree_sha256: bbd9e2d2e63de9d70ee21d2566608542426a0a1ae2f4b8120a08add9795b058e
+        builder_verifier_runtime_seconds: 68.4066709
+        privileged_oracle_score: 1.0
+        clean_room_solver_score: 0.9260558303777712
+        alternative_solver_score: 0.92743224417822
+        independent_post_freeze_status: fail_seven_of_eight_transient_trusted_oracle_metadata
+      retracted_crlf_build_evidence:
+        exact_task_build_sha256: b006df370e1038ac1e6cf7deeea1cc824110366807f6523223ca408612c196b0
+        exact_public_tree_sha256: bbd9e2d2e63de9d70ee21d2566608542426a0a1ae2f4b8120a08add9795b058e
+        privileged_oracle_score: 1.0
+        clean_room_solver_score: 0.9260558303777712
+        alternative_solver_score: 0.92743224417822
+        independent_verifier_runtime_seconds: 69.5395319
+        status: retracted_after_clean_checkout_line_ending_audit
+    resources:
+      estimated_reference_runtime_minutes: 5
+      estimated_memory_gb: 2
+      bounded: true
+      measured_status: measured_on_checkout_stable_build_except_peak_memory
+      unified_verification_runtime_seconds: 68.8558793
+      provenance_path_resolution: pass_task_root_relative
+      public_solver_runtime_seconds_range: [0.206, 0.213]
+      hidden_grader_runtime_seconds_range: [5.730, 5.846]
+      alternative_public_solver_runtime_seconds: 0.181
+      alternative_hidden_grader_runtime_seconds: 5.752
+      peak_memory_status: not_instrumented
+    specification_closure_risk: closed_by_fresh_external_participant_only_review
+    leakage_risk: verified_low_with_behavioral_hash_and_lf_backstops
+    expected_human_effort: 8-to-16-hours for a graphical-model practitioner
+    provisional_difficulty: structurally_hard_candidate
+    release_status: needs_agent_calibration
+    decision: selected_verified_pending_scientific_review_and_agent_calibration
+    decision_reason: >-
+      This converts the bounded-locality claim into a long workflow that must
+      reconcile data, construct a normalized model, perform nonenumerative
+      inference, and diagnose held-out departures. It is distinct from the
+      small-n spectral reconstruction task.
+
+  - candidate_id: candidate-replay-melbourne-experiment
+    title: Replay the reported 14-variable device analysis
+    final_mapping: null
+    target_leaf_id: claim-leaf-long-range-correlations-and-local-model-mismatch
+    task_mode: reproduction
+    derivation_type: reported_workflow_reproduction
+    participant_operation_ids:
+      - op-xor-correct-and-aggregate-counts
+      - op-transform-length-histograms
+      - op-fit-nuisance-decays
+      - op-reconstruct-simplex-distribution
+      - op-compute-dependence-diagnostics
+    participant_output_artifact_ids:
+      - artifact-simplex-distribution
+      - artifact-dependence-table
+    intermediate_private_rubric_artifact_ids:
+      - artifact-transformed-spectra
+      - artifact-fitted-decays
+    structural_challenge:
+      meaningful_operation_count: 5
+      dependency_depth: 4
+      branch_count: 1
+      tool_count: 1
+      required_artifact_count: 2
+      challenge_sources:
+        - data ingestion and spectral fitting
+        - device-specific grouping and diagnostic conventions
+    shortcut_audit:
+      clone_and_run_source: likely_trivializes_if_complete_source_data_are_supplied
+      one_formula_or_single_library_call: not_applicable
+      hardcode_public_examples: high_risk_if_reported_outputs_or_figure_data_are_public
+      fabricate_reported_metrics: evaluator_can_recompute_but_source_values_leak
+      notes: Official notebooks and reported values would strongly leak the answer.
+    verification:
+      oracle_possible: false_with_current_snapshot
+      public_input_solver_possible: false_with_current_snapshot
+      behavioral_hidden_evaluation_possible: weak_without_new_instances
+      realistic_mutants_possible: true
+      tolerance_strategy: blocked_by_missing_trusted_raw_workflow
+    resources:
+      estimated_reference_runtime_minutes: null
+      estimated_memory_gb: null
+      bounded: unknown
+    specification_closure_risk: high
+    leakage_risk: high
+    expected_human_effort: dominated_by_source_repair_not_scientific_workflow
+    provisional_difficulty: rejected
+    decision: reject
+    decision_reason: >-
+      The worktree lacks the notebooks and checked-out data archive, pickles are
+      unsafe to deserialize without a separate audit, source notebooks contain
+      defects, and a complete public replay would be clone-and-run plus answer leakage.
+
+  - candidate_id: candidate-reproduce-figure4-scaling
+    title: Reproduce the local-chain scaling figure
+    final_mapping: null
+    target_leaf_id: claim-leaf-figure4-sqrt-scaling
+    task_mode: reproduction
+    derivation_type: reported_figure_reproduction
+    participant_operation_ids: []
+    participant_output_artifact_ids: []
+    intermediate_private_rubric_artifact_ids: []
+    structural_challenge:
+      meaningful_operation_count: 2
+      dependency_depth: 1
+      branch_count: 1
+      tool_count: 1
+      required_artifact_count: 1
+      challenge_sources:
+        - Monte Carlo simulation
+        - curve fitting
+    shortcut_audit:
+      clone_and_run_source: trivializes_with_Linear_Chain_notebook
+      one_formula_or_single_library_call: much_of_target_reduces_to_one_curve_fit
+      hardcode_public_examples: reported_figure_data_are_present_in_source_archive
+      fabricate_reported_metrics: exact_plot_grading_would_be_brittle
+      notes: Proprietary Wolfram runtime and source conflicts add accidental difficulty.
+    verification:
+      oracle_possible: false_as_exact_claim
+      public_input_solver_possible: possible_but_not_well_grounded
+      behavioral_hidden_evaluation_possible: weak
+      realistic_mutants_possible: limited
+      tolerance_strategy: blocked_by_metric_fit_and_indexing_conflicts
+    resources:
+      estimated_reference_runtime_minutes: unknown
+      estimated_memory_gb: unknown
+      bounded: unknown
+    specification_closure_risk: high
+    leakage_risk: high
+    expected_human_effort: 1-to-3-hours if notebook runs
+    provisional_difficulty: rejected
+    decision: reject
+    decision_reason: >-
+      The caption, notebook, and figure script disagree on metric and fit. Even
+      after repair, this is a proprietary clone-and-run figure task rather than
+      a hard backward workflow slice.
+
+  - candidate_id: candidate-learn-unknown-grf-topology
+    title: Discover a local noise graph from marginals
+    final_mapping: null
+    target_leaf_id: claim-leaf-topology-learning-open
+    task_mode: method_masked_rediscovery
+    derivation_type: proposed_extension_beyond_reported_result
+    participant_operation_ids: []
+    participant_output_artifact_ids: []
+    intermediate_private_rubric_artifact_ids: []
+    structural_challenge:
+      meaningful_operation_count: 6
+      dependency_depth: 4
+      branch_count: 3
+      tool_count: 1
+      required_artifact_count: 3
+      challenge_sources:
+        - structure learning under sampling noise
+        - model selection and conditional-independence ambiguity
+        - hidden distribution shift
+    shortcut_audit:
+      clone_and_run_source: source_does_not_solve_it
+      one_formula_or_single_library_call: unlikely
+      hardcode_public_examples: can_be_prevented
+      fabricate_reported_metrics: can_be_prevented
+      notes: High structural difficulty does not compensate for an unclosed scientific target.
+    verification:
+      oracle_possible: only_for_synthetic_latent_graph_not_for_identifiable_structure
+      public_input_solver_possible: possible_with_new_objective
+      behavioral_hidden_evaluation_possible: possible_but_requires_substantial_new_benchmark_research
+      realistic_mutants_possible: true
+      tolerance_strategy: unresolved_equivalent_graph_and_model_selection_semantics
+    resources:
+      estimated_reference_runtime_minutes: 30
+      estimated_memory_gb: 4
+      bounded: true
+    specification_closure_risk: high
+    leakage_risk: low
+    expected_human_effort: multiple_days
+    provisional_difficulty: rejected
+    decision: reject
+    decision_reason: >-
+      The paper explicitly leaves topology learning open. Graph recovery is not
+      identifiable without a new equivalence-aware objective and assumptions,
+      so selecting it would create hidden methodological requirements.
+
+  - candidate_id: candidate-two-variable-correlation-checkpoint
+    title: Recover a two-variable correlation checkpoint
+    final_mapping: null
+    target_leaf_id: claim-leaf-observed-rates-preserve-correlations
+    task_mode: masked_workflow_completion
+    derivation_type: reported_micro_case
+    participant_operation_ids:
+      - op-reconstruct-simplex-distribution
+      - op-compute-dependence-diagnostics
+    participant_output_artifact_ids:
+      - artifact-simplex-distribution
+      - artifact-dependence-table
+    intermediate_private_rubric_artifact_ids: []
+    structural_challenge:
+      meaningful_operation_count: 2
+      dependency_depth: 1
+      branch_count: 1
+      tool_count: 1
+      required_artifact_count: 2
+      challenge_sources:
+        - transform convention
+        - correlation calculation
+    shortcut_audit:
+      clone_and_run_source: unnecessary
+      one_formula_or_single_library_call: trivializes
+      hardcode_public_examples: trivializes_if_micro_case_is_public
+      fabricate_reported_metrics: easy_to_detect_but_not_hard
+      notes: The supplement also has a 0.0006 versus 0.006 typo in this example.
+    verification:
+      oracle_possible: true_after_resolving_typo_from_downstream_arithmetic
+      public_input_solver_possible: true
+      behavioral_hidden_evaluation_possible: weak
+      realistic_mutants_possible: few
+      tolerance_strategy: ordinary_numeric_tolerance
+    resources:
+      estimated_reference_runtime_minutes: 1
+      estimated_memory_gb: 1
+      bounded: true
+    specification_closure_risk: low
+    leakage_risk: high
+    expected_human_effort: less_than_1_hour
+    provisional_difficulty: rejected
+    decision: reject
+    decision_reason: >-
+      This is an automatically checkable leaf checkpoint but only two shallow
+      operations. It is useful inside the spectral evaluator, not as a final ALE task.
+
+selected_candidate_ids:
+  - candidate-spectral-correlation-audit
+  - candidate-scalable-local-noise-model
+
+selection_rationale: >-
+  The selected candidates are distinct long-horizon slices: one reconstructs a
+  small-to-medium explicit error distribution from raw randomized count decays
+  and audits nonlocal structure, while the other starts from noisy local tables
+  and performs bounded-width reconciliation, inference, and held-out anomaly
+  analysis at sizes where full enumeration is infeasible. The four alternatives
+  are rejected for missing source bytes and leakage, source conflicts and
+  clone-and-run behavior, an open non-identifiable target, or insufficient depth.
+  Selection is for build and verification only; neither task is accepted until
+  all runtime, clean-room, paper-blind, mutant, metamorphic, and leakage gates pass.

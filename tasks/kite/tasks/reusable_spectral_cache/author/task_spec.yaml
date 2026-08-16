@@ -1,0 +1,257 @@
+schema_version: paper2ale.codex-task-spec/v1
+
+task:
+  task_id: reusable-chebyshev-spectral-cache-v1
+  title: Reusable Chebyshev spectral cache
+  status: needs_agent_calibration
+  task_mode: masked_workflow_completion
+  derivation_type: reported_workflow_slice_with_grounded_synthetic_instances
+  target_claim_leaf_id: leaf-spectral-cache
+  summary: >
+    Construct probe-resolved raw Chebyshev moments for several sparse Hermitian
+    systems and reuse the cache for branch-stable retarded, advanced, and
+    spectral-density contractions at multiple energies, broadenings, and prefixes.
+
+workflow_subgraph:
+  operation_ids:
+    - op-spectral-assemble
+    - op-spectral-rescale
+    - op-spectral-recurrence
+    - op-spectral-aggregate
+    - op-spectral-reconstruct
+    - op-spectral-diagnose
+  public_input_artifact_ids:
+    - artifact-spectral-public-systems
+  participant_output_artifact_ids:
+    - artifact-spectral-moments
+    - artifact-spectral-response
+    - artifact-spectral-diagnostics
+  private_rubric_artifact_ids:
+    - artifact-spectral-operator
+    - artifact-spectral-scaled-operator
+    - artifact-spectral-probe-moments
+    - artifact-spectral-hidden-queries
+    - artifact-spectral-hidden-response
+  meaningful_operation_count: 6
+  dependency_depth: 5
+  branch_count: 3
+  tool_count: 1
+
+participant:
+  task_description_path: participant/TASK.md
+  visible_inputs:
+    - id: input-manifest
+      path: participant/input/manifest.json
+      format: JSON
+      purpose: declares systems, bounds, dimensions, probes, and cache length
+      source: trusted-synthetic
+      redistribution_status: allowed
+    - id: public-queries
+      path: participant/input/public_queries.csv
+      format: CSV
+      purpose: visible multi-energy, broadening, sector, and prefix contractions
+      source: benchmark-choice
+      redistribution_status: allowed
+    - id: sparse-systems
+      path: participant/input/systems/
+      format: CSV undirected edge lists, onsite vectors, and probes
+      purpose: deterministic Hermitian systems and fixed trace probes
+      source: trusted-synthetic
+      redistribution_status: allowed
+  starter_software:
+    - path: participant/software/validate_submission.py
+      purpose: public structural validation only
+      removed_solution_components:
+        - moment recurrence implementation
+        - resolvent contraction implementation
+        - reference values and scoring thresholds
+  environment:
+    os: cross-platform
+    cpu_count: 4
+    memory_gb: 8
+    gpu: null
+    wall_time_minutes: 20
+    disk_gb: 1
+    network:
+      enabled: false
+      allowlist: []
+    packages:
+      - python>=3.11
+      - numpy==2.3.5
+  required_outputs:
+    - id: raw-moments
+      path: output/moments.npz
+      format: safe NPZ
+      schema_or_shape: exact keys; tau_real/tau_imag float64 shape (3,4,384)
+      purpose: reusable probe-resolved raw cache
+      required: true
+    - id: public-responses
+      path: output/public_response.csv
+      format: CSV
+      schema_or_shape: 21 rows with exact public query identities and complex values
+      purpose: demonstrate multi-parameter finite contractions
+      required: true
+    - id: diagnostics
+      path: output/diagnostics.json
+      format: strict JSON
+      schema_or_shape: exact deterministic per-system cache diagnostics
+      purpose: evidence-linked validation of scaling and moment invariants
+      required: true
+  public_success_criteria:
+    - probe-resolved raw moments follow the disclosed affine and Chebyshev conventions
+    - held-out finite contractions remain accurate across energies, broadenings, sectors, and prefixes
+    - public responses and diagnostics are recomputably consistent with the submitted cache
+    - double-precision numerical equivalence is accepted without byte equality
+  constraints:
+    - data-only submission; no participant executable is evaluated
+    - NumPy and Python standard library only
+    - no network, GPU, pickle, object arrays, links, or extra output files
+  prohibited_dependencies:
+    - source paper
+    - official source repository
+    - hidden evaluator files
+    - undeclared network access
+
+paper_blindness:
+  neutralized_identifiers:
+    - paper title and acronym
+    - source repository and executable names
+    - source equation numbers and filenames
+  withheld_author_information:
+    - exact hidden queries, thresholds, metric weights, references, seeds, and mutants
+  leakage_checks:
+    - recursive forbidden-identifier scan of participant text and paths
+    - participant inventory compared against author and private projections
+    - clean-room solver receives only participant-visible files
+  source_lookup_should_not_solve_task: true
+
+specification_closure:
+  decisions:
+    - decision: sparse Hermitian edge orientation and conjugation
+      status: disclosed
+      public_location_or_rationale: TASK.md Provided files
+    - decision: affine half-width, center, and physical energy units
+      status: disclosed
+      public_location_or_rationale: TASK.md Required numerical convention
+    - decision: probe normalization, conjugate inner product, and division by N
+      status: disclosed
+      public_location_or_rationale: TASK.md Required numerical convention
+    - decision: recurrence initialization, factor two, order range, and prefix meaning
+      status: disclosed
+      public_location_or_rationale: TASK.md Required numerical convention
+    - decision: probe averaging
+      status: disclosed
+      public_location_or_rationale: TASK.md Finite resolvent contraction
+    - decision: complex square-root branch and stable q evaluation
+      status: disclosed
+      public_location_or_rationale: TASK.md Finite resolvent contraction
+    - decision: order-zero versus higher-order normalization and 1/a Jacobian
+      status: disclosed
+      public_location_or_rationale: TASK.md finite contraction and normalization paragraph
+    - decision: GR, GA, DOS, eta, and prefix semantics
+      status: disclosed
+      public_location_or_rationale: TASK.md finite contraction
+    - decision: algorithms and sparse data structures
+      status: evaluator_method_agnostic
+      public_location_or_rationale: any method producing numerically equivalent artifacts is accepted
+    - decision: output schemas, file caps, environment, and success criteria
+      status: disclosed
+      public_location_or_rationale: TASK.md output and environment sections
+  all_closed: true
+  paper_blind_review:
+    reviewer_has_seen_source: false
+    task_restatement_correct: true
+    material_ambiguities: []
+    status: pass
+  unresolved_items: []
+
+intrinsic_difficulty:
+  provisional_label: structurally_hard_candidate
+  challenge_sources:
+    - correct multi-file construction and Hermitian sparse recurrence across heterogeneous systems
+    - normalization-sensitive probe-resolved moment caching through 384 orders
+    - complex branch, affine-unit, causality, and prefix semantics in reusable contractions
+    - cross-artifact consistency and diagnostics that expose realistic scientific errors
+  non_difficulty_factors:
+    - formatting
+    - hidden threshold
+    - raw output volume
+  shortcut_tests:
+    - name: copy visible responses with dummy moments
+      result: rejected
+      evidence: private mutant public_grid_hardcode
+    - name: dense one-call eigendecomposition
+      result: valid alternative but still requires all normalization, cache, contraction, and evidence stages
+      evidence: author/alternative_solver/solve.py
+    - name: cache only averaged or kernelized moments
+      result: rejected
+      evidence: private mutants probe_collapse and kernelized_cache
+    - name: omit high-order recurrence and zero pad
+      result: rejected
+      evidence: private mutant truncated_zero_pad
+  expected_human_workflow: 6-12 expert hours to inspect inputs, implement and test recurrence, resolve complex branch behavior, construct outputs, and validate invariants
+  agent_calibration:
+    status: not_run
+    exact_task_build_id: sha256:439d24074b7efc721570f33b64e0433427dfa6488945274a4aedbd78ee4b3f54
+    pinned_agent_systems: []
+
+private_evaluation:
+  evaluation_spec_path: private/evaluation_spec.yaml
+  hidden_input_paths:
+    - private/hidden_inputs/queries.csv
+  reference_paths:
+    - private/reference/oracle_submission/
+    - private/reference/hidden_response.csv
+  grader_paths:
+    - private/grader/grade.py
+    - private/grader/core.py
+  exact_thresholds_private: true
+  exact_weights_private: true
+
+reference_generation:
+  privileged_oracle:
+    path: author/oracle/generate.py
+    may_use_source_information: true
+    last_run_status: pass
+    score: 1.0
+    generation_runtime_seconds: 0.7447128000003431
+  public_input_reference_solver:
+    path: author/reference_solver/
+    reads_only_participant_package: true
+    declared_environment_only: true
+    last_run_status: pass
+    score: 1.0
+    runtime_seconds: 0.24147650000031717
+  alternative_solver:
+    path: author/alternative_solver/
+    available: true
+    independence_notes: moments use dense Hermitian spectral decomposition rather than sparse vector recurrence; artifact writing is shared
+    last_run_status: pass
+    score: 1.0
+    runtime_seconds: 0.5774356000001717
+
+instance_generation:
+  supported: true
+  trusted_generator: author/oracle/generate.py
+  private_seed_policy: distinct fixed author seeds for retired review build; server-secret regeneration required before scored release
+  varying_factors:
+    - sparse topology, complex hopping, onsite disorder, system dimension, probes, queries, and prefixes
+  invariants_preserved:
+    - Hermiticity, strict scaled spectral containment, unit-modulus probes, and exact finite Chebyshev contraction
+  public_review_instances_retired: true
+
+provenance:
+  source_manifest_path: ../../authoring/source_manifest.yaml
+  evidence_map_path: ../../authoring/evidence_map.yaml
+  workflow_graph_path: ../../authoring/workflow_graph.yaml
+  candidate_record_path: ../../authoring/task_candidates.yaml
+
+release:
+  verification_report_path: author/verification_report.md
+  checklist_complete: false
+  decision: needs_agent_calibration
+  blocking_issues:
+    - Exact task build has not been calibrated against pinned frontier-agent systems.
+    - Independent scientific-domain review of the normalization and finite-resolvent convention is pending.
+    - ALE compiler/publication integration and production resource measurement, including peak RSS and cross-platform symlink checks, are pending.
+    - A distribution license for the independently authored participant assets must be selected; the upstream LGPL/GPL metadata conflict is recorded.

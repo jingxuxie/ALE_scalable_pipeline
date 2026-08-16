@@ -1,0 +1,66 @@
+{
+  "expected": "all cases fail",
+  "mutants": [
+    {
+      "description": "swaps retarded and advanced response branches",
+      "mutant_id": "advanced_branch_swap"
+    },
+    {
+      "description": "fabricates deterministic diagnostic values",
+      "mutant_id": "diagnostics_inconsistent"
+    },
+    {
+      "description": "applies the higher-order factor two to order zero",
+      "mutant_id": "double_order_zero"
+    },
+    {
+      "description": "uses physical eta directly as the scaled imaginary coordinate",
+      "mutant_id": "eta_not_scaled"
+    },
+    {
+      "description": "normalizes unit-modulus probes and still divides by N",
+      "mutant_id": "extra_probe_normalization"
+    },
+    {
+      "description": "stores Jackson-damped coefficients rather than raw moments",
+      "mutant_id": "kernelized_cache"
+    },
+    {
+      "description": "omits the physical 1/a response factor",
+      "mutant_id": "omit_response_jacobian"
+    },
+    {
+      "description": "contracts all 384 moments for every public prefix",
+      "mutant_id": "prefix_ignored"
+    },
+    {
+      "description": "copies probe zero into all probe slots",
+      "mutant_id": "probe_collapse"
+    },
+    {
+      "description": "ships exact visible responses with a dummy cache",
+      "mutant_id": "public_grid_hardcode"
+    },
+    {
+      "description": "uses A v[n-1] - v[n-2] instead of 2 A v[n-1] - v[n-2]",
+      "mutant_id": "recurrence_missing_two"
+    },
+    {
+      "description": "stores order n+1 at slot n",
+      "mutant_id": "shifted_order"
+    },
+    {
+      "description": "binds valid cached arrays to the wrong public systems",
+      "mutant_id": "stale_system_swap"
+    },
+    {
+      "description": "computes only 96 moments and pads the reusable suffix with zeros",
+      "mutant_id": "truncated_zero_pad"
+    },
+    {
+      "description": "uses twice the disclosed affine half-width",
+      "mutant_id": "wrong_affine_halfwidth"
+    }
+  ],
+  "schema_version": "spectral-mutant-manifest/v1"
+}

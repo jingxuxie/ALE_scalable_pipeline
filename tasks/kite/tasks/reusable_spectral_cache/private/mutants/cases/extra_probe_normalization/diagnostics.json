@@ -1,0 +1,32 @@
+{
+  "moment_count": 384,
+  "probe_count": 4,
+  "public_query_count": 21,
+  "schema_version": "spectral-diagnostics/v1",
+  "systems": [
+    {
+      "dimension": 311,
+      "max_abs_imaginary_moment": 4.407787775726679e-19,
+      "max_abs_moment": 0.003215434083601286,
+      "scaled_gershgorin_radius": 0.8227151233714503,
+      "system_id": "sys_alpha",
+      "tau0_max_abs_error": 0.9967845659163987
+    },
+    {
+      "dimension": 529,
+      "max_abs_imaginary_moment": 1.3885672886346346e-19,
+      "max_abs_moment": 0.001890359168241966,
+      "scaled_gershgorin_radius": 0.8262766108793933,
+      "system_id": "sys_beta",
+      "tau0_max_abs_error": 0.998109640831758
+    },
+    {
+      "dimension": 769,
+      "max_abs_imaginary_moment": 8.560958521597999e-20,
+      "max_abs_moment": 0.0013003901170351106,
+      "scaled_gershgorin_radius": 0.8247130422335653,
+      "system_id": "sys_gamma",
+      "tau0_max_abs_error": 0.9986996098829649
+    }
+  ]
+}

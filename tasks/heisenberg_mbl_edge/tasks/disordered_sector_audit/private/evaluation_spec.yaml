@@ -1,0 +1,222 @@
+schema_version: paper2ale.codex-evaluation-spec/v1
+
+task_id: disordered-sector-audit-v1
+visibility: private
+
+execution_budget:
+  public_total_wall_time_seconds: 1200
+  hidden_experiment_count: 3
+  per_experiment_timeout_seconds: 300
+  orchestration_and_validation_margin_seconds: 300
+  rationale: Three five-minute case ceilings plus a five-minute evaluator margin honor the disclosed twenty-minute total budget.
+
+hard_gates:
+  - gate_id: one-regular-solution
+    description: Submission is a real directory containing only a regular UTF-8 solution.py within 200000 bytes.
+    implementation: private/grader/core.py validate_submission
+  - gate_id: guarded-execution
+    description: Each hidden run uses a fresh copied source/input tree and empty output directory, a host-environment allowlist, live-bounded console/result files with a mandatory post-exit console recheck, and denial of network, process, link, and out-of-stage filesystem operations.
+    implementation: private/grader/grade.py plus sandbox_runner.py
+  - gate_id: safe-result
+    description: Result is one non-linked regular JSON file within 8 MiB, with unique keys and no NaN or infinity.
+    implementation: private/grader/core.py load_json_strict
+  - gate_id: complete-schema
+    description: Exact row fields and experiment-derived row-key sets are present with finite values, safe key types, exact context descriptors, and conclusions relationally recomputed from submitted aggregates.
+    implementation: private/grader/core.py validate_result
+
+metrics:
+  - metric_id: spectral_packet
+    description: Eigen-index selection, eigenvalues, reversed normalized energies, and adjacent-gap ratios on fresh sectors.
+    direction: higher_is_better
+    weight: 0.25
+    hidden_inputs:
+      - hidden_inputs/hidden_alpha/experiment.json
+      - hidden_inputs/hidden_beta/experiment.json
+      - hidden_inputs/hidden_gamma/experiment.json
+    reference:
+      type: oracle
+      path: reference/hidden-*.json
+    scoring:
+      type: normalized_rmse_and_required_index_fraction
+      parameters:
+        excellent: 1.0
+        minimum: 50.0
+    tolerance:
+      type: abs_and_rel
+      absolute: 2.0e-8
+      relative: 1.0e-7
+      derivation: Sparse author loop versus vectorized alternative and repeated BLAS runs disagree below 2e-12.
+  - metric_id: entanglement_participation
+    description: Natural-log real-space Schmidt entropy and computational-basis S1/S2.
+    direction: higher_is_better
+    weight: 0.30
+    hidden_inputs:
+      - hidden_inputs/hidden_alpha/experiment.json
+      - hidden_inputs/hidden_beta/experiment.json
+      - hidden_inputs/hidden_gamma/experiment.json
+    scoring:
+      type: normalized_rmse
+      parameters:
+        excellent: 1.0
+        minimum: 50.0
+    tolerance:
+      type: abs_and_rel
+      absolute: 2.0e-8
+      relative: 1.0e-7
+      derivation: SVD and reduced-density eigendecomposition disagree below 2e-12; tolerance leaves a wide cross-platform margin.
+  - metric_id: magnetization
+    description: Subsystem magnetization mean and centered variance.
+    direction: higher_is_better
+    weight: 0.15
+    scoring:
+      type: normalized_rmse
+      parameters:
+        excellent: 1.0
+        minimum: 50.0
+    tolerance:
+      type: abs_and_rel
+      absolute: 2.0e-8
+      relative: 1.0e-7
+      derivation: Direct diagonal moments are well-conditioned; absolute tolerance protects means near zero.
+  - metric_id: realization_aggregation
+    description: Equal-realization means and realization-clustered sample SEM across unequal packet sizes.
+    direction: higher_is_better
+    weight: 0.20
+    scoring:
+      type: normalized_rmse_with_exact_identity_fields
+      parameters:
+        excellent: 1.0
+        minimum: 50.0
+    tolerance:
+      type: abs_and_rel
+      absolute: 5.0e-8
+      relative: 2.0e-7
+      derivation: Propagates state-observable tolerance and floating reduction order while rejecting naive state weighting.
+  - metric_id: evidence_consistency
+    description: Claims, effects, positive-effect flags, directions, and evidence aggregate IDs match recomputed rows.
+    direction: higher_is_better
+    weight: 0.10
+    scoring:
+      type: exact_categorical_and_normalized_effect_rmse
+      parameters:
+        excellent: 1.0
+        minimum: 50.0
+    tolerance:
+      type: abs_and_rel
+      absolute: 5.0e-8
+      relative: 2.0e-7
+      derivation: Effects are differences of already-tolerant aggregate means.
+
+score_contract:
+  hard_gate_failure_score: 0.0
+  metric_weights_sum_to_one: true
+  score_range:
+    minimum: 0.0
+    maximum: 1.0
+  pass_rule:
+    type: total_score_and_per_experiment_mandatory_submetrics
+    total_score_threshold: 0.95
+    mandatory_metric_thresholds:
+      spectral_packet: 0.92
+      entanglement_participation: 0.92
+      magnetization: 0.92
+      realization_aggregation: 0.92
+      evidence_consistency: 1.0
+    application: Every mandatory threshold must hold separately on every hidden experiment; cross-experiment averaging cannot hide a failed case.
+
+stochastic_policy:
+  stochastic: false
+  hidden_seed_count: 3
+  aggregation: mean_across_hidden_experiments
+  confidence_or_variance_rule: Submission SEM is recomputed from realization means.
+  baseline_relative: false
+
+hidden_suite:
+  ordinary_cases:
+    count: 1
+    source: trusted generator independent child stream
+  distribution_shift_cases:
+    count: 2
+    description: New odd/even lengths, non-half sector, reversed targets, wraparound cuts, and unequal packets.
+  adversarial_cases:
+    count: 5
+    description: Metamorphic site, field, scale, spin-sector, and order transformations.
+  anti_hardcoding_cases:
+    count: 3
+    description: All scored condition, record, comparison, query, and experiment identifiers are opaque, suite-specific, and absent from the retired input; fields and cuts are also fresh.
+  input_contract_probes:
+    - Trusted loading rejects records with fewer than two queries, matching the public schema.
+    - Every hidden record has query-specific packet sizes, and generated reference row counts are checked against each individual query value.
+
+valid_solutions:
+  - id: privileged-oracle
+    path: ../author/oracle/generate.py
+    expected: pass
+  - id: clean-room-reference
+    path: ../author/reference_solver/solution.py
+    expected: pass
+  - id: alternative-valid
+    path: ../author/alternative_solver/solution.py
+    expected: pass
+
+mutations:
+  - {mutant_id: pauli_scale, category: operator-normalization, path: mutants/cases/pauli_scale/solution.py, expected: fail}
+  - {mutant_id: unit_exchange, category: input-parameter, path: mutants/cases/unit_exchange/solution.py, expected: fail}
+  - {mutant_id: open_boundary, category: topology, path: mutants/cases/open_boundary/solution.py, expected: fail}
+  - {mutant_id: wrong_energy_normalization, category: energy, path: mutants/cases/wrong_energy_normalization/solution.py, expected: fail}
+  - {mutant_id: one_sided_packet, category: packet, path: mutants/cases/one_sided_packet/solution.py, expected: fail}
+  - {mutant_id: shannon_entanglement, category: observable, path: mutants/cases/shannon_entanglement/solution.py, expected: fail}
+  - {mutant_id: log2_entanglement, category: logarithm, path: mutants/cases/log2_entanglement/solution.py, expected: fail}
+  - {mutant_id: s2_ipr, category: participation, path: mutants/cases/s2_ipr/solution.py, expected: fail}
+  - {mutant_id: mz_second_moment, category: moment, path: mutants/cases/mz_second_moment/solution.py, expected: fail}
+  - {mutant_id: naive_aggregation, category: grouping, path: mutants/cases/naive_aggregation/solution.py, expected: fail}
+  - {mutant_id: sem_over_states, category: uncertainty, path: mutants/cases/sem_over_states/solution.py, expected: fail}
+  - {mutant_id: stale_evidence, category: evidence, path: mutants/cases/stale_evidence/solution.py, expected: fail}
+
+metamorphic_tests:
+  - test_id: cyclic-site-relabeling
+    applicability: applicable
+    implementation: scripts/verify.py oracle_metamorphic_tests and solver_metamorphic_tests for both participant-facing solvers
+    expected_relation: State observables, realization aggregates, and evidence conclusions are invariant when fields and cut are relabeled together.
+  - test_id: uniform-field-shift
+    applicability: applicable
+    implementation: scripts/verify.py oracle_metamorphic_tests and solver_metamorphic_tests for both participant-facing solvers
+    expected_relation: Fixed-sector eigenvectors, aggregates, and conclusions are invariant; all state eigenvalues receive the known sector constant.
+  - test_id: common-hamiltonian-scaling
+    applicability: applicable
+    implementation: scripts/verify.py oracle_metamorphic_tests and solver_metamorphic_tests for both participant-facing solvers
+    expected_relation: State eigenvalues scale; normalized packets, aggregates, conclusions, and dimensionless/eigenvector observables remain invariant.
+  - test_id: global-spin-flip-nonzero-sector
+    applicability: applicable
+    implementation: scripts/verify.py oracle_metamorphic_tests and solver_metamorphic_tests for both participant-facing solvers
+    expected_relation: n_up maps to L-n_up with negated fields; state and aggregate subsystem means change sign while aggregate SEM, conclusions, and other graded observables remain invariant.
+  - test_id: record-permutation
+    applicability: applicable
+    implementation: scripts/verify.py oracle_metamorphic_tests and solver_metamorphic_tests for both participant-facing solvers
+    expected_relation: Canonical result is byte-equivalent after input record permutation.
+
+determinism:
+  repeated_grader_runs: 2
+  repeated_alternative_runs: 2
+  raw_alternative_participant_case_runs: 2
+  require_identical_raw_alternative_result_bytes: true
+  require_identical_parsed_scores: true
+  require_identical_process_status: true
+
+leakage_and_security:
+  participant_must_not_access:
+    - private/
+    - author/
+    - source paper
+    - official source repository
+  network_policy: off
+  path_and_symlink_checks: true
+  output_size_limit_bytes: 8388608
+  executable_submission_sandbox: >
+    Every case is staged with only copied source/input and an empty output
+    directory. The child receives an environment allowlist; result and console
+    growth are bounded live. A closure-backed Python audit hook uses resolved
+    path confinement and denies sockets, all common process creation, link and
+    symlink operations, renames/deletes, frame tracing, and ctypes loading.
+    These controls are defense in depth only; production ALE must use OS-level
+    filesystem, process, network, memory, and process-tree isolation.

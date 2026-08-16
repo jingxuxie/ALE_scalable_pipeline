@@ -1,0 +1,499 @@
+{
+  "audit_top_k": 3,
+  "cliques": [
+    {
+      "clique_id": "c14_6229",
+      "new_variables": [
+        "u50_644",
+        "u39_215"
+      ],
+      "parent_id": "c13_2593",
+      "separator_variables": [
+        "u00_191",
+        "u41_140"
+      ],
+      "variables": [
+        "u00_191",
+        "u50_644",
+        "u41_140",
+        "u39_215"
+      ]
+    },
+    {
+      "clique_id": "c08_5534",
+      "new_variables": [
+        "u42_339",
+        "u43_511",
+        "u34_612"
+      ],
+      "parent_id": "c07_6208",
+      "separator_variables": [
+        "u10_139",
+        "u07_741"
+      ],
+      "variables": [
+        "u42_339",
+        "u43_511",
+        "u10_139",
+        "u07_741",
+        "u34_612"
+      ]
+    },
+    {
+      "clique_id": "c07_6208",
+      "new_variables": [
+        "u07_741"
+      ],
+      "parent_id": "c06_9004",
+      "separator_variables": [
+        "u48_563",
+        "u01_403",
+        "u10_139"
+      ],
+      "variables": [
+        "u48_563",
+        "u01_403",
+        "u07_741",
+        "u10_139"
+      ]
+    },
+    {
+      "clique_id": "c01_5914",
+      "new_variables": [
+        "u26_399",
+        "u54_252"
+      ],
+      "parent_id": "c6864_root",
+      "separator_variables": [
+        "u37_643",
+        "u46_364"
+      ],
+      "variables": [
+        "u26_399",
+        "u37_643",
+        "u46_364",
+        "u54_252"
+      ]
+    },
+    {
+      "clique_id": "c02_5005",
+      "new_variables": [
+        "u05_913",
+        "u21_451"
+      ],
+      "parent_id": "c01_5914",
+      "separator_variables": [
+        "u46_364",
+        "u26_399"
+      ],
+      "variables": [
+        "u05_913",
+        "u46_364",
+        "u21_451",
+        "u26_399"
+      ]
+    },
+    {
+      "clique_id": "c18_4737",
+      "new_variables": [
+        "u36_238",
+        "u20_798",
+        "u49_528",
+        "u29_318"
+      ],
+      "parent_id": "c17_9616",
+      "separator_variables": [
+        "u33_940"
+      ],
+      "variables": [
+        "u36_238",
+        "u20_798",
+        "u33_940",
+        "u49_528",
+        "u29_318"
+      ]
+    },
+    {
+      "clique_id": "c17_9616",
+      "new_variables": [
+        "u12_917",
+        "u33_940"
+      ],
+      "parent_id": "c16_9681",
+      "separator_variables": [
+        "u24_443",
+        "u18_415",
+        "u50_644"
+      ],
+      "variables": [
+        "u12_917",
+        "u24_443",
+        "u18_415",
+        "u33_940",
+        "u50_644"
+      ]
+    },
+    {
+      "clique_id": "c05_8939",
+      "new_variables": [
+        "u35_611"
+      ],
+      "parent_id": "c04_7809",
+      "separator_variables": [
+        "u09_423",
+        "u30_511",
+        "u13_719"
+      ],
+      "variables": [
+        "u35_611",
+        "u09_423",
+        "u30_511",
+        "u13_719"
+      ]
+    },
+    {
+      "clique_id": "c10_1638",
+      "new_variables": [
+        "u47_588",
+        "u55_773",
+        "u25_438"
+      ],
+      "parent_id": "c09_4341",
+      "separator_variables": [
+        "u32_347",
+        "u06_283"
+      ],
+      "variables": [
+        "u47_588",
+        "u55_773",
+        "u25_438",
+        "u32_347",
+        "u06_283"
+      ]
+    },
+    {
+      "clique_id": "c03_8601",
+      "new_variables": [
+        "u27_974",
+        "u57_833",
+        "u23_134",
+        "u51_214"
+      ],
+      "parent_id": "c02_5005",
+      "separator_variables": [
+        "u05_913"
+      ],
+      "variables": [
+        "u27_974",
+        "u57_833",
+        "u05_913",
+        "u23_134",
+        "u51_214"
+      ]
+    },
+    {
+      "clique_id": "c16_9681",
+      "new_variables": [
+        "u18_415",
+        "u24_443"
+      ],
+      "parent_id": "c15_1985",
+      "separator_variables": [
+        "u50_644",
+        "u28_232"
+      ],
+      "variables": [
+        "u50_644",
+        "u18_415",
+        "u28_232",
+        "u24_443"
+      ]
+    },
+    {
+      "clique_id": "c19_5580",
+      "new_variables": [
+        "u03_241",
+        "u19_568",
+        "u14_375"
+      ],
+      "parent_id": "c18_4737",
+      "separator_variables": [
+        "u49_528"
+      ],
+      "variables": [
+        "u03_241",
+        "u19_568",
+        "u14_375",
+        "u49_528"
+      ]
+    },
+    {
+      "clique_id": "c20_3955",
+      "new_variables": [
+        "u53_781",
+        "u02_818",
+        "u22_840",
+        "u04_896"
+      ],
+      "parent_id": "c19_5580",
+      "separator_variables": [
+        "u03_241"
+      ],
+      "variables": [
+        "u03_241",
+        "u53_781",
+        "u02_818",
+        "u22_840",
+        "u04_896"
+      ]
+    },
+    {
+      "clique_id": "c13_2593",
+      "new_variables": [
+        "u40_342",
+        "u00_191"
+      ],
+      "parent_id": "c12_7539",
+      "separator_variables": [
+        "u41_140",
+        "u06_283"
+      ],
+      "variables": [
+        "u40_342",
+        "u41_140",
+        "u06_283",
+        "u00_191"
+      ]
+    },
+    {
+      "clique_id": "c6864_root",
+      "new_variables": [
+        "u52_170",
+        "u46_364",
+        "u16_388",
+        "u37_643"
+      ],
+      "parent_id": null,
+      "separator_variables": [],
+      "variables": [
+        "u52_170",
+        "u46_364",
+        "u16_388",
+        "u37_643"
+      ]
+    },
+    {
+      "clique_id": "c12_7539",
+      "new_variables": [
+        "u41_140"
+      ],
+      "parent_id": "c11_9898",
+      "separator_variables": [
+        "u32_347",
+        "u44_955",
+        "u06_283"
+      ],
+      "variables": [
+        "u41_140",
+        "u32_347",
+        "u44_955",
+        "u06_283"
+      ]
+    },
+    {
+      "clique_id": "c15_1985",
+      "new_variables": [
+        "u15_759",
+        "u28_232",
+        "u11_939"
+      ],
+      "parent_id": "c14_6229",
+      "separator_variables": [
+        "u50_644"
+      ],
+      "variables": [
+        "u15_759",
+        "u28_232",
+        "u50_644",
+        "u11_939"
+      ]
+    },
+    {
+      "clique_id": "c21_7200",
+      "new_variables": [
+        "u45_921",
+        "u31_718",
+        "u17_785",
+        "u08_575"
+      ],
+      "parent_id": "c20_3955",
+      "separator_variables": [
+        "u02_818"
+      ],
+      "variables": [
+        "u45_921",
+        "u31_718",
+        "u17_785",
+        "u02_818",
+        "u08_575"
+      ]
+    },
+    {
+      "clique_id": "c11_9898",
+      "new_variables": [
+        "u56_908",
+        "u44_955"
+      ],
+      "parent_id": "c10_1638",
+      "separator_variables": [
+        "u06_283",
+        "u25_438",
+        "u32_347"
+      ],
+      "variables": [
+        "u06_283",
+        "u25_438",
+        "u56_908",
+        "u44_955",
+        "u32_347"
+      ]
+    },
+    {
+      "clique_id": "c04_7809",
+      "new_variables": [
+        "u30_511",
+        "u09_423",
+        "u13_719"
+      ],
+      "parent_id": "c03_8601",
+      "separator_variables": [
+        "u27_974"
+      ],
+      "variables": [
+        "u27_974",
+        "u30_511",
+        "u09_423",
+        "u13_719"
+      ]
+    },
+    {
+      "clique_id": "c06_9004",
+      "new_variables": [
+        "u01_403",
+        "u10_139",
+        "u48_563"
+      ],
+      "parent_id": "c05_8939",
+      "separator_variables": [
+        "u13_719"
+      ],
+      "variables": [
+        "u01_403",
+        "u10_139",
+        "u48_563",
+        "u13_719"
+      ]
+    },
+    {
+      "clique_id": "c09_4341",
+      "new_variables": [
+        "u06_283",
+        "u32_347",
+        "u38_446"
+      ],
+      "parent_id": "c08_5534",
+      "separator_variables": [
+        "u07_741",
+        "u10_139"
+      ],
+      "variables": [
+        "u07_741",
+        "u06_283",
+        "u10_139",
+        "u32_347",
+        "u38_446"
+      ]
+    }
+  ],
+  "counts_file": "clique_counts.json",
+  "declared_bounds": {
+    "maximum_clique_size": 7,
+    "maximum_queries": 64,
+    "maximum_validation_interactions": 64,
+    "maximum_variables": 96
+  },
+  "instance_id": "inst_8f2c7a13",
+  "queries_file": "queries.jsonl",
+  "root_clique_id": "c6864_root",
+  "schema_version": "local-noise-input/v1",
+  "smoothing_pseudocount": 0.5,
+  "table_encoding": {
+    "assignment_values": [
+      0,
+      1
+    ],
+    "index_rule": "sum(value[j] * 2**j)"
+  },
+  "validation_file": "validation.jsonl",
+  "variable_count": 58,
+  "variable_ids": [
+    "u55_773",
+    "u51_214",
+    "u24_443",
+    "u07_741",
+    "u02_818",
+    "u46_364",
+    "u34_612",
+    "u35_611",
+    "u11_939",
+    "u18_415",
+    "u33_940",
+    "u08_575",
+    "u41_140",
+    "u40_342",
+    "u19_568",
+    "u42_339",
+    "u03_241",
+    "u09_423",
+    "u10_139",
+    "u50_644",
+    "u14_375",
+    "u54_252",
+    "u17_785",
+    "u37_643",
+    "u20_798",
+    "u57_833",
+    "u38_446",
+    "u21_451",
+    "u13_719",
+    "u26_399",
+    "u15_759",
+    "u36_238",
+    "u39_215",
+    "u30_511",
+    "u22_840",
+    "u53_781",
+    "u04_896",
+    "u05_913",
+    "u27_974",
+    "u31_718",
+    "u44_955",
+    "u28_232",
+    "u29_318",
+    "u56_908",
+    "u52_170",
+    "u01_403",
+    "u43_511",
+    "u47_588",
+    "u00_191",
+    "u12_917",
+    "u25_438",
+    "u23_134",
+    "u06_283",
+    "u16_388",
+    "u45_921",
+    "u49_528",
+    "u32_347",
+    "u48_563"
+  ]
+}

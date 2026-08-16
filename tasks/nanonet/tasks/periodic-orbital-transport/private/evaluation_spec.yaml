@@ -1,0 +1,342 @@
+schema_version: paper2ale.codex-evaluation-spec/v1
+
+task_id: "periodic-orbital-transport"
+
+visibility: "private"
+
+hard_gates:
+  - gate_id: "submission-source-policy"
+    description: >
+      solution.py is a regular non-symlink UTF-8 file no larger than 204800
+      bytes and passes the AST/import/dynamic-call/source-marker policy.
+    implementation: "private/grader/evaluate.py:_check_submission_source"
+  - gate_id: "isolated-execution"
+    description: >
+      The program exits successfully within 120 seconds per case and 1800
+      seconds per suite, emits at most 1048576 console bytes, and receives a
+      scrubbed environment in a fresh temporary case directory.
+    implementation: "private/grader/evaluate.py:_run_solver"
+  - gate_id: "required-artifacts"
+    description: >
+      The output directory contains exactly hamiltonian.npz,
+      self_energies.npz, spectra.npz, and diagnostics.json as regular files.
+    implementation: "private/grader/evaluate.py:_validate_output_tree"
+  - gate_id: "safe-container-schema"
+    description: >
+      NPZ members, NPY versions, keys, dtypes, C-order flags, input-dependent
+      shapes, payload sizes, CRCs, and diagnostics schema match the contract;
+      pickle/object arrays, links, duplicate/unsafe members, and extra files
+      are rejected.
+    implementation: "private/grader/evaluate.py:_inspect_npz_archive and private/grader/science.py:read_outputs"
+  - gate_id: "finite-values"
+    description: "Every submitted numeric array and diagnostic number is finite."
+    implementation: "private/grader/science.py:read_outputs"
+  - gate_id: "identity-and-grid"
+    description: >
+      Model ID, raw-input SHA-256, basis/device dimensions, phase grid, and
+      energy grids agree with the supplied instance.
+    implementation: "private/grader/science.py:read_outputs"
+  - gate_id: "resource-and-path-policy"
+    description: >
+      Aggregate compressed and expanded outputs are each at most 52428800
+      bytes, diagnostics are at most 65536 bytes, and no output path, symlink,
+      junction, or archive member escapes the isolated output directory.
+    implementation: "private/grader/evaluate.py:_validate_output_tree and evaluate"
+
+metrics:
+  - metric_id: "assembly"
+    description: "Accuracy of H0 and forward H1 against independently generated references."
+    direction: "higher_is_better"
+    weight: 0.18
+    hidden_inputs: &all_hidden_cases
+      - "hidden_inputs/hidden_cutoff_edge.json"
+      - "hidden_inputs/hidden_energy_shift_base.json"
+      - "hidden_inputs/hidden_energy_shift_shifted.json"
+      - "hidden_inputs/hidden_heterogeneous_s_sp.json"
+      - "hidden_inputs/hidden_ordinary_permutation.json"
+      - "hidden_inputs/hidden_ordinary_rotation.json"
+      - "hidden_inputs/hidden_site_permutation_base.json"
+      - "hidden_inputs/hidden_site_permutation_permuted.json"
+      - "hidden_inputs/hidden_strong_defect.json"
+      - "hidden_inputs/hidden_weak_contact.json"
+    reference:
+      type: "oracle"
+      path: "The hamiltonian.npz inside the reference directory named by each input model_id."
+    scoring:
+      type: "mean_of_two_log10_tolerance_ramps"
+      parameters: &array_quality_parameters
+        normalized_error: "max(normalized RMS error, 0.25 * maximum normalized point error)"
+        excellent: "normalized_error <= 1 gives 1.0"
+        unacceptable: "normalized_error >= 100 gives 0.0"
+        interior: "1 - log10(normalized_error) / 2"
+    tolerance:
+      type: "absolute_plus_relative_scale"
+      absolute: 2.0e-12
+      relative: 2.0e-11
+      derivation: "Exact assembly is algebraic; allowance covers independent complex128 operation order."
+
+  - metric_id: "bands"
+    description: "Accuracy of ascending Bloch eigenvalues for every supplied phase."
+    direction: "higher_is_better"
+    weight: 0.12
+    hidden_inputs: *all_hidden_cases
+    reference:
+      type: "oracle"
+      path: "The bands array in spectra.npz inside the reference directory named by each input model_id."
+    scoring:
+      type: "log10_tolerance_ramp"
+      parameters: *array_quality_parameters
+    tolerance:
+      type: "absolute_plus_relative_scale"
+      absolute: 2.0e-9
+      relative: 2.0e-9
+      derivation: "Independent Hermitian eigensolvers and near-degenerate band ordering motivate nanounit equivalence."
+
+  - metric_id: "self_energies"
+    description: >
+      Retarded left/right contact self-energy accuracy plus independently
+      recomputed surface Dyson residual and broadening-matrix causality.
+    direction: "higher_is_better"
+    weight: 0.24
+    hidden_inputs: *all_hidden_cases
+    reference:
+      type: "oracle_and_invariant"
+      path: "The self_energies.npz in each model_id reference directory plus evaluator recomputation."
+    scoring:
+      type: "weighted_accuracy_and_log_residuals"
+      parameters:
+        reference_accuracy_weight: 0.75
+        dyson_residual_weight: 0.15
+        causality_weight: 0.10
+        dyson_excellent: 2.0e-9
+        dyson_unacceptable: 2.0e-4
+        causality_excellent: 2.0e-10
+        causality_unacceptable: 2.0e-5
+        residual_interior: "linear in log10 residual"
+    tolerance:
+      type: "absolute_plus_relative_scale"
+      absolute: 5.0e-8
+      relative: 2.0e-7
+      derivation: >
+        Repeated independent retarded solvers differed by at most 3.18e-10;
+        the wider bound covers conditioning near broadened band edges while
+        Dyson and causality checks prevent branch substitution.
+
+  - metric_id: "dos_ldos"
+    description: "Accuracy of total device DOS and every cell-resolved LDOS value."
+    direction: "higher_is_better"
+    weight: 0.20
+    hidden_inputs: *all_hidden_cases
+    reference:
+      type: "oracle"
+      path: "The dos_total and ldos_cells arrays in each model_id reference spectra.npz."
+    scoring:
+      type: "weighted_log10_tolerance_ramps"
+      parameters:
+        dos_weight: 0.40
+        ldos_weight: 0.60
+        array_quality: *array_quality_parameters
+    tolerance:
+      type: "absolute_plus_relative_scale"
+      absolute: 5.0e-8
+      relative: 3.0e-7
+      derivation: >
+        Green-function traces amplify self-energy differences; two independent
+        implementations agreed within 1.33e-10 for DOS and 7.10e-11 for LDOS.
+
+  - metric_id: "transmission"
+    description: "Accuracy of spinless coherent Caroli transmission at every energy."
+    direction: "higher_is_better"
+    weight: 0.18
+    hidden_inputs: *all_hidden_cases
+    reference:
+      type: "oracle"
+      path: "The transmission array in spectra.npz inside each model_id reference directory."
+    scoring:
+      type: "log10_tolerance_ramp"
+      parameters: *array_quality_parameters
+    tolerance:
+      type: "absolute_plus_relative_scale"
+      absolute: 5.0e-8
+      relative: 5.0e-7
+      derivation: >
+        Absolute protection is needed for weak-contact and defect-suppressed
+        transmission; independent valid solvers agreed within 1.72e-11.
+
+  - metric_id: "evidence_consistency"
+    description: >
+      Submitted bands and observables are recomputed from submitted
+      Hamiltonians and self-energies; LDOS sums, diagnostic claims, and
+      Hermiticity are checked independently.
+    direction: "higher_is_better"
+    weight: 0.08
+    hidden_inputs: *all_hidden_cases
+    reference:
+      type: "submission-derived_invariants"
+      path: "private/grader/evaluate.py:_evidence_consistency"
+    scoring:
+      type: "weighted_recomputation_and_residual_scores"
+      parameters:
+        band_recompute_weight: 0.12
+        observable_recompute_weight: 0.23
+        ldos_sum_identity_weight: 0.15
+        diagnostic_claim_weight: 0.35
+        recomputed_hermiticity_weight: 0.15
+        band_tolerance_absolute: 3.0e-10
+        band_tolerance_relative: 2.0e-10
+        observable_tolerance_absolute: 3.0e-9
+        observable_tolerance_relative: 3.0e-8
+        transmission_tolerance_absolute: 3.0e-9
+        transmission_tolerance_relative: 3.0e-8
+        diagnostic_hermiticity_absolute: 1.0e-12
+        diagnostic_hermiticity_relative: 1.0e-5
+        surface_claim_excellent: 1.0e-9
+        surface_claim_unacceptable: 1.0e-5
+        recomputed_hermiticity_excellent: 2.0e-12
+        recomputed_hermiticity_unacceptable: 2.0e-5
+    tolerance:
+      type: "mixed_array_and_log_residual"
+      absolute: "as listed in scoring parameters"
+      relative: "as listed in scoring parameters"
+      derivation: "Tighter than oracle accuracy because all relations are recomputed from the same submitted arrays."
+
+score_contract:
+  hard_gate_failure_score: 0.0
+  metric_weights_sum_to_one: true
+  score_range:
+    minimum: 0.0
+    maximum: 1.0
+  pass_rule:
+    type: "total_score_all_cases_and_mandatory_submetrics"
+    total_score_threshold: 0.90
+    mandatory_metric_thresholds:
+      assembly: 0.90
+      bands: 0.90
+      self_energies: 0.82
+      dos_ldos: 0.85
+      transmission: 0.80
+      evidence_consistency: 0.75
+      per_case_total: 0.90
+      dyson_residual_score: 0.50
+      causality_score: 0.50
+    additional_requirements:
+      - "Every hidden case must pass its per-case total and mandatory minima."
+      - "Aggregate metric means must meet the same mandatory metric minima."
+
+stochastic_policy:
+  stochastic: false
+  hidden_seed_count: 10
+  aggregation: "mean across ten deterministic cases plus all-case and mandatory-minimum rules"
+  confidence_or_variance_rule: null
+  baseline_relative: false
+
+hidden_suite:
+  ordinary_cases:
+    count: 4
+    source: "trusted synthetic generator with private seeds"
+    description: "Rotated geometry, reordered sites, cutoff boundary, and heterogeneous s/sp3 basis."
+  distribution_shift_cases:
+    count: 2
+    description: "Weak asymmetric contacts and a strong local potential/bond defect."
+  adversarial_cases:
+    count: 4
+    description: "Two global-energy-shift cases and two site-list-permutation cases forming metamorphic pairs."
+  anti_hardcoding_cases:
+    count: 10
+    description: "All ten model IDs, coordinates, grids, parameters, and references are absent from participant files; this label overlaps the case groups above."
+
+valid_solutions:
+  - id: "privileged-oracle"
+    path: "../author/oracle/generate_assets.py and the ten model_id-named reference directories"
+    expected: "pass"
+  - id: "clean-room-reference"
+    path: "../author/reference_solver/solve.py"
+    expected: "pass with total score 1.0 on all ten cases"
+  - id: "alternative-valid"
+    path: "../author/alternative_solver/solve.py"
+    expected: "pass with total score 1.0 on all ten cases"
+
+mutations:
+  - mutant_id: "mutant-wrong-sp-sign"
+    category: "wrong directional sign"
+    path: "mutants/mutant_wrong_sp_sign.py"
+    expected: "fail"
+  - mutant_id: "mutant-omit-periodic"
+    category: "omitted forward periodic interaction"
+    path: "mutants/mutant_omit_periodic.py"
+    expected: "fail"
+  - mutant_id: "mutant-advanced-branch"
+    category: "wrong causal surface branch"
+    path: "mutants/mutant_advanced_branch.py"
+    expected: "fail"
+  - mutant_id: "mutant-eta-real-shift"
+    category: "broadening applied as a real energy shift"
+    path: "mutants/mutant_eta_real_shift.py"
+    expected: "fail"
+  - mutant_id: "mutant-dos-factor"
+    category: "wrong spin and normalization factor"
+    path: "mutants/mutant_dos_factor.py"
+    expected: "fail"
+  - mutant_id: "mutant-caroli-no-dagger"
+    category: "wrong conjugation in transmission"
+    path: "mutants/mutant_caroli_no_dagger.py"
+    expected: "fail"
+  - mutant_id: "mutant-stale-public"
+    category: "stale or public-example-overfit device state"
+    path: "mutants/mutant_stale_public.py"
+    expected: "fail"
+  - mutant_id: "mutant-partial"
+    category: "partial required artifact set"
+    path: "mutants/mutant_partial.py"
+    expected: "fail hard gate"
+  - mutant_id: "mutant-nan"
+    category: "non-finite numerical artifact"
+    path: "mutants/mutant_nan.py"
+    expected: "fail hard gate"
+
+metamorphic_tests:
+  - test_id: "global-energy-origin-shift"
+    applicability: "applicable"
+    implementation: "author/oracle/generate_assets.py:_metamorphic_oracle_checks"
+    expected_relation: >
+      Adding delta to every onsite and device potential while shifting the
+      energy grid by delta shifts H0 and bands by delta, leaves H1 unchanged,
+      and preserves self-energies, DOS/LDOS, and transmission at corresponding
+      energies; maximum absolute residual must be at most 2.0e-9.
+  - test_id: "site-list-permutation-equivariance"
+    applicability: "applicable"
+    implementation: "author/oracle/generate_assets.py:_metamorphic_oracle_checks"
+    expected_relation: >
+      Reordering sites induces the documented site-major orbital permutation
+      on H0, H1, and both self-energy stacks while leaving bands, DOS/LDOS, and
+      transmission invariant; maximum absolute residual must be at most 2.0e-9.
+  - test_id: "ldos-partition-identity"
+    applicability: "applicable to every case"
+    implementation: "private/grader/evaluate.py:_evidence_consistency"
+    expected_relation: "sum over ldos_cells along the cell axis equals dos_total within the private consistency tolerance."
+  - test_id: "surface-dyson-and-causality"
+    applicability: "applicable to both leads at every hidden energy"
+    implementation: "private/grader/evaluate.py:_surface_quality"
+    expected_relation: "Contact-scaled lead self-energies satisfy the disclosed surface fixed-point equation and produce positive-semidefinite broadenings up to roundoff."
+
+determinism:
+  repeated_grader_runs: 2
+  require_identical_parsed_scores: true
+  require_identical_process_status: true
+
+leakage_and_security:
+  participant_must_not_access:
+    - "private/"
+    - "author/"
+    - "../../authoring/"
+    - "source paper"
+    - "official source repository"
+  network_policy: "off"
+  path_and_symlink_checks: true
+  output_size_limit_bytes: 52428800
+  executable_submission_sandbox: >
+    Production requires an outer ALE OS sandbox with network disabled and only
+    the submitted source plus one input mounted. The evaluator's --submission
+    mode is explicitly a trusted-author calibration convenience using a fresh
+    temporary directory, scrubbed environment, source policy, and time/size
+    limits; production should execute externally and invoke --artifacts-only.

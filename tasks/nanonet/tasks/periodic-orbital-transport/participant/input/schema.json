@@ -1,0 +1,264 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "periodic-orbital-transport-input.schema.json",
+  "title": "Periodic orbital transport input",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "model_id",
+    "lattice_vector",
+    "neighbor_cutoff",
+    "species",
+    "sites",
+    "hoppings",
+    "phase_grid",
+    "energy_grid",
+    "eta",
+    "device"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "periodic-orbital-device/v1"
+    },
+    "model_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "lattice_vector": {
+      "$ref": "#/$defs/vector3"
+    },
+    "neighbor_cutoff": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "maximum": 1000
+    },
+    "species": {
+      "type": "object",
+      "minProperties": 1,
+      "maxProperties": 8,
+      "propertyNames": {
+        "$ref": "#/$defs/name"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/species_record"
+      }
+    },
+    "sites": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 8,
+      "items": {
+        "$ref": "#/$defs/site_record"
+      }
+    },
+    "hoppings": {
+      "type": "object",
+      "minProperties": 1,
+      "maxProperties": 64,
+      "propertyNames": {
+        "pattern": "^[A-Za-z][A-Za-z0-9_-]{0,31}\\|[A-Za-z][A-Za-z0-9_-]{0,31}$"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/hopping_record"
+      }
+    },
+    "phase_grid": {
+      "$ref": "#/$defs/phase_grid"
+    },
+    "energy_grid": {
+      "$ref": "#/$defs/energy_grid"
+    },
+    "eta": {
+      "type": "number",
+      "minimum": 1e-6,
+      "maximum": 10
+    },
+    "device": {
+      "$ref": "#/$defs/device_record"
+    }
+  },
+  "$defs": {
+    "name": {
+      "type": "string",
+      "pattern": "^[A-Za-z][A-Za-z0-9_-]{0,31}$"
+    },
+    "vector3": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "type": "number",
+        "minimum": -1000,
+        "maximum": 1000
+      }
+    },
+    "phase_grid": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 64,
+      "items": {
+        "type": "number",
+        "minimum": -100,
+        "maximum": 100
+      }
+    },
+    "energy_grid": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 64,
+      "items": {
+        "type": "number",
+        "minimum": -100,
+        "maximum": 100
+      }
+    },
+    "species_record": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["orbitals", "onsite"],
+          "additionalProperties": false,
+          "properties": {
+            "orbitals": {
+              "const": ["s"]
+            },
+            "onsite": {
+              "type": "object",
+              "required": ["s"],
+              "additionalProperties": false,
+              "properties": {
+                "s": {
+                  "$ref": "#/$defs/model_value"
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["orbitals", "onsite"],
+          "additionalProperties": false,
+          "properties": {
+            "orbitals": {
+              "const": ["s", "px", "py", "pz"]
+            },
+            "onsite": {
+              "type": "object",
+              "required": ["s", "px", "py", "pz"],
+              "additionalProperties": false,
+              "properties": {
+                "s": {
+                  "$ref": "#/$defs/model_value"
+                },
+                "px": {
+                  "$ref": "#/$defs/model_value"
+                },
+                "py": {
+                  "$ref": "#/$defs/model_value"
+                },
+                "pz": {
+                  "$ref": "#/$defs/model_value"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "site_record": {
+      "type": "object",
+      "required": ["id", "species", "position"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "species": {
+          "$ref": "#/$defs/name"
+        },
+        "position": {
+          "$ref": "#/$defs/vector3"
+        }
+      }
+    },
+    "hopping_record": {
+      "type": "object",
+      "required": ["ss_sigma", "sp_sigma", "pp_sigma", "pp_pi"],
+      "additionalProperties": false,
+      "properties": {
+        "ss_sigma": {
+          "$ref": "#/$defs/model_value"
+        },
+        "sp_sigma": {
+          "$ref": "#/$defs/model_value"
+        },
+        "pp_sigma": {
+          "$ref": "#/$defs/model_value"
+        },
+        "pp_pi": {
+          "$ref": "#/$defs/model_value"
+        }
+      }
+    },
+    "device_record": {
+      "type": "object",
+      "required": [
+        "cells",
+        "site_potential",
+        "bond_scale",
+        "contact_scale_left",
+        "contact_scale_right"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "cells": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10
+        },
+        "site_potential": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 10,
+          "items": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 8,
+            "items": {
+              "$ref": "#/$defs/model_value"
+            }
+          }
+        },
+        "bond_scale": {
+          "type": "array",
+          "maxItems": 9,
+          "items": {
+            "type": "number",
+            "minimum": -10,
+            "maximum": 10
+          }
+        },
+        "contact_scale_left": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 10
+        },
+        "contact_scale_right": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 10
+        }
+      }
+    },
+    "model_value": {
+      "type": "number",
+      "minimum": -100,
+      "maximum": 100
+    }
+  },
+  "$comment": "JSON cannot express all cross-field rules: the lattice vector has nonzero norm; site IDs are unique; site species exist; pair keys are lexicographically ordered and cover every enumerated neighbor; all numbers are finite; site_potential is cells by sites; and bond_scale has cells minus one entries. TASK.md defines these requirements."
+}

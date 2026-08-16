@@ -1,0 +1,1141 @@
+{
+  "aggregate_expanded_output_bytes": 687816,
+  "aggregate_output_bytes": 702816,
+  "cases": [
+    {
+      "expanded_output_bytes": 9349,
+      "hard_gates": {
+        "failures": [],
+        "passed": true
+      },
+      "metrics": {
+        "assembly": {
+          "h0_error": {
+            "max_absolute_error": 0.0,
+            "max_normalized_error": 0.0,
+            "max_relative_error": 0.0,
+            "normalized_error": 0.0,
+            "normalized_rms_error": 0.0
+          },
+          "h0_score": 1.0,
+          "h1_error": {
+            "max_absolute_error": 0.0,
+            "max_normalized_error": 0.0,
+            "max_relative_error": 0.0,
+            "normalized_error": 0.0,
+            "normalized_rms_error": 0.0
+          },
+          "h1_score": 1.0,
+          "score": 1.0
+        },
+        "bands": {
+          "error": {
+            "max_absolute_error": 0.0,
+            "max_normalized_error": 0.0,
+            "max_relative_error": 0.0,
+            "normalized_error": 0.0,
+            "normalized_rms_error": 0.0
+          },
+          "score": 1.0
+        },
+        "dos_ldos": {
+          "dos_error": {
+            "max_absolute_error": 8.953067487640265,
+            "max_normalized_error": 6427368.119784729,
+            "max_relative_error": 2.0,
+            "normalized_error": 5432353.160321762,
+            "normalized_rms_error": 5432353.160321762
+          },
+          "dos_score": 0.0,
+          "ldos_error": {
+            "max_absolute_error": 2.0744670271299093,
+            "max_normalized_error": 5743740.389757778,
+            "max_relative_error": 2.0000000000000004,
+            "normalized_error": 4209866.916998498,
+            "normalized_rms_error": 4209866.916998498
+          },
+          "ldos_score": 0.0,
+          "score": 0.0
+        },
+        "evidence_consistency": {
+          "band_recompute_error": 0.0,
+          "band_recompute_score": 1.0,
+          "diagnostic_hermiticity_error": 0.0,
+          "diagnostic_hermiticity_score": 1.0,
+          "diagnostic_surface_order_score": 1.0,
+          "dos_recompute_error": 54070576.056817904,
+          "dos_recompute_score": 0.0,
+          "ldos_recompute_error": 50445613.561426096,
+          "ldos_recompute_score": 0.0,
+          "ldos_sum_error": 3.2984221318742205e-09,
+          "ldos_sum_score": 1.0,
+          "recomputed_max_hermiticity_residual": 0.0,
+          "score": 0.77,
+          "transmission_recompute_error": 21844682.498541772,
+          "transmission_recompute_score": 0.0
+        },
+        "self_energies": {
+          "causality_score": 0.0,
+          "dyson_score": 0.0,
+          "left_error": {
+            "max_absolute_error": 0.9439888017315281,
+            "max_normalized_error": 6525953.981824093,
+            "max_relative_error": 1.9946628510996658,
+            "normalized_error": 2289847.839348608,
+            "normalized_rms_error": 2289847.839348608
+          },
+          "max_causality_violation": 0.9464476784560363,
+          "max_dyson_residual": 0.3264065422445741,
+          "reference_accuracy_score": 0.0,
+          "right_error": {
+            "max_absolute_error": 0.8077850624522283,
+            "max_normalized_error": 6166550.191937173,
+            "max_relative_error": 1.9946628510996658,
+            "normalized_error": 2133701.1172811226,
+            "normalized_rms_error": 2133701.1172811226
+          },
+          "score": 0.0
+        },
+        "transmission": {
+          "error": {
+            "max_absolute_error": 4.440892098500626e-16,
+            "max_normalized_error": 1.4483203294356608e-09,
+            "max_relative_error": 9.253518592183611e-16,
+            "normalized_error": 5.636820515943287e-10,
+            "normalized_rms_error": 5.636820515943287e-10
+          },
+          "score": 1.0
+        }
+      },
+      "model_id": "hidden_cutoff_edge",
+      "output_bytes": 10849,
+      "passed": false,
+      "total_score": 0.5416
+    },
+    {
+      "expanded_output_bytes": 25404,
+      "hard_gates": {
+        "failures": [],
+        "passed": true
+      },
+      "metrics": {
+        "assembly": {
+          "h0_error": {
+            "max_absolute_error": 0.0,
+            "max_normalized_error": 0.0,
+            "max_relative_error": 0.0,
+            "normalized_error": 0.0,
+            "normalized_rms_error": 0.0
+          },
+          "h0_score": 1.0,
+          "h1_error": {
+            "max_absolute_error": 0.0,
+            "max_normalized_error": 0.0,
+            "max_relative_error": 0.0,
+            "normalized_error": 0.0,
+            "normalized_rms_error": 0.0
+          },
+          "h1_score": 1.0,
+          "score": 1.0
+        },
+        "bands": {
+          "error": {
+            "max_absolute_error": 0.0,
+            "max_normalized_error": 0.0,
+            "max_relative_error": 0.0,
+            "normalized_error": 0.0,
+            "normalized_rms_error": 0.0
+          },
+          "score": 1.0
+        },
+        "dos_ldos": {
+          "dos_error": {
+            "max_absolute_error": 28.46576921885198,
+            "max_normalized_error": 6589503.768336921,
+            "max_relative_error": 2.0000000000000004,
+            "normalized_error": 5187808.004702134,
+            "normalized_rms_error": 5187808.004702134
+          },
+          "dos_score": 0.0,
+          "ldos_error": {
+            "max_absolute_error": 7.052730598141843,
+            "max_normalized_error": 6365799.7580074575,
+            "max_relative_error": 2.0000000000000018,
+            "normalized_error": 3995613.3307513874,
+            "normalized_rms_error": 3995613.3307513874
+          },
+          "ldos_score": 0.0,
+          "score": 0.0
+        },
+        "evidence_consistency": {
+          "band_recompute_error": 0.0,
+          "band_recompute_score": 1.0,
+          "diagnostic_hermiticity_error": 0.0,
+          "diagnostic_hermiticity_score": 1.0,
+          "diagnostic_surface_order_score": 1.0,
+          "dos_recompute_error": 346208114.645892,
+          "dos_recompute_score": 0.0,
+          "ldos_recompute_error": 161842793.13524342,
+          "ldos_recompute_score": 0.0,
+          "ldos_sum_error": 3.6881620046924587e-09,
+          "ldos_sum_score": 1.0,
+          "recomputed_max_hermiticity_residual": 0.0,
+          "score": 0.77,
+          "transmission_recompute_error": 17118625.25005927,
+          "transmission_recompute_score": 0.0
+        },
+        "self_energies": {
+          "causality_score": 0.0,
+          "dyson_score": 0.0,
+          "left_error": {
+            "max_absolute_error": 3.5121457541983054,
+            "max_normalized_error": 8157160.611438514,
+            "max_relative_error": 1.999998404629535,
+            "normalized_error": 2039290.1528596284,
+            "normalized_rms_error": 1537296.5839131046
+          },
+          "max_causality_violation": 1.0,
+          "max_dyson_residual": 0.8195550115897458,
+          "reference_accuracy_score": 0.0,
+          "right_error": {
+            "max_absolute_error": 4.522964604269975,
+            "max_normalized_error": 7266198.4718340235,
+            "max_relative_error": 1.9926550486157957,
+            "normalized_error": 1816549.6179585059,
+            "normalized_rms_error": 1267342.3352428905
+          },
+          "score": 0.0
+        },
+        "transmission": {
+          "error": {
+            "max_absolute_error": 1.3322676295501878e-15,
+            "max_normalized_error": 7.543517318303735e-09,
+            "max_relative_error": 1.6241176837347798e-14,
+            "normalized_error": 1.8858793295759337e-09,
+            "normalized_rms_error": 1.6740300786361645e-09
+          },
+          "score": 1.0
+        }
+      },
+      "model_id": "hidden_energy_shift_base",
+      "output_bytes": 26904,
+      "passed": false,
+      "total_score": 0.5416
+    },
+    {
+      "expanded_output_bytes": 25406,
+      "hard_gates": {
+        "failures": [],
+        "passed": true
+      },
+      "metrics": {
+        "assembly": {
+          "h0_error": {
+            "max_absolute_error": 0.0,
+            "max_normalized_error": 0.0,
+            "max_relative_error": 0.0,
+            "normalized_error": 0.0,
+            "normalized_rms_error": 0.0
+          },
+          "h0_score": 1.0,
+          "h1_error": {
+            "max_absolute_error": 0.0,
+            "max_normalized_error": 0.0,
+            "max_relative_error": 0.0,
+            "normalized_error": 0.0,
+            "normalized_rms_error": 0.0
+          },
+          "h1_score": 1.0,
+          "score": 1.0
+        },
+        "bands": {
+          "error": {
+            "max_absolute_error": 0.0,
+            "max_normalized_error": 0.0,
+            "max_relative_error": 0.0,
+            "normalized_error": 0.0,
+            "normalized_rms_error": 0.0
+          },
+          "score": 1.0
+        },
+        "dos_ldos": {
+          "dos_error": {
+            "max_absolute_error": 28.46576921885198,
+            "max_normalized_error": 6589503.768336919,
+            "max_relative_error": 2.0000000000000004,
+            "normalized_error": 5187808.004702134,
+            "normalized_rms_error": 5187808.004702134
+          },
+          "dos_score": 0.0,
+          "ldos_error": {
+            "max_absolute_error": 7.052730598141842,
+            "max_normalized_error": 6365799.758007457,
+            "max_relative_error": 2.0000000000000027,
+            "normalized_error": 3995613.330751388,
+            "normalized_rms_error": 3995613.330751388
+          },
+          "ldos_score": 0.0,
+          "score": 0.0
+        },
+        "evidence_consistency": {
+          "band_recompute_error": 0.0,
+          "band_recompute_score": 1.0,
+          "diagnostic_hermiticity_error": 0.0,
+          "diagnostic_hermiticity_score": 1.0,
+          "diagnostic_surface_order_score": 1.0,
+          "dos_recompute_error": 346208114.6458772,
+          "dos_recompute_score": 0.0,
+          "ldos_recompute_error": 161842793.13524184,
+          "ldos_recompute_score": 0.0,
+          "ldos_sum_error": 3.2464655711641866e-09,
+          "ldos_sum_score": 1.0,
+          "recomputed_max_hermiticity_residual": 0.0,
+          "score": 0.77,
+          "transmission_recompute_error": 17118625.250059266,
+          "transmission_recompute_score": 0.0
+        },
+        "self_energies": {
+          "causality_score": 0.0,
+          "dyson_score": 0.0,
+          "left_error": {
+            "max_absolute_error": 3.5121457541982983,
+            "max_normalized_error": 8157160.611438507,
+            "max_relative_error": 1.9999984046295274,
+            "normalized_error": 2039290.1528596268,
+            "normalized_rms_error": 1537296.5839131046
+          },
+          "max_causality_violation": 1.0,
+          "max_dyson_residual": 0.8195550115897416,
+          "reference_accuracy_score": 0.0,
+          "right_error": {
+            "max_absolute_error": 4.522964604269955,
+            "max_normalized_error": 7266198.4718340235,
+            "max_relative_error": 1.9926550486157968,
+            "normalized_error": 1816549.6179585059,
+            "normalized_rms_error": 1267342.3352428912
+          },
+          "score": 0.0
+        },
+        "transmission": {
+          "error": {
+            "max_absolute_error": 4.85722573273506e-16,
+            "max_normalized_error": 4.981568040389231e-09,
+            "max_relative_error": 1.9536488079708588e-14,
+            "normalized_error": 1.2453920100973077e-09,
+            "normalized_rms_error": 1.1793771029217684e-09
+          },
+          "score": 1.0
+        }
+      },
+      "model_id": "hidden_energy_shift_shifted",
+      "output_bytes": 26906,
+      "passed": false,
+      "total_score": 0.5416
+    },
+    {
+      "expanded_output_bytes": 102277,
+      "hard_gates": {
+        "failures": [],
+        "passed": true
+      },
+      "metrics": {
+        "assembly": {
+          "h0_error": {
+            "max_absolute_error": 0.0,
+            "max_normalized_error": 0.0,
+            "max_relative_error": 0.0,
+            "normalized_error": 0.0,
+            "normalized_rms_error": 0.0
+          },
+          "h0_score": 1.0,
+          "h1_error": {
+            "max_absolute_error": 0.0,
+            "max_normalized_error": 0.0,
+            "max_relative_error": 0.0,
+            "normalized_error": 0.0,
+            "normalized_rms_error": 0.0
+          },
+          "h1_score": 1.0,
+          "score": 1.0
+        },
+        "bands": {
+          "error": {
+            "max_absolute_error": 0.0,
+            "max_normalized_error": 0.0,
+            "max_relative_error": 0.0,
+            "normalized_error": 0.0,
+            "normalized_rms_error": 0.0
+          },
+          "score": 1.0
+        },
+        "dos_ldos": {
+          "dos_error": {
+            "max_absolute_error": 38.74529794382492,
+            "max_normalized_error": 6609801.260955256,
+            "max_relative_error": 2.000000000000001,
+            "normalized_error": 6155727.318042553,
+            "normalized_rms_error": 6155727.318042553
+          },
+          "dos_score": 0.0,
+          "ldos_error": {
+            "max_absolute_error": 8.155848823946501,
+            "max_normalized_error": 6404895.605444172,
+            "max_relative_error": 2.0000000000000013,
+            "normalized_error": 4834588.696470773,
+            "normalized_rms_error": 4834588.696470773
+          },
+          "ldos_score": 0.0,
+          "score": 0.0
+        },
+        "evidence_consistency": {
+          "band_recompute_error": 0.0,
+          "band_recompute_score": 1.0,
+          "diagnostic_hermiticity_error": 0.0,
+          "diagnostic_hermiticity_score": 1.0,
+          "diagnostic_surface_order_score": 1.0,
+          "dos_recompute_error": 559195038.477823,
+          "dos_recompute_score": 0.0,
+          "ldos_recompute_error": 120793038.01751697,
+          "ldos_recompute_score": 0.0,
+          "ldos_sum_error": 4.190133828115136e-09,
+          "ldos_sum_score": 1.0,
+          "recomputed_max_hermiticity_residual": 0.0,
+          "score": 0.77,
+          "transmission_recompute_error": 24985333.281488106,
+          "transmission_recompute_score": 0.0
+        },
+        "self_energies": {
+          "causality_score": 0.0,
+          "dyson_score": 0.0,
+          "left_error": {
+            "max_absolute_error": 22.444770197411497,
+            "max_normalized_error": 9369079.048203142,
+            "max_relative_error": 1.9999999913548583,
+            "normalized_error": 3656969.2865035585,
+            "normalized_rms_error": 3656969.2865035585
+          },
+          "max_causality_violation": 1.0,
+          "max_dyson_residual": 1.4407994209593082,
+          "reference_accuracy_score": 0.0,
+          "right_error": {
+            "max_absolute_error": 13.247827998944878,
+            "max_normalized_error": 9542437.882150102,
+            "max_relative_error": 1.999999810901113,
+            "normalized_error": 3596260.7675996693,
+            "normalized_rms_error": 3596260.7675996693
+          },
+          "score": 0.0
+        },
+        "transmission": {
+          "error": {
+            "max_absolute_error": 2.886579864025407e-15,
+            "max_normalized_error": 7.862417260944322e-09,
+            "max_relative_error": 4.730806662317702e-15,
+            "normalized_error": 2.3412602226428354e-09,
+            "normalized_rms_error": 2.3412602226428354e-09
+          },
+          "score": 1.0
+        }
+      },
+      "model_id": "hidden_heterogeneous_s_sp",
+      "output_bytes": 103777,
+      "passed": false,
+      "total_score": 0.5416
+    },
+    {
+      "expanded_output_bytes": 32230,
+      "hard_gates": {
+        "failures": [],
+        "passed": true
+      },
+      "metrics": {
+        "assembly": {
+          "h0_error": {
+            "max_absolute_error": 0.0,
+            "max_normalized_error": 0.0,
+            "max_relative_error": 0.0,
+            "normalized_error": 0.0,
+            "normalized_rms_error": 0.0
+          },
+          "h0_score": 1.0,
+          "h1_error": {
+            "max_absolute_error": 0.0,
+            "max_normalized_error": 0.0,
+            "max_relative_error": 0.0,
+            "normalized_error": 0.0,
+            "normalized_rms_error": 0.0
+          },
+          "h1_score": 1.0,
+          "score": 1.0
+        },
+        "bands": {
+          "error": {
+            "max_absolute_error": 0.0,
+            "max_normalized_error": 0.0,
+            "max_relative_error": 0.0,
+            "normalized_error": 0.0,
+            "normalized_rms_error": 0.0
+          },
+          "score": 1.0
+        },
+        "dos_ldos": {
+          "dos_error": {
+            "max_absolute_error": 23.48684021552416,
+            "max_normalized_error": 6573375.061646904,
+            "max_relative_error": 2.0000000000000004,
+            "normalized_error": 5726513.56874283,
+            "normalized_rms_error": 5726513.56874283
+          },
+          "dos_score": 0.0,
+          "ldos_error": {
+            "max_absolute_error": 5.481403711672089,
+            "max_normalized_error": 6284495.950257229,
+            "max_relative_error": 2.000000000000002,
+            "normalized_error": 4324816.523153879,
+            "normalized_rms_error": 4324816.523153879
+          },
+          "ldos_score": 0.0,
+          "score": 0.0
+        },
+        "evidence_consistency": {
+          "band_recompute_error": 0.0,
+          "band_recompute_score": 1.0,
+          "diagnostic_hermiticity_error": 0.0,
+          "diagnostic_hermiticity_score": 1.0,
+          "diagnostic_surface_order_score": 1.0,
+          "dos_recompute_error": 209749217.22085026,
+          "dos_recompute_score": 0.0,
+          "ldos_recompute_error": 84950140.97697607,
+          "ldos_recompute_score": 0.0,
+          "ldos_sum_error": 3.242795109995977e-09,
+          "ldos_sum_score": 1.0,
+          "recomputed_max_hermiticity_residual": 0.0,
+          "score": 0.77,
+          "transmission_recompute_error": 20785099.958658077,
+          "transmission_recompute_score": 0.0
+        },
+        "self_energies": {
+          "causality_score": 0.0,
+          "dyson_score": 0.0,
+          "left_error": {
+            "max_absolute_error": 26.852749236757447,
+            "max_normalized_error": 8829558.767032,
+            "max_relative_error": 1.9999339520653687,
+            "normalized_error": 2518888.2142675384,
+            "normalized_rms_error": 2518888.2142675384
+          },
+          "max_causality_violation": 1.0,
+          "max_dyson_residual": 1.4286961165990772,
+          "reference_accuracy_score": 0.0,
+          "right_error": {
+            "max_absolute_error": 4.443748938966754,
+            "max_normalized_error": 7175793.627435603,
+            "max_relative_error": 1.9981173576223417,
+            "normalized_error": 1803406.3002875894,
+            "normalized_rms_error": 1803406.3002875894
+          },
+          "score": 0.0
+        },
+        "transmission": {
+          "error": {
+            "max_absolute_error": 9.43689570931383e-16,
+            "max_normalized_error": 3.478038033881886e-09,
+            "max_relative_error": 1.0702511742575606e-13,
+            "normalized_error": 1.1981901918829034e-09,
+            "normalized_rms_error": 1.1981901918829034e-09
+          },
+          "score": 1.0
+        }
+      },
+      "model_id": "hidden_ordinary_permutation",
+      "output_bytes": 33730,
+      "passed": false,
+      "total_score": 0.5416
+    },
+    {
+      "expanded_output_bytes": 62571,
+      "hard_gates": {
+        "failures": [],
+        "passed": true
+      },
+      "metrics": {
+        "assembly": {
+          "h0_error": {
+            "max_absolute_error": 0.0,
+            "max_normalized_error": 0.0,
+            "max_relative_error": 0.0,
+            "normalized_error": 0.0,
+            "normalized_rms_error": 0.0
+          },
+          "h0_score": 1.0,
+          "h1_error": {
+            "max_absolute_error": 0.0,
+            "max_normalized_error": 0.0,
+            "max_relative_error": 0.0,
+            "normalized_error": 0.0,
+            "normalized_rms_error": 0.0
+          },
+          "h1_score": 1.0,
+          "score": 1.0
+        },
+        "bands": {
+          "error": {
+            "max_absolute_error": 0.0,
+            "max_normalized_error": 0.0,
+            "max_relative_error": 0.0,
+            "normalized_error": 0.0,
+            "normalized_rms_error": 0.0
+          },
+          "score": 1.0
+        },
+        "dos_ldos": {
+          "dos_error": {
+            "max_absolute_error": 35.86622073467065,
+            "max_normalized_error": 6605278.556248301,
+            "max_relative_error": 2.0000000000000004,
+            "normalized_error": 5726947.310864188,
+            "normalized_rms_error": 5726947.310864188
+          },
+          "dos_score": 0.0,
+          "ldos_error": {
+            "max_absolute_error": 10.489643303275265,
+            "max_normalized_error": 6461342.170750676,
+            "max_relative_error": 2.000000000000002,
+            "normalized_error": 4559225.683065481,
+            "normalized_rms_error": 4559225.683065481
+          },
+          "ldos_score": 0.0,
+          "score": 0.0
+        },
+        "evidence_consistency": {
+          "band_recompute_error": 0.0,
+          "band_recompute_score": 1.0,
+          "diagnostic_hermiticity_error": 0.0,
+          "diagnostic_hermiticity_score": 1.0,
+          "diagnostic_surface_order_score": 1.0,
+          "dos_recompute_error": 283675472.99901444,
+          "dos_recompute_score": 0.0,
+          "ldos_recompute_error": 44491369.511108145,
+          "ldos_recompute_score": 0.0,
+          "ldos_sum_error": 3.813640699249306e-09,
+          "ldos_sum_score": 1.0,
+          "recomputed_max_hermiticity_residual": 0.0,
+          "score": 0.77,
+          "transmission_recompute_error": 20594799.085889388,
+          "transmission_recompute_score": 0.0
+        },
+        "self_energies": {
+          "causality_score": 0.0,
+          "dyson_score": 0.0,
+          "left_error": {
+            "max_absolute_error": 16.624656930488847,
+            "max_normalized_error": 8823308.624564024,
+            "max_relative_error": 1.9999700740077615,
+            "normalized_error": 2205827.156141006,
+            "normalized_rms_error": 1632507.434404475
+          },
+          "max_causality_violation": 1.0,
+          "max_dyson_residual": 0.788382405792906,
+          "reference_accuracy_score": 0.0,
+          "right_error": {
+            "max_absolute_error": 4.70432711238648,
+            "max_normalized_error": 8597602.97251356,
+            "max_relative_error": 1.9999923846599368,
+            "normalized_error": 2149400.74312839,
+            "normalized_rms_error": 1673921.0289145757
+          },
+          "score": 0.0
+        },
+        "transmission": {
+          "error": {
+            "max_absolute_error": 1.4432899320127035e-15,
+            "max_normalized_error": 7.717327932126505e-09,
+            "max_relative_error": 8.03184181247791e-15,
+            "normalized_error": 2.2415942729061056e-09,
+            "normalized_rms_error": 2.2415942729061056e-09
+          },
+          "score": 1.0
+        }
+      },
+      "model_id": "hidden_ordinary_rotation",
+      "output_bytes": 64071,
+      "passed": false,
+      "total_score": 0.5416
+    },
+    {
+      "expanded_output_bytes": 134888,
+      "hard_gates": {
+        "failures": [],
+        "passed": true
+      },
+      "metrics": {
+        "assembly": {
+          "h0_error": {
+            "max_absolute_error": 0.0,
+            "max_normalized_error": 0.0,
+            "max_relative_error": 0.0,
+            "normalized_error": 0.0,
+            "normalized_rms_error": 0.0
+          },
+          "h0_score": 1.0,
+          "h1_error": {
+            "max_absolute_error": 0.0,
+            "max_normalized_error": 0.0,
+            "max_relative_error": 0.0,
+            "normalized_error": 0.0,
+            "normalized_rms_error": 0.0
+          },
+          "h1_score": 1.0,
+          "score": 1.0
+        },
+        "bands": {
+          "error": {
+            "max_absolute_error": 0.0,
+            "max_normalized_error": 0.0,
+            "max_relative_error": 0.0,
+            "normalized_error": 0.0,
+            "normalized_rms_error": 0.0
+          },
+          "score": 1.0
+        },
+        "dos_ldos": {
+          "dos_error": {
+            "max_absolute_error": 34.83228275973384,
+            "max_normalized_error": 6603473.6255909465,
+            "max_relative_error": 2.000000000000001,
+            "normalized_error": 6135484.52979421,
+            "normalized_rms_error": 6135484.52979421
+          },
+          "dos_score": 0.0,
+          "ldos_error": {
+            "max_absolute_error": 10.205028441566483,
+            "max_normalized_error": 6455796.868334721,
+            "max_relative_error": 2.0000000000000013,
+            "normalized_error": 5077596.068023978,
+            "normalized_rms_error": 5077596.068023978
+          },
+          "ldos_score": 0.0,
+          "score": 0.0
+        },
+        "evidence_consistency": {
+          "band_recompute_error": 0.0,
+          "band_recompute_score": 1.0,
+          "diagnostic_hermiticity_error": 0.0,
+          "diagnostic_hermiticity_score": 1.0,
+          "diagnostic_surface_order_score": 1.0,
+          "dos_recompute_error": 200206604.43483487,
+          "dos_recompute_score": 0.0,
+          "ldos_recompute_error": 108540485.91398264,
+          "ldos_recompute_score": 0.0,
+          "ldos_sum_error": 4.943260872393792e-09,
+          "ldos_sum_score": 1.0,
+          "recomputed_max_hermiticity_residual": 0.0,
+          "score": 0.77,
+          "transmission_recompute_error": 25009706.737583328,
+          "transmission_recompute_score": 0.0
+        },
+        "self_energies": {
+          "causality_score": 0.0,
+          "dyson_score": 0.0,
+          "left_error": {
+            "max_absolute_error": 20.67168930782043,
+            "max_normalized_error": 9707190.751450226,
+            "max_relative_error": 1.9999997045422393,
+            "normalized_error": 2426797.6878625564,
+            "normalized_rms_error": 1944645.890662271
+          },
+          "max_causality_violation": 1.0,
+          "max_dyson_residual": 1.417693360180639,
+          "reference_accuracy_score": 0.0,
+          "right_error": {
+            "max_absolute_error": 22.9700869283094,
+            "max_normalized_error": 9743815.793512307,
+            "max_relative_error": 1.999977190217922,
+            "normalized_error": 2435953.948378077,
+            "normalized_rms_error": 2135200.8624756658
+          },
+          "score": 0.0
+        },
+        "transmission": {
+          "error": {
+            "max_absolute_error": 1.3322676295501878e-15,
+            "max_normalized_error": 4.733649232435002e-09,
+            "max_relative_error": 5.850560359593774e-15,
+            "normalized_error": 2.073186129037884e-09,
+            "normalized_rms_error": 2.073186129037884e-09
+          },
+          "score": 1.0
+        }
+      },
+      "model_id": "hidden_site_permutation_base",
+      "output_bytes": 136388,
+      "passed": false,
+      "total_score": 0.5416
+    },
+    {
+      "expanded_output_bytes": 134893,
+      "hard_gates": {
+        "failures": [],
+        "passed": true
+      },
+      "metrics": {
+        "assembly": {
+          "h0_error": {
+            "max_absolute_error": 0.0,
+            "max_normalized_error": 0.0,
+            "max_relative_error": 0.0,
+            "normalized_error": 0.0,
+            "normalized_rms_error": 0.0
+          },
+          "h0_score": 1.0,
+          "h1_error": {
+            "max_absolute_error": 0.0,
+            "max_normalized_error": 0.0,
+            "max_relative_error": 0.0,
+            "normalized_error": 0.0,
+            "normalized_rms_error": 0.0
+          },
+          "h1_score": 1.0,
+          "score": 1.0
+        },
+        "bands": {
+          "error": {
+            "max_absolute_error": 0.0,
+            "max_normalized_error": 0.0,
+            "max_relative_error": 0.0,
+            "normalized_error": 0.0,
+            "normalized_rms_error": 0.0
+          },
+          "score": 1.0
+        },
+        "dos_ldos": {
+          "dos_error": {
+            "max_absolute_error": 34.83228275973384,
+            "max_normalized_error": 6603473.6255909465,
+            "max_relative_error": 2.000000000000002,
+            "normalized_error": 6135484.52979421,
+            "normalized_rms_error": 6135484.52979421
+          },
+          "dos_score": 0.0,
+          "ldos_error": {
+            "max_absolute_error": 10.205028441566483,
+            "max_normalized_error": 6455796.868334721,
+            "max_relative_error": 2.0000000000000027,
+            "normalized_error": 5077596.068023978,
+            "normalized_rms_error": 5077596.068023978
+          },
+          "ldos_score": 0.0,
+          "score": 0.0
+        },
+        "evidence_consistency": {
+          "band_recompute_error": 0.0,
+          "band_recompute_score": 1.0,
+          "diagnostic_hermiticity_error": 0.0,
+          "diagnostic_hermiticity_score": 1.0,
+          "diagnostic_surface_order_score": 1.0,
+          "dos_recompute_error": 200206604.4348343,
+          "dos_recompute_score": 0.0,
+          "ldos_recompute_error": 108540485.9140016,
+          "ldos_recompute_score": 0.0,
+          "ldos_sum_error": 4.802682527598441e-09,
+          "ldos_sum_score": 1.0,
+          "recomputed_max_hermiticity_residual": 0.0,
+          "score": 0.77,
+          "transmission_recompute_error": 25009706.737583328,
+          "transmission_recompute_score": 0.0
+        },
+        "self_energies": {
+          "causality_score": 0.0,
+          "dyson_score": 0.0,
+          "left_error": {
+            "max_absolute_error": 20.671689307820756,
+            "max_normalized_error": 9707190.751450067,
+            "max_relative_error": 1.9999997045422067,
+            "normalized_error": 2426797.687862517,
+            "normalized_rms_error": 1944645.8906622636
+          },
+          "max_causality_violation": 1.0,
+          "max_dyson_residual": 1.4176933601806248,
+          "reference_accuracy_score": 0.0,
+          "right_error": {
+            "max_absolute_error": 22.9700869283094,
+            "max_normalized_error": 9743815.793512328,
+            "max_relative_error": 1.9999771902179229,
+            "normalized_error": 2435953.948378082,
+            "normalized_rms_error": 2135200.862475666
+          },
+          "score": 0.0
+        },
+        "transmission": {
+          "error": {
+            "max_absolute_error": 8.881784197001252e-16,
+            "max_normalized_error": 4.301639351214392e-09,
+            "max_relative_error": 1.6954685123720835e-14,
+            "normalized_error": 1.6991498891761885e-09,
+            "normalized_rms_error": 1.6991498891761885e-09
+          },
+          "score": 1.0
+        }
+      },
+      "model_id": "hidden_site_permutation_permuted",
+      "output_bytes": 136393,
+      "passed": false,
+      "total_score": 0.5416
+    },
+    {
+      "expanded_output_bytes": 89112,
+      "hard_gates": {
+        "failures": [],
+        "passed": true
+      },
+      "metrics": {
+        "assembly": {
+          "h0_error": {
+            "max_absolute_error": 0.0,
+            "max_normalized_error": 0.0,
+            "max_relative_error": 0.0,
+            "normalized_error": 0.0,
+            "normalized_rms_error": 0.0
+          },
+          "h0_score": 1.0,
+          "h1_error": {
+            "max_absolute_error": 0.0,
+            "max_normalized_error": 0.0,
+            "max_relative_error": 0.0,
+            "normalized_error": 0.0,
+            "normalized_rms_error": 0.0
+          },
+          "h1_score": 1.0,
+          "score": 1.0
+        },
+        "bands": {
+          "error": {
+            "max_absolute_error": 0.0,
+            "max_normalized_error": 0.0,
+            "max_relative_error": 0.0,
+            "normalized_error": 0.0,
+            "normalized_rms_error": 0.0
+          },
+          "score": 1.0
+        },
+        "dos_ldos": {
+          "dos_error": {
+            "max_absolute_error": 34.495903269609954,
+            "max_normalized_error": 6602863.309517161,
+            "max_relative_error": 2.0000000000000013,
+            "normalized_error": 6211565.475289715,
+            "normalized_rms_error": 6211565.475289715
+          },
+          "dos_score": 0.0,
+          "ldos_error": {
+            "max_absolute_error": 7.029112875460672,
+            "max_normalized_error": 6364834.618023935,
+            "max_relative_error": 2.0000000000000018,
+            "normalized_error": 4695127.441690696,
+            "normalized_rms_error": 4695127.441690696
+          },
+          "ldos_score": 0.0,
+          "score": 0.0
+        },
+        "evidence_consistency": {
+          "band_recompute_error": 0.0,
+          "band_recompute_score": 1.0,
+          "diagnostic_hermiticity_error": 0.0,
+          "diagnostic_hermiticity_score": 1.0,
+          "diagnostic_surface_order_score": 1.0,
+          "dos_recompute_error": 232840293.89914528,
+          "dos_recompute_score": 0.0,
+          "ldos_recompute_error": 118784155.19267155,
+          "ldos_recompute_score": 0.0,
+          "ldos_sum_error": 5.004041691510286e-09,
+          "ldos_sum_score": 1.0,
+          "recomputed_max_hermiticity_residual": 0.0,
+          "score": 0.77,
+          "transmission_recompute_error": 19159359.852655847,
+          "transmission_recompute_score": 0.0
+        },
+        "self_energies": {
+          "causality_score": 0.0,
+          "dyson_score": 0.0,
+          "left_error": {
+            "max_absolute_error": 23.38872656092952,
+            "max_normalized_error": 8977895.842017166,
+            "max_relative_error": 1.9999135677565139,
+            "normalized_error": 2290191.3068901636,
+            "normalized_rms_error": 2290191.3068901636
+          },
+          "max_causality_violation": 1.0,
+          "max_dyson_residual": 1.1747548614582255,
+          "reference_accuracy_score": 0.0,
+          "right_error": {
+            "max_absolute_error": 5.546188817443294,
+            "max_normalized_error": 8570108.527781362,
+            "max_relative_error": 1.9999847614646014,
+            "normalized_error": 2142527.1319453404,
+            "normalized_rms_error": 1833687.2287756777
+          },
+          "score": 0.0
+        },
+        "transmission": {
+          "error": {
+            "max_absolute_error": 1.0755285551056204e-16,
+            "max_normalized_error": 1.9634275162056984e-09,
+            "max_relative_error": 1.1254740334283044e-14,
+            "normalized_error": 5.134694519391019e-10,
+            "normalized_rms_error": 5.134694519391019e-10
+          },
+          "score": 1.0
+        }
+      },
+      "model_id": "hidden_strong_defect",
+      "output_bytes": 90612,
+      "passed": false,
+      "total_score": 0.5416
+    },
+    {
+      "expanded_output_bytes": 71686,
+      "hard_gates": {
+        "failures": [],
+        "passed": true
+      },
+      "metrics": {
+        "assembly": {
+          "h0_error": {
+            "max_absolute_error": 0.0,
+            "max_normalized_error": 0.0,
+            "max_relative_error": 0.0,
+            "normalized_error": 0.0,
+            "normalized_rms_error": 0.0
+          },
+          "h0_score": 1.0,
+          "h1_error": {
+            "max_absolute_error": 0.0,
+            "max_normalized_error": 0.0,
+            "max_relative_error": 0.0,
+            "normalized_error": 0.0,
+            "normalized_rms_error": 0.0
+          },
+          "h1_score": 1.0,
+          "score": 1.0
+        },
+        "bands": {
+          "error": {
+            "max_absolute_error": 0.0,
+            "max_normalized_error": 0.0,
+            "max_relative_error": 0.0,
+            "normalized_error": 0.0,
+            "normalized_rms_error": 0.0
+          },
+          "score": 1.0
+        },
+        "dos_ldos": {
+          "dos_error": {
+            "max_absolute_error": 56.20636712212911,
+            "max_normalized_error": 6627362.917189381,
+            "max_relative_error": 2.0000000000000013,
+            "normalized_error": 5619651.160413797,
+            "normalized_rms_error": 5619651.160413797
+          },
+          "dos_score": 0.0,
+          "ldos_error": {
+            "max_absolute_error": 9.529191064385433,
+            "max_normalized_error": 6441346.846648149,
+            "max_relative_error": 2.000000000000006,
+            "normalized_error": 4255596.3165255925,
+            "normalized_rms_error": 4255596.3165255925
+          },
+          "ldos_score": 0.0,
+          "score": 0.0
+        },
+        "evidence_consistency": {
+          "band_recompute_error": 0.0,
+          "band_recompute_score": 1.0,
+          "diagnostic_hermiticity_error": 0.0,
+          "diagnostic_hermiticity_score": 1.0,
+          "diagnostic_surface_order_score": 1.0,
+          "dos_recompute_error": 58784120.89656913,
+          "dos_recompute_score": 0.0,
+          "ldos_recompute_error": 47792603.97348568,
+          "ldos_recompute_score": 0.0,
+          "ldos_sum_error": 4.457654082588598e-09,
+          "ldos_sum_score": 1.0,
+          "recomputed_max_hermiticity_residual": 0.0,
+          "score": 0.77,
+          "transmission_recompute_error": 2621021.35394474,
+          "transmission_recompute_score": 0.0
+        },
+        "self_energies": {
+          "causality_score": 0.0,
+          "dyson_score": 0.0,
+          "left_error": {
+            "max_absolute_error": 0.4556014832796974,
+            "max_normalized_error": 3994623.858898992,
+            "max_relative_error": 1.9999931120931622,
+            "normalized_error": 998655.964724748,
+            "normalized_rms_error": 260286.57029818898
+          },
+          "max_causality_violation": 1.0,
+          "max_dyson_residual": 0.7865947886328098,
+          "reference_accuracy_score": 0.0,
+          "right_error": {
+            "max_absolute_error": 0.8391435482855722,
+            "max_normalized_error": 4995604.150492116,
+            "max_relative_error": 1.9999931120931609,
+            "normalized_error": 1248901.037623029,
+            "normalized_rms_error": 376618.6256789997
+          },
+          "score": 0.0
+        },
+        "transmission": {
+          "error": {
+            "max_absolute_error": 7.112366251504909e-17,
+            "max_normalized_error": 1.3817590770225562e-09,
+            "max_relative_error": 2.4137974164228935e-14,
+            "normalized_error": 3.4543976925563904e-10,
+            "normalized_rms_error": 2.5700965559423336e-10
+          },
+          "score": 1.0
+        }
+      },
+      "model_id": "hidden_weak_contact",
+      "output_bytes": 73186,
+      "passed": false,
+      "total_score": 0.5416
+    }
+  ],
+  "evaluator_error": null,
+  "hard_gates": {
+    "failures": [],
+    "passed": true
+  },
+  "metrics": {
+    "assembly": {
+      "score": 1.0,
+      "weight": 0.18
+    },
+    "bands": {
+      "score": 1.0,
+      "weight": 0.12
+    },
+    "dos_ldos": {
+      "score": 0.0,
+      "weight": 0.2
+    },
+    "evidence_consistency": {
+      "score": 0.7699999999999999,
+      "weight": 0.08
+    },
+    "self_energies": {
+      "score": 0.0,
+      "weight": 0.24
+    },
+    "transmission": {
+      "score": 1.0,
+      "weight": 0.18
+    }
+  },
+  "mode": "execute",
+  "passed": false,
+  "schema_version": "periodic-orbital-transport-evaluation/v1",
+  "total_score": 0.5416
+}

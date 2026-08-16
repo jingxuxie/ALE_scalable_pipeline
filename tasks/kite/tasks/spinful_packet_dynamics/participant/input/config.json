@@ -1,0 +1,27 @@
+{
+  "basis_order": 52,
+  "boundary": "open",
+  "hopping_t": 1.0,
+  "initial_state": {
+    "alpha": 0.41,
+    "kx": 0.71,
+    "ky": -0.33,
+    "sigma": 1.22,
+    "theta": 1.08,
+    "x0": 3.15,
+    "y0": 3.55
+  },
+  "instance_id": "spd-d8891b6fae09a0e09103273b",
+  "rho_limit": 0.975,
+  "schema_version": "spinful-packet-instance/v1",
+  "site_order": "sites.csv row order",
+  "soc_lambda": 0.28,
+  "spin_order": [
+    "up",
+    "down"
+  ],
+  "time_interval": [
+    0.0,
+    2.5
+  ]
+}

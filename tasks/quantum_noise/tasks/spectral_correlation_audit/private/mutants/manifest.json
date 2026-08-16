@@ -1,0 +1,19 @@
+{
+  "schema_version": "spectral-correlation-audit-mutants/v1",
+  "mutants": [
+    {"mutant_id": "ignore-target-mask", "category": "xor-correction", "description": "Treat observed masks as errors without undoing randomized targets."},
+    {"mutant_id": "normalized-forward-transform", "category": "transform-normalization", "description": "Divide every forward transform by the state count."},
+    {"mutant_id": "ordinal-length-fit", "category": "length-semantics", "description": "Fit against row positions instead of manifest sequence lengths."},
+    {"mutant_id": "unit-nuisance-amplitude", "category": "nuisance-model", "description": "Force every nuisance amplitude to one."},
+    {"mutant_id": "unnormalized-inverse", "category": "inverse-normalization", "description": "Omit the inverse state-count factor."},
+    {"mutant_id": "independent-bit-collapse", "category": "correlation-omission", "description": "Replace the recovered joint law by the product of its one-bit marginals."},
+    {"mutant_id": "omit-clique-separators", "category": "local-model-factorization", "description": "Multiply clique marginals without separator division."},
+    {"mutant_id": "mi-reported-as-cmi", "category": "wrong-dependence-metric", "description": "Report unconditional mutual information as all-rest conditional mutual information."},
+    {"mutant_id": "covariance-as-correlation", "category": "wrong-correlation-normalization", "description": "Report covariance without standard-deviation normalization."},
+    {"mutant_id": "ascending-cmi-ranking", "category": "wrong-ranking-direction", "description": "Sort nonlocal pairs by increasing rather than decreasing conditional mutual information."},
+    {"mutant_id": "js-divergence-not-distance", "category": "wrong-distance", "description": "Report unsquared Jensen-Shannon divergence instead of its square-root distance."},
+    {"mutant_id": "uniform-stale-analysis", "category": "anti-hardcoding", "description": "Ignore count probabilities and emit a uniform analysis with current shapes."},
+    {"mutant_id": "reversed-unit-significance", "category": "bit-convention", "description": "Reverse unit labels only in dependence analysis."},
+    {"mutant_id": "chain-topology-assumption", "category": "topology-hardcoding", "description": "Ignore the supplied clique tree and assume every hidden topology is a sliding width-three chain."}
+  ]
+}

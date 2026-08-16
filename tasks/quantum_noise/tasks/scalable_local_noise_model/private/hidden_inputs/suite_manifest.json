@@ -1,0 +1,36 @@
+{
+  "cases": [
+    {
+      "instance_id": "inst_8f2c7a13",
+      "maximum_clique_size": 5,
+      "variable_count": 58
+    },
+    {
+      "instance_id": "inst_41de9b76",
+      "maximum_clique_size": 6,
+      "variable_count": 69
+    },
+    {
+      "instance_id": "inst_c5a30e84",
+      "maximum_clique_size": 5,
+      "variable_count": 61
+    },
+    {
+      "instance_id": "inst_729bf016",
+      "maximum_clique_size": 6,
+      "variable_count": 82
+    },
+    {
+      "instance_id": "inst_e14c6952",
+      "maximum_clique_size": 6,
+      "variable_count": 55
+    },
+    {
+      "instance_id": "inst_36a8d2f9",
+      "maximum_clique_size": 7,
+      "variable_count": 88
+    }
+  ],
+  "private_seed_policy": "fixed retired author seeds; regenerate from server-secret seeds before scored release",
+  "schema_version": "local-noise-hidden-suite/v1"
+}

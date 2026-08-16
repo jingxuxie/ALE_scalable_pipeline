@@ -1,0 +1,24 @@
+{
+  "clique_topology": "chain",
+  "experiment_id": "sable-array",
+  "injected_nonlocal_pairs": [
+    [
+      0,
+      6
+    ],
+    [
+      1,
+      5
+    ],
+    [
+      2,
+      6
+    ]
+  ],
+  "maximum_eigenvalue": 1.0,
+  "minimum_eigenvalue": 0.5643817678051655,
+  "minimum_pauli_support_probability": 1.360891944789034e-07,
+  "minimum_probability": 1.0141186579187125e-08,
+  "normalization_error": 0.0,
+  "schema_version": "spectral-correlation-audit-truth-summary/v1"
+}

@@ -1,0 +1,77 @@
+{
+  "experiments": [
+    {
+      "effects": {
+        "weak-vs-strong-center::entanglement": 1.5345776168303487,
+        "weak-vs-strong-center::gap_ratio": 0.12242304186432962,
+        "weak-vs-strong-center::participation_s1": 2.164077182482399,
+        "weak-vs-strong-center::participation_s2": 2.1048205426086577,
+        "weak-vs-strong-offset::entanglement": 1.0036797559897204,
+        "weak-vs-strong-offset::gap_ratio": 0.18153129642980664,
+        "weak-vs-strong-offset::participation_s1": 2.1567149544460515,
+        "weak-vs-strong-offset::participation_s2": 2.0612015200000395
+      },
+      "experiment_id": "retired-demo-01",
+      "input_sha256": "de2574d6032aa18dd903ef9ec7bdff2521ac28cd6dfae6403402aeb187761c07",
+      "record_count": 10,
+      "reference_sha256": "2b3bc5664304ffed78dab04e335dfe1a6a0214bf04f42cea47a76facaafff18e",
+      "state_row_count": 140
+    },
+    {
+      "effects": {
+        "cmp-a08::entanglement": 2.000841737360379,
+        "cmp-a08::gap_ratio": 0.1451250394261962,
+        "cmp-a08::participation_s1": 3.1467852764728814,
+        "cmp-a08::participation_s2": 2.9696079812577327,
+        "cmp-a63::entanglement": 1.784536553102908,
+        "cmp-a63::gap_ratio": 0.052730025664115776,
+        "cmp-a63::participation_s1": 3.111146948156253,
+        "cmp-a63::participation_s2": 2.834208342426095
+      },
+      "experiment_id": "hidden-alpha-01",
+      "input_sha256": "ac8ec753afb8befb83d5b2f0660fb6312770a0d8728915e3fa5208877478d164",
+      "record_count": 10,
+      "reference_sha256": "62e4e82a69d49414c7177aa65cf70ae99ec1716c44fb6c9a41a0a242b7e113ca",
+      "state_row_count": 140
+    },
+    {
+      "effects": {
+        "cmp-b14::entanglement": 2.295796623409888,
+        "cmp-b14::gap_ratio": 0.09139067174717036,
+        "cmp-b14::participation_s1": 3.65031611553932,
+        "cmp-b14::participation_s2": 3.5140788804334306,
+        "cmp-b76::entanglement": 1.7294101773564912,
+        "cmp-b76::gap_ratio": 0.21919790595764954,
+        "cmp-b76::participation_s1": 3.3066322378425133,
+        "cmp-b76::participation_s2": 3.1157036642799287
+      },
+      "experiment_id": "hidden-beta-01",
+      "input_sha256": "1cd15047227738572d2fd50834221eff0a17cdae2d0f8175613ca6f04b831568",
+      "record_count": 8,
+      "reference_sha256": "be815d77b016305daa857c8535b41ea07bc9b564ef2e5e5e49617f3e7468424d",
+      "state_row_count": 114
+    },
+    {
+      "effects": {
+        "cmp-g05::entanglement": 3.0441750562026333,
+        "cmp-g05::gap_ratio": 0.21512384288167807,
+        "cmp-g05::participation_s1": 4.712897898634532,
+        "cmp-g05::participation_s2": 4.667626596320035,
+        "cmp-g47::entanglement": 1.9640153046225142,
+        "cmp-g47::gap_ratio": 0.09568634973564027,
+        "cmp-g47::participation_s1": 4.139347101755295,
+        "cmp-g47::participation_s2": 3.883728331640028,
+        "cmp-g88::entanglement": 2.056182069579798,
+        "cmp-g88::gap_ratio": 0.2584346809229865,
+        "cmp-g88::participation_s1": 4.4897675638005055,
+        "cmp-g88::participation_s2": 4.191868844225715
+      },
+      "experiment_id": "hidden-gamma-01",
+      "input_sha256": "243a97a46d59420d95fae417a086988553241f60d7424ab751ff8853da8418fe",
+      "record_count": 10,
+      "reference_sha256": "79a9337462eb57c5a5c8af65868efe13e1438b9a6dc4388bda6ee82f1ee60de0",
+      "state_row_count": 240
+    }
+  ],
+  "schema_version": "sector-audit-oracle-summary/v1"
+}

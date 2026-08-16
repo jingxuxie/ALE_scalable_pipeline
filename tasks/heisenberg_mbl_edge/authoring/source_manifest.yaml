@@ -1,0 +1,268 @@
+schema_version: paper2ale.codex-source-manifest/v1
+
+paper:
+  paper_id: "arxiv:1411.0660v2"
+  title: "Many-body localization edge in the random-field Heisenberg chain"
+  local_path: "sources/1411.0660v2.pdf"
+  public_url: "https://arxiv.org/pdf/1411.0660v2"
+  record_url: "https://arxiv.org/abs/1411.0660"
+  version: "arXiv v2, current revision, submitted 2014-12-23 09:00:11 UTC"
+  byte_length: 1940511
+  page_count: 7
+  sha256: "16bb369799942361d5af23e245bd9b09e05d93638a792128ba09cdd97a58c86e"
+  license: "arXiv non-exclusive license to distribute 1.0; not a general permissive reuse license"
+  license_url: "https://arxiv.org/licenses/nonexclusive-distrib/1.0/"
+  retrieved_at: "2026-08-15"
+  citation: "D. J. Luitz, N. Laflorencie, and F. Alet, arXiv:1411.0660v2; Phys. Rev. B 91, 081103(R) (2015)."
+
+paper_versions:
+  - version_id: "arxiv-v1-pdf"
+    url: "https://arxiv.org/pdf/1411.0660v1"
+    submitted_at: "2014-11-03T20:59:58Z"
+    byte_length: 1926106
+    sha256: "c019fc2d736731fe8dcf6a153ec99f1d755fd9d1d8fe8919d4fbe4a1b58d8deb"
+    locally_retained: false
+  - version_id: "arxiv-v1-source"
+    url: "https://arxiv.org/e-print/1411.0660v1"
+    submitted_at: "2014-11-03T20:59:58Z"
+    byte_length: 1617985
+    sha256: "0c256ec051166ca7646e109b7803be2267c95bfe397bb8683dd9b590e1dac047"
+    locally_retained: false
+  - version_id: "arxiv-v2-pdf"
+    url: "https://arxiv.org/pdf/1411.0660v2"
+    submitted_at: "2014-12-23T09:00:11Z"
+    byte_length: 1940511
+    sha256: "16bb369799942361d5af23e245bd9b09e05d93638a792128ba09cdd97a58c86e"
+    locally_retained: true
+    local_path: "sources/1411.0660v2.pdf"
+  - version_id: "arxiv-v2-source"
+    url: "https://arxiv.org/e-print/1411.0660v2"
+    submitted_at: "2014-12-23T09:00:11Z"
+    byte_length: 1662089
+    sha256: "56eace8e902ef42aabd3e6674b6ca8027c01e50c10ff11ee9ab6c27fe92e33ca"
+    locally_retained: true
+    local_path: "sources/1411.0660v2-source.tar"
+  - version_id: "aps-version-of-record"
+    url: "https://harvest.aps.org/v2/journals/articles/10.1103/PhysRevB.91.081103/fulltext"
+    record_url: "https://journals.aps.org/prb/abstract/10.1103/PhysRevB.91.081103"
+    doi: "10.1103/PhysRevB.91.081103"
+    received_at: "2014-11-06"
+    published_at: "2015-02-09"
+    issue_date: "2015-02-15"
+    designation: "Phys. Rev. B 91, 081103(R); Rapid Communication; Editors' Suggestion"
+    byte_length: 589472
+    page_count: 5
+    sha256: "c1580210a894d568b708ceaebd64e4c601bbf8be46b72b81b9852d7cc3c29eb0"
+    locally_retained: false
+    license: "Copyright 2015 American Physical Society; APS default reuse and permissions terms"
+    license_url: "https://journals.aps.org/licenses"
+
+supporting_records:
+  - source_id: "arxiv-record"
+    type: "official_record_page"
+    url: "https://arxiv.org/abs/1411.0660"
+    retrieved_at: "2026-08-15"
+    locally_retained: false
+    sha256: null
+    hash_note: "Dynamic record page was inspected but is not an authoring artifact; exact paper/source bytes are pinned separately."
+    role: "Version history, title, authors, DOI, journal reference, and arXiv license link."
+  - source_id: "author-official-publications"
+    type: "official_author_webpage"
+    url: "https://dluitz.github.io/publications/#2015"
+    retrieved_at: "2026-08-15"
+    locally_retained: false
+    sha256: null
+    hash_note: "Dynamic official webpage was inspected but is not redistributed."
+    role: "Corroborates that the official 2015 publication entry links APS and arXiv but no code or raw data."
+  - source_id: "arxiv-v1-v2-diff"
+    type: "author_generated_comparison_record"
+    url: null
+    retrieved_at: "2026-08-15"
+    locally_retained: false
+    sha256: null
+    hash_note: "Comparison is derived from the four independently pinned v1/v2 PDF/source hashes above; no separate diff artifact is retained."
+    role: "Records semantic changes in multifractality, mobility-edge strength, and spectral-asymmetry wording."
+  - source_id: "benchmark-authoring"
+    type: "internal_authoring_record"
+    url: null
+    retrieved_at: "2026-08-15"
+    locally_retained: true
+    local_paths:
+      - "evidence_map.yaml"
+      - "workflow_graph.yaml"
+      - "task_candidates.yaml"
+    sha256: null
+    hash_note: "Mutable during task construction; final build identity must be recorded after verification."
+    role: "Declares benchmark choices and grounded extensions; never cited as a paper result."
+
+source_archive:
+  source_id: "arxiv-v2-source"
+  local_path: "sources/1411.0660v2-source.tar"
+  url: "https://arxiv.org/e-print/1411.0660v2"
+  byte_length: 1662089
+  sha256: "56eace8e902ef42aabd3e6674b6ca8027c01e50c10ff11ee9ab6c27fe92e33ca"
+  inspected_as_untrusted_archive: true
+  executed: false
+  supplement_layout: "mbl.tex lines 359-436 after appendix; rendered PDF pages 6-7"
+  members:
+    - path: "bf_vs_h.pdf"
+      byte_length: 261982
+      sha256: "db2ce990d1a22f799ce0d48c81f445da45006cda075cc240d109ca6e7b303f37"
+    - path: "EE_vs_L.pdf"
+      byte_length: 542296
+      sha256: "6a529ddcae66ee421de8c20a58b4adefe7d0921ea1826845b6d229bacdb48731"
+    - path: "fa_vs_h.pdf"
+      byte_length: 263296
+      sha256: "7bd9bf65be9c235f20b19a20522c1c754a1bb74d4d02623b3c7b5cbca9fa6782"
+    - path: "gap_KL.pdf"
+      byte_length: 341766
+      sha256: "2b077a74aa6c452cee9f31a5a700656b238db41a4d34951b4e3244eec335da13"
+    - path: "mbl.bbl"
+      byte_length: 40799
+      sha256: "27880953ce7b86834b641a873ae1a0be5c9ce71fc74498fab795995c507d309b"
+    - path: "mbl.tex"
+      byte_length: 31295
+      sha256: "7865c2c281aea08ad89ed93cf82c1482ee18cf5868c31071abb6774dc08275c6"
+    - path: "pe_vs_L.pdf"
+      byte_length: 147103
+      sha256: "78f889339fbc39a4e016d158006a3b64e53dc86ad06ef46f3f5b64bc7ea9b3fa"
+    - path: "phasediag_a.pdf"
+      byte_length: 460999
+      sha256: "d36f8b93ed7be1ff818a1bb5c6bf70ae4eb25b88f9eccd25b429f80989beb6a9"
+    - path: "systematic_hc.pdf"
+      byte_length: 169683
+      sha256: "d71ac0a0d2ff0610977077b4abcd3af359e35932a30a86af9aff732344aec47f"
+    - path: "systematic_nu.pdf"
+      byte_length: 169471
+      sha256: "47ba617e082e73677ddceb893a2e3a0a26564a68b5f82f5a0d313da29e566c3d"
+
+supplements:
+  - supplement_id: "arxiv-v2-bundled-supplement"
+    title: "Supplementary material"
+    local_path: "sources/1411.0660v2.pdf"
+    source_archive_path: "sources/1411.0660v2-source.tar"
+    pages: "6-7"
+    source_tex_locator: "mbl.tex:359-436"
+    figures:
+      - "Figure 6"
+      - "Figure 7"
+      - "Figure 8"
+    equations:
+      - "Equation 2"
+      - "Equation 3"
+    public_url: "https://arxiv.org/pdf/1411.0660v2"
+    official_aps_url: "http://link.aps.org/supplemental/10.1103/PhysRevB.91.081103"
+    separate_aps_bytes_retrieved: false
+    access_note: "APS labels the separate supplement subscription-required; arXiv v2 bundles the author-submitted supplement. Byte identity was not asserted."
+    license: "arXiv non-exclusive license to distribute for the arXiv bytes; APS terms for APS-formatted bytes"
+
+repositories:
+  - repository_id: "sinvert-mbl-2018-follow-on"
+    official: true
+    official_for_target_2015_paper: false
+    url: "https://bitbucket.org/dluitz/sinvert_mbl/"
+    api_url: "https://api.bitbucket.org/2.0/repositories/dluitz/sinvert_mbl"
+    local_path: null
+    commit: "706838f3e656f4792c170aa723067c2ae3111491"
+    commit_date: "2019-09-17T06:28:20Z"
+    initial_commit: "a418edf14c6298b9a5c15530c8107c32339e493d"
+    initial_commit_date: "2018-03-12T10:57:22Z"
+    tree_sha256: "47e56f0697623bbc3525324bb1b387a58713be58fbca87c77fa61f5b1b5c9231"
+    tree_hash_kind: "SHA-256 of Bitbucket commit tar.gz response"
+    license: "GNU GPL v3"
+    license_file_sha256: "e57f1c320b8cf8798a7d2ff83a6f9e06a33a03585f6e065fea97f1d86db84052"
+    tags: []
+    releases: []
+    retrieved_at: "2026-08-15"
+    role: "Official author code for a separate 2018 shift-invert methods paper; method-adjacent evidence only."
+    used_by_selected_tasks: false
+    execution_status: "not_executed"
+    notes: "Created more than three years after the target paper and must not be described as the 2015 implementation or data source."
+
+datasets: []
+
+data_availability:
+  official_2015_raw_data_found: false
+  official_2015_dataset_url: null
+  numeric_assets_in_source:
+    - "Compiled vector figure PDFs only"
+  notes: "No raw tables, disorder seeds, h grid, eigenpairs, realization records, or fit samples were linked by arXiv, APS, or the author's official publication entry."
+
+environments:
+  - environment_id: "read-only-source-inspection-2026-08-15"
+    type: "manual"
+    path_or_digest: null
+    python: null
+    packages: []
+    system_dependencies:
+      - "PowerShell"
+      - "Poppler for read-only PDF metadata/render inspection"
+      - "tar for archive inventory after member-path inspection"
+    notes: "No paper-supplied or repository-supplied program was executed."
+
+source_execution:
+  commands: []
+  source_commands_inspected: false
+  source_software_executed: false
+  observed_artifacts:
+    - path: "sources/1411.0660v2.pdf"
+      sha256: "16bb369799942361d5af23e245bd9b09e05d93638a792128ba09cdd97a58c86e"
+      purpose: "Pinned author-only paper and bundled supplement"
+    - path: "sources/1411.0660v2-source.tar"
+      sha256: "56eace8e902ef42aabd3e6674b6ca8027c01e50c10ff11ee9ab6c27fe92e33ca"
+      purpose: "Pinned author-only TeX and figure-source archive"
+
+conflicts:
+  - conflict_id: "version-wording-multifractality"
+    topic: "Strength of Hilbert-space multifractality claim"
+    paper_statement: "v1 uses unqualified signs-of-multifractality language."
+    code_behavior: null
+    observed_behavior: "v2 replaces this with nonergodicity/no-true-localization wording and explicitly retains a small-a_q ambiguity."
+    resolution: "paper"
+    rationale: "Use current v2 and preserve its qualification; v1 language cannot be a hidden requirement."
+  - conflict_id: "version-wording-mobility-edge"
+    topic: "Mobility-edge strength and asymmetry"
+    paper_statement: "v1 says mobility edge and mentions apparent slight spectral asymmetry."
+    code_behavior: null
+    observed_behavior: "v2 says extensive mobility edge and removes the asymmetry conclusion."
+    resolution: "paper"
+    rationale: "Use current v2; selected second task targets finite-size signatures rather than a thermodynamic-edge assertion."
+  - conflict_id: "ee-fluctuation-label"
+    topic: "Entanglement fluctuation terminology"
+    paper_statement: "Prose defines sigma_E as a standard deviation while the Figure 3 caption calls it variance."
+    code_behavior: null
+    observed_behavior: null
+    resolution: "benchmark-choice"
+    rationale: "Any task using this quantity must disclose one convention and evaluate that convention method-agnostically."
+  - conflict_id: "odd-sector-label"
+    topic: "Odd-L magnetization sector"
+    paper_statement: "The paper labels odd L=15,17,19 as S^z=1 although physical total S^z is half-integer."
+    code_behavior: null
+    observed_behavior: "The likely intended convention is doubled magnetization 2S^z=1, but this is not explicit."
+    resolution: "benchmark-choice"
+    rationale: "Participant tasks disclose n_up directly; the ambiguous paper notation is not hidden."
+  - conflict_id: "aps-supplement-bytes"
+    topic: "Separate APS supplement pin"
+    paper_statement: "Published Ref. 57 points to the APS supplemental URL."
+    code_behavior: null
+    observed_behavior: "APS currently requires subscription; separate bytes were not retrieved. The arXiv v2 bundle contains the supplement."
+    resolution: "unresolved"
+    rationale: "Do not assert APS/arXiv supplement byte identity."
+  - conflict_id: "missing-2015-code-data"
+    topic: "Original implementation and raw numerical data"
+    paper_statement: "The paper names PETSc, SLEPc, MUMPS, and HPC resources but no repository or dataset."
+    code_behavior: "The official Bitbucket repository is for a separate 2018 methods paper."
+    observed_behavior: "No 2015 code/data link was found on arXiv, APS, or the author's publication page."
+    resolution: "unresolved"
+    rationale: "Selected tasks use fully specified benchmark-authored inputs and independent trusted generators."
+
+license_and_privacy_decision:
+  participant_assets_redistributable: false
+  restricted_assets:
+    - "sources/1411.0660v2.pdf"
+    - "sources/1411.0660v2-source.tar"
+    - "all extracted TeX and source figure bytes"
+    - "APS-formatted article or supplement bytes"
+  sensitive_or_personal_data_present: false
+  decision: "manual-review"
+  notes: "This false value is a conservative manual-review gate, not a claim that benchmark-authored numerical data are inherently restricted. Participant packages must contain only benchmark-authored code, schemas, and generated numerical instances. Paper/source bytes remain author-only. Confirm final generated-asset and dependency licenses before release, then update this decision."

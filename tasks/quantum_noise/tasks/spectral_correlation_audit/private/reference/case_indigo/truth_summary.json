@@ -1,0 +1,28 @@
+{
+  "clique_topology": "chain",
+  "experiment_id": "indigo-array",
+  "injected_nonlocal_pairs": [
+    [
+      0,
+      7
+    ],
+    [
+      2,
+      6
+    ],
+    [
+      1,
+      5
+    ],
+    [
+      0,
+      4
+    ]
+  ],
+  "maximum_eigenvalue": 0.9999999999999997,
+  "minimum_eigenvalue": 0.47616738149091875,
+  "minimum_pauli_support_probability": 6.597537149831506e-08,
+  "minimum_probability": 4.354043383318554e-09,
+  "normalization_error": 0.0,
+  "schema_version": "spectral-correlation-audit-truth-summary/v1"
+}

@@ -1,0 +1,1263 @@
+schema_version: paper2ale.codex-evidence-map/v1
+
+paper_id: arxiv-1907.13022v2
+
+records:
+  - evidence_id: evidence-paper-randomized-x-mask
+    type: protocol
+    statement: >-
+      The experiment randomly compiled an X gate into each submitted sequence and
+      interpreted the resulting distribution accordingly to remove SPAM bias.
+    origin_class: paper_reported
+    source:
+      source_id: arxiv-1907.13022v2
+      locator_type: path-lines
+      locator:
+        path: authoring/sources/paper_source/noiseLearningArxiv.tex
+        start_line: 1213
+        end_line: 1213
+        section: supplementary experimental details
+    exact_quote_or_value: 'randomly compiled X gate; probability distribution interpreted accordingly'
+    confidence: high
+    corroborating_evidence_ids:
+      - evidence-code-acquisition-xor-convention
+    conflicting_evidence_ids: []
+    used_by_claim_ids:
+      - claim-leaf-spam-free-spectrum
+    used_by_operation_ids:
+      - op-xor-correct-and-aggregate-counts
+    participant_requirement_allowed: true
+    notes: >-
+      The participant contract discloses decimal masks under one LSB convention;
+      it does not require knowledge of Qiskit's displayed bit-string order.
+
+  - evidence_id: evidence-code-acquisition-xor-convention
+    type: code
+    statement: >-
+      The official acquisition notebooks save randomized X masks, XOR observed
+      outcomes with those masks, adapt Qiskit's rightmost-Q0 display order before
+      XOR, and emit histograms in integer-key order.
+    origin_class: code_present
+    source:
+      source_id: repo-query-ibmq
+      locator_type: immutable-commit-url-line-ranges
+      locator:
+        commit: d73e1002f5f0ec35f54bf47c338f8c28eaaaa954
+        urls:
+          - https://github.com/rharper2/query_ibmq/blob/d73e1002f5f0ec35f54bf47c338f8c28eaaaa954/createAndRunCircuits.ipynb#L130-L137
+          - https://github.com/rharper2/query_ibmq/blob/d73e1002f5f0ec35f54bf47c338f8c28eaaaa954/createAndRunCircuits.ipynb#L199-L211
+          - https://github.com/rharper2/query_ibmq/blob/d73e1002f5f0ec35f54bf47c338f8c28eaaaa954/createAndRunCircuits.ipynb#L265-L287
+          - https://github.com/rharper2/query_ibmq/blob/d73e1002f5f0ec35f54bf47c338f8c28eaaaa954/createAndRunCircuits.ipynb#L561-L564
+          - https://github.com/rharper2/query_ibmq/blob/d73e1002f5f0ec35f54bf47c338f8c28eaaaa954/PickleExtractor.ipynb#L210-L229
+          - https://github.com/rharper2/query_ibmq/blob/d73e1002f5f0ec35f54bf47c338f8c28eaaaa954/PickleExtractor.ipynb#L238-L238
+          - https://github.com/rharper2/query_ibmq/blob/d73e1002f5f0ec35f54bf47c338f8c28eaaaa954/PickleExtractor.ipynb#L399-L406
+    exact_quote_or_value: 'observed XOR target after Qiskit string-order adaptation; integer-ordered output keys'
+    confidence: high
+    corroborating_evidence_ids:
+      - evidence-paper-randomized-x-mask
+    conflicting_evidence_ids: []
+    used_by_claim_ids:
+      - claim-leaf-spam-free-spectrum
+    used_by_operation_ids:
+      - op-xor-correct-and-aggregate-counts
+    participant_requirement_allowed: false
+    notes: >-
+      The repository was inspected at an immutable remote commit but not retained.
+      Public decimal masks already share the disclosed LSB convention, so direct
+      integer XOR is correct and no participant-side reversal is allowed.
+
+  - evidence_id: evidence-paper-five-stage-protocol
+    type: protocol
+    statement: >-
+      The reported workflow estimates outcome distributions by sequence length,
+      applies a Walsh-Hadamard transform, fits exponential decays, transforms
+      back, and projects onto the probability simplex.
+    origin_class: paper_reported
+    source:
+      source_id: arxiv-1907.13022v2
+      locator_type: path-lines
+      locator:
+        path: authoring/sources/paper_source/noiseLearningArxiv.tex
+        start_line: 157
+        end_line: 168
+        section: main text
+        figure: Figure 1
+    exact_quote_or_value: 'estimate outcomes; Walsh-Hadamard transform; exponential fit; inverse transform; simplex projection'
+    confidence: high
+    corroborating_evidence_ids:
+      - evidence-code-transform-fit-project
+    conflicting_evidence_ids: []
+    used_by_claim_ids:
+      - claim-leaf-spam-free-spectrum
+      - claim-leaf-long-range-correlations-and-local-model-mismatch
+    used_by_operation_ids:
+      - op-xor-correct-and-aggregate-counts
+      - op-transform-length-histograms
+      - op-fit-nuisance-decays
+      - op-reconstruct-simplex-distribution
+    participant_requirement_allowed: true
+    notes: Scientific stages and conventions needed by the task must be disclosed publicly.
+
+  - evidence_id: evidence-paper-decay-model
+    type: equation
+    statement: >-
+      Each transformed mode is fitted to a nuisance-amplitude exponential model
+      A times p to the sequence length, yielding SPAM-free decay estimates.
+    origin_class: paper_reported
+    source:
+      source_id: arxiv-1907.13022v2
+      locator_type: path-lines
+      locator:
+        path: authoring/sources/paper_source/noiseLearningArxiv.tex
+        start_line: 1497
+        end_line: 1510
+        section: Protocol to measure all single-qubit f parameters simultaneously
+        equation: 'bar p(m) = A p^m'
+    exact_quote_or_value: 'bar p(m) = A p^m'
+    confidence: high
+    corroborating_evidence_ids:
+      - evidence-paper-five-stage-protocol
+      - evidence-code-transform-fit-project
+    conflicting_evidence_ids:
+      - evidence-paper-fit-cutoff-ambiguity
+    used_by_claim_ids:
+      - claim-leaf-spam-free-spectrum
+    used_by_operation_ids:
+      - op-fit-nuisance-decays
+    participant_requirement_allowed: true
+    notes: >-
+      The selected spectral task uses this disclosed model on synthetic hidden
+      instances. Its public all-length fit is a benchmark choice because the
+      paper's own fit-truncation symbols are not self-contained.
+
+  - evidence_id: evidence-paper-fit-cutoff-ambiguity
+    type: limitation
+    statement: >-
+      The supplement gives threshold formulas for discarding late decay points,
+      but switches from p_1 to p_0 and does not define either symbol locally.
+    origin_class: paper_reported
+    source:
+      source_id: arxiv-1907.13022v2
+      locator_type: path-lines
+      locator:
+        path: authoring/sources/paper_source/noiseLearningArxiv.tex
+        line_ranges:
+          - {start_line: 1197, end_line: 1197}
+          - {start_line: 1211, end_line: 1211}
+        section: supplementary experimental fit details
+    exact_quote_or_value: 'single-qubit `(p_1+1/16)/4`; two-qubit `(p_0+1/16)/4`; no local definition'
+    confidence: high
+    corroborating_evidence_ids: []
+    conflicting_evidence_ids:
+      - evidence-paper-decay-model
+      - evidence-paper-experiment-protocol
+    used_by_claim_ids:
+      - claim-leaf-spam-free-spectrum
+    used_by_operation_ids:
+      - op-fit-nuisance-decays
+    participant_requirement_allowed: false
+    notes: >-
+      The benchmark therefore discloses an all-length conditioned fit instead of
+      asking participants to recover an undefined paper-specific cutoff.
+
+  - evidence_id: evidence-paper-experimental-run-count-conflict
+    type: limitation
+    statement: >-
+      The supplement reports both 1924 and 1946 runs per experimental
+      configuration in different locations.
+    origin_class: paper_reported
+    source:
+      source_id: arxiv-1907.13022v2
+      locator_type: path-lines
+      locator:
+        path: authoring/sources/paper_source/noiseLearningArxiv.tex
+        line_ranges:
+          - {start_line: 1206, end_line: 1206}
+          - {start_line: 2140, end_line: 2140}
+        section: supplementary experimental details
+    exact_quote_or_value: '1924 submissions per configuration versus 973 jobs and 1946 runs per configuration'
+    confidence: high
+    corroborating_evidence_ids: []
+    conflicting_evidence_ids:
+      - evidence-paper-experiment-protocol
+    used_by_claim_ids: []
+    used_by_operation_ids: []
+    participant_requirement_allowed: false
+    notes: Neither selected task uses a reported device-run count.
+
+  - evidence_id: evidence-paper-simulation-grid-ambiguity
+    type: limitation
+    statement: >-
+      The simulation caption states 11 gate lengths, while later prose says
+      lengths `1, 3, 5 up to 22 gates`, 50 sequences, and 8096 shots; the length
+      progression does not uniquely define 11 integer values.
+    origin_class: paper_reported
+    source:
+      source_id: arxiv-1907.13022v2
+      locator_type: path-lines
+      locator:
+        path: authoring/sources/paper_source/noiseLearningArxiv.tex
+        line_ranges:
+          - {start_line: 1558, end_line: 1559}
+          - {start_line: 2097, end_line: 2097}
+        section: supplementary simulation details
+    exact_quote_or_value: '11 different gate lengths versus `1, 3, 5 up to 22 gates`; 50 sequences; 8096 shots'
+    confidence: high
+    corroborating_evidence_ids: []
+    conflicting_evidence_ids: []
+    used_by_claim_ids: []
+    used_by_operation_ids: []
+    participant_requirement_allowed: false
+    notes: Synthetic benchmark grids and shot totals are independently generated and public-bounded.
+
+  - evidence_id: evidence-paper-observed-rate-definition
+    type: definition
+    statement: >-
+      Local-Clifford averaging reduces the representation from 4^n Pauli rates
+      to 2^n observed error rates while retaining many-body correlation content.
+    origin_class: paper_reported
+    source:
+      source_id: arxiv-1907.13022v2
+      locator_type: path-lines
+      locator:
+        path: authoring/sources/paper_source/noiseLearningArxiv.tex
+        start_line: 165
+        end_line: 169
+        section: main text
+    exact_quote_or_value: '4^n to 2^n; observed error rates retain many-body correlations'
+    confidence: high
+    corroborating_evidence_ids:
+      - evidence-paper-observed-vs-pauli-correlation
+      - evidence-paper-observed-pauli-visibility-map
+    conflicting_evidence_ids: []
+    used_by_claim_ids:
+      - claim-leaf-observed-rates-preserve-correlations
+      - claim-leaf-long-range-correlations-and-local-model-mismatch
+    used_by_operation_ids:
+      - op-reconstruct-simplex-distribution
+      - op-compute-dependence-diagnostics
+    participant_requirement_allowed: true
+    notes: Public tasks must not mislabel the 2^n vector as the full 4^n Pauli distribution.
+
+  - evidence_id: evidence-paper-observed-pauli-visibility-map
+    type: equation
+    statement: >-
+      For each qubit, local-Clifford Pauli-support probabilities map to observed
+      error probabilities through B=[[1,1/3],[0,2/3]], with inverse
+      NH=[[1,-1/2],[0,3/2]]; the n-qubit map is the tensor power.
+    origin_class: paper_reported
+    source:
+      source_id: arxiv-1907.13022v2
+      locator_type: path-lines
+      locator:
+        path: authoring/sources/paper_source/noiseLearningArxiv.tex
+        line_ranges:
+          - {start_line: 1660, end_line: 1692}
+          - {start_line: 1994, end_line: 2045}
+        section: supplementary observed error rates and Pauli error rates
+    exact_quote_or_value: 'B=[[1,1/3],[0,2/3]]; NH=B^-1=[[1,-1/2],[0,3/2]]; tensor-power map'
+    confidence: high
+    corroborating_evidence_ids:
+      - evidence-paper-observed-rate-definition
+    conflicting_evidence_ids: []
+    used_by_claim_ids:
+      - claim-leaf-observed-rates-preserve-correlations
+      - claim-leaf-long-range-correlations-and-local-model-mismatch
+    used_by_operation_ids:
+      - op-reconstruct-simplex-distribution
+    participant_requirement_allowed: false
+    notes: >-
+      Spectral hidden cases must be generated inside this physical image: sample
+      a nonnegative normalized Pauli-support vector s, set q=B^tensor-n s, and
+      have the privileged oracle verify inverse recovery and nonnegative support.
+      Participants reconstruct observed q and need not know hidden s.
+
+  - evidence_id: evidence-paper-observed-vs-pauli-correlation
+    type: result
+    statement: >-
+      The supplement reports identical correlation patterns for observed and
+      averaged Pauli error rates, with reduced magnitudes for observed rates.
+    origin_class: paper_reported
+    source:
+      source_id: arxiv-1907.13022v2
+      locator_type: path-lines
+      locator:
+        path: authoring/sources/paper_source/noiseLearningArxiv.tex
+        start_line: 2051
+        end_line: 2060
+        section: supplementary information
+        figure: Figure S4
+    exact_quote_or_value: 'pattern is identical; observed-rate correlation magnitudes are decreased'
+    confidence: high
+    corroborating_evidence_ids:
+      - evidence-paper-observed-rate-definition
+    conflicting_evidence_ids: []
+    used_by_claim_ids:
+      - claim-leaf-observed-rates-preserve-correlations
+    used_by_operation_ids:
+      - op-compute-dependence-diagnostics
+    participant_requirement_allowed: true
+    notes: This supports diagnostic transfer, not equality of numeric magnitudes.
+
+  - evidence_id: evidence-paper-dependence-definitions
+    type: metric
+    statement: >-
+      The paper defines mutual information, conditional mutual information,
+      covariance of binary error indicators, and Pearson correlation.
+    origin_class: paper_reported
+    source:
+      source_id: arxiv-1907.13022v2
+      locator_type: path-lines
+      locator:
+        path: authoring/sources/paper_source/noiseLearningArxiv.tex
+        start_line: 1064
+        end_line: 1114
+        section: Methods - Analysis of probability distributions
+        equation: 'Q = V^(-1/2) Sigma V^(-1/2)'
+    exact_quote_or_value: 'binary no-error/error variables; covariance, MI, CMI, and Pearson Q'
+    confidence: high
+    corroborating_evidence_ids:
+      - evidence-code-dependence-functions
+    conflicting_evidence_ids:
+      - evidence-code-dependence-functions
+    used_by_claim_ids:
+      - claim-leaf-correlation-matrix
+      - claim-leaf-long-range-correlations-and-local-model-mismatch
+    used_by_operation_ids:
+      - op-compute-dependence-diagnostics
+      - op-rank-nonlocal-interactions
+    participant_requirement_allowed: true
+    notes: Degenerate-variable behavior is a benchmark convention and must be disclosed.
+
+  - evidence_id: evidence-paper-polynomial-correlations
+    type: claim
+    statement: >-
+      Covariance and correlation matrices can be computed in polynomial time
+      without reconstructing an efficient global GRF description.
+    origin_class: paper_reported
+    source:
+      source_id: arxiv-1907.13022v2
+      locator_type: path-lines
+      locator:
+        path: authoring/sources/paper_source/noiseLearningArxiv.tex
+        start_line: 239
+        end_line: 248
+        section: main text
+    exact_quote_or_value: 'covariance and correlation matrices can be computed unconditionally in polynomial time'
+    confidence: high
+    corroborating_evidence_ids:
+      - evidence-paper-marginalization-scalability
+    conflicting_evidence_ids: []
+    used_by_claim_ids:
+      - claim-leaf-correlation-matrix
+    used_by_operation_ids:
+      - op-compute-dependence-diagnostics
+    participant_requirement_allowed: true
+    notes: The spectral task is bounded to explicit 2^n outputs and does not overclaim asymptotic scalability.
+
+  - evidence_id: evidence-paper-long-range-mismatch
+    type: result
+    statement: >-
+      In two-qubit mode, the local GRF fits poorly and the reconstructed
+      distribution exposes multiple long-range correlations, including broadly
+      positive correlations involving qubit 11.
+    origin_class: paper_reported
+    source:
+      source_id: arxiv-1907.13022v2
+      locator_type: path-lines
+      locator:
+        path: authoring/sources/paper_source/noiseLearningArxiv.tex
+        start_line: 191
+        end_line: 205
+        section: main text
+        figure: Figure 3
+    exact_quote_or_value: 'JSD 0.216(1); many long-range correlations; qubit 11 broadly positive'
+    confidence: high
+    corroborating_evidence_ids:
+      - evidence-paper-jsd-definition
+    conflicting_evidence_ids:
+      - evidence-code-jsd-definition
+    used_by_claim_ids:
+      - claim-leaf-long-range-correlations-and-local-model-mismatch
+    used_by_operation_ids:
+      - op-reconstruct-local-clique-tree-model
+      - op-rank-nonlocal-interactions
+    participant_requirement_allowed: false
+    notes: The reported device value and qubit identities remain author-only; hidden synthetic instances test the phenomenon.
+
+  - evidence_id: evidence-paper-single-mode-mismatch
+    type: result
+    statement: >-
+      In single-qubit mode, the reported local-GRF mismatch is smaller but
+      nonzero, indicating residual long-range correlations.
+    origin_class: paper_reported
+    source:
+      source_id: arxiv-1907.13022v2
+      locator_type: path-lines
+      locator:
+        path: authoring/sources/paper_source/noiseLearningArxiv.tex
+        start_line: 248
+        end_line: 255
+        section: main text
+        figure: Figure 2
+    exact_quote_or_value: 'JSD 0.042(8); long-range correlations are small but nonzero'
+    confidence: high
+    corroborating_evidence_ids:
+      - evidence-paper-jsd-definition
+    conflicting_evidence_ids:
+      - evidence-code-jsd-definition
+    used_by_claim_ids:
+      - claim-leaf-single-mode-small-mismatch
+    used_by_operation_ids: []
+    participant_requirement_allowed: false
+    notes: Retained only as privileged evidence; not a participant target value.
+
+  - evidence_id: evidence-paper-grf-locality
+    type: method
+    statement: >-
+      A GRF factorizes a positive distribution over bounded subsets and encodes
+      local conditional-independence assumptions through its graph.
+    origin_class: paper_reported
+    source:
+      source_id: arxiv-1907.13022v2
+      locator_type: path-lines
+      locator:
+        path: authoring/sources/paper_source/noiseLearningArxiv.tex
+        start_line: 208
+        end_line: 225
+        section: main text
+    exact_quote_or_value: 'bounded-size factors; learn factor-neighborhood marginals'
+    confidence: high
+    corroborating_evidence_ids:
+      - evidence-paper-grf-factorization
+    conflicting_evidence_ids:
+      - evidence-source-grf-zero-support-heuristic
+    used_by_claim_ids:
+      - claim-leaf-bounded-local-grf-scalability
+      - claim-leaf-figure4-sqrt-scaling
+    used_by_operation_ids:
+      - op-reconcile-overlapping-marginals
+      - op-construct-normalized-junction-model
+      - op-reconstruct-local-clique-tree-model
+    participant_requirement_allowed: true
+    notes: Selected tasks disclose their narrower clique-tree model family.
+
+  - evidence_id: evidence-paper-grf-factorization
+    type: equation
+    statement: >-
+      For the reported chain-like factorization, a global distribution is
+      assembled from local joint marginals divided by separator marginals.
+    origin_class: paper_reported
+    source:
+      source_id: arxiv-1907.13022v2
+      locator_type: path-lines
+      locator:
+        path: authoring/sources/paper_source/noiseLearningArxiv.tex
+        start_line: 1145
+        end_line: 1189
+        section: Methods - Gibbs Random Fields
+        equation: induced distribution, Eq. induced
+    exact_quote_or_value: 'product of local joint terms divided by overlap marginals'
+    confidence: high
+    corroborating_evidence_ids:
+      - evidence-paper-grf-locality
+    conflicting_evidence_ids: []
+    used_by_claim_ids:
+      - claim-leaf-bounded-local-grf-scalability
+    used_by_operation_ids:
+      - op-construct-normalized-junction-model
+      - op-answer-partial-assignment-queries
+      - op-reconstruct-local-clique-tree-model
+    participant_requirement_allowed: true
+    notes: The local task generalizes this to disclosed junction trees and noisy inconsistent counts.
+
+  - evidence_id: evidence-paper-figure4-scalability
+    type: result
+    statement: >-
+      Figure 4 simulates nearest-neighbor chains through length 100, reconstructs
+      from fixed-sample local marginals, and fits global error growth to a
+      square-root law over 20 instances per length.
+    origin_class: paper_reported
+    source:
+      source_id: arxiv-1907.13022v2
+      locator_type: path-lines
+      locator:
+        path: authoring/sources/paper_source/noiseLearningArxiv.tex
+        start_line: 213
+        end_line: 225
+        section: main text
+        figure: Figure 4
+    exact_quote_or_value: 'L <= 100; 20 instances; fixed samples; fit a*sqrt(x)'
+    confidence: high
+    corroborating_evidence_ids:
+      - evidence-data-figure4-notebook
+    conflicting_evidence_ids:
+      - evidence-source-figure4-mismatch
+    used_by_claim_ids:
+      - claim-leaf-figure4-sqrt-scaling
+      - claim-leaf-bounded-local-grf-scalability
+    used_by_operation_ids:
+      - op-reconcile-overlapping-marginals
+      - op-construct-normalized-junction-model
+    participant_requirement_allowed: false
+    notes: The selected task uses new hidden instances and does not ask participants to reproduce the plotted curve.
+
+  - evidence_id: evidence-paper-marginalization-scalability
+    type: claim
+    statement: >-
+      The supplement states that Walsh transforms commute with marginalization
+      and that bounded-degree GRF parameters can be learned in polynomial time,
+      up to an overall normalizing factor, from marginalized data.
+    origin_class: paper_reported
+    source:
+      source_id: arxiv-1907.13022v2
+      locator_type: path-lines
+      locator:
+        path: authoring/sources/paper_source/noiseLearningArxiv.tex
+        start_line: 2067
+        end_line: 2079
+        section: Scalable Estimations
+    exact_quote_or_value: 'bounded-degree GRF learning is polynomial up to an overall normalizing factor'
+    confidence: high
+    corroborating_evidence_ids:
+      - evidence-paper-polynomial-correlations
+    conflicting_evidence_ids:
+      - evidence-code-hardcoded-reconstruct
+    used_by_claim_ids:
+      - claim-leaf-bounded-local-grf-scalability
+      - claim-leaf-correlation-matrix
+    used_by_operation_ids:
+      - op-reconcile-overlapping-marginals
+      - op-answer-partial-assignment-queries
+    participant_requirement_allowed: true
+    notes: >-
+      This grounds a nonenumerative resource constraint only at the level claimed
+      by the paper. The global-consistency/error-bound proof is delegated to Ref.
+      28 (Flammia2019); the selected task's normalized junction-tree width and
+      arbitrary-query contract are benchmark-derived specializations.
+
+  - evidence_id: evidence-paper-projection-noncommutation
+    type: limitation
+    statement: >-
+      Walsh transformation commutes with marginalization, but the final
+      probability-simplex projection does not.
+    origin_class: paper_reported
+    source:
+      source_id: arxiv-1907.13022v2
+      locator_type: path-lines
+      locator:
+        path: authoring/sources/paper_source/noiseLearningArxiv.tex
+        start_line: 1512
+        end_line: 1513
+        section: Protocol to measure all single-qubit f parameters simultaneously
+    exact_quote_or_value: 'projection onto the probability simplex does not commute with marginalization'
+    confidence: high
+    corroborating_evidence_ids: []
+    conflicting_evidence_ids: []
+    used_by_claim_ids:
+      - claim-leaf-spam-free-spectrum
+    used_by_operation_ids:
+      - op-reconstruct-simplex-distribution
+    participant_requirement_allowed: true
+    notes: Motivates rubric checks on both global and marginal consistency.
+
+  - evidence_id: evidence-paper-topology-open
+    type: limitation
+    statement: >-
+      Learning an adequate GRF topology from data is presented as possible with
+      classical methods but explicitly left as an open problem for future work.
+    origin_class: paper_reported
+    source:
+      source_id: arxiv-1907.13022v2
+      locator_type: path-lines
+      locator:
+        path: authoring/sources/paper_source/noiseLearningArxiv.tex
+        start_line: 223
+        end_line: 227
+        section: main text
+    exact_quote_or_value: 'topology learning remains an open problem'
+    confidence: high
+    corroborating_evidence_ids: []
+    conflicting_evidence_ids: []
+    used_by_claim_ids:
+      - claim-leaf-topology-learning-open
+    used_by_operation_ids: []
+    participant_requirement_allowed: false
+    notes: This blocks topology rediscovery as a verified final task without a new, fully specified objective.
+
+  - evidence_id: evidence-paper-covariance-estimator-open
+    type: limitation
+    statement: >-
+      The best globally consistent covariance estimator from inconsistent local
+      covariance estimates is explicitly left open.
+    origin_class: paper_reported
+    source:
+      source_id: arxiv-1907.13022v2
+      locator_type: path-lines
+      locator:
+        path: authoring/sources/paper_source/noiseLearningArxiv.tex
+        start_line: 2081
+        end_line: 2085
+        section: Scalable Estimations
+    exact_quote_or_value: 'best consistent global covariance estimator is an open question'
+    confidence: high
+    corroborating_evidence_ids: []
+    conflicting_evidence_ids: []
+    used_by_claim_ids:
+      - claim-leaf-covariance-estimator-open
+    used_by_operation_ids: []
+    participant_requirement_allowed: false
+    notes: No unique paper-grounded reference makes this suitable as a final exact task.
+
+  - evidence_id: evidence-paper-jsd-definition
+    type: metric
+    statement: >-
+      Methods defines KL with natural logarithms and JSD as the square root of
+      the average of KL(p||m) and KL(q||m).
+    origin_class: paper_reported
+    source:
+      source_id: arxiv-1907.13022v2
+      locator_type: path-lines
+      locator:
+        path: authoring/sources/paper_source/noiseLearningArxiv.tex
+        start_line: 1067
+        end_line: 1071
+        section: Methods - Analysis of probability distributions
+        equation: KL divergence
+        additional_lines: 1118-1125
+    exact_quote_or_value: 'natural-log KL; JSD = sqrt((D(p||m)+D(q||m))/2)'
+    confidence: high
+    corroborating_evidence_ids: []
+    conflicting_evidence_ids:
+      - evidence-code-jsd-definition
+    used_by_claim_ids:
+      - claim-leaf-long-range-correlations-and-local-model-mismatch
+    used_by_operation_ids:
+      - op-reconstruct-local-clique-tree-model
+    participant_requirement_allowed: true
+    notes: Spectral task publicly adopts this convention.
+
+  - evidence_id: evidence-paper-experiment-protocol
+    type: data
+    statement: >-
+      The single-qubit experiment used 1,000 submissions, 11 listed sequence
+      lengths, and 1,024 shots per length; the two-qubit runs were interleaved
+      and used lengths 0 through 10.
+    origin_class: paper_reported
+    source:
+      source_id: arxiv-1907.13022v2
+      locator_type: path-lines
+      locator:
+        path: authoring/sources/paper_source/noiseLearningArxiv.tex
+        start_line: 1191
+        end_line: 1213
+        section: Methods - IBM Quantum Experience
+    exact_quote_or_value: '1000 submissions; lengths 1,5,...,105; 1024 shots; interleaved two-qubit runs'
+    confidence: high
+    corroborating_evidence_ids:
+      - evidence-data-repository-availability
+    conflicting_evidence_ids:
+      - evidence-observed-incomplete-data-checkout
+      - evidence-paper-fit-cutoff-ambiguity
+      - evidence-paper-experimental-run-count-conflict
+    used_by_claim_ids:
+      - claim-leaf-spam-free-spectrum
+    used_by_operation_ids: []
+    participant_requirement_allowed: false
+    notes: >-
+      Reported device schedule is not required by either synthetic task. The
+      cited span includes undefined fit-cutoff symbols and the 1924-run statement;
+      those limitations are separately recorded and are not hidden requirements.
+
+  - evidence_id: evidence-paper-bootstrap
+    type: protocol
+    statement: >-
+      Reported uncertainties use 1,000 nonparametric bootstrap reconstructions
+      of the SPAM-free probability vector and downstream diagnostics.
+    origin_class: paper_reported
+    source:
+      source_id: arxiv-1907.13022v2
+      locator_type: path-lines
+      locator:
+        path: authoring/sources/paper_source/noiseLearningArxiv.tex
+        start_line: 1215
+        end_line: 1228
+        section: Methods - Error Bars
+    exact_quote_or_value: '1000 bootstrap resamples and complete repeated analysis'
+    confidence: high
+    corroborating_evidence_ids: []
+    conflicting_evidence_ids: []
+    used_by_claim_ids:
+      - claim-leaf-long-range-correlations-and-local-model-mismatch
+    used_by_operation_ids: []
+    participant_requirement_allowed: false
+    notes: Hidden synthetic evaluation uses multiple instances rather than requiring this exact bootstrap count.
+
+  - evidence_id: evidence-code-transform-fit-project
+    type: code
+    statement: >-
+      The official Julia implementation contains outcome normalization and
+      Walsh transformation, exponential fitting, inverse transform, and simplex
+      projection helpers.
+    origin_class: code_present
+    source:
+      source_id: repo-juqst
+      locator_type: path-lines
+      locator:
+        path: authoring/sources/Juqst.jl/src/marginal.jl
+        start_line: 55
+        end_line: 189
+        section: transformToFidelity, fitTheFidelities, convertAndProject
+    exact_quote_or_value: 'transformToFidelity; fitTheFidelities; convertAndProject'
+    confidence: high
+    corroborating_evidence_ids:
+      - evidence-paper-five-stage-protocol
+    conflicting_evidence_ids: []
+    used_by_claim_ids:
+      - claim-leaf-spam-free-spectrum
+    used_by_operation_ids:
+      - op-transform-length-histograms
+      - op-fit-nuisance-decays
+      - op-reconstruct-simplex-distribution
+    participant_requirement_allowed: false
+    notes: Source code is privileged evidence and is excluded from participant packages.
+
+  - evidence_id: evidence-code-dependence-functions
+    type: code
+    statement: >-
+      The official Julia implementation contains marginalization, mutual
+      information, conditional mutual information, covariance, and correlation
+      helpers.
+    origin_class: code_present
+    source:
+      source_id: repo-juqst
+      locator_type: path-lines
+      locator:
+        path: authoring/sources/Juqst.jl/src/marginal.jl
+        start_line: 421
+        end_line: 707
+        section: distribution analysis helpers
+    exact_quote_or_value: 'mutualInformation, conditionalMutualInfo, covarianceMatrix, correlationMatrix'
+    confidence: high
+    corroborating_evidence_ids:
+      - evidence-paper-dependence-definitions
+    conflicting_evidence_ids:
+      - evidence-paper-dependence-definitions
+    used_by_claim_ids:
+      - claim-leaf-correlation-matrix
+    used_by_operation_ids:
+      - op-compute-dependence-diagnostics
+    participant_requirement_allowed: false
+    notes: >-
+      These helpers use base-2 logarithms for MI and CMI, while the paper and
+      spectral benchmark use disclosed natural-log units. Behavioral outputs,
+      not source implementation identity, are evaluated.
+
+  - evidence_id: evidence-code-jsd-definition
+    type: code
+    statement: >-
+      The official Julia JSD helper uses base-2 relative entropy and returns the
+      symmetric Jensen-Shannon divergence without the paper's square root.
+    origin_class: code_present
+    source:
+      source_id: repo-juqst
+      locator_type: path-lines
+      locator:
+        path: authoring/sources/Juqst.jl/src/marginal.jl
+        start_line: 478
+        end_line: 516
+        section: relativeEntropy and JSD
+    exact_quote_or_value: 'return 0.5*(relativeEntropy(dist1,m)+relativeEntropy(dist2,m))'
+    confidence: high
+    corroborating_evidence_ids: []
+    conflicting_evidence_ids:
+      - evidence-paper-jsd-definition
+      - evidence-paper-long-range-mismatch
+      - evidence-paper-single-mode-mismatch
+    used_by_claim_ids:
+      - claim-leaf-long-range-correlations-and-local-model-mismatch
+    used_by_operation_ids: []
+    participant_requirement_allowed: false
+    notes: Must not silently define the benchmark metric.
+
+  - evidence_id: evidence-code-hardcoded-reconstruct
+    type: limitation
+    statement: The official reconstruct helper enumerates exactly 2^14 states regardless of input dimension.
+    origin_class: code_present
+    source:
+      source_id: repo-juqst
+      locator_type: path-lines
+      locator:
+        path: authoring/sources/Juqst.jl/src/marginal.jl
+        start_line: 530
+        end_line: 542
+        section: reconstruct
+    exact_quote_or_value: 'tomatch=0:(2^14-1)'
+    confidence: high
+    corroborating_evidence_ids: []
+    conflicting_evidence_ids:
+      - evidence-paper-marginalization-scalability
+    used_by_claim_ids:
+      - claim-leaf-bounded-local-grf-scalability
+    used_by_operation_ids: []
+    participant_requirement_allowed: false
+    notes: The selected local task forbids full-state enumeration by scale and evaluates nonenumerative behavior.
+
+  - evidence_id: evidence-code-marginal-local-pipeline
+    type: code
+    statement: >-
+      A source helper marginalizes raw observations by supplied scopes, fits
+      each transformed marginal, and constructs local GRF factors, while its
+      comments question sparse large-vector support.
+    origin_class: code_present
+    source:
+      source_id: repo-juqst
+      locator_type: path-lines
+      locator:
+        path: authoring/sources/Juqst.jl/src/marginal.jl
+        start_line: 641
+        end_line: 692
+        section: marginaliseFromRawData
+    exact_quote_or_value: 'marginalizes, transforms, fits, transforms, and fills local factors'
+    confidence: high
+    corroborating_evidence_ids:
+      - evidence-paper-marginalization-scalability
+    conflicting_evidence_ids: []
+    used_by_claim_ids:
+      - claim-leaf-bounded-local-grf-scalability
+    used_by_operation_ids:
+      - op-reconcile-overlapping-marginals
+    participant_requirement_allowed: false
+    notes: The source helper is evidence only and not a robust scalable participant implementation.
+
+  - evidence_id: evidence-code-repository-role
+    type: code
+    statement: >-
+      The official repository README identifies its quantum-noise branch as the
+      analysis implementation for this paper and points to reproduction notebooks.
+    origin_class: code_present
+    source:
+      source_id: repo-juqst
+      locator_type: path-lines
+      locator:
+        path: authoring/sources/Juqst.jl/README.md
+        start_line: 16
+        end_line: 28
+        section: Package Aims
+    exact_quote_or_value: 'contains the analysis code and reproduction workbooks'
+    confidence: high
+    corroborating_evidence_ids:
+      - evidence-paper-code-availability
+    conflicting_evidence_ids:
+      - evidence-source-notebook-defects
+    used_by_claim_ids: []
+    used_by_operation_ids: []
+    participant_requirement_allowed: false
+    notes: Supports official-source classification, not participant access.
+
+  - evidence_id: evidence-paper-code-availability
+    type: protocol
+    statement: The paper points to Juqst.jl notebooks for recreating the graphs.
+    origin_class: paper_reported
+    source:
+      source_id: arxiv-1907.13022v2
+      locator_type: path-lines
+      locator:
+        path: authoring/sources/paper_source/noiseLearningArxiv.tex
+        start_line: 1230
+        end_line: 1242
+        section: Data Availability and Code Availability
+    exact_quote_or_value: 'data repository, Dryad DOI, and Juqst.jl notebooks'
+    confidence: high
+    corroborating_evidence_ids:
+      - evidence-code-repository-role
+      - evidence-data-repository-availability
+    conflicting_evidence_ids:
+      - evidence-observed-incomplete-data-checkout
+    used_by_claim_ids: []
+    used_by_operation_ids: []
+    participant_requirement_allowed: false
+    notes: The source repository is not included in participant packages.
+
+  - evidence_id: evidence-data-repository-availability
+    type: data
+    statement: >-
+      The official data README identifies the IBM 14-qubit dataset, a Dryad
+      alternate, data.zip, a pickle-reading notebook, and a Figure 4 notebook.
+    origin_class: code_present
+    source:
+      source_id: repo-efficient-learning-data
+      locator_type: path-lines
+      locator:
+        path: authoring/sources/EfficientLearningDataSet/README.md
+        start_line: 1
+        end_line: 13
+        section: repository README
+    exact_quote_or_value: 'data.zip; pickle reader; Dryad; Linear_Chain.nb reproduces Figure 4'
+    confidence: high
+    corroborating_evidence_ids:
+      - evidence-paper-code-availability
+    conflicting_evidence_ids:
+      - evidence-observed-incomplete-data-checkout
+    used_by_claim_ids:
+      - claim-leaf-figure4-sqrt-scaling
+    used_by_operation_ids: []
+    participant_requirement_allowed: false
+    notes: Pickle content would require sandboxed conversion before any use.
+
+  - evidence_id: evidence-data-figure4-notebook
+    type: code
+    statement: The repository provides a Wolfram notebook stated to reproduce Figure 4.
+    origin_class: code_present
+    source:
+      source_id: repo-efficient-learning-data
+      locator_type: path-lines
+      locator:
+        path: authoring/sources/EfficientLearningDataSet/README.md
+        start_line: 11
+        end_line: 13
+        section: repository README
+        artifact_sha256: 2c4631c151b5433c9725ad0a2e65c539e7c13af381608ee483a03356cc653a88
+    exact_quote_or_value: 'Linear_Chain.nb will reproduce Figure 4'
+    confidence: high
+    corroborating_evidence_ids:
+      - evidence-paper-figure4-scalability
+    conflicting_evidence_ids:
+      - evidence-source-figure4-mismatch
+    used_by_claim_ids:
+      - claim-leaf-figure4-sqrt-scaling
+    used_by_operation_ids: []
+    participant_requirement_allowed: false
+    notes: Not executed because the Wolfram runtime is proprietary and unpinned.
+
+  - evidence_id: evidence-observed-incomplete-data-checkout
+    type: trace
+    statement: >-
+      The pinned data repository has no index, a zero-byte index.lock, an
+      unhydrated worktree, and only four root files; data.zip is absent from the
+      worktree although its LFS object exists in .git.
+    origin_class: dynamically_observed
+    source:
+      source_id: source-inspection-2026-08-15
+      locator_type: trace-event
+      locator:
+        path: authoring/sources/EfficientLearningDataSet
+        trace_event: >-
+          git status --short; HEAD tree inspection; .git/index and index.lock
+          inspection; .git/lfs/objects inspection
+    exact_quote_or_value: 'LFS object sha256 aad1fdf3...e73ac, size 311764270 bytes; worktree data.zip absent'
+    confidence: high
+    corroborating_evidence_ids: []
+    conflicting_evidence_ids:
+      - evidence-data-repository-availability
+      - evidence-paper-experiment-protocol
+      - evidence-paper-code-availability
+    used_by_claim_ids: []
+    used_by_operation_ids: []
+    participant_requirement_allowed: false
+    notes: The LFS object was not unpickled or executed and is not used by selected tasks.
+
+  - evidence_id: evidence-observed-paper-source-case-defect
+    type: trace
+    statement: >-
+      The TeX source requests lowercase figure2.pdf while the archive contains
+      uppercase Figure2.pdf, breaking unchanged compilation on case-sensitive systems.
+    origin_class: dynamically_observed
+    source:
+      source_id: source-inspection-2026-08-15
+      locator_type: path-lines
+      locator:
+        path: authoring/sources/paper_source/noiseLearningArxiv.tex
+        start_line: 172
+        end_line: 172
+        trace_event: compared include path with extracted directory entry
+    exact_quote_or_value: 'figures/figure2.pdf versus figures/Figure2.pdf'
+    confidence: high
+    corroborating_evidence_ids: []
+    conflicting_evidence_ids: []
+    used_by_claim_ids: []
+    used_by_operation_ids: []
+    participant_requirement_allowed: false
+    notes: Compilation was unnecessary and not attempted.
+
+  - evidence_id: evidence-source-figure4-mismatch
+    type: limitation
+    statement: >-
+      Figure 4's caption conflicts with its source notebook about both the
+      second metric and the second fit family.
+    origin_class: code_present
+    source:
+      source_id: repo-efficient-learning-data
+      locator_type: path-lines
+      locator:
+        path: authoring/sources/EfficientLearningDataSet/Linear_Chain.nb
+        start_line: 4144
+        end_line: 4181
+        additional_lines: 4750-4786
+        corroborating_path: authoring/sources/paper_source/figures/Figure4.wl:1-8
+    exact_quote_or_value: 'Hellinger uses a*sqrt(L); 1000*D(q||p) uses a*L'
+    confidence: high
+    corroborating_evidence_ids: []
+    conflicting_evidence_ids:
+      - evidence-paper-figure4-scalability
+      - evidence-data-figure4-notebook
+    used_by_claim_ids:
+      - claim-leaf-figure4-sqrt-scaling
+    used_by_operation_ids: []
+    participant_requirement_allowed: false
+    notes: Figure 4 is not used as an exact oracle or participant-visible answer.
+
+  - evidence_id: evidence-source-two-qubit-xy-typo
+    type: limitation
+    statement: >-
+      Supplement prose says the correlated XY probability becomes 0.0006, but
+      the table and all downstream arithmetic use 0.006.
+    origin_class: paper_reported
+    source:
+      source_id: arxiv-1907.13022v2
+      locator_type: path-lines
+      locator:
+        path: authoring/sources/paper_source/noiseLearningArxiv.tex
+        start_line: 1902
+        end_line: 1931
+        additional_lines: 1967-1979
+    exact_quote_or_value: 'prose 0.0006; Table V 0.006; downstream correlation 0.0639497067'
+    confidence: high
+    corroborating_evidence_ids: []
+    conflicting_evidence_ids: []
+    used_by_claim_ids:
+      - claim-leaf-observed-rates-preserve-correlations
+    used_by_operation_ids: []
+    participant_requirement_allowed: false
+    notes: Arithmetic supports 0.006; the micro-case is rejected as a final task.
+
+  - evidence_id: evidence-source-grf-zero-support-heuristic
+    type: limitation
+    statement: >-
+      Official GRF code substitutes 1e-8 for zero separator probabilities and
+      mean-fills undefined conditional columns.
+    origin_class: code_present
+    source:
+      source_id: repo-juqst
+      locator_type: path-lines
+      locator:
+        path: authoring/sources/Juqst.jl/src/marginal.jl
+        start_line: 296
+        end_line: 300
+        additional_lines: 348-373
+    exact_quote_or_value: 'zero separator -> 1e-8; zero conditional column -> mean fill'
+    confidence: high
+    corroborating_evidence_ids: []
+    conflicting_evidence_ids:
+      - evidence-paper-grf-locality
+    used_by_claim_ids:
+      - claim-leaf-bounded-local-grf-scalability
+    used_by_operation_ids:
+      - op-reconcile-overlapping-marginals
+    participant_requirement_allowed: false
+    notes: Public local-task smoothing rules must be independently specified.
+
+  - evidence_id: evidence-source-notebook-defects
+    type: limitation
+    statement: >-
+      The two-qubit notebook reuses run-1 bootstrap matrices for run-2/run-3
+      bounds and contains a saved undefined-module error.
+    origin_class: code_present
+    source:
+      source_id: repo-juqst
+      locator_type: path-lines
+      locator:
+        path: authoring/sources/Juqst.jl/docs/examples/quantumNoise/TwoQubitGatesRuns.ipynb
+        start_line: 1737
+        end_line: 1748
+        additional_lines: 2344-2358
+    exact_quote_or_value: 'corrmatsRV1 reused; UndefVarError: Marginal not defined'
+    confidence: high
+    corroborating_evidence_ids: []
+    conflicting_evidence_ids:
+      - evidence-code-repository-role
+    used_by_claim_ids: []
+    used_by_operation_ids: []
+    participant_requirement_allowed: false
+    notes: Official notebook outputs are not private evaluator references.
+
+  - evidence_id: evidence-benchmark-synthetic-spectral-instances
+    type: config
+    statement: >-
+      The spectral task uses trusted synthetic count histories generated from a
+      disclosed stationary XOR-convolution observation model. Hidden observed
+      distributions are formed as q=B^tensor-n s from normalized nonnegative
+      Pauli-support vectors s, with hidden channel, SPAM, labels, lengths, and
+      sampling variation.
+    origin_class: grounded_extension
+    source:
+      source_id: benchmark-design-spectral-correlation-audit-v1
+      locator_type: config-key
+      locator:
+        path: tasks/spectral_correlation_audit/private
+        config_key: hidden_suite.generator
+    exact_quote_or_value: 'synthetic XOR-convolution counts; hidden ordinary, shift, and adversarial cases'
+    confidence: high
+    corroborating_evidence_ids:
+      - evidence-paper-five-stage-protocol
+      - evidence-paper-decay-model
+      - evidence-paper-observed-pauli-visibility-map
+    conflicting_evidence_ids: []
+    used_by_claim_ids:
+      - claim-leaf-long-range-correlations-and-local-model-mismatch
+    used_by_operation_ids:
+      - op-xor-correct-and-aggregate-counts
+      - op-fit-nuisance-decays
+      - op-rank-nonlocal-interactions
+    participant_requirement_allowed: true
+    notes: >-
+      Exact private seeds, cases, thresholds, weights, and references remain
+      hidden. The privileged oracle must check NH^tensor-n q recovers s within a
+      fixed internal numerical tolerance and has no negative support beyond that
+      tolerance.
+
+  - evidence_id: evidence-benchmark-local-junction-extension
+    type: config
+    statement: >-
+      The local task uses generic classical binary distributions q* in a disclosed
+      running-intersection clique-tree family, adds independent noisy local count
+      tables, and evaluates
+      overlap reconciliation, exact nonenumerative queries, and held-out parity
+      interaction audits.
+    origin_class: grounded_extension
+    source:
+      source_id: benchmark-design-local-junction-noise-model-v1
+      locator_type: config-key
+      locator:
+        path: tasks/scalable_local_noise_model
+        config_key: participant.contract
+    exact_quote_or_value: 'junction-tree counts, overlap reconciliation, partial queries, parity anomaly audit'
+    confidence: high
+    corroborating_evidence_ids:
+      - evidence-paper-grf-factorization
+      - evidence-paper-marginalization-scalability
+    conflicting_evidence_ids: []
+    used_by_claim_ids:
+      - claim-leaf-bounded-local-grf-scalability
+    used_by_operation_ids:
+      - op-reconstruct-local-clique-tree-model
+      - op-parse-local-count-tables
+      - op-reconcile-overlapping-marginals
+      - op-construct-normalized-junction-model
+      - op-answer-partial-assignment-queries
+      - op-predict-validation-interactions
+      - op-rank-missed-interactions
+      - op-report-model-diagnostics
+    participant_requirement_allowed: true
+    notes: >-
+      The public task specifies table ordering, a predictive method-agnostic
+      reconstruction target with a pseudocount baseline, query semantics, and
+      audit score semantics. Junction-tree width, exact normalization, arbitrary
+      partial-assignment queries, and held-out validation are benchmark-derived;
+      the paper itself claims bounded-degree polynomial learning only up to an
+      overall normalizing factor and delegates its proof to Ref. 28.
+      The benchmark does not assert that every generated q* is the observed-error
+      image of a physical Pauli channel; that quantum-physicality condition is
+      specific to the spectral generator.
+
+  - evidence_id: evidence-benchmark-separation-decision
+    type: config
+    statement: >-
+      Participant packages contain only neutral task descriptions, generated
+      inputs, and validators; source paper/repositories, generator secrets,
+      evaluator details, thresholds, references, and mutants remain outside.
+    origin_class: benchmark_choice
+    source:
+      source_id: authoring-session-2026-08-15
+      locator_type: config-key
+      locator:
+        path: authoring/source_manifest.yaml
+        config_key: license_and_privacy_decision
+    exact_quote_or_value: 'neutral synthetic public inputs; strict participant/private/author separation'
+    confidence: high
+    corroborating_evidence_ids: []
+    conflicting_evidence_ids: []
+    used_by_claim_ids: []
+    used_by_operation_ids: []
+    participant_requirement_allowed: true
+    notes: >-
+      Earlier participant scans, isolated access probes, exact inventories, and
+      package-nonmutation checks passed, but corrected builds require fresh final
+      leakage and nonmutation verification after adversarial-audit repairs.
+
+coverage:
+  paper_sections_reviewed:
+    - main text, including Figures 1-4
+    - Methods - Analysis of probability distributions
+    - Methods - Gibbs Random Fields
+    - Methods - IBM Quantum Experience and Error Bars
+    - supplementary Preliminaries and Learning the averaged noise
+    - supplementary Meaning of Observed Error Rate
+    - supplementary Scalable Estimations
+    - supplementary Running the protocol in simulation and on a device
+    - Data Availability and Code Availability
+  repository_paths_reviewed:
+    - authoring/sources/Juqst.jl/README.md
+    - authoring/sources/Juqst.jl/LICENSE
+    - authoring/sources/Juqst.jl/Project.toml
+    - authoring/sources/Juqst.jl/Manifest.toml
+    - authoring/sources/Juqst.jl/src/marginal.jl
+    - authoring/sources/Juqst.jl/docs/examples/quantumNoise
+    - authoring/sources/EfficientLearningDataSet/README.md
+    - authoring/sources/EfficientLearningDataSet/LICENSE
+    - authoring/sources/EfficientLearningDataSet/Linear_Chain.nb
+  remote_repository_paths_reviewed:
+    - https://github.com/rharper2/query_ibmq/blob/d73e1002f5f0ec35f54bf47c338f8c28eaaaa954/createAndRunCircuits.ipynb
+    - https://github.com/rharper2/query_ibmq/blob/d73e1002f5f0ec35f54bf47c338f8c28eaaaa954/PickleExtractor.ipynb
+  configurations_reviewed:
+    - Juqst.jl/Project.toml
+    - Juqst.jl/Manifest.toml
+    - EfficientLearningDataSet/.gitattributes
+    - embedded repository commits, remotes, sparse/partial-clone state, and licenses
+  dynamic_runs_reviewed:
+    - source-inspection-2026-08-15
+  known_gaps:
+    - Official Julia and Wolfram workflows were not executed.
+    - The empirical data worktree is incomplete; notebooks and worktree data.zip are absent.
+    - Dryad version 5/internal version 70586 provides exact official hashes for all four release files despite the incomplete local worktree.
+    - The LFS data archive was not extracted or unpickled.
+    - Paper bytes remain author-only under arXiv's non-exclusive distribution license.
+    - Checkout-stable spectral build 0bba762f4be56c68c2b20c5147c99d37b716f47ae74a8cff88f7f2271e796a1b and participant projection eaeef52ee4dc8f7c97ef26d0bb2070a42feb3d50ec21da9499be2dbe817fa1d2 have zero CRLF/cache files and passed an independent ten-of-ten rerun; peak memory and production-container enforcement remain unmeasured.
+    - Local build b006df370e1038ac1e6cf7deeea1cc824110366807f6523223ca408612c196b0 passed an independent nine-of-nine run but is retracted as final evidence because 56 generated text fixtures used CRLF despite repository LF normalization.
+    - Checkout-stable local build 9716962c4c4f3338ef2b66a7aea69e10289c8575db33edd64cbadb81e8a62573 and participant projection f095d644815187489501b6a83567f01888b929b47164156f140b9bc6f0841834 contain 92 UTF-8/LF files with zero CRLF/cache files and passed an independent nine-of-nine rerun; peak memory and production-container enforcement remain unmeasured.
+    - Figure 4 metric, fit-family, and indexing conflicts prevent exact plot-value oracle use.
+    - Paper fit-cutoff symbols are undefined, experimental run counts disagree, and the simulation length grid is ambiguous; none is used as selected-task oracle truth.
+    - The bounded-degree GRF proof is delegated to Ref. 28 and is stated only up to normalization; the junction-tree width/query contract is a grounded benchmark extension.
+    - Official notebooks contain unresolved heuristic and copy-paste defects.
+
+validation:
+  every_record_has_locator: true
+  low_confidence_hidden_requirements: []
+  unresolved_conflicts:
+    - conflict-paper-source-case
+    - conflict-data-snapshot-incomplete
+    - conflict-source-environment-unpinned
+    - conflict-figure4-metric-and-fit
+    - conflict-figure4-indexing
+    - conflict-notebook-bootstrap-copy-paste
+    - conflict-notebook-saved-error
+    - conflict-experimental-run-count
+    - conflict-simulation-grid-and-shots
+  observed_resolved_conflicts:
+    - conflict-embedded-git-packaging
+  benchmark_resolved_conflicts:
+    - conflict-jsd-square-root
+    - conflict-jsd-main-text-bound
+    - conflict-dependence-log-base
+    - conflict-reconstruct-hardcoded-14
+    - conflict-supplement-xy-typo
+    - conflict-grf-zero-support
+    - conflict-fit-cutoff-symbols
+  participant_hidden_dependency_status: >-
+    No known hidden paper/source dependency in either design. Both current
+    participant projections passed fresh independent paper-blind review, and no
+    known participant requirement depends on hidden paper/source information.
+    Both executable closures pass on independently reproduced checkout-stable
+    builds. Frontier-agent calibration, collaborator scientific review, secret
+    scored-seed regeneration, peak-memory measurement, and production ALE
+    isolation remain outside this authoring verification.

@@ -1,0 +1,105 @@
+{
+  "aggregate": {
+    "minimum_group_weak_minus_strong": 0.07309571411437954,
+    "observed_ratio_maximum": 0.6401027249147097,
+    "observed_ratio_minimum": 0.25316171807023113,
+    "strong_mean_r": 0.3967747341652005,
+    "weak_mean_r": 0.5031222903864401,
+    "weak_minus_strong": 0.10634755622123959
+  },
+  "case_id": "heisenberg_ed_fixed_sector",
+  "derivation_type": "small_exact_diagonalization",
+  "group_summaries": [
+    {
+      "realizations": 12,
+      "size": 8,
+      "strong_control": 8.0,
+      "strong_mean_r": 0.38861438331258613,
+      "strong_sem": 0.02210780746868592,
+      "target": 0.25,
+      "weak_control": 0.75,
+      "weak_mean_r": 0.47997096976464765,
+      "weak_minus_strong": 0.09135658645206152,
+      "weak_sem": 0.0186172631705842
+    },
+    {
+      "realizations": 12,
+      "size": 8,
+      "strong_control": 8.0,
+      "strong_mean_r": 0.3830007245847284,
+      "strong_sem": 0.012742487485910866,
+      "target": 0.5,
+      "weak_control": 0.75,
+      "weak_mean_r": 0.4992515789076053,
+      "weak_minus_strong": 0.1162508543228769,
+      "weak_sem": 0.020839926336577275
+    },
+    {
+      "realizations": 12,
+      "size": 8,
+      "strong_control": 8.0,
+      "strong_mean_r": 0.39924019608737465,
+      "strong_sem": 0.013078741761118966,
+      "target": 0.75,
+      "weak_control": 0.75,
+      "weak_mean_r": 0.4895675220854794,
+      "weak_minus_strong": 0.09032732599810472,
+      "weak_sem": 0.021039376052091666
+    },
+    {
+      "realizations": 12,
+      "size": 10,
+      "strong_control": 8.0,
+      "strong_mean_r": 0.3952597816086727,
+      "strong_sem": 0.01604633478477561,
+      "target": 0.25,
+      "weak_control": 0.75,
+      "weak_mean_r": 0.523388057192072,
+      "weak_minus_strong": 0.12812827558339934,
+      "weak_sem": 0.011304190124485618
+    },
+    {
+      "realizations": 12,
+      "size": 10,
+      "strong_control": 8.0,
+      "strong_mean_r": 0.40682842981383094,
+      "strong_sem": 0.008957924404678394,
+      "target": 0.5,
+      "weak_control": 0.75,
+      "weak_mean_r": 0.5457550106704473,
+      "weak_minus_strong": 0.13892658085661636,
+      "weak_sem": 0.011609806268912
+    },
+    {
+      "realizations": 12,
+      "size": 10,
+      "strong_control": 8.0,
+      "strong_mean_r": 0.40770488958400986,
+      "strong_sem": 0.010038495664862293,
+      "target": 0.75,
+      "weak_control": 0.75,
+      "weak_mean_r": 0.4808006036983894,
+      "weak_minus_strong": 0.07309571411437954,
+      "weak_sem": 0.013305988854434373
+    }
+  ],
+  "invariants": {
+    "bounded_adjacent_gap_ratios": true,
+    "complete_raw_sector_spectra_stored": true,
+    "every_size_target_group_orders_weak_above_strong": true,
+    "fixed_sector_dimensions_match_binomial": true,
+    "hamiltonians_are_real_symmetric": true,
+    "normalized_target_selection_used": true,
+    "spectra_are_finite": true,
+    "weak_field_mean_exceeds_strong_field_mean": true
+  },
+  "packet_count": 144,
+  "raw_eigenvalue_count": 23184,
+  "schema_version": "spectral-ed-realism-truth-summary/v1",
+  "sector_dimensions": {
+    "10": 252,
+    "8": 70
+  },
+  "spectrum_digest": "495058ccf1307503abafb7eb28ef8eae573189428c375cbb8a29016f62ca4ff2",
+  "unique_spectrum_count": 48
+}

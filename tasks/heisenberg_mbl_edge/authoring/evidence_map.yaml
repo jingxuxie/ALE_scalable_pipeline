@@ -1,0 +1,568 @@
+schema_version: paper2ale.codex-evidence-map/v1
+
+paper_id: "arxiv:1411.0660v2"
+
+records:
+  - evidence_id: "evidence-model-hamiltonian"
+    type: "equation"
+    statement: "The reported system is a periodic spin-1/2 Heisenberg chain with random longitudinal fields and conserved total magnetization."
+    origin_class: "paper_reported"
+    source:
+      source_id: "arxiv-v2-pdf"
+      locator_type: "page-equation"
+      locator: {page: 2, section: "model definition", equation: "1", table: null, figure: null, path: null, start_line: null, end_line: null, config_key: null, trace_event: null}
+    exact_quote_or_value: "H=sum_i S_i dot S_(i+1)-h_i S_i^z; h_i in [-h,h]"
+    confidence: "high"
+    corroborating_evidence_ids: []
+    conflicting_evidence_ids: []
+    used_by_claim_ids: ["claim-root", "leaf-joint-finite-size-signatures"]
+    used_by_operation_ids: ["op-paper-model", "op-dsa-assemble-hamiltonian"]
+    participant_requirement_allowed: true
+    notes: "A task must disclose the exchange normalization, periodic closing bond, field sign, spin convention, and basis ordering."
+
+  - evidence_id: "evidence-sectors-energy-coordinate"
+    type: "protocol"
+    statement: "The paper resolves fixed-magnetization sectors and normalizes each realization by its own extremal energies."
+    origin_class: "paper_reported"
+    source:
+      source_id: "arxiv-v2-pdf"
+      locator_type: "page-section"
+      locator: {page: 2, section: "Numerical method", equation: null, table: null, figure: null, path: null, start_line: null, end_line: null, config_key: null, trace_event: null}
+    exact_quote_or_value: "epsilon=(E-Emax)/(E0-Emax); even L use S^z=0; odd L are labeled S^z=1"
+    confidence: "high"
+    corroborating_evidence_ids: ["evidence-odd-sector-ambiguity"]
+    conflicting_evidence_ids: ["evidence-odd-sector-ambiguity"]
+    used_by_claim_ids: ["leaf-gap-ratio-fss-audit", "leaf-joint-finite-size-signatures"]
+    used_by_operation_ids: ["op-paper-energy-targeting", "op-dsa-enumerate-sector", "op-dsa-select-packets"]
+    participant_requirement_allowed: true
+    notes: "Use n_up rather than inheriting the ambiguous odd-L S^z label. The coordinate maps Emax to 0 and E0 to 1."
+
+  - evidence_id: "evidence-shift-invert-sampling"
+    type: "protocol"
+    statement: "The source workflow uses shift-invert/Krylov eigenpairs at 19 energy targets with realization ensembles and reduced L=22 sampling."
+    origin_class: "paper_reported"
+    source:
+      source_id: "arxiv-v2-pdf"
+      locator_type: "page-section"
+      locator: {page: "2-3", section: "Numerical method", equation: null, table: null, figure: null, path: null, start_line: null, end_line: null, config_key: null, trace_event: null}
+    exact_quote_or_value: "at least 50 eigenpairs; epsilon=0.05,0.10,...,0.95; >=1000 realizations except L=22 uses 50-250"
+    confidence: "high"
+    corroborating_evidence_ids: []
+    conflicting_evidence_ids: []
+    used_by_claim_ids: ["leaf-gap-ratio-fss-audit", "leaf-l22-shiftinvert-reproduction"]
+    used_by_operation_ids: ["op-paper-eigenpairs", "op-paper-energy-targeting"]
+    participant_requirement_allowed: true
+    notes: "The selected tasks do not require this production-scale computation."
+
+  - evidence_id: "evidence-realization-first-binning"
+    type: "protocol"
+    statement: "All target eigenstates from one disorder realization are binned before standard errors are computed across realizations."
+    origin_class: "paper_reported"
+    source:
+      source_id: "arxiv-v2-pdf"
+      locator_type: "page-section"
+      locator: {page: 3, section: "Numerical method, paragraph continuing below Figure 2", equation: null, table: null, figure: "2", path: null, start_line: null, end_line: null, config_key: null, trace_event: null}
+    exact_quote_or_value: "bin over all eigenstates of one realization, then compute SEM over bin averages"
+    confidence: "high"
+    corroborating_evidence_ids: []
+    conflicting_evidence_ids: []
+    used_by_claim_ids: ["leaf-gap-ratio-fss-audit", "leaf-joint-finite-size-signatures"]
+    used_by_operation_ids: ["op-paper-realization-binning", "op-ssa-bin", "op-dsa-realization-bin"]
+    participant_requirement_allowed: true
+    notes: "Treating eigenstates as independent is a scientifically realistic pseudoreplication mutant."
+
+  - evidence_id: "evidence-gap-ratio-definition"
+    type: "metric"
+    statement: "The adjacent-gap ratio uses two neighboring raw level spacings and requires no reported unfolding step."
+    origin_class: "paper_reported"
+    source:
+      source_id: "aps-version-of-record"
+      locator_type: "page-section"
+      locator: {page: "081103-2", section: "Level statistics and eigenvectors similarity", equation: null, table: null, figure: null, path: null, start_line: null, end_line: null, config_key: null, trace_event: null}
+    exact_quote_or_value: "r_n=min(delta_n,delta_(n+1))/max(delta_n,delta_(n+1))"
+    confidence: "high"
+    corroborating_evidence_ids: []
+    conflicting_evidence_ids: []
+    used_by_claim_ids: ["leaf-gap-ratio-fss-audit", "leaf-joint-finite-size-signatures"]
+    used_by_operation_ids: ["op-paper-gap-ratio", "op-ssa-gap", "op-dsa-compute-observables"]
+    participant_requirement_allowed: true
+    notes: "Packet-edge, degeneracy, and exact selection conventions are not fully reported and must be specified by the benchmark."
+
+  - evidence_id: "evidence-gap-ratio-center-result"
+    type: "result"
+    statement: "At epsilon=0.5, the finite-size gap-ratio curves cross and the reported collapse yields a central critical-field estimate."
+    origin_class: "paper_reported"
+    source:
+      source_id: "aps-version-of-record"
+      locator_type: "page-figure"
+      locator: {page: "081103-3", section: "Results and finite size scaling analysis", equation: null, table: null, figure: "2 top and inset", path: null, start_line: null, end_line: null, config_key: null, trace_event: null}
+    exact_quote_or_value: "epsilon=0.5; h_c=3.72(6); nu=0.91(7); r_GOE=0.5307(1); r_Poisson=0.3863"
+    confidence: "high"
+    corroborating_evidence_ids: ["evidence-fss-protocol", "evidence-stability-grid"]
+    conflicting_evidence_ids: []
+    used_by_claim_ids: ["leaf-gap-ratio-fss-audit"]
+    used_by_operation_ids: ["op-paper-gap-ratio", "op-paper-fss"]
+    participant_requirement_allowed: false
+    notes: "Reported numbers ground the task design but are never participant targets or hidden magic constants."
+
+  - evidence_id: "evidence-kl-signatures"
+    type: "result"
+    statement: "Neighboring-eigenstate KL behavior separates weak and strong finite-size regimes alongside gap statistics."
+    origin_class: "paper_reported"
+    source:
+      source_id: "aps-version-of-record"
+      locator_type: "page-figure"
+      locator: {page: "081103-2 to 081103-3", section: "Level statistics; Results", equation: null, table: null, figure: "2 bottom", path: null, start_line: null, end_line: null, config_key: null, trace_event: null}
+    exact_quote_or_value: "KL=sum_i p_i ln(p_i/q_i); weak h=1 narrows near 2; strong h=4.8 mean and variance grow with L"
+    confidence: "high"
+    corroborating_evidence_ids: ["evidence-gap-ratio-center-result"]
+    conflicting_evidence_ids: ["evidence-kl-pairing-gap"]
+    used_by_claim_ids: ["leaf-joint-finite-size-signatures"]
+    used_by_operation_ids: ["op-paper-kl"]
+    participant_requirement_allowed: false
+    notes: "The exact source pairing convention is underspecified. The selected sector task avoids KL as a required output; any future task using it must disclose a deterministic pairing rule."
+
+  - evidence_id: "evidence-kl-pairing-gap"
+    type: "limitation"
+    statement: "The source alternates between nearby eigenstates and randomly chosen states at one energy target when describing KL pairs."
+    origin_class: "author_inferred"
+    source:
+      source_id: "arxiv-v2-source"
+      locator_type: "path-disjoint-lines"
+      locator: {page: null, section: null, equation: null, table: null, figure: null, path: "mbl.tex", start_line: 162, end_line: 168, additional_lines: [242], config_key: null, trace_event: null}
+    exact_quote_or_value: "nearby eigenstates versus randomly chosen at the same energy target"
+    confidence: "high"
+    corroborating_evidence_ids: []
+    conflicting_evidence_ids: ["evidence-kl-signatures"]
+    used_by_claim_ids: ["leaf-joint-finite-size-signatures"]
+    used_by_operation_ids: []
+    participant_requirement_allowed: false
+    notes: "This cannot be a hidden dependency. The selected sector task avoids KL; any future benchmark using KL must own and disclose its pairing rule."
+
+  - evidence_id: "evidence-entanglement-scaling"
+    type: "result"
+    statement: "Half-chain entanglement changes from volume-like to area-like finite-size scaling across disorder."
+    origin_class: "paper_reported"
+    source:
+      source_id: "aps-version-of-record"
+      locator_type: "page-figure"
+      locator: {page: "081103-3", section: "Results", equation: null, table: null, figure: "3", path: null, start_line: null, end_line: null, config_key: null, trace_event: null}
+    exact_quote_or_value: "epsilon=0.5: h_c=3.62(2), nu=0.80(4); epsilon=0.8: h_c=2.27(2), nu=1.02(3)"
+    confidence: "high"
+    corroborating_evidence_ids: []
+    conflicting_evidence_ids: ["evidence-ee-sigma-ambiguity"]
+    used_by_claim_ids: ["leaf-entanglement-ridge", "leaf-joint-finite-size-signatures"]
+    used_by_operation_ids: ["op-paper-entanglement", "op-dsa-compute-observables", "op-dsa-ensemble-contrast"]
+    participant_requirement_allowed: false
+    notes: "A table-only fit to these plotted points was rejected as too shallow."
+
+  - evidence_id: "evidence-ee-sigma-ambiguity"
+    type: "limitation"
+    statement: "The prose treats sigma_E as a standard deviation while the Figure 3 caption calls it variance."
+    origin_class: "paper_reported"
+    source:
+      source_id: "arxiv-v2-pdf"
+      locator_type: "page-figure"
+      locator: {page: 3, section: "Results", equation: null, table: null, figure: "3 and caption", path: null, start_line: null, end_line: null, config_key: null, trace_event: null}
+    exact_quote_or_value: "standard deviation in prose; variance in caption"
+    confidence: "high"
+    corroborating_evidence_ids: []
+    conflicting_evidence_ids: ["evidence-entanglement-scaling"]
+    used_by_claim_ids: ["leaf-entanglement-ridge"]
+    used_by_operation_ids: []
+    participant_requirement_allowed: false
+    notes: "Any future use requires an explicit benchmark convention."
+
+  - evidence_id: "evidence-bipartite-fluctuation-result"
+    type: "result"
+    statement: "Half-chain magnetization fluctuations provide another finite-size crossing and collapse."
+    origin_class: "paper_reported"
+    source:
+      source_id: "aps-version-of-record"
+      locator_type: "page-figure"
+      locator: {page: "081103-4", section: "Results", equation: null, table: null, figure: "4", path: null, start_line: null, end_line: null, config_key: null, trace_event: null}
+    exact_quote_or_value: "epsilon=0.3; h_c=3.09(7); nu=0.77(4)"
+    confidence: "high"
+    corroborating_evidence_ids: []
+    conflicting_evidence_ids: []
+    used_by_claim_ids: ["leaf-multiple-observable-consistency", "leaf-joint-finite-size-signatures"]
+    used_by_operation_ids: ["op-paper-entanglement", "op-dsa-compute-observables", "op-dsa-ensemble-contrast"]
+    participant_requirement_allowed: false
+    notes: "Useful corroboration, not a selected target leaf."
+
+  - evidence_id: "evidence-participation-result"
+    type: "result"
+    statement: "Participation entropy grows extensively in the weak-disorder example and much more slowly in the strong-disorder example."
+    origin_class: "paper_reported"
+    source:
+      source_id: "aps-version-of-record"
+      locator_type: "page-figure"
+      locator: {page: "081103-4", section: "Hilbert space localization and Discussion", equation: null, table: null, figure: "5", path: null, start_line: null, end_line: null, config_key: null, trace_event: null}
+    exact_quote_or_value: "epsilon=0.4; h=1.8 has a_1,a_2 about 1; h=4.8 has a_1=0.07(9), a_2=0.00(7)"
+    confidence: "high"
+    corroborating_evidence_ids: ["evidence-no-true-hilbert-localization"]
+    conflicting_evidence_ids: ["evidence-version-multifractality"]
+    used_by_claim_ids: ["leaf-joint-finite-size-signatures", "leaf-no-true-hilbert-localization"]
+    used_by_operation_ids: ["op-paper-participation", "op-dsa-compute-observables", "op-dsa-ensemble-contrast"]
+    participant_requirement_allowed: true
+    notes: "Natural-log participation entropy and the computational-basis convention must be public."
+
+  - evidence_id: "evidence-no-true-hilbert-localization"
+    type: "claim"
+    statement: "Within accessible sizes, the participation entropy continues growing in the strong-disorder regime, so true Hilbert-space localization is not established."
+    origin_class: "paper_reported"
+    source:
+      source_id: "aps-version-of-record"
+      locator_type: "page-section"
+      locator: {page: "081103-4", section: "Hilbert space localization; Discussion and conclusions", equation: null, table: null, figure: "5", path: null, start_line: null, end_line: null, config_key: null, trace_event: null}
+    exact_quote_or_value: "small positive a_q and a_q=0 plus logarithmic growth cannot be separated"
+    confidence: "high"
+    corroborating_evidence_ids: ["evidence-participation-result"]
+    conflicting_evidence_ids: ["evidence-version-multifractality"]
+    used_by_claim_ids: ["leaf-no-true-hilbert-localization"]
+    used_by_operation_ids: ["op-paper-participation"]
+    participant_requirement_allowed: false
+    notes: "Preserve the finite-size and fit-form qualification."
+
+  - evidence_id: "evidence-mobility-edge-claim"
+    type: "claim"
+    statement: "The paper interprets energy-resolved finite-size transition estimates as an extensive many-body mobility edge."
+    origin_class: "paper_reported"
+    source:
+      source_id: "aps-version-of-record"
+      locator_type: "page-figure"
+      locator: {page: "081103-1 and 081103-4", section: "Abstract; Discussion and conclusions", equation: null, table: null, figure: "1", path: null, start_line: null, end_line: null, config_key: null, trace_event: null}
+    exact_quote_or_value: "energy-resolved transition estimates form a boundary in h versus epsilon"
+    confidence: "high"
+    corroborating_evidence_ids: ["evidence-gap-ratio-center-result", "evidence-entanglement-scaling", "evidence-bipartite-fluctuation-result"]
+    conflicting_evidence_ids: ["evidence-finite-size-caveat"]
+    used_by_claim_ids: ["claim-root", "leaf-multiple-observable-consistency"]
+    used_by_operation_ids: ["op-paper-reconcile-observables"]
+    participant_requirement_allowed: false
+    notes: "The second selected task explicitly avoids requiring a thermodynamic-edge conclusion."
+
+  - evidence_id: "evidence-finite-size-caveat"
+    type: "limitation"
+    statement: "The exponent and edge interpretation are subject to strong finite-size and correction-to-scaling concerns."
+    origin_class: "paper_reported"
+    source:
+      source_id: "aps-version-of-record"
+      locator_type: "page-section"
+      locator: {page: "081103-4", section: "Discussion and conclusions", equation: null, table: null, figure: null, path: null, start_line: null, end_line: null, config_key: null, trace_event: null}
+    exact_quote_or_value: "nu=0.8(3); apparent Harris-Chayes violation within used sizes; corrections may be nonstandard"
+    confidence: "high"
+    corroborating_evidence_ids: ["evidence-stability-grid", "evidence-fit-limitations"]
+    conflicting_evidence_ids: ["evidence-mobility-edge-claim"]
+    used_by_claim_ids: ["leaf-gap-ratio-fss-audit", "leaf-joint-finite-size-signatures"]
+    used_by_operation_ids: ["op-paper-stability", "op-ssa-report", "op-dsa-evidence-report"]
+    participant_requirement_allowed: true
+    notes: "Reported finite-size behavior is evaluable; a universal thermodynamic assertion is not required."
+
+  - evidence_id: "evidence-fss-protocol"
+    type: "protocol"
+    statement: "The supplement fits four observables to a one-parameter finite-size scaling form using a cubic representation of the universal curve."
+    origin_class: "paper_reported"
+    source:
+      source_id: "arxiv-v2-bundled-supplement"
+      locator_type: "page-section"
+      locator: {page: 6, section: "Details on fitting procedures and estimates of critical exponents and fields", equation: null, table: null, figure: "6-7", path: null, start_line: null, end_line: null, config_key: null, trace_event: null}
+    exact_quote_or_value: "g[(h-h_c)L^(1/nu)]; cubic g; r, f, S_E/L, and F/L"
+    confidence: "high"
+    corroborating_evidence_ids: ["evidence-stability-grid"]
+    conflicting_evidence_ids: []
+    used_by_claim_ids: ["leaf-gap-ratio-fss-audit"]
+    used_by_operation_ids: ["op-paper-fss", "op-ssa-fit"]
+    participant_requirement_allowed: true
+    notes: "The benchmark may accept equivalent robust fitting methods if evaluated behaviorally."
+
+  - evidence_id: "evidence-stability-grid"
+    type: "protocol"
+    statement: "The supplement scans fit half-width and minimum system size before selecting a production window."
+    origin_class: "paper_reported"
+    source:
+      source_id: "arxiv-v2-bundled-supplement"
+      locator_type: "page-figure"
+      locator: {page: 6, section: "Details on fitting procedures", equation: null, table: null, figure: "6-7", path: null, start_line: null, end_line: null, config_key: null, trace_event: null}
+    exact_quote_or_value: "L_min in {12,14,16}; w in {0.4,0.6,0.8,1.0,1.2}; preferred w=0.8 and L_min=14, gap ratio 15"
+    confidence: "high"
+    corroborating_evidence_ids: ["evidence-fss-protocol"]
+    conflicting_evidence_ids: []
+    used_by_claim_ids: ["leaf-gap-ratio-fss-audit"]
+    used_by_operation_ids: ["op-paper-stability", "op-ssa-stability"]
+    participant_requirement_allowed: true
+    notes: "Exact private grids may vary, but the public task must state the required stability analysis."
+
+  - evidence_id: "evidence-bootstrap-systematics"
+    type: "protocol"
+    statement: "Bootstrap uncertainty covers statistical fit error while spread across fit choices supplies an additional systematic scale."
+    origin_class: "paper_reported"
+    source:
+      source_id: "arxiv-v2-bundled-supplement"
+      locator_type: "page-section"
+      locator: {page: 6, section: "Details on fitting procedures, final paragraph", equation: null, table: null, figure: "6-7", path: null, start_line: null, end_line: null, config_key: null, trace_event: null}
+    exact_quote_or_value: "bootstrap statistical error plus systematic spread from the stability analysis"
+    confidence: "high"
+    corroborating_evidence_ids: ["evidence-stability-grid"]
+    conflicting_evidence_ids: []
+    used_by_claim_ids: ["leaf-gap-ratio-fss-audit"]
+    used_by_operation_ids: ["op-paper-bootstrap", "op-ssa-uncertainty"]
+    participant_requirement_allowed: true
+    notes: "The paper omits loss, optimizer, weighting, bootstrap count, and resampling unit; the benchmark must close those choices or be method-agnostic."
+
+  - evidence_id: "evidence-fit-limitations"
+    type: "limitation"
+    statement: "Largest-size-only fits, even-size-only entanglement, and low spectral density at energy extremes weaken the reported scaling analysis."
+    origin_class: "paper_reported"
+    source:
+      source_id: "arxiv-v2-bundled-supplement"
+      locator_type: "page-section"
+      locator: {page: 6, section: "Details on fitting procedures, discussion after Figures 6-7", equation: null, table: null, figure: "6-7", path: null, start_line: null, end_line: null, config_key: null, trace_event: null}
+    exact_quote_or_value: "L>=16 has too little size range; edge density of states is low; entanglement uses even L only"
+    confidence: "high"
+    corroborating_evidence_ids: ["evidence-finite-size-caveat"]
+    conflicting_evidence_ids: []
+    used_by_claim_ids: ["leaf-gap-ratio-fss-audit"]
+    used_by_operation_ids: ["op-ssa-report"]
+    participant_requirement_allowed: true
+    notes: "The audit task should reward diagnosis rather than conceal these limitations."
+
+  - evidence_id: "evidence-dynamic-fraction"
+    type: "result"
+    statement: "The supplement defines the dynamical spin fraction and reports another spectrum-center finite-size collapse."
+    origin_class: "paper_reported"
+    source:
+      source_id: "arxiv-v2-bundled-supplement"
+      locator_type: "page-equation-figure"
+      locator: {page: 7, section: "Dynamical spin fraction", equation: "2-3", table: null, figure: "8", path: null, start_line: null, end_line: null, config_key: null, trace_event: null}
+    exact_quote_or_value: "epsilon=0.5; h_c=3.42(6); nu=0.62(5)"
+    confidence: "high"
+    corroborating_evidence_ids: []
+    conflicting_evidence_ids: []
+    used_by_claim_ids: ["leaf-multiple-observable-consistency"]
+    used_by_operation_ids: ["op-paper-reconcile-observables"]
+    participant_requirement_allowed: false
+    notes: "Not selected because it would add dynamics without improving the two chosen verification boundaries."
+
+  - evidence_id: "evidence-missing-numerical-details"
+    type: "limitation"
+    statement: "The source omits multiple solution-critical numerical details needed for exact reproduction."
+    origin_class: "author_inferred"
+    source:
+      source_id: "arxiv-v2-pdf"
+      locator_type: "page-section"
+      locator: {page: "2-3 and 6", section: "Numerical method and supplementary fitting procedure", equation: null, table: null, figure: null, path: null, start_line: null, end_line: null, config_key: null, trace_event: null}
+    exact_quote_or_value: "solver tolerance, h grid, packet-edge rule, fitting loss, weighting, optimizer, and bootstrap count are absent"
+    confidence: "high"
+    corroborating_evidence_ids: ["evidence-no-2015-code-data"]
+    conflicting_evidence_ids: []
+    used_by_claim_ids: ["leaf-l22-shiftinvert-reproduction"]
+    used_by_operation_ids: []
+    participant_requirement_allowed: false
+    notes: "This is why direct L=22 reproduction is rejected and benchmark-specific conventions must be public."
+
+  - evidence_id: "evidence-version-multifractality"
+    type: "limitation"
+    statement: "Current v2 materially qualifies the stronger v1 multifractality and spectral-asymmetry language."
+    origin_class: "paper_reported"
+    source:
+      source_id: "arxiv-v1-v2-diff"
+      locator_type: "path-lines"
+      locator: {page: null, section: null, equation: null, table: null, figure: null, path: "v1:mbl.tex versus v2:mbl.tex", start_line: 52, end_line: 61, config_key: null, trace_event: null}
+    exact_quote_or_value: "v2 removes generic multifractality/asymmetry and retains a small-a_q finite-size ambiguity"
+    confidence: "high"
+    corroborating_evidence_ids: ["evidence-no-true-hilbert-localization"]
+    conflicting_evidence_ids: ["evidence-participation-result", "evidence-no-true-hilbert-localization"]
+    used_by_claim_ids: ["leaf-no-true-hilbert-localization"]
+    used_by_operation_ids: []
+    participant_requirement_allowed: false
+    notes: "Use v2 only for task semantics."
+
+  - evidence_id: "evidence-odd-sector-ambiguity"
+    type: "limitation"
+    statement: "For odd spin-1/2 chains the reported S^z=1 sector label is physically ambiguous."
+    origin_class: "author_inferred"
+    source:
+      source_id: "arxiv-v2-pdf"
+      locator_type: "page-section"
+      locator: {page: 2, section: "Numerical method", equation: null, table: null, figure: null, path: null, start_line: null, end_line: null, config_key: null, trace_event: null}
+    exact_quote_or_value: "odd L=15,17,19 labeled S^z=1"
+    confidence: "high"
+    corroborating_evidence_ids: ["evidence-sectors-energy-coordinate"]
+    conflicting_evidence_ids: ["evidence-sectors-energy-coordinate"]
+    used_by_claim_ids: ["leaf-joint-finite-size-signatures"]
+    used_by_operation_ids: ["op-dsa-enumerate-sector"]
+    participant_requirement_allowed: false
+    notes: "The benchmark must disclose n_up explicitly and never test a guessed doubled-magnetization convention."
+
+  - evidence_id: "evidence-no-2015-code-data"
+    type: "limitation"
+    statement: "No official implementation or raw-data release is linked to the 2015 article."
+    origin_class: "author_inferred"
+    source:
+      source_id: "author-official-publications"
+      locator_type: "webpage-section"
+      locator: {page: null, section: "2015 publication entry for the target article", equation: null, table: null, figure: null, path: "https://dluitz.github.io/publications/#2015", start_line: null, end_line: null, config_key: null, trace_event: null}
+    exact_quote_or_value: "Only APS and arXiv links are listed for the 2015 entry"
+    confidence: "high"
+    corroborating_evidence_ids: ["evidence-missing-numerical-details", "evidence-follow-on-code"]
+    conflicting_evidence_ids: []
+    used_by_claim_ids: ["leaf-l22-shiftinvert-reproduction"]
+    used_by_operation_ids: []
+    participant_requirement_allowed: false
+    notes: "Absence was checked on arXiv, APS, and the official author publication page; it is not proof that private historical code never existed."
+
+  - evidence_id: "evidence-follow-on-code"
+    type: "code"
+    statement: "An official author repository provides demonstration shift-invert code for a separate 2018 methods paper."
+    origin_class: "code_present"
+    source:
+      source_id: "sinvert-mbl-2018-follow-on"
+      locator_type: "path-lines"
+      locator: {page: null, section: null, equation: null, table: null, figure: null, path: "README.md", start_line: 1, end_line: 16, config_key: null, trace_event: null}
+    exact_quote_or_value: "GPLv3 demonstration code; repository created 2018-03-12; latest commit 706838f3..."
+    confidence: "high"
+    corroborating_evidence_ids: ["evidence-no-2015-code-data"]
+    conflicting_evidence_ids: []
+    used_by_claim_ids: []
+    used_by_operation_ids: []
+    participant_requirement_allowed: false
+    notes: "Method-adjacent provenance only; not used by either selected task and not represented as 2015 code."
+
+  - evidence_id: "evidence-arxiv-license"
+    type: "limitation"
+    statement: "The arXiv bytes are distributed under arXiv's non-exclusive distribution license, not a general permissive content license."
+    origin_class: "paper_reported"
+    source:
+      source_id: "arxiv-record"
+      locator_type: "webpage-section"
+      locator: {page: null, section: "License", equation: null, table: null, figure: null, path: "https://arxiv.org/licenses/nonexclusive-distrib/1.0/", start_line: null, end_line: null, config_key: null, trace_event: null}
+    exact_quote_or_value: "perpetual non-exclusive license to arXiv to distribute"
+    confidence: "high"
+    corroborating_evidence_ids: []
+    conflicting_evidence_ids: []
+    used_by_claim_ids: []
+    used_by_operation_ids: []
+    participant_requirement_allowed: false
+    notes: "Paper/source bytes remain author-only."
+
+  - evidence_id: "evidence-aps-rights"
+    type: "limitation"
+    statement: "The version of record is copyrighted by APS and exposes a reuse-and-permissions route."
+    origin_class: "paper_reported"
+    source:
+      source_id: "aps-version-of-record"
+      locator_type: "webpage-section"
+      locator: {page: null, section: "Information", equation: null, table: null, figure: null, path: "https://journals.aps.org/prb/abstract/10.1103/PhysRevB.91.081103", start_line: null, end_line: null, config_key: null, trace_event: null}
+    exact_quote_or_value: "Copyright 2015 American Physical Society"
+    confidence: "high"
+    corroborating_evidence_ids: []
+    conflicting_evidence_ids: []
+    used_by_claim_ids: []
+    used_by_operation_ids: []
+    participant_requirement_allowed: false
+    notes: "APS-formatted bytes are not participant assets."
+
+  - evidence_id: "evidence-ssa-generated-extension"
+    type: "protocol"
+    statement: "The spectral-scaling task uses benchmark-authored public and hidden spectral ensembles that preserve the reported hierarchical scaling workflow without copying source results."
+    origin_class: "grounded_extension"
+    source:
+      source_id: "benchmark-authoring"
+      locator_type: "authoring-record"
+      locator: {page: null, section: "Selected candidate spectral-scaling-audit-v1", equation: null, table: null, figure: null, path: "task_candidates.yaml", start_line: null, end_line: null, config_key: "candidate-spectral-scaling-audit", trace_event: null}
+    exact_quote_or_value: "new instances; realization groups; multiple L and h; fit-window and distribution-shift cases"
+    confidence: "high"
+    corroborating_evidence_ids: ["evidence-realization-first-binning", "evidence-fss-protocol", "evidence-stability-grid"]
+    conflicting_evidence_ids: []
+    used_by_claim_ids: ["leaf-gap-ratio-fss-audit"]
+    used_by_operation_ids: ["op-ssa-parse", "op-ssa-gap", "op-ssa-bin", "op-ssa-fit", "op-ssa-stability", "op-ssa-uncertainty", "op-ssa-report"]
+    participant_requirement_allowed: true
+    notes: "Exact hidden cases and reference values remain private; all solution-critical conventions must be public."
+
+  - evidence_id: "evidence-ssa-method-freedom"
+    type: "protocol"
+    statement: "Equivalent stable fitting and uncertainty methods may pass if they recover hidden behavior and produce internally consistent evidence."
+    origin_class: "benchmark_choice"
+    source:
+      source_id: "benchmark-authoring"
+      locator_type: "authoring-record"
+      locator: {page: null, section: "Specification closure", equation: null, table: null, figure: null, path: "task_candidates.yaml", start_line: null, end_line: null, config_key: "candidate-spectral-scaling-audit.verification", trace_event: null}
+    exact_quote_or_value: "outcome-based fit quality, stability, uncertainty, and evidence consistency"
+    confidence: "high"
+    corroborating_evidence_ids: ["evidence-bootstrap-systematics"]
+    conflicting_evidence_ids: []
+    used_by_claim_ids: ["leaf-gap-ratio-fss-audit"]
+    used_by_operation_ids: ["op-ssa-fit", "op-ssa-uncertainty"]
+    participant_requirement_allowed: true
+    notes: "This closes missing paper optimizer/loss details without hiding one exact source method."
+
+  - evidence_id: "evidence-dsa-small-system-extension"
+    type: "protocol"
+    statement: "The sector-audit task moves the reported model to fully specified, CPU-bounded small sectors and evaluates fresh hidden realizations behaviorally."
+    origin_class: "grounded_extension"
+    source:
+      source_id: "benchmark-authoring"
+      locator_type: "authoring-record"
+      locator: {page: null, section: "Selected candidate disordered-sector-audit-v1", equation: null, table: null, figure: null, path: "task_candidates.yaml", start_line: null, end_line: null, config_key: "candidate-disordered-sector-audit", trace_event: null}
+    exact_quote_or_value: "L<=14 dense exact diagonalization; explicit fields, n_up, subsystem, targets, and IDs"
+    confidence: "high"
+    corroborating_evidence_ids: ["evidence-model-hamiltonian", "evidence-sectors-energy-coordinate", "evidence-gap-ratio-definition", "evidence-participation-result"]
+    conflicting_evidence_ids: []
+    used_by_claim_ids: ["leaf-joint-finite-size-signatures"]
+    used_by_operation_ids: ["op-dsa-parse", "op-dsa-enumerate-sector", "op-dsa-assemble-hamiltonian", "op-dsa-diagonalize", "op-dsa-select-packets", "op-dsa-compute-observables", "op-dsa-realization-bin", "op-dsa-ensemble-contrast", "op-dsa-evidence-report"]
+    participant_requirement_allowed: true
+    notes: "The extension preserves model/observable structure while avoiding undisclosed HPC and shift-invert requirements."
+
+  - evidence_id: "evidence-dsa-finite-size-only"
+    type: "protocol"
+    statement: "The sector-audit conclusion is limited to weak/strong finite-size signatures and must not assert a thermodynamic mobility edge."
+    origin_class: "benchmark_choice"
+    source:
+      source_id: "benchmark-authoring"
+      locator_type: "authoring-record"
+      locator: {page: null, section: "Selected candidate disordered-sector-audit-v1", equation: null, table: null, figure: null, path: "task_candidates.yaml", start_line: null, end_line: null, config_key: "candidate-disordered-sector-audit.decision_reason", trace_event: null}
+    exact_quote_or_value: "joint finite-size spectral and eigenstate signatures only"
+    confidence: "high"
+    corroborating_evidence_ids: ["evidence-finite-size-caveat"]
+    conflicting_evidence_ids: ["evidence-mobility-edge-claim"]
+    used_by_claim_ids: ["leaf-joint-finite-size-signatures"]
+    used_by_operation_ids: ["op-dsa-ensemble-contrast", "op-dsa-evidence-report"]
+    participant_requirement_allowed: true
+    notes: "This avoids turning extrapolative source uncertainty into task difficulty."
+
+coverage:
+  paper_sections_reviewed:
+    - "Abstract and introduction"
+    - "Model definition and Eq. 1"
+    - "Characterization of ergodic and localized regimes"
+    - "Numerical method"
+    - "Results and finite-size scaling analysis"
+    - "Discussion and conclusions"
+    - "Supplement: fitting procedures and estimates"
+    - "Supplement: dynamical spin fraction"
+    - "Figures 1-8 and equations 1-3"
+  repository_paths_reviewed:
+    - "sinvert_mbl README.md at commit 706838f3e656f4792c170aa723067c2ae3111491"
+    - "sinvert_mbl contributors"
+    - "sinvert_mbl src/licence.gpl"
+    - "sinvert_mbl root and src API inventories"
+  configurations_reviewed: []
+  dynamic_runs_reviewed: []
+  known_gaps:
+    - "No 2015 implementation or raw numerical data was found."
+    - "Separate APS supplement bytes were access-controlled and not pinned."
+    - "Exact h grid, disorder seeds, packet-edge handling, eigensolver tolerances, fitting loss/weights, optimizer, and bootstrap count are unavailable."
+    - "KL pairing and odd-L sector notation are ambiguous."
+    - "No provider program was executed; task oracles must be independent reconstructions."
+
+validation:
+  every_record_has_locator: true
+  low_confidence_hidden_requirements: []
+  unresolved_conflicts:
+    - "aps-supplement-byte-identity"
+    - "historical-2015-private-code-or-data-availability"
+  benchmark_resolved_conflicts:
+    - "odd-L sectors disclosed by n_up"
+    - "KL pairing disclosed by task"
+    - "entanglement fluctuation convention not used as a hidden requirement"
+    - "v2 wording controls"

@@ -1,0 +1,99 @@
+{
+  "schema_version": "spinful-packet-mutants/v1",
+  "scientific": [
+    {
+      "id": "wrong_soc_sign",
+      "category": "wrong sign",
+      "description": "Negates the spin-orbit coupling while keeping every other convention."
+    },
+    {
+      "id": "conjugate_peierls_phase",
+      "category": "wrong phase",
+      "description": "Uses exp(-i phi) for the listed bond orientation."
+    },
+    {
+      "id": "swap_soc_axes",
+      "category": "coordinate order",
+      "description": "Interchanges dx and dy only in the spin-orbit block."
+    },
+    {
+      "id": "omit_ising_disorder",
+      "category": "omitted interaction",
+      "description": "Replaces the site-dependent Ising field by the common base value."
+    },
+    {
+      "id": "swap_initial_spin",
+      "category": "spin index",
+      "description": "Swaps up and down components of the initial spinor."
+    },
+    {
+      "id": "unnormalized_packet",
+      "category": "normalization",
+      "description": "Propagates the raw Gaussian amplitudes without global normalization."
+    },
+    {
+      "id": "first_order_recurrence",
+      "category": "recurrence",
+      "description": "Uses q_n = H_tilde q_(n-1) instead of the Chebyshev recurrence."
+    },
+    {
+      "id": "real_bessel_coefficients",
+      "category": "propagation phase",
+      "description": "Drops the (-i)^n factor from public-time contractions."
+    }
+  ],
+  "structural": [
+    {
+      "id": "malformed",
+      "category": "parse safety"
+    },
+    {
+      "id": "malformed_json",
+      "category": "recursive JSON safety"
+    },
+    {
+      "id": "partial",
+      "category": "missing artifact"
+    },
+    {
+      "id": "nan",
+      "category": "non-finite value"
+    },
+    {
+      "id": "huge_finite",
+      "category": "finite overflow safety"
+    },
+    {
+      "id": "oversized",
+      "category": "resource bound"
+    },
+    {
+      "id": "stale",
+      "category": "stale instance"
+    },
+    {
+      "id": "fabricated",
+      "category": "self-reported evidence"
+    },
+    {
+      "id": "wrong_conclusions",
+      "category": "categorical evidence"
+    },
+    {
+      "id": "wrong_numeric_type",
+      "category": "schema type safety"
+    },
+    {
+      "id": "wrong_category_type",
+      "category": "unhashable schema type"
+    },
+    {
+      "id": "hardcoded_public",
+      "category": "anti-hardcoding"
+    },
+    {
+      "id": "unexpected_executable",
+      "category": "artifact allowlist"
+    }
+  ]
+}

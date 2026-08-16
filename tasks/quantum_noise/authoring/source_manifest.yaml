@@ -1,0 +1,502 @@
+schema_version: paper2ale.codex-source-manifest/v1
+
+paper:
+  paper_id: arxiv-1907.13022v2
+  title: Efficient learning of quantum noise
+  local_path: authoring/sources/1907.13022v2.pdf
+  text_extract_path: authoring/sources/1907.13022v2.txt
+  text_extract_derivation:
+    command: pdftotext -layout authoring/sources/1907.13022v2.pdf authoring/sources/1907.13022v2.txt
+    tool_version: Poppler pdftotext 25.02.0
+    status: reproduced_exactly_by_sha256
+    verification: >-
+      Re-running layout mode produced SHA-256
+      3de2b76b9f3d907a209258622d1eeed5024b0ffc6b40ecf770632460a59b111a;
+      plain non-layout mode did not match.
+  source_archive_path: authoring/sources/1907.13022v2-source.tar
+  extracted_source_path: authoring/sources/paper_source/noiseLearningArxiv.tex
+  public_url: https://arxiv.org/abs/1907.13022
+  version: arXiv v2, 16 April 2021
+  sha256: 4867308d9d0033d9d0cbe1cf723cb00d569c4b8cd22588b4c1ba611af93c7684
+  text_extract_sha256: 3de2b76b9f3d907a209258622d1eeed5024b0ffc6b40ecf770632460a59b111a
+  source_archive_sha256: 3536360ef4a538e77d4ef7677e796fa34bb0de6a14414894a441f93f2f00602c
+  extracted_tex_sha256: 77bf5189ecb0cb9f56486ef520fc4a68ae5a8737d3cf249beffe02b63e2525bd
+  extracted_source_tree_sha256: f65009d2bd109ae9ebf04192e193219562a9f659a3f81e2a6d88a8ab15f448ca
+  extracted_source_tree_hash_recipe: >-
+    Exclude .git and author-added .gitkeep files. Sort slash-normalized relative
+    paths with ordinal comparison, join each path, NUL, and lowercase file
+    SHA-256 with LF and no final LF, then SHA-256 the UTF-8 bytes.
+  license: arXiv non-exclusive distribution license 1.0
+  license_url: https://arxiv.org/licenses/nonexclusive-distrib/1.0/license.html
+  redistribution: author_only_not_in_participant_package
+  retrieved_at: '2026-08-15'
+  citation: >-
+    Robin Harper, Steven T. Flammia, and Joel J. Wallman, Efficient learning of
+    quantum noise, Nature Physics 16, 1184-1188 (2020),
+    https://doi.org/10.1038/s41567-020-0992-8.
+
+supplements:
+  - supplement_id: integrated-supplement-arxiv-v2
+    role: supplementary methods, derivations, simulations, and device details
+    local_path: authoring/sources/1907.13022v2.pdf
+    source_path: authoring/sources/paper_source/noiseLearningArxiv.tex
+    version: integrated in arXiv v2
+    sha256: 4867308d9d0033d9d0cbe1cf723cb00d569c4b8cd22588b4c1ba611af93c7684
+    license: arXiv non-exclusive distribution license 1.0
+
+repositories:
+  - repository_id: repo-juqst
+    official: true
+    official_basis: >-
+      The paper Code Availability statement points to this repository, and its
+      README says it contains the analysis code used for the paper.
+    url: https://github.com/rharper2/Juqst.jl.git
+    local_path: authoring/sources/Juqst.jl
+    branch: master
+    commit: 533d0c46f29638e0a235ab58ce2cd86591a4e966
+    release_tag: null
+    exact_publication_version_status: not_established
+    commit_date: '2020-09-18T13:46:04+10:00'
+    git_tree_object_sha1: 1fdaa719e5ddd9ce088b5d11f1b29d327a8ed184
+    snapshot_tree_sha256: 0b65e9ea4f5752beea4a5b83e01355f7caac4daf8a8cb6bf66a91cf5b04fed95
+    snapshot_file_count: 62
+    snapshot_complete_for_head: true
+    license: MIT
+    license_path: authoring/sources/Juqst.jl/LICENSE
+    license_sha256: 72c2db874e7bea17724214156fef9737ecd89e607d29c1008270eb47825699ba
+    nested_license_notices:
+      - path: authoring/sources/Juqst.jl/docs/examples/additionalPythonCode/PlotQCircuit/LICENSE
+        license: BSD-2-Clause
+      - component: incorporated QuantumInfo.jl portions
+        license: MIT
+    retrieved_at: '2026-08-15'
+    role: official analysis implementation and example notebooks
+
+  - repository_id: repo-efficient-learning-data
+    official: true
+    official_basis: The paper Data Availability statement points to this repository.
+    url: https://github.com/rharper2/EfficientLearningDataSet.git
+    local_path: authoring/sources/EfficientLearningDataSet
+    branch: master
+    commit: 11624f8cb32f81fca4e2f8c7a570d8e09672f659
+    commit_date: '2020-08-16T17:12:28+10:00'
+    git_tree_object_sha1: f5dc90a5dcb2cfc6b708350d3eb3134c75c286a5
+    present_snapshot_tree_sha256: 685aa3bed8cd1d7759dc5d723af7c4d07223074ee04dde191cc6a1ab49e12bb8
+    present_snapshot_file_count: 4
+    snapshot_complete_for_head: false
+    missing_from_worktree:
+      - data.zip
+      - jupyter notebook/PickleExtractor.ipynb
+      - jupyter notebook checkpoint and auxiliary files
+    partial_clone_filter: blob:none
+    sparse_checkout: root_files_only
+    worktree_index_state: missing_index_with_zero_byte_index.lock
+    lfs_data_object:
+      present_in_git_storage: true
+      checked_out: false
+      sha256: aad1fdf3ec88711e9a2d648b5a61a8ce8df08f46a1ef761ea7ca220e788e73ac
+      size_bytes: 311764270
+      archive_listing_only:
+        total_entries: 4244
+        pickle_entries: 2113
+        csv_entries: 4
+        apple_metadata_entries: 2122
+        unsafe_path_entries: 0
+        maximum_path_length: 75
+      execution_warning: >-
+        Python pickle deserialization can execute code. The archive was listed
+        but not extracted or deserialized and must not be used outside a hardened
+        sandbox plus static opcode/content audit.
+    license: CC0-1.0
+    license_path: authoring/sources/EfficientLearningDataSet/LICENSE
+    license_sha256: f4e7f373b9b996950337e8d41a4a2939c2d90b7725e9baf3d5084a22717ad328
+    retrieved_at: '2026-08-15'
+    role: official experimental data repository; incomplete pin retained as evidence only
+
+  - repository_id: repo-query-ibmq
+    official: true
+    official_basis: >-
+      The official data README points to this acquisition repository. Its
+      notebooks document the randomized target masks, Qiskit display-order
+      adapter, XOR correction, and integer-ordered histogram extraction used for
+      the experiment.
+    url: https://github.com/rharper2/query_ibmq.git
+    local_path: null
+    snapshot_retention: remotely_audited_exact_commit_not_retained
+    branch: master
+    commit: d73e1002f5f0ec35f54bf47c338f8c28eaaaa954
+    commit_date: '2020-06-22T13:15:20+10:00'
+    git_tree_object_sha1: 54b28ae512a03edfeaef78abbd24a77db864ae1f
+    snapshot_tree_sha256: null
+    snapshot_complete_for_head: not_applicable_no_retained_snapshot
+    license: MIT
+    license_path: LICENSE
+    license_sha256: 024910b6b577d64ba2385e8aaa3dc85ced277f55cd2420721c9796b1f097ad89
+    license_size_bytes: 1069
+    retrieved_at: '2026-08-15'
+    role: >-
+      Remotely audited acquisition and extraction provenance for target-mask XOR
+      correction; no repository byte enters either task package.
+
+datasets:
+  - dataset_id: ibmq-melbourne-paper-data
+    url: https://doi.org/10.5061/dryad.q83bk3jf0
+    alternate_url: https://github.com/rharper2/EfficientLearningDataSet
+    local_path: authoring/sources/EfficientLearningDataSet
+    version: Dryad version 5; repository commit 11624f8cb32f81fca4e2f8c7a570d8e09672f659
+    dryad_version_number: 5
+    dryad_internal_version_id: 70586
+    dryad_release_date: '2020-06-26'
+    sha256_or_tree_sha256: aad1fdf3ec88711e9a2d648b5a61a8ce8df08f46a1ef761ea7ca220e788e73ac
+    digest_scope: primary_data.zip_payload_only; complete_release_inventory_follows
+    official_file_inventory:
+      - filename: data.zip
+        sha256: aad1fdf3ec88711e9a2d648b5a61a8ce8df08f46a1ef761ea7ca220e788e73ac
+        size_bytes: 311764270
+        local_state: present_only_as_git_lfs_object_not_checked_out
+      - filename: jupyter_notebook.zip
+        sha256: 8e826554eb87fa2d95feea7c4a5db2145f580c4ed9454692a58d675b2c31bfbe
+        size_bytes: 76841
+        local_state: absent
+      - filename: Linear_Chain.nb
+        sha256: ea88cf87af674565c622e985c960eedf04578404dc8719768acb5a922760de9f
+        size_bytes: 386094
+        local_state: present_with_crlf_worktree_conversion
+      - filename: README
+        sha256: 03f801f961020a748cc323d8f7980552fad7a08f4135e8414b75c56be55d4f0e
+        size_bytes: 478
+        local_state: present
+    local_repository_snapshot_tree_sha256: 685aa3bed8cd1d7759dc5d723af7c4d07223074ee04dde191cc6a1ab49e12bb8
+    local_repository_digest_scope: present_four_file_worktree_only
+    license: CC0-1.0
+    redistribution: allowed_by_repository_license_but_not_used_because_snapshot_is_incomplete
+    role: source experiment provenance only; no bytes enter selected participant tasks
+
+  - dataset_id: figure4-linear-chain-notebook
+    url: https://github.com/rharper2/EfficientLearningDataSet/blob/11624f8cb32f81fca4e2f8c7a570d8e09672f659/Linear_Chain.nb
+    local_path: authoring/sources/EfficientLearningDataSet/Linear_Chain.nb
+    version: repository commit 11624f8cb32f81fca4e2f8c7a570d8e09672f659
+    sha256_or_tree_sha256: ea88cf87af674565c622e985c960eedf04578404dc8719768acb5a922760de9f
+    digest_scope: canonical_upstream_and_dryad_bytes
+    upstream_and_dryad_sha256: ea88cf87af674565c622e985c960eedf04578404dc8719768acb5a922760de9f
+    upstream_and_dryad_size_bytes: 386094
+    local_worktree_sha256: 2c4631c151b5433c9725ad0a2e65c539e7c13af381608ee483a03356cc653a88
+    local_conversion: >-
+      Git core.autocrlf=true converted the upstream LF bytes to CRLF in the local
+      worktree. The pinned raw GitHub blob is byte-identical to Dryad version 5.
+    license: CC0-1.0
+    redistribution: allowed
+    role: author-only evidence for the Figure 4 simulation; not executed or redistributed
+
+environments:
+  - environment_id: source-julia-environment
+    type: lockfile
+    path_or_digest: authoring/sources/Juqst.jl/Manifest.toml
+    manifest_sha256: e2d621baab13d4f355fc4e39b1ce1e90d25f1528dc5c9a390d71f96dafed387a
+    python: null
+    julia: unknown_not_declared
+    packages:
+      - Juqst==0.1.1-g1
+      - dependency graph recorded in Manifest.toml
+    system_dependencies: []
+    reproducibility_status: incomplete_because_julia_version_and_compat_bounds_are_not_declared
+
+  - environment_id: figure4-wolfram-environment
+    type: manual
+    path_or_digest: authoring/sources/EfficientLearningDataSet/Linear_Chain.nb
+    python: null
+    wolfram_version: >-
+      notebook CreatedBy Mathematica 11.1; saved FrontEndVersion 12.1 for Mac OS X
+      x86 64-bit, 18 March 2020
+    packages:
+      - FiniteFields (version not pinned)
+    system_dependencies:
+      - proprietary Wolfram runtime
+    reproducibility_status: incomplete_because_kernel_package_version_and_cross_platform_runtime_are_not_pinned
+
+source_execution:
+  trust_decision: >-
+    Source repositories and notebooks were treated as untrusted evidence. Entry
+    points were inspected but no provider-supplied source command or notebook
+    was executed while preparing these shared authoring records.
+  commands: []
+  inspected_entry_points:
+    - authoring/sources/Juqst.jl/src/marginal.jl
+    - authoring/sources/Juqst.jl/docs/examples/quantumNoise/SingleQubitProtocol.ipynb
+    - authoring/sources/Juqst.jl/docs/examples/quantumNoise/TwoQubitGatesRuns.ipynb
+    - authoring/sources/EfficientLearningDataSet/Linear_Chain.nb
+  remotely_inspected_entry_points:
+    - https://github.com/rharper2/query_ibmq/blob/d73e1002f5f0ec35f54bf47c338f8c28eaaaa954/createAndRunCircuits.ipynb
+    - https://github.com/rharper2/query_ibmq/blob/d73e1002f5f0ec35f54bf47c338f8c28eaaaa954/PickleExtractor.ipynb
+  observed_artifacts:
+    - path: authoring/sources/paper_source/figures/Figure2.csv
+      purpose: author-only source figure data
+    - path: authoring/sources/paper_source/figures/Figure3.csv
+      purpose: author-only source figure data
+    - path: authoring/sources/paper_source/figures/Figure4_alt.csv
+      purpose: author-only source simulation output
+  dynamic_reproduction_status: not_run
+  reason: >-
+    Selected tasks use reviewed synthetic generators and independent Python
+    solvers. Official Julia/Mathematica execution is neither needed nor trusted
+    as the participant solution path.
+
+snapshot_hygiene:
+  audit_date: '2026-08-15'
+  total_retained_source_bytes: 1050687836
+  nested_git_metadata_bytes: 750954151
+  retained_untrusted_lfs_payload_bytes: 311764270
+  juqst_archived_outputs_and_generated_media_bytes: 283707670
+  symlinks_found: 0
+  credential_like_files_found: 0
+  paper_source_archive_unsafe_paths: 0
+  executable_binary_note: >-
+    One tracked .pyc exists outside nested .git metadata; it was not executed.
+  cleanup_status: not_performed_destructive_action_not_authorized
+  parent_git_exclusion_policy:
+    path: authoring/sources/.gitignore
+    sha256: 5ad74b74e95e4d0b11db0519647955a8f53d77b4bb1d1c56af8e2f9b2f88ccd5
+    size_bytes: 195
+    git_check_ignore_status: pass_for_paper_pdf_text_tar_source_tree_and_both_provider_repositories
+  packaging_decision: >-
+    Retain exact current local hashes and footprint, but exclude paper/source and
+    both nested repositories from the parent Git tree through the checked
+    authoring/sources/.gitignore policy. This resolves accidental gitlink/release
+    inclusion while leaving local disk footprint and external evidence transport
+    as explicit authoring concerns. Participant packages exclude the sources tree.
+
+conflicts:
+  - conflict_id: conflict-jsd-square-root
+    topic: Jensen-Shannon distance versus divergence
+    paper_statement: >-
+      Methods lines 1067-1071 and 1118-1125 define natural-log KL and take the
+      square root of the symmetric Jensen-Shannon divergence.
+    code_behavior: >-
+      Juqst.jl src/marginal.jl lines 478-516 uses log2 and returns the symmetric
+      divergence without a square root.
+    observed_behavior: source definitions disagree before execution
+    resolution: benchmark-choice
+    rationale: >-
+      The spectral task publicly specifies square-root JSD using natural logs;
+      evaluator references must implement that disclosed convention.
+
+  - conflict_id: conflict-jsd-main-text-bound
+    topic: JSD log-base convention
+    paper_statement: >-
+      Main-text line 249 says JSD is in [0,1] if log2 is used, while Methods
+      defines KL with natural logarithms.
+    code_behavior: Juqst.jl uses log2 internally.
+    observed_behavior: two paper locations and code use different scale conventions
+    resolution: benchmark-choice
+    rationale: The public task fixes one scale and does not ask for paper-reported values.
+
+  - conflict_id: conflict-dependence-log-base
+    topic: mutual-information and conditional-mutual-information log base
+    paper_statement: >-
+      Methods lines 1076-1095 defines MI with ln and CMI with the surrounding
+      natural-log information convention.
+    code_behavior: >-
+      Juqst.jl src/marginal.jl lines 449-470 and 589-600 computes the MI and CMI
+      summands with log2.
+    observed_behavior: paper and official code differ by a constant scale factor
+    resolution: benchmark-choice
+    rationale: >-
+      The spectral participant contract explicitly defines both MI and CMI in
+      natural-log units; references and evaluator recomputation use that disclosed
+      scale.
+
+  - conflict_id: conflict-reconstruct-hardcoded-14
+    topic: general-size GRF reconstruction
+    paper_statement: Bounded-degree GRF learning is claimed polynomial in system size.
+    code_behavior: >-
+      Juqst.jl src/marginal.jl lines 538-542 enumerates tomatch from 0 to
+      2^14-1 regardless of input dimension.
+    observed_behavior: static inspection shows a 14-qubit constant
+    resolution: benchmark-choice
+    rationale: >-
+      Selected local-model task requires size-generic nonenumerative inference
+      and does not expose or reuse this helper.
+
+  - conflict_id: conflict-paper-source-case
+    topic: portable paper-source compilation
+    paper_statement: TeX line 172 includes figures/figure2.pdf.
+    code_behavior: The extracted archive contains figures/Figure2.pdf.
+    observed_behavior: case-sensitive systems cannot resolve that include path unchanged
+    resolution: unresolved
+    rationale: Recorded source defect; compilation is not required for task verification.
+
+  - conflict_id: conflict-data-snapshot-incomplete
+    topic: official dataset availability
+    paper_statement: >-
+      Data Availability and the data README point to the repository and say the
+      data are in data.zip with a notebook reader.
+    code_behavior: The pinned commit names data.zip and notebook files.
+    observed_behavior: >-
+      The local partial/sparse worktree contains only four root files and lacks
+      data.zip and all notebooks. The exact 311,764,270-byte data.zip LFS object
+      is present under .git/lfs, but the non-LFS notebook blobs are absent and
+      could not be hydrated offline. Dryad version 5, immutable internal version
+      70586, independently pins data.zip, jupyter_notebook.zip, Linear_Chain.nb,
+      and README with exact SHA-256 digests.
+    resolution: benchmark-choice
+    rationale: >-
+      Do not use the incomplete empirical dataset in either selected task;
+      generate neutral synthetic instances with independent trusted code.
+
+  - conflict_id: conflict-source-environment-unpinned
+    topic: source execution reproducibility
+    paper_statement: The paper points to code/notebooks but does not pin a runtime image.
+    code_behavior: Project/Manifest files exist but omit an exact Julia runtime version.
+    observed_behavior: >-
+      The notebook identifies Mathematica 11.1 and a 12.1 Mac front end, but
+      its FiniteFields package version and a portable runtime are not pinned.
+    resolution: benchmark-choice
+    rationale: Use a separately declared Python participant environment.
+
+  - conflict_id: conflict-figure4-metric-and-fit
+    topic: Figure 4 metric identity and scaling fit
+    paper_statement: >-
+      Figure 4 caption, TeX lines 215-220, labels the streams Hellinger and JSD
+      and says both orange curves fit a*sqrt(L).
+    code_behavior: >-
+      Figure4.wl lines 1-8 labels the streams Hellinger and D(q||p).
+      Linear_Chain.nb lines 4144-4181 fits Hellinger to a*sqrt(L), while lines
+      4750-4786 fit 1000*D(q||p) to a*L.
+    observed_behavior: >-
+      Saved coefficients are 0.003066702582151935 and 0.049710497328741915;
+      they do not establish the caption's exact JSD square-root claim.
+    resolution: unresolved
+    rationale: >-
+      Figure 4 is qualitative grounding only and must not supply an exact hidden
+      metric or fit-shape oracle.
+
+  - conflict_id: conflict-figure4-indexing
+    topic: Figure 4 chain-length indexing
+    paper_statement: The caption describes chain lengths through L=100.
+    code_behavior: >-
+      Stored data are 20 by 97, naturally representing L=4..100, while the
+      notebook plotting/fitting selection omits an endpoint through its index range.
+    observed_behavior: >-
+      The saved Hellinger coefficient follows the notebook indexing; a derived
+      all-row L=4..100 fit gives 0.0029796361369755216 instead.
+    resolution: unresolved
+    rationale: Do not grade reproduction of the reported coefficient.
+
+  - conflict_id: conflict-supplement-xy-typo
+    topic: two-qubit synthetic correlation probability
+    paper_statement: TeX line 1904 says XY is changed from 0.0004125 to 0.0006.
+    code_behavior: >-
+      Table V at lines 1925-1931 uses XY=0.006 and II=0.899275; downstream
+      observed probabilities and correlation 0.0639497067 follow 0.006.
+    observed_behavior: internal arithmetic supports 0.006, not 0.0006
+    resolution: observed
+    rationale: >-
+      Treat 0.0006 as a typographical error; do not expose this paper-specific
+      micro-case as a final task.
+
+  - conflict_id: conflict-grf-zero-support
+    topic: zero-support handling in GRF factors
+    paper_statement: The paper assumes a strictly positive GRF.
+    code_behavior: >-
+      Juqst.jl marginal.jl lines 296-300 and 348-373 replaces zero separators
+      by 1e-8 and mean-fills undefined conditional columns.
+    observed_behavior: static inspection shows heuristic, estimator-dependent behavior
+    resolution: benchmark-choice
+    rationale: >-
+      The local task must publicly specify its own smoothing/support rule and
+      evaluator objective instead of copying this arbitrary heuristic.
+
+  - conflict_id: conflict-notebook-bootstrap-copy-paste
+    topic: two-qubit bootstrap correlation intervals
+    paper_statement: Distinct two-qubit layouts have their own bootstrap uncertainty estimates.
+    code_behavior: >-
+      TwoQubitGatesRuns.ipynb lines 1743-1748 calculates run-2 and run-3 bounds
+      from corrmatsRV1 rather than corrmatsRV2 and corrmatsRV3.
+    observed_behavior: static inspection shows a copy-paste defect
+    resolution: unresolved
+    rationale: Official notebook intervals are not used as evaluator references.
+
+  - conflict_id: conflict-notebook-saved-error
+    topic: executable state of the official two-qubit notebook
+    paper_statement: Code Availability points to notebooks recreating graphs.
+    code_behavior: >-
+      TwoQubitGatesRuns.ipynb lines 2344-2358 contains a saved UndefVarError
+      stating that Marginal is not defined.
+    observed_behavior: the pinned notebook contains an error output
+    resolution: unresolved
+    rationale: The notebook is evidence only and was not executed.
+
+  - conflict_id: conflict-embedded-git-packaging
+    topic: self-contained source snapshot packaging
+    paper_statement: not applicable
+    code_behavior: Both authoring source directories contain embedded .git repositories.
+    observed_behavior: >-
+      Parent Git may record gitlinks rather than bytes, and ordinary Git rejects
+      the directories as dubious ownership unless safe.directory is supplied.
+      The retained source tree totals 1,050,687,836 bytes, including 750,954,151
+      bytes of nested Git metadata.
+    resolution: observed
+    rationale: >-
+      The snapshots remain local author evidence and keep their exact manifest
+      pins, but authoring/sources/.gitignore excludes them from the parent Git
+      tree. git check-ignore confirms the paper and both provider repositories,
+       so accidental gitlinks or participant-visible source bytes are prevented.
+
+  - conflict_id: conflict-fit-cutoff-symbols
+    topic: decay-fit data-retention cutoffs
+    paper_statement: >-
+      Supplement TeX line 1197 discards a single-qubit fit when the final point is
+      below `(p_1+1/16)/4`, while line 1211 uses `(p_0+1/16)/4` for two-qubit
+      fits. Neither symbol is defined locally, and the symbol changes between the
+      two otherwise parallel prescriptions.
+    code_behavior: not_relied_upon_for_the_selected_benchmark
+    observed_behavior: the paper does not supply a self-contained cutoff rule
+    resolution: benchmark-choice
+    rationale: >-
+      The spectral task publicly requires a conditioned fit over all disclosed
+      lengths and grades the disclosed observation model behaviorally. It does
+      not import an undefined paper cutoff or use one as hidden oracle truth.
+
+  - conflict_id: conflict-experimental-run-count
+    topic: number of experimental runs per configuration
+    paper_statement: >-
+      Supplement TeX line 1206 says 1924 submissions were made for each of three
+      configurations, whereas line 2140 says 973 jobs produced 1946 runs per
+      configuration.
+    code_behavior: no_selected_task_depends_on_the_reported_run_count
+    observed_behavior: the two paper locations differ by 22 runs per configuration
+    resolution: unresolved
+    rationale: >-
+      The selected tasks use neutral synthetic instances and do not treat either
+      count as evaluator truth or participant-required knowledge.
+
+  - conflict_id: conflict-simulation-grid-and-shots
+    topic: simulation sequence-length grid and shot count
+    paper_statement: >-
+      Figure 8 caption at TeX lines 1558-1559 says 50 sequences were run at 11
+      gate lengths. Supplement line 2097 instead describes lengths `1, 3, 5 up
+      to 22 gates`, 50 sequences, and 8096 shots per sequence; that progression
+      does not uniquely specify 11 integer lengths.
+    code_behavior: no_selected_task_uses_the_reported_grid_or_shot_count
+    observed_behavior: the prose does not uniquely determine the reported simulation design
+    resolution: unresolved
+    rationale: >-
+      Hidden synthetic grids and shot totals are generated under the public task
+      bounds. The ambiguous paper values are evidence limitations, not secrets
+      that participants must infer.
+
+license_and_privacy_decision:
+  participant_assets_redistributable: true
+  restricted_assets:
+    - paper PDF/source, retained in authoring only because the arXiv distribution license is not a general public reuse license
+    - official source repositories, excluded from participant package despite MIT/CC0 status
+    - remotely audited query_ibmq repository, not retained or redistributed
+    - incomplete empirical dataset snapshot, excluded from participant package
+  sensitive_or_personal_data_present: unknown_due_to_uninspected_pickle_archive
+  participant_and_retained_public_assets_sensitive_or_personal_data_present: false
+  uninspected_pickle_archive_personal_data_status: unknown_not_deserialized_or_content_audited
+  decision: eligible
+  notes: >-
+    Both selected tasks use newly generated neutral synthetic inputs. No paper,
+    repository, device-identifying metadata, source figure, reported value, or
+    official data byte is needed by or copied into participant packages.

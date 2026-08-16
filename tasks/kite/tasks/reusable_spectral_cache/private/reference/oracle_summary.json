@@ -1,0 +1,32 @@
+{
+  "generator": "author/oracle/generate.py",
+  "hidden_query_count": 18,
+  "max_abs_tau0_error": 0.0,
+  "max_abs_tau_imaginary": 1.3708219982509973e-16,
+  "moment_method": "dense Hermitian matrix-vector recurrence",
+  "public_query_count": 21,
+  "schema_version": "spectral-oracle-summary/v1",
+  "system_details": [
+    {
+      "actual_eigenvalue_max": 2.3790983336845053,
+      "actual_eigenvalue_min": -2.5553386633574817,
+      "edge_count": 797,
+      "scaled_max_abs_eigenvalue": 0.7201179437856917,
+      "system_id": "sys_alpha"
+    },
+    {
+      "actual_eigenvalue_max": 4.457805627576112,
+      "actual_eigenvalue_min": -4.263626508918891,
+      "edge_count": 1174,
+      "scaled_max_abs_eigenvalue": 0.7402459692226859,
+      "system_id": "sys_beta"
+    },
+    {
+      "actual_eigenvalue_max": 3.6509220324493246,
+      "actual_eigenvalue_min": -3.4279407499542827,
+      "edge_count": 1973,
+      "scaled_max_abs_eigenvalue": 0.7401282552808004,
+      "system_id": "sys_gamma"
+    }
+  ]
+}

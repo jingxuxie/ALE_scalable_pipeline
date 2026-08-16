@@ -1,0 +1,226 @@
+schema_version: paper2ale.codex-evaluation-spec/v1
+
+task_id: local-junction-noise-model-v1
+visibility: private
+
+hard_gates:
+  - gate_id: source-artifact
+    description: Submission contains exactly one bounded regular non-linked solution.py that compiles.
+    implementation: private/grader/grade.py::validate_source
+  - gate_id: isolated-execution
+    description: Each solve exits within 45 seconds under safe-path/no-user-site Python, a minimal environment, closed inherited descriptors, audited capability restrictions, and post-run protected-tree integrity checks.
+    implementation: private/grader/grade.py::execute_case
+  - gate_id: output-schema
+    description: Four bounded regular artifacts parse with unique JSON keys and exact IDs, rows, and fields.
+    implementation: private/grader/core.py::load_submission_outputs
+  - gate_id: normalized-model
+    description: Every root or conditional factor row is finite, nonnegative, and normalized within 2e-7.
+    implementation: private/grader/core.py::validate_model
+  - gate_id: validation-isolation
+    description: Every submission is rerun on paired copies differing only in validation outcomes; model, queries, and non-audit diagnostics must be identical while the audit must respond.
+    implementation: private/grader/grade.py::enforce_validation_isolation
+  - gate_id: same-input-determinism
+    description: Every hidden case is rerun under a different hash seed and working directory; all four parsed artifacts must be semantically identical.
+    implementation: private/grader/grade.py::enforce_same_input_determinism
+
+metrics:
+  - metric_id: model-recovery
+    description: Macro mean score from per-case mean Hellinger error over oracle and submitted clique marginals.
+    direction: higher_is_better
+    weight: 0.35
+    hidden_inputs:
+      - hidden_inputs/cases/
+    reference:
+      type: oracle-latent-junction-model
+      path: reference/truth/
+    scoring:
+      type: piecewise_linear
+      parameters:
+        excellent_mean_hellinger: 0.045
+        minimum_mean_hellinger: 0.160
+    tolerance:
+      type: statistical-quality-band
+      absolute: 0.045
+      relative: null
+      derivation: multinomial recovery distribution across ordinary and low-shot generator cases
+
+  - metric_id: heldout-query-accuracy
+    description: Macro mean score from log-RMSE on private partial-assignment probabilities recomputed from submitted factors.
+    direction: higher_is_better
+    weight: 0.27
+    hidden_inputs:
+      - reference/truth/* private_queries
+    reference:
+      type: oracle-dynamic-programming
+      path: reference/truth/
+    scoring:
+      type: piecewise_linear
+      parameters:
+        excellent_log_rmse: 0.055
+        minimum_log_rmse: 0.260
+    tolerance:
+      type: probability-log-scale
+      absolute: 1.0e-14
+      relative: null
+      derivation: probability floor only prevents log underflow; score band reflects statistical estimation
+
+  - metric_id: query-model-consistency
+    description: Public query sidecar is compared with evaluator DP over the submitted model.
+    direction: higher_is_better
+    weight: 0.10
+    scoring:
+      type: normalized-rmse-piecewise-linear
+      parameters:
+        excellent: 1.0
+        minimum: 25.0
+    tolerance:
+      type: abs_and_rel
+      absolute: 3.0e-10
+      relative: 3.0e-8
+      derivation: over 100 times the largest float64 evaluator/reference disagreement
+
+  - metric_id: audit-consistency
+    description: Parity probabilities, z scores, absolute values, ranks, and flagged IDs are recomputed from the submitted model.
+    direction: higher_is_better
+    weight: 0.08
+    scoring:
+      type: numeric-and-exact-discrete
+      parameters:
+        numeric_excellent: 1.0
+        numeric_minimum: 25.0
+        discrete_rank_and_flagged_match_required: true
+    tolerance:
+      type: abs_and_rel
+      absolute: 8.0e-9
+      relative: 3.0e-7
+      derivation: signed-message and enumerated-parity implementation disagreement plus float64 margin
+
+  - metric_id: anomaly-ranking
+    description: Population labels score average precision and top-|positives| recall on anomaly and OOD cases.
+    direction: higher_is_better
+    weight: 0.15
+    scoring:
+      type: weighted-ranking
+      parameters:
+        average_precision_weight: 0.6
+        top_recall_weight: 0.4
+        mandatory_anomaly_or_ood_category_mean: 0.65
+
+  - metric_id: diagnostics-consistency
+    description: All numeric diagnostic fields are recomputed from input tables and submitted factors.
+    direction: higher_is_better
+    weight: 0.05
+    scoring:
+      type: normalized-rmse-piecewise-linear
+      parameters:
+        excellent: 1.0
+        minimum: 25.0
+    tolerance:
+      type: abs_and_rel
+      absolute: 5.0e-9
+      relative: 2.0e-7
+      derivation: two-pass belief propagation and direct-query marginal cross-checks
+
+score_contract:
+  hard_gate_failure_score: 0.0
+  metric_weights_sum_to_one: true
+  score_range: {minimum: 0.0, maximum: 1.0}
+  pass_rule:
+    type: total-score-and-mandatory-metrics-and-category-topology-and-case-floors
+    total_score_threshold: 0.82
+    mandatory_metric_thresholds:
+      model-recovery: 0.72
+      heldout-query-accuracy: 0.68
+      query-model-consistency: 0.98
+      audit-consistency: 0.98
+      diagnostics-consistency: 0.98
+    category_floors:
+      model-recovery: 0.50
+      heldout-query-accuracy: 0.45
+    topology_floors:
+      model-recovery: 0.50
+      heldout-query-accuracy: 0.45
+    per_case_floors:
+      model-recovery: 0.40
+      heldout-query-accuracy: 0.40
+
+stochastic_policy:
+  stochastic: true
+  hidden_seed_count: 6
+  aggregation: macro-mean-across-cases-with-category-topology-and-per-case-floors
+  confidence_or_variance_rule: generated multinomial and binomial samples span ordinary, anomaly, low-shot, and wider-clique regimes
+  baseline_relative: false
+
+hidden_suite:
+  ordinary_cases:
+    count: 2
+    source: trusted private generator with chain and branching trees
+  distribution_shift_cases:
+    count: 2
+    description: one sparse-count case and one maximum-width/larger-n case
+  adversarial_cases:
+    count: 2
+    description: branching/fork layouts with independently shifted validation interactions
+  anti_hardcoding_cases:
+    count: 6
+    description: every hidden case changes IDs, record order, local bit axes, topology, n, shots, and queries
+
+valid_solutions:
+  - id: privileged-oracle
+    path: reference/oracle_outputs/
+    expected: pass with score 1.0
+  - id: clean-room-reference
+    path: ../author/reference_solver/solve.py
+    expected: pass
+  - id: alternative-valid
+    path: ../author/alternative_solver/solve.py
+    expected: pass
+
+mutations:
+  - {mutant_id: wrong_endian, category: coordinate-convention, path: mutants/cases/wrong_endian, expected: fail}
+  - {mutant_id: ignore_context, category: omitted-interaction, path: mutants/cases/ignore_context, expected: fail}
+  - {mutant_id: uniform_root, category: omitted-marginal, path: mutants/cases/uniform_root, expected: fail}
+  - {mutant_id: no_smoothing, category: omitted-normalization-guard, path: mutants/cases/no_smoothing, expected: fail}
+  - {mutant_id: query_product, category: cross-clique-independence, path: mutants/cases/query_product, expected: fail}
+  - {mutant_id: ascending_audit, category: wrong-ranking-direction, path: mutants/cases/ascending_audit, expected: fail}
+  - {mutant_id: single_topology_failure, category: concealed-topology-failure, path: mutants/cases/single_topology_failure, expected: fail}
+  - {mutant_id: validation_contamination, category: validation-leakage, path: mutants/cases/validation_contamination, expected: fail}
+  - {mutant_id: hash_nondeterminism, category: nondeterministic-output, path: mutants/cases/hash_nondeterminism, expected: fail}
+  - {mutant_id: stale_identity, category: stale-cache, path: mutants/cases/stale_identity, expected: fail}
+  - {mutant_id: truncate_tree, category: partial-model, path: mutants/cases/truncate_tree, expected: fail}
+
+metamorphic_tests:
+  - test_id: evidence-partition
+    applicability: applicable
+    implementation: scripts/verify.py::metamorphic_checks
+    expected_relation: q(E)=q(E,X=0)+q(E,X=1)
+  - test_id: parity-complement
+    applicability: applicable
+    implementation: scripts/verify.py::metamorphic_checks
+    expected_relation: q(parity=0)+q(parity=1)=1
+  - test_id: signed-message-equivalence
+    applicability: applicable
+    implementation: scripts/verify.py::metamorphic_checks
+    expected_relation: signed sum-product equals explicit parity-assignment summation on a small scope
+  - test_id: clique-order-invariance
+    applicability: applicable
+    implementation: scripts/verify.py::metamorphic_checks
+    expected_relation: permuting manifest/count record order leaves semantic probabilities unchanged
+  - test_id: validation-isolation
+    applicability: applicable
+    implementation: scripts/verify.py::metamorphic_checks
+    expected_relation: changing only validation outcomes leaves model.json, query results, and non-audit diagnostics semantically identical while audit values change; enforced on every submitted hidden-case solve
+
+determinism:
+  repeated_grader_runs: 2
+  repeated_submission_runs_per_hidden_case: 2
+  require_identical_parsed_scores: true
+  require_identical_process_status: true
+  require_identical_parsed_artifacts: [model.json, query_results.jsonl, audit.json, diagnostics.json]
+
+leakage_and_security:
+  participant_must_not_access: [private/, author/, source paper, official source repository]
+  network_policy: off
+  path_and_symlink_checks: lexical root checks; captured immutable audit-policy dependencies; fail-closed descriptor/dir_fd/relative-low-level access; denial of reads, mutations, links, chdir, exec/fork/kill, subprocess, network, ctypes, registry, and _winapi capabilities; source/input/case-root post-run snapshots
+  output_size_limit_bytes: 2564000
+  executable_submission_sandbox: Python -P -B -s with minimal environment, closed inherited descriptors, audit-hook clean room, and integrity snapshots in local verification; production ALE OS sandbox remains required for hard memory/process isolation

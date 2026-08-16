@@ -1,0 +1,9 @@
+{
+  "basis_size": 12,
+  "device_cells": 4,
+  "input_sha256": "bbbd0b7aee050a31fa5d6bbf3c62696a813f35812c17710a15dbc6ca654d920e",
+  "max_hermiticity_residual": 0.0,
+  "max_surface_residual": 4.032166212157867e-16,
+  "model_id": "hidden_site_permutation_base",
+  "schema_version": "periodic-orbital-transport-output/v1"
+}

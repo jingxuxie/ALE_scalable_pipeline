@@ -1,0 +1,451 @@
+{
+  "alternative_solver": {
+    "grader_runtime_seconds": [
+      0.14827059999970515,
+      0.14749440000014147
+    ],
+    "independence": "edge-accumulated operator recurrence; no dense Hamiltonian in propagation",
+    "metrics": {
+      "ensemble-aggregation": {
+        "reference_normalized_rms_error": 7.524872277934537e-07,
+        "score": 0.9999992475133384,
+        "trajectory_consistency_normalized_rms_error": 0.0
+      },
+      "evidence-consistency": {
+        "categorical_exact": true,
+        "categorical_fraction": 1.0,
+        "reference_normalized_rms_error": 2.614805849027041e-07,
+        "score": 0.9999997908155869,
+        "trajectory_consistency_normalized_rms_error": 2.908554101008283e-09
+      },
+      "hidden-time-contraction": {
+        "normalized_rms_error": 5.035944208662472e-07,
+        "score": 0.9999994964058327
+      },
+      "public-trajectories": {
+        "basis_consistency_normalized_rms_error": 2.741619870871563e-07,
+        "reference_normalized_rms_error": 7.004848789225709e-07,
+        "score": 0.9999992995156117
+      },
+      "recurrence-basis": {
+        "normalized_rms_error": 1.29322871021068e-06,
+        "score": 0.9999987067729623
+      }
+    },
+    "runtime_seconds": 0.5921001999995497,
+    "score": 0.9999992285440962,
+    "status": "pass"
+  },
+  "bessel_audit": {
+    "max_abs_disagreement": 1.406375016443917e-13
+  },
+  "build_identity": "sha256:1723af0f244159dee47f96d153123e6e6e8b80bb02509ad75c765360f6163ca1",
+  "clean_room_reference": {
+    "deterministic_repeated_grade": true,
+    "grader_runtime_seconds": [
+      0.15037730000040028,
+      0.15418249999947875
+    ],
+    "hidden_access": "file reads outside clean root and runtime denied by audit hook",
+    "isolation_probe_runtime_seconds": 0.09889799999928073,
+    "metrics": {
+      "ensemble-aggregation": {
+        "reference_normalized_rms_error": 7.517342514204406e-07,
+        "score": 0.9999992482663136,
+        "trajectory_consistency_normalized_rms_error": 0.0
+      },
+      "evidence-consistency": {
+        "categorical_exact": true,
+        "categorical_fraction": 1.0,
+        "reference_normalized_rms_error": 2.8446118613102743e-07,
+        "score": 0.9999997724311158,
+        "trajectory_consistency_normalized_rms_error": 2.908554101008283e-09
+      },
+      "hidden-time-contraction": {
+        "normalized_rms_error": 5.0339244838728e-07,
+        "score": 0.999999496607805
+      },
+      "public-trajectories": {
+        "basis_consistency_normalized_rms_error": 2.7409173465662474e-07,
+        "reference_normalized_rms_error": 7.007050602782638e-07,
+        "score": 0.9999992992954307
+      },
+      "recurrence-basis": {
+        "normalized_rms_error": 1.2997252803431405e-06,
+        "score": 0.999998700276409
+      }
+    },
+    "network": "denied by Python audit hook; denial probe passed",
+    "output_bytes": {
+      "analysis.json": 3917,
+      "basis.npz": 689721,
+      "ensemble.csv": 5318,
+      "trajectories.csv": 8706
+    },
+    "runtime_seconds": 0.18488570000045002,
+    "score": 0.9999992243019628,
+    "solver_command": "python solve.py participant output",
+    "status": "pass"
+  },
+  "final_package_audit": {
+    "clean_room_solver_static_audit": "pass",
+    "hidden_time_disjointness": "pass",
+    "paper_blind_review": "pass",
+    "participant_file_count": 8,
+    "source_identifier_scan": "pass"
+  },
+  "instance_generation": {
+    "message": "generated spd-d8891b6fae09a0e09103273b: 72 sites, 127 bonds, 6 realizations",
+    "mode": "temporary regeneration matched checked artifacts semantically",
+    "runtime_seconds": 0.20778799999970943,
+    "status": "pass"
+  },
+  "metamorphic_tests": {
+    "results": {
+      "coordinate_translation": {
+        "hamiltonian_invariance_max_abs": 2.2301825219878386e-16,
+        "moment_relation_max_abs": 1.4210854715202004e-14,
+        "packet_phase_covariance_max_abs": 1.1443916996305594e-16,
+        "status": "pass"
+      },
+      "global_phase": {
+        "basis_covariance_max_abs": 2.4552312978479334e-16,
+        "observable_invariance_max_abs": 8.881784197001252e-16,
+        "status": "pass"
+      },
+      "hamiltonian_scaling_time": {
+        "basis_invariance_max_abs": 4.2457866502527573e-16,
+        "observable_invariance_max_abs": 7.105427357601002e-15,
+        "status": "pass"
+      },
+      "hermiticity": {
+        "max_abs_error": 0.0,
+        "status": "pass"
+      },
+      "norm_and_zero_soc": {
+        "norm_max_abs_error": 1.1213252548714081e-14,
+        "status": "pass",
+        "transverse_spin_max_abs": 0.0,
+        "up_polarization_max_abs_error": 0.0
+      },
+      "uniform_energy_shift": {
+        "basis_invariance_max_abs": 2.1138016631127878e-16,
+        "observable_invariance_max_abs": 7.105427357601002e-15,
+        "status": "pass"
+      }
+    },
+    "runtime_seconds": 0.1352150000002439,
+    "status": "pass"
+  },
+  "numpy": "2.3.5",
+  "oracle_generation": {
+    "message": "oracle wrote C:\\Users\\Jingxu\\AppData\\Local\\Temp\\spinful-packet-regenerate-qlxaejbv\\reference for spd-d8891b6fae09a0e09103273b",
+    "mode": "temporary regeneration matched checked artifacts semantically",
+    "runtime_seconds": 0.19774400000005699,
+    "status": "pass"
+  },
+  "oracle_grade": {
+    "metrics": {
+      "ensemble-aggregation": {
+        "reference_normalized_rms_error": 0.0,
+        "score": 1.0,
+        "trajectory_consistency_normalized_rms_error": 0.0
+      },
+      "evidence-consistency": {
+        "categorical_exact": true,
+        "categorical_fraction": 1.0,
+        "reference_normalized_rms_error": 0.0,
+        "score": 1.0,
+        "trajectory_consistency_normalized_rms_error": 0.0
+      },
+      "hidden-time-contraction": {
+        "normalized_rms_error": 5.018689224125671e-07,
+        "score": 0.9999994981313295
+      },
+      "public-trajectories": {
+        "basis_consistency_normalized_rms_error": 6.665954439570476e-07,
+        "reference_normalized_rms_error": 0.0,
+        "score": 0.9999993334050004
+      },
+      "recurrence-basis": {
+        "normalized_rms_error": 0.0,
+        "score": 1.0
+      }
+    },
+    "runtime_seconds": [
+      0.14900160000070173,
+      0.1403444000006857
+    ],
+    "score": 0.9999997412138324,
+    "status": "pass"
+  },
+  "package_audit": {
+    "clean_room_solver_static_audit": "pass",
+    "hidden_time_disjointness": "pass",
+    "paper_blind_review": "pass",
+    "participant_file_count": 8,
+    "source_identifier_scan": "pass"
+  },
+  "python": "3.12.13",
+  "root_symlink_test": {
+    "reason": "[WinError 1314] \u5ba2\u6237\u7aef\u6ca1\u6709\u6240\u9700\u7684\u7279\u6743\u3002: 'C:\\\\Users\\\\Jingxu\\\\AppData\\\\Local\\\\Temp\\\\spinful-packet-verify-9q8l_tr9\\\\clean-room\\\\output' -> 'C:\\\\Users\\\\Jingxu\\\\AppData\\\\Local\\\\Temp\\\\spinful-packet-verify-9q8l_tr9\\\\submission-root-link'",
+    "static_gate_present": true,
+    "status": "platform_unavailable"
+  },
+  "schema_version": "spinful-packet-verification/v1",
+  "scientific_mutants": [
+    {
+      "category": "wrong sign",
+      "grader_runtime_seconds": [
+        0.1434017000001404,
+        0.13563100000010309
+      ],
+      "id": "wrong_soc_sign",
+      "score": 0.022750131990781745,
+      "solver_runtime_seconds": 0.16799389999960113,
+      "status": "rejected_as_expected"
+    },
+    {
+      "category": "wrong phase",
+      "grader_runtime_seconds": [
+        0.14421429999947577,
+        0.14615130000038334
+      ],
+      "id": "conjugate_peierls_phase",
+      "score": 0.02600062072059458,
+      "solver_runtime_seconds": 0.16406240000014805,
+      "status": "rejected_as_expected"
+    },
+    {
+      "category": "coordinate order",
+      "grader_runtime_seconds": [
+        0.14169440000023314,
+        0.14075049999974
+      ],
+      "id": "swap_soc_axes",
+      "score": 0.022750257428460947,
+      "solver_runtime_seconds": 0.17617239999981393,
+      "status": "rejected_as_expected"
+    },
+    {
+      "category": "omitted interaction",
+      "grader_runtime_seconds": [
+        0.1438333000005514,
+        0.14549369999986084
+      ],
+      "id": "omit_ising_disorder",
+      "score": 0.01950150544193843,
+      "solver_runtime_seconds": 0.1688934000003428,
+      "status": "rejected_as_expected"
+    },
+    {
+      "category": "spin index",
+      "grader_runtime_seconds": [
+        0.1487440000000788,
+        0.13771689999975933
+      ],
+      "id": "swap_initial_spin",
+      "score": 0.026000095034295307,
+      "solver_runtime_seconds": 0.18482159999985015,
+      "status": "rejected_as_expected"
+    },
+    {
+      "category": "normalization",
+      "grader_runtime_seconds": [
+        0.13540780000039376,
+        0.1452356999998301
+      ],
+      "id": "unnormalized_packet",
+      "score": 0.026000026300395322,
+      "solver_runtime_seconds": 0.1626313000006121,
+      "status": "rejected_as_expected"
+    },
+    {
+      "category": "recurrence",
+      "grader_runtime_seconds": [
+        0.14386879999983648,
+        0.14147640000010142
+      ],
+      "id": "first_order_recurrence",
+      "score": 0.019500208732849654,
+      "solver_runtime_seconds": 0.1837138999999297,
+      "status": "rejected_as_expected"
+    },
+    {
+      "category": "propagation phase",
+      "grader_runtime_seconds": [
+        0.16389059999983147,
+        0.1446860000005472
+      ],
+      "id": "real_bessel_coefficients",
+      "score": 0.575999625981493,
+      "solver_runtime_seconds": 0.16090010000061739,
+      "status": "rejected_as_expected"
+    }
+  ],
+  "status": "pass",
+  "structural_and_adversarial_mutants": [
+    {
+      "category": "parse safety",
+      "grader_runtime_seconds": [
+        0.12460279999959312,
+        0.11942389999967418
+      ],
+      "hard_gate_failures": [
+        "basis.npz is not a valid NPZ archive: File is not a zip file"
+      ],
+      "id": "malformed",
+      "score": 0.0,
+      "status": "rejected_as_expected"
+    },
+    {
+      "category": "recursive JSON safety",
+      "grader_runtime_seconds": [
+        0.12490279999929044,
+        0.12442660000033356
+      ],
+      "hard_gate_failures": [
+        "invalid JSON in analysis.json: maximum recursion depth exceeded while decoding a JSON array from a unicode string"
+      ],
+      "id": "malformed_json",
+      "score": 0.0,
+      "status": "rejected_as_expected"
+    },
+    {
+      "category": "missing artifact",
+      "grader_runtime_seconds": [
+        0.11945119999927556,
+        0.12312539999948058
+      ],
+      "hard_gate_failures": [
+        "artifact set mismatch; missing=['ensemble.csv'], unexpected=[]"
+      ],
+      "id": "partial",
+      "score": 0.0,
+      "status": "rejected_as_expected"
+    },
+    {
+      "category": "non-finite value",
+      "grader_runtime_seconds": [
+        0.12916059999952267,
+        0.149818700000651
+      ],
+      "hard_gate_failures": [
+        "non-finite norm in trajectories.csv"
+      ],
+      "id": "nan",
+      "score": 0.0,
+      "status": "rejected_as_expected"
+    },
+    {
+      "category": "finite overflow safety",
+      "grader_runtime_seconds": [
+        0.139984700000241,
+        0.14210970000021916
+      ],
+      "hard_gate_failures": [],
+      "id": "huge_finite",
+      "score": 0.5760002469520052,
+      "status": "rejected_as_expected"
+    },
+    {
+      "category": "resource bound",
+      "grader_runtime_seconds": [
+        0.12354150000010122,
+        0.11986920000072132
+      ],
+      "hard_gate_failures": [
+        "submission exceeds 20971520 bytes"
+      ],
+      "id": "oversized",
+      "score": 0.0,
+      "status": "rejected_as_expected"
+    },
+    {
+      "category": "stale instance",
+      "grader_runtime_seconds": [
+        0.12416610000036599,
+        0.12232930000027409
+      ],
+      "hard_gate_failures": [
+        "basis.npz has a stale instance_id"
+      ],
+      "id": "stale",
+      "score": 0.0,
+      "status": "rejected_as_expected"
+    },
+    {
+      "category": "self-reported evidence",
+      "grader_runtime_seconds": [
+        0.14455120000002353,
+        0.1479909999998199
+      ],
+      "hard_gate_failures": [],
+      "id": "fabricated",
+      "score": 0.8894997452556337,
+      "status": "rejected_as_expected"
+    },
+    {
+      "category": "categorical evidence",
+      "grader_runtime_seconds": [
+        0.14462490000005346,
+        0.14082980000057432
+      ],
+      "hard_gate_failures": [],
+      "id": "wrong_conclusions",
+      "score": 0.9934997412138324,
+      "status": "rejected_as_expected"
+    },
+    {
+      "category": "schema type safety",
+      "grader_runtime_seconds": [
+        0.13279620000048453,
+        0.12483319999955711
+      ],
+      "hard_gate_failures": [
+        "analysis field eigenvalue_min must be numeric"
+      ],
+      "id": "wrong_numeric_type",
+      "score": 0.0,
+      "status": "rejected_as_expected"
+    },
+    {
+      "category": "unhashable schema type",
+      "grader_runtime_seconds": [
+        0.13949790000060602,
+        0.1271153999996386
+      ],
+      "hard_gate_failures": [
+        "invalid spin conclusion"
+      ],
+      "id": "wrong_category_type",
+      "score": 0.0,
+      "status": "rejected_as_expected"
+    },
+    {
+      "category": "anti-hardcoding",
+      "grader_runtime_seconds": [
+        0.1452222999996593,
+        0.1529780999999275
+      ],
+      "hard_gate_failures": [],
+      "id": "hardcoded_public",
+      "score": 0.2500000559956184,
+      "status": "rejected_as_expected"
+    },
+    {
+      "category": "artifact allowlist",
+      "grader_runtime_seconds": [
+        0.12024109999947541,
+        0.12707960000079765
+      ],
+      "hard_gate_failures": [
+        "artifact set mismatch; missing=[], unexpected=['run_me.py']"
+      ],
+      "id": "unexpected_executable",
+      "score": 0.0,
+      "status": "rejected_as_expected"
+    }
+  ],
+  "syntax_audit": "pass"
+}

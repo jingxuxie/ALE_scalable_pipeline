@@ -1,0 +1,360 @@
+{
+  "comparisons": [
+    {
+      "comparison_id": "cmp-a08",
+      "query_id": "q-a31",
+      "strong_condition": "c-a92",
+      "weak_condition": "c-a17"
+    },
+    {
+      "comparison_id": "cmp-a63",
+      "query_id": "q-a74",
+      "strong_condition": "c-a92",
+      "weak_condition": "c-a17"
+    }
+  ],
+  "experiment_id": "hidden-alpha-01",
+  "records": [
+    {
+      "L": 9,
+      "condition_id": "c-a17",
+      "exchange": 1.0,
+      "fields": [
+        -0.5236206101076406,
+        -0.5530856114731002,
+        -0.3223653438318703,
+        0.6212289323276295,
+        -0.175094669947223,
+        0.2820197667210106,
+        0.46705726934587555,
+        0.3987639883146291,
+        -0.5673384611376712
+      ],
+      "n_up": 4,
+      "queries": [
+        {
+          "epsilon": 0.44,
+          "packet_size": 9,
+          "query_id": "q-a31",
+          "subsystem_size": 4,
+          "subsystem_start": 7
+        },
+        {
+          "epsilon": 0.27,
+          "packet_size": 6,
+          "query_id": "q-a74",
+          "subsystem_size": 5,
+          "subsystem_start": 1
+        }
+      ],
+      "record_id": "ra17-r02"
+    },
+    {
+      "L": 9,
+      "condition_id": "c-a92",
+      "exchange": 1.0,
+      "fields": [
+        0.8718114008417324,
+        1.8240621038819906,
+        -5.092268213289375,
+        4.205490937341535,
+        -3.7721798569067864,
+        -2.083931635842741,
+        6.877485294779191,
+        -4.917795918403753,
+        5.411179107332279
+      ],
+      "n_up": 4,
+      "queries": [
+        {
+          "epsilon": 0.44,
+          "packet_size": 6,
+          "query_id": "q-a31",
+          "subsystem_size": 4,
+          "subsystem_start": 7
+        },
+        {
+          "epsilon": 0.27,
+          "packet_size": 8,
+          "query_id": "q-a74",
+          "subsystem_size": 5,
+          "subsystem_start": 1
+        }
+      ],
+      "record_id": "ra92-r03"
+    },
+    {
+      "L": 9,
+      "condition_id": "c-a17",
+      "exchange": 1.0,
+      "fields": [
+        0.7873040099092184,
+        -0.8330826285660919,
+        0.15391128844679336,
+        0.2288634758843885,
+        -0.20744891482015337,
+        -0.08514358053785431,
+        0.8399560012868267,
+        0.26041501916912957,
+        -0.6214310691287004
+      ],
+      "n_up": 4,
+      "queries": [
+        {
+          "epsilon": 0.44,
+          "packet_size": 8,
+          "query_id": "q-a31",
+          "subsystem_size": 4,
+          "subsystem_start": 7
+        },
+        {
+          "epsilon": 0.27,
+          "packet_size": 5,
+          "query_id": "q-a74",
+          "subsystem_size": 5,
+          "subsystem_start": 1
+        }
+      ],
+      "record_id": "ra17-r04"
+    },
+    {
+      "L": 9,
+      "condition_id": "c-a92",
+      "exchange": 1.0,
+      "fields": [
+        -6.025051138732214,
+        2.1649940899030415,
+        2.775042154237614,
+        -6.1390854575213485,
+        -4.688465544330317,
+        6.331168298296641,
+        0.928432593827079,
+        -6.59068800619739,
+        2.613697496819393
+      ],
+      "n_up": 4,
+      "queries": [
+        {
+          "epsilon": 0.44,
+          "packet_size": 7,
+          "query_id": "q-a31",
+          "subsystem_size": 4,
+          "subsystem_start": 7
+        },
+        {
+          "epsilon": 0.27,
+          "packet_size": 9,
+          "query_id": "q-a74",
+          "subsystem_size": 5,
+          "subsystem_start": 1
+        }
+      ],
+      "record_id": "ra92-r01"
+    },
+    {
+      "L": 9,
+      "condition_id": "c-a92",
+      "exchange": 1.0,
+      "fields": [
+        -1.6671055488084985,
+        2.3215118340542045,
+        -4.4842064860643855,
+        -4.422682518738963,
+        -0.8651328360595985,
+        -0.08616860141300187,
+        -6.773186957426375,
+        -5.240354478669262,
+        4.6341131485044915
+      ],
+      "n_up": 4,
+      "queries": [
+        {
+          "epsilon": 0.44,
+          "packet_size": 9,
+          "query_id": "q-a31",
+          "subsystem_size": 4,
+          "subsystem_start": 7
+        },
+        {
+          "epsilon": 0.27,
+          "packet_size": 6,
+          "query_id": "q-a74",
+          "subsystem_size": 5,
+          "subsystem_start": 1
+        }
+      ],
+      "record_id": "ra92-r02"
+    },
+    {
+      "L": 9,
+      "condition_id": "c-a17",
+      "exchange": 1.0,
+      "fields": [
+        -0.48316272539327343,
+        -0.278481053156741,
+        0.789346449177473,
+        0.38584630214629867,
+        0.5881370656827826,
+        -0.28880830770235366,
+        0.5333646419386245,
+        0.6058577417178074,
+        -0.7853611216922862
+      ],
+      "n_up": 4,
+      "queries": [
+        {
+          "epsilon": 0.44,
+          "packet_size": 6,
+          "query_id": "q-a31",
+          "subsystem_size": 4,
+          "subsystem_start": 7
+        },
+        {
+          "epsilon": 0.27,
+          "packet_size": 8,
+          "query_id": "q-a74",
+          "subsystem_size": 5,
+          "subsystem_start": 1
+        }
+      ],
+      "record_id": "ra17-r03"
+    },
+    {
+      "L": 9,
+      "condition_id": "c-a92",
+      "exchange": 1.0,
+      "fields": [
+        0.686496726581062,
+        1.7883553955623288,
+        -2.889943393470788,
+        4.472156516675314,
+        1.528328472758524,
+        -2.459854484244656,
+        -6.214950507087596,
+        -4.433290734510534,
+        2.787650074555808
+      ],
+      "n_up": 4,
+      "queries": [
+        {
+          "epsilon": 0.44,
+          "packet_size": 8,
+          "query_id": "q-a31",
+          "subsystem_size": 4,
+          "subsystem_start": 7
+        },
+        {
+          "epsilon": 0.27,
+          "packet_size": 5,
+          "query_id": "q-a74",
+          "subsystem_size": 5,
+          "subsystem_start": 1
+        }
+      ],
+      "record_id": "ra92-r04"
+    },
+    {
+      "L": 9,
+      "condition_id": "c-a17",
+      "exchange": 1.0,
+      "fields": [
+        0.808271703145251,
+        -0.08431994127220976,
+        -0.7732177491233813,
+        0.23889131683072196,
+        0.07535307958165649,
+        0.19912032726205842,
+        -0.8415895863192866,
+        -0.5777289618700396,
+        0.6832156338478229
+      ],
+      "n_up": 4,
+      "queries": [
+        {
+          "epsilon": 0.44,
+          "packet_size": 7,
+          "query_id": "q-a31",
+          "subsystem_size": 4,
+          "subsystem_start": 7
+        },
+        {
+          "epsilon": 0.27,
+          "packet_size": 9,
+          "query_id": "q-a74",
+          "subsystem_size": 5,
+          "subsystem_start": 1
+        }
+      ],
+      "record_id": "ra17-r01"
+    },
+    {
+      "L": 9,
+      "condition_id": "c-a92",
+      "exchange": 1.0,
+      "fields": [
+        1.785834128645794,
+        -4.4467355813878875,
+        3.2389459003305525,
+        -4.404931128776359,
+        2.96797252129179,
+        5.665106006136421,
+        -2.0941492612933494,
+        0.261580169487587,
+        2.004028212517955
+      ],
+      "n_up": 4,
+      "queries": [
+        {
+          "epsilon": 0.44,
+          "packet_size": 5,
+          "query_id": "q-a31",
+          "subsystem_size": 4,
+          "subsystem_start": 7
+        },
+        {
+          "epsilon": 0.27,
+          "packet_size": 7,
+          "query_id": "q-a74",
+          "subsystem_size": 5,
+          "subsystem_start": 1
+        }
+      ],
+      "record_id": "ra92-r00"
+    },
+    {
+      "L": 9,
+      "condition_id": "c-a17",
+      "exchange": 1.0,
+      "fields": [
+        -0.2220847165999097,
+        -0.49817329608039496,
+        0.3216194398920246,
+        0.03363902194921742,
+        -0.06440641866104058,
+        -0.23766057471271695,
+        0.6540817605215116,
+        0.13706837547787054,
+        0.26380675182952806
+      ],
+      "n_up": 4,
+      "queries": [
+        {
+          "epsilon": 0.44,
+          "packet_size": 5,
+          "query_id": "q-a31",
+          "subsystem_size": 4,
+          "subsystem_start": 7
+        },
+        {
+          "epsilon": 0.27,
+          "packet_size": 7,
+          "query_id": "q-a74",
+          "subsystem_size": 5,
+          "subsystem_start": 1
+        }
+      ],
+      "record_id": "ra17-r00"
+    }
+  ],
+  "schema_version": "sector-audit-experiment/v1"
+}

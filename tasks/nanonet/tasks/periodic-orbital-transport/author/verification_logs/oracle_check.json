@@ -1,0 +1,37 @@
+{
+  "result": {
+    "case_count": 12,
+    "hidden_case_count": 10,
+    "measured_oracle_seconds": {
+      "hidden_cutoff_edge": 0.016674099999363534,
+      "hidden_energy_shift_base": 0.022766699999920093,
+      "hidden_energy_shift_shifted": 0.023072700001648627,
+      "hidden_heterogeneous_s_sp": 0.03871409999555908,
+      "hidden_ordinary_permutation": 0.024501299994881265,
+      "hidden_ordinary_rotation": 0.030141199997160584,
+      "hidden_site_permutation_base": 0.034418000002915505,
+      "hidden_site_permutation_permuted": 0.036356899996462744,
+      "hidden_strong_defect": 0.037570799999230076,
+      "hidden_weak_contact": 0.03463999999803491,
+      "public_rotated_multispecies": 0.03078539999842178,
+      "public_scalar_diatomic": 0.019062300001678523
+    },
+    "measured_total_oracle_seconds": 0.3487034999852767,
+    "public_case_count": 2,
+    "status": "pass"
+  },
+  "run": {
+    "command": [
+      "C:\\Users\\Jingxu\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+      "E:\\Desktop2026.2.1\\ALE\\scalable_pipeline\\tasks\\nanonet\\tasks\\periodic-orbital-transport\\author\\oracle\\generate_assets.py",
+      "--task-root",
+      "E:\\Desktop2026.2.1\\ALE\\scalable_pipeline\\tasks\\nanonet\\tasks\\periodic-orbital-transport",
+      "--check"
+    ],
+    "cwd": "E:\\Desktop2026.2.1\\ALE\\scalable_pipeline\\tasks\\nanonet\\tasks\\periodic-orbital-transport",
+    "elapsed_seconds": 0.665577800005849,
+    "return_code": 0,
+    "stderr": "",
+    "stdout": "{\r\n  \"case_count\": 12,\r\n  \"hidden_case_count\": 10,\r\n  \"measured_oracle_seconds\": {\r\n    \"hidden_cutoff_edge\": 0.016674099999363534,\r\n    \"hidden_energy_shift_base\": 0.022766699999920093,\r\n    \"hidden_energy_shift_shifted\": 0.023072700001648627,\r\n    \"hidden_heterogeneous_s_sp\": 0.03871409999555908,\r\n    \"hidden_ordinary_permutation\": 0.024501299994881265,\r\n    \"hidden_ordinary_rotation\": 0.030141199997160584,\r\n    \"hidden_site_permutation_base\": 0.034418000002915505,\r\n    \"hidden_site_permutation_permuted\": 0.036356899996462744,\r\n    \"hidden_strong_defect\": 0.037570799999230076,\r\n    \"hidden_weak_contact\": 0.03463999999803491,\r\n    \"public_rotated_multispecies\": 0.03078539999842178,\r\n    \"public_scalar_diatomic\": 0.019062300001678523\r\n  },\r\n  \"measured_total_oracle_seconds\": 0.3487034999852767,\r\n  \"public_case_count\": 2,\r\n  \"status\": \"pass\"\r\n}\r\n"
+  }
+}

@@ -1,0 +1,82 @@
+{
+  "mutants": [
+    {
+      "category": "coordinate-convention",
+      "description": "Treat the first local scope variable as the most-significant rather than least-significant bit.",
+      "expected": "fail",
+      "mutant_id": "wrong_endian",
+      "path": "cases/wrong_endian"
+    },
+    {
+      "category": "omitted-interaction",
+      "description": "Discard separator context and fit only pooled new-variable marginals.",
+      "expected": "fail",
+      "mutant_id": "ignore_context",
+      "path": "cases/ignore_context"
+    },
+    {
+      "category": "omitted-marginal",
+      "description": "Replace the learned root marginal by a uniform table.",
+      "expected": "fail",
+      "mutant_id": "uniform_root",
+      "path": "cases/uniform_root"
+    },
+    {
+      "category": "omitted-normalization-guard",
+      "description": "Remove the disclosed half-count smoothing on sparse hidden cases.",
+      "expected": "fail",
+      "mutant_id": "no_smoothing",
+      "path": "cases/no_smoothing"
+    },
+    {
+      "category": "cross-clique-independence",
+      "description": "Answer multi-variable queries as products of singleton probabilities.",
+      "expected": "fail",
+      "mutant_id": "query_product",
+      "path": "cases/query_product"
+    },
+    {
+      "category": "wrong-ranking-direction",
+      "description": "Rank the smallest standardized residual as most anomalous.",
+      "expected": "fail",
+      "mutant_id": "ascending_audit",
+      "path": "cases/ascending_audit"
+    },
+    {
+      "category": "concealed-topology-failure",
+      "description": "Over-shrink factors only for a disclosed three-way-junction layout.",
+      "expected": "fail",
+      "mutant_id": "single_topology_failure",
+      "path": "cases/single_topology_failure"
+    },
+    {
+      "category": "validation-leakage",
+      "description": "Tilt fitted root probabilities using held-out validation outcomes.",
+      "expected": "fail",
+      "mutant_id": "validation_contamination",
+      "path": "cases/validation_contamination"
+    },
+    {
+      "category": "nondeterministic-output",
+      "description": "Perturb root factors using Python's randomized string hash.",
+      "expected": "fail",
+      "mutant_id": "hash_nondeterminism",
+      "path": "cases/hash_nondeterminism"
+    },
+    {
+      "category": "stale-cache",
+      "description": "Return artifacts labeled with a fixed public-like instance identity.",
+      "expected": "fail",
+      "mutant_id": "stale_identity",
+      "path": "cases/stale_identity"
+    },
+    {
+      "category": "partial-model",
+      "description": "Omit the final clique factor and emit incomplete sidecars.",
+      "expected": "fail",
+      "mutant_id": "truncate_tree",
+      "path": "cases/truncate_tree"
+    }
+  ],
+  "schema_version": "local-noise-mutants/v1"
+}

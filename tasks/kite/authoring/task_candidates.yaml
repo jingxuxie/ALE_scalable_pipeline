@@ -1,0 +1,150 @@
+schema_version: paper2ale.codex-task-candidates/v1
+
+paper_id: "arxiv-1910.05194v2"
+
+candidates:
+  - candidate_id: "candidate-01-spectral-cache"
+    title: "Reusable Sparse Spectral Cache"
+    target_leaf_id: "leaf-spectral-cache"
+    task_mode: "masked_workflow_completion"
+    derivation_type: "reported_workflow_slice_with_grounded_synthetic_instances"
+    participant_operation_ids: ["op-spectral-assemble", "op-spectral-rescale", "op-spectral-recurrence", "op-spectral-aggregate", "op-spectral-reconstruct", "op-spectral-diagnose"]
+    participant_output_artifact_ids: ["artifact-spectral-moments", "artifact-spectral-response", "artifact-spectral-diagnostics"]
+    intermediate_private_rubric_artifact_ids: ["artifact-spectral-operator", "artifact-spectral-scaled-operator", "artifact-spectral-probe-moments", "artifact-spectral-hidden-response"]
+    structural_challenge:
+      meaningful_operation_count: 6
+      dependency_depth: 5
+      branch_count: 3
+      tool_count: 1
+      required_artifact_count: 3
+      challenge_sources:
+        - "complex Hermitian sparse assembly and stable high-order recurrence"
+        - "coupled normalization, physical/rescaled units, and complex branch conventions"
+        - "cache reuse on unseen energy, broadening, and prefix queries"
+    shortcut_audit:
+      clone_and_run_source: "fails"
+      one_formula_or_single_library_call: "fails"
+      hardcode_public_examples: "fails"
+      fabricate_reported_metrics: "fails"
+      notes: "Synthetic systems are absent from the official source; hidden queries are recomputed from submitted raw moments; no participant self-report is trusted."
+    verification:
+      oracle_possible: true
+      public_input_solver_possible: true
+      behavioral_hidden_evaluation_possible: true
+      realistic_mutants_possible: true
+      tolerance_strategy: "cross-implementation float64 error with max-of-absolute-and-relative scaling; supplied-vector recurrence is deterministic"
+    resources: {estimated_reference_runtime_minutes: 2, estimated_memory_gb: 1, bounded: true}
+    specification_closure_risk: "low after explicit raw-moment convention"
+    leakage_risk: "low"
+    expected_human_effort: "6-12 hours for a robust implementation and diagnostics"
+    provisional_difficulty: "structurally_hard_candidate"
+    decision: "select"
+    decision_reason: "The cache-reuse leaf has a six-stage numerical workflow, strong private query generalization, independent dense and recurrence oracles, and realistic scientific mutants."
+
+  - candidate_id: "candidate-02-spin-dynamics"
+    title: "Spinful Packet Dynamics Cache"
+    target_leaf_id: "leaf-spin-precession"
+    task_mode: "method_masked_rediscovery"
+    derivation_type: "reported_workflow_slice_with_grounded_synthetic_instances"
+    participant_operation_ids: ["op-spin-assemble", "op-spin-packet", "op-spin-rescale", "op-spin-recurrence", "op-spin-contract", "op-spin-observables", "op-spin-ensemble", "op-spin-analysis"]
+    participant_output_artifact_ids: ["artifact-spin-basis", "artifact-spin-trajectories", "artifact-spin-ensemble", "artifact-spin-analysis"]
+    intermediate_private_rubric_artifact_ids: ["artifact-spin-hamiltonians", "artifact-spin-scaled-hamiltonians", "artifact-spin-bounds", "artifact-spin-packets", "artifact-spin-states", "artifact-spin-hidden-trajectories"]
+    structural_challenge:
+      meaningful_operation_count: 8
+      dependency_depth: 6
+      branch_count: 4
+      branch_definition: "reusable basis/private-time contraction, public trajectories, ensemble aggregation, and evidence-linked analysis"
+      tool_count: 1
+      required_artifact_count: 4
+      challenge_sources:
+        - "bond-directed complex spin-block assembly and basis conventions"
+        - "long-horizon polynomial propagation with reusable state bases"
+        - "multiple coupled observables and correct ensemble aggregation"
+        - "hidden-time generalization and evidence-linked comparison"
+    shortcut_audit:
+      clone_and_run_source: "fails"
+      one_formula_or_single_library_call: "fails"
+      hardcode_public_examples: "fails"
+      fabricate_reported_metrics: "fails"
+      notes: "Hidden times are contracted from submitted basis states, and every reported feature is recomputed from trajectories."
+    verification:
+      oracle_possible: true
+      public_input_solver_possible: true
+      behavioral_hidden_evaluation_possible: true
+      realistic_mutants_possible: true
+      tolerance_strategy: "basis-state and hidden-time trajectory comparisons calibrated across recurrence and dense propagation"
+    resources: {estimated_reference_runtime_minutes: 3, estimated_memory_gb: 2, bounded: true}
+    specification_closure_risk: "low after full Hamiltonian and packet conventions are disclosed"
+    leakage_risk: "low"
+    expected_human_effort: "8-16 hours for assembly, propagation, observables, aggregation, and validation"
+    provisional_difficulty: "structurally_hard_candidate"
+    decision: "select"
+    decision_reason: "It retains the application-to-numerics backward slice and supports hidden-time behavioral grading without executing participant code."
+
+  - candidate_id: "candidate-03-kubo-hall"
+    title: "Cached Hall Response Compiler"
+    target_leaf_id: "leaf-hall-response"
+    task_mode: "masked_workflow_completion"
+    derivation_type: "reported_workflow_slice"
+    participant_operation_ids: ["op-hall-assemble", "op-hall-velocities", "op-hall-moments", "op-hall-integrate", "op-hall-audit"]
+    participant_output_artifact_ids: ["artifact-hall-moments", "artifact-hall-curves", "artifact-hall-report"]
+    intermediate_private_rubric_artifact_ids: ["artifact-hall-operator", "artifact-hall-velocities"]
+    structural_challenge: {meaningful_operation_count: 5, dependency_depth: 4, branch_count: 3, tool_count: 1, required_artifact_count: 3, challenge_sources: ["rank-two complex moment tensor", "finite-temperature response integration"]}
+    shortcut_audit: {clone_and_run_source: "fails", one_formula_or_single_library_call: "fails", hardcode_public_examples: "fails", fabricate_reported_metrics: "fails", notes: "Potentially strong, but exact public closure would require authoring a complete response convention beyond what the paper prints."}
+    verification: {oracle_possible: true, public_input_solver_possible: true, behavioral_hidden_evaluation_possible: true, realistic_mutants_possible: true, tolerance_strategy: "dense finite-system response comparison"}
+    resources: {estimated_reference_runtime_minutes: 15, estimated_memory_gb: 4, bounded: true}
+    specification_closure_risk: "high"
+    leakage_risk: "medium"
+    expected_human_effort: "12-24 hours"
+    provisional_difficulty: "structurally_hard_candidate"
+    decision: "reject"
+    decision_reason: "The paper does not print the complete DC Kubo-Bastin kernel, and filling the gap would turn a source-specific convention into a benchmark-author choice with higher common-mode risk."
+
+  - candidate_id: "candidate-04-matrix-free-kernel"
+    title: "Decomposed Matrix-Free Recurrence Kernel"
+    target_leaf_id: "leaf-matrix-free-equivalence"
+    task_mode: "debugging_and_repair"
+    derivation_type: "grounded_extension"
+    participant_operation_ids: ["op-matrix-pattern-parse", "op-matrix-partition", "op-matrix-halo", "op-matrix-defect-fuse", "op-matrix-recurrence", "op-matrix-equivalence"]
+    participant_output_artifact_ids: ["artifact-matrix-checkpoints", "artifact-matrix-moments", "artifact-matrix-counters"]
+    intermediate_private_rubric_artifact_ids: ["artifact-matrix-pattern-operator", "artifact-matrix-partitions", "artifact-matrix-halo-states", "artifact-matrix-defect-operator"]
+    structural_challenge: {meaningful_operation_count: 6, dependency_depth: 5, branch_count: 4, tool_count: 1, required_artifact_count: 3, challenge_sources: ["boundary and halo indexing", "complex defects and recurrence equivalence"]}
+    shortcut_audit: {clone_and_run_source: "fails", one_formula_or_single_library_call: "fails", hardcode_public_examples: "fails", fabricate_reported_metrics: "fails", notes: "Numerically strong but more software-kernel-centric than the selected scientific workflows."}
+    verification: {oracle_possible: true, public_input_solver_possible: true, behavioral_hidden_evaluation_possible: true, realistic_mutants_possible: true, tolerance_strategy: "explicit sparse operator equivalence"}
+    resources: {estimated_reference_runtime_minutes: 3, estimated_memory_gb: 1, bounded: true}
+    specification_closure_risk: "low"
+    leakage_risk: "low"
+    expected_human_effort: "8-16 hours"
+    provisional_difficulty: "structurally_hard_candidate"
+    decision: "reject"
+    decision_reason: "Kept as a reserve; the two selected tasks more directly target scientific claims while remaining equally verifiable."
+
+  - candidate_id: "candidate-05-momentum-spectrum"
+    title: "Disorder-Broadened Momentum Spectrum"
+    target_leaf_id: "leaf-momentum-spectrum"
+    task_mode: "comparison_and_ablation"
+    derivation_type: "reported_workflow_slice"
+    participant_operation_ids: ["op-momentum-assemble", "op-momentum-projectors", "op-momentum-resolvent", "op-momentum-average", "op-momentum-ridges", "op-momentum-compare"]
+    participant_output_artifact_ids: ["artifact-momentum-map", "artifact-momentum-ridges", "artifact-momentum-report"]
+    intermediate_private_rubric_artifact_ids: ["artifact-momentum-operator", "artifact-momentum-projectors", "artifact-momentum-realization-maps"]
+    structural_challenge: {meaningful_operation_count: 6, dependency_depth: 4, branch_count: 4, tool_count: 1, required_artifact_count: 3, challenge_sources: ["phase-correct momentum projectors", "peak and linewidth extraction"]}
+    shortcut_audit: {clone_and_run_source: "fails", one_formula_or_single_library_call: "fails", hardcode_public_examples: "fails", fabricate_reported_metrics: "fails", notes: "Strong candidate but feature tolerances are less stable on CPU-bounded small systems."}
+    verification: {oracle_possible: true, public_input_solver_possible: true, behavioral_hidden_evaluation_possible: true, realistic_mutants_possible: true, tolerance_strategy: "dense eigensystem spectral maps plus tolerant feature extraction"}
+    resources: {estimated_reference_runtime_minutes: 10, estimated_memory_gb: 3, bounded: true}
+    specification_closure_risk: "medium"
+    leakage_risk: "low"
+    expected_human_effort: "10-20 hours"
+    provisional_difficulty: "structurally_hard_candidate"
+    decision: "reject"
+    decision_reason: "The selected spectral cache offers a cleaner oracle, and the selected dynamics task has a longer application workflow."
+
+selected_candidate_ids:
+  - "candidate-01-spectral-cache"
+  - "candidate-02-spin-dynamics"
+
+selection_rationale: >
+  The two selected tasks are complementary rather than split leaf questions. Each retains a
+  complete application-to-numerics backward slice, uses synthetic instances that source lookup
+  cannot answer, supports private reuse queries without executing participant code, and has an
+  independent oracle plus realistic mutation surface. The response and momentum-spectrum
+  candidates were not forced through higher specification or finite-size risk.

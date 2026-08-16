@@ -1,0 +1,12 @@
+{
+  "case_id": "case_indigo",
+  "case_token": "hidden-indigo-4a8f125e",
+  "finite_size_crossover": true,
+  "high_control_mean_r": 0.3962688106835565,
+  "low_control_mean_r": 0.5324419742587791,
+  "n_groups": 108,
+  "n_realizations": 2914,
+  "n_targets": 3,
+  "phase_direction": "mean_r_decreases_with_control",
+  "schema_version": "spectral-scaling-claims/v1"
+}

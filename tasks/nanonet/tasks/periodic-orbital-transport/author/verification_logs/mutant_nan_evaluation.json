@@ -1,0 +1,147 @@
+{
+  "aggregate_expanded_output_bytes": 687816,
+  "aggregate_output_bytes": 702816,
+  "cases": [
+    {
+      "hard_gates": {
+        "failures": [
+          "hidden_cutoff_edge: malformed output artifact: ScienceError: transmission: contains a non-finite value"
+        ],
+        "passed": false
+      },
+      "metrics": {},
+      "model_id": "hidden_cutoff_edge",
+      "passed": false,
+      "total_score": 0.0
+    },
+    {
+      "hard_gates": {
+        "failures": [
+          "hidden_energy_shift_base: malformed output artifact: ScienceError: transmission: contains a non-finite value"
+        ],
+        "passed": false
+      },
+      "metrics": {},
+      "model_id": "hidden_energy_shift_base",
+      "passed": false,
+      "total_score": 0.0
+    },
+    {
+      "hard_gates": {
+        "failures": [
+          "hidden_energy_shift_shifted: malformed output artifact: ScienceError: transmission: contains a non-finite value"
+        ],
+        "passed": false
+      },
+      "metrics": {},
+      "model_id": "hidden_energy_shift_shifted",
+      "passed": false,
+      "total_score": 0.0
+    },
+    {
+      "hard_gates": {
+        "failures": [
+          "hidden_heterogeneous_s_sp: malformed output artifact: ScienceError: transmission: contains a non-finite value"
+        ],
+        "passed": false
+      },
+      "metrics": {},
+      "model_id": "hidden_heterogeneous_s_sp",
+      "passed": false,
+      "total_score": 0.0
+    },
+    {
+      "hard_gates": {
+        "failures": [
+          "hidden_ordinary_permutation: malformed output artifact: ScienceError: transmission: contains a non-finite value"
+        ],
+        "passed": false
+      },
+      "metrics": {},
+      "model_id": "hidden_ordinary_permutation",
+      "passed": false,
+      "total_score": 0.0
+    },
+    {
+      "hard_gates": {
+        "failures": [
+          "hidden_ordinary_rotation: malformed output artifact: ScienceError: transmission: contains a non-finite value"
+        ],
+        "passed": false
+      },
+      "metrics": {},
+      "model_id": "hidden_ordinary_rotation",
+      "passed": false,
+      "total_score": 0.0
+    },
+    {
+      "hard_gates": {
+        "failures": [
+          "hidden_site_permutation_base: malformed output artifact: ScienceError: transmission: contains a non-finite value"
+        ],
+        "passed": false
+      },
+      "metrics": {},
+      "model_id": "hidden_site_permutation_base",
+      "passed": false,
+      "total_score": 0.0
+    },
+    {
+      "hard_gates": {
+        "failures": [
+          "hidden_site_permutation_permuted: malformed output artifact: ScienceError: transmission: contains a non-finite value"
+        ],
+        "passed": false
+      },
+      "metrics": {},
+      "model_id": "hidden_site_permutation_permuted",
+      "passed": false,
+      "total_score": 0.0
+    },
+    {
+      "hard_gates": {
+        "failures": [
+          "hidden_strong_defect: malformed output artifact: ScienceError: transmission: contains a non-finite value"
+        ],
+        "passed": false
+      },
+      "metrics": {},
+      "model_id": "hidden_strong_defect",
+      "passed": false,
+      "total_score": 0.0
+    },
+    {
+      "hard_gates": {
+        "failures": [
+          "hidden_weak_contact: malformed output artifact: ScienceError: transmission: contains a non-finite value"
+        ],
+        "passed": false
+      },
+      "metrics": {},
+      "model_id": "hidden_weak_contact",
+      "passed": false,
+      "total_score": 0.0
+    }
+  ],
+  "evaluator_error": null,
+  "hard_gates": {
+    "failures": [
+      "hidden_cutoff_edge: malformed output artifact: ScienceError: transmission: contains a non-finite value",
+      "hidden_energy_shift_base: malformed output artifact: ScienceError: transmission: contains a non-finite value",
+      "hidden_energy_shift_shifted: malformed output artifact: ScienceError: transmission: contains a non-finite value",
+      "hidden_heterogeneous_s_sp: malformed output artifact: ScienceError: transmission: contains a non-finite value",
+      "hidden_ordinary_permutation: malformed output artifact: ScienceError: transmission: contains a non-finite value",
+      "hidden_ordinary_rotation: malformed output artifact: ScienceError: transmission: contains a non-finite value",
+      "hidden_site_permutation_base: malformed output artifact: ScienceError: transmission: contains a non-finite value",
+      "hidden_site_permutation_permuted: malformed output artifact: ScienceError: transmission: contains a non-finite value",
+      "hidden_strong_defect: malformed output artifact: ScienceError: transmission: contains a non-finite value",
+      "hidden_weak_contact: malformed output artifact: ScienceError: transmission: contains a non-finite value"
+    ],
+    "passed": false
+  },
+  "metrics": {},
+  "mode": "execute",
+  "passed": false,
+  "schema_version": "periodic-orbital-transport-evaluation/v1",
+  "total_score": 0.0
+}

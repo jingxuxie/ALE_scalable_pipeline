@@ -1,0 +1,9 @@
+{
+  "basis_size": 9,
+  "device_cells": 5,
+  "input_sha256": "e40f18a0e58ff2c3c3e79727c6bbce3c9e4ead5fd2306863237d6dbfd302c846",
+  "max_hermiticity_residual": 0.0,
+  "max_surface_residual": 8.670952386241513e-16,
+  "model_id": "public_rotated_multispecies",
+  "schema_version": "periodic-orbital-transport-output/v1"
+}

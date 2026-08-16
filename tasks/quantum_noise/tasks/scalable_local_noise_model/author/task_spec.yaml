@@ -1,0 +1,294 @@
+schema_version: paper2ale.codex-task-spec/v1
+
+task:
+  task_id: local-junction-noise-model-v1
+  title: Scalable local binary noise model
+  status: needs_agent_calibration
+  task_mode: masked_workflow_completion
+  derivation_type: grounded_extension_of_reported_local-noise-learning_workflow
+  target_claim_leaf_id: claim-leaf-bounded-local-grf-scalability
+  summary: >
+    Reconcile independently sampled overlapping binary clique tables into a
+    normalized bounded-width joint model, answer arbitrary partial-assignment
+    probabilities without global enumeration, and audit validation parity
+    interactions for nonlocal behavior missed by the reconstructed model.
+
+workflow_subgraph:
+  operation_ids:
+    - op-parse-local-count-tables
+    - op-reconcile-overlapping-marginals
+    - op-construct-normalized-junction-model
+    - op-answer-partial-assignment-queries
+    - op-predict-validation-interactions
+    - op-rank-missed-interactions
+    - op-report-model-diagnostics
+  public_input_artifact_ids:
+    - artifact-local-count-tables
+    - artifact-disclosed-junction-tree-layout
+    - artifact-public-partial-assignment-queries
+    - artifact-validation-parity-counts
+  participant_output_artifact_ids:
+    - artifact-junction-tree-factor-model
+    - artifact-query-results
+    - artifact-validation-audit
+    - artifact-model-diagnostics
+  private_rubric_artifact_ids:
+    - artifact-hidden-local-noise-instances
+    - artifact-latent-local-factor-models
+    - artifact-hidden-query-probabilities
+    - artifact-injected-interaction-labels
+  meaningful_operation_count: 7
+  dependency_depth: 6
+  branch_count: 4
+  tool_count: 2
+
+participant:
+  task_description_path: participant/TASK.md
+  visible_inputs:
+    - id: disclosed-junction-layout
+      path: participant/input/manifest.json
+      format: strict JSON
+      purpose: variable identities, rooted clique tree, local axis order, smoothing and instance bounds
+      source: trusted-synthetic
+      redistribution_status: allowed
+    - id: noisy-local-counts
+      path: participant/input/clique_counts.json
+      format: strict JSON integer tables
+      purpose: independent multinomial observations of overlapping clique marginals
+      source: trusted-synthetic
+      redistribution_status: allowed
+    - id: public-evidence-queries
+      path: participant/input/queries.jsonl
+      format: JSONL
+      purpose: visible arbitrary partial-assignment probability requests
+      source: benchmark-choice
+      redistribution_status: allowed
+    - id: validation-parity-measurements
+      path: participant/input/validation.jsonl
+      format: JSONL
+      purpose: held-out interaction measurements to predict and rank by standardized residual
+      source: trusted-synthetic
+      redistribution_status: allowed
+  starter_software:
+    - path: participant/software/validate_submission.py
+      purpose: public source and output structural checks only
+      removed_solution_components:
+        - marginal reconciliation and statistical estimator
+        - normalized model construction
+        - dynamic-programming inference
+        - parity prediction and audit ranking
+  environment:
+    os: cross-platform
+    cpu_count: 4
+    memory_gb: 4
+    gpu: null
+    wall_time_minutes: 12
+    disk_gb: 1
+    network: {enabled: false, allowlist: []}
+    packages:
+      - python>=3.11
+      - numpy==2.3.5
+  required_outputs:
+    - id: submitted-program
+      path: submission/solution.py
+      format: UTF-8 Python source
+      schema_or_shape: one regular file implementing the documented --input/--output CLI
+      purpose: solve unseen bounded-width instances
+      required: true
+    - id: factor-model
+      path: runtime-output/model.json
+      format: strict JSON
+      schema_or_shape: one root marginal and one normalized conditional table per manifest clique
+      purpose: portable normalized model interpreted behaviorally by the evaluator
+      required: true
+    - id: query-results
+      path: runtime-output/query_results.jsonl
+      format: JSONL
+      schema_or_shape: one finite probability per input query in input order
+      purpose: demonstrate integrated dynamic-programming inference
+      required: true
+    - id: validation-audit
+      path: runtime-output/audit.json
+      format: strict JSON
+      schema_or_shape: all validation predictions, standardized residuals, ranks, and top-k IDs
+      purpose: identify validation interactions inconsistent with the local model
+      required: true
+    - id: diagnostics
+      path: runtime-output/diagnostics.json
+      format: strict JSON
+      schema_or_shape: recomputable normalization, clique-fit, and separator diagnostics
+      purpose: evidence-linked model quality report
+      required: true
+  public_success_criteria:
+    - model factors form a finite normalized joint distribution on every disclosed tree
+    - held-out clique marginals and partial-assignment probabilities recover the latent bounded-local model
+    - query and audit values agree with evaluator inference over the submitted model
+    - standardized residual ranking identifies validation interactions missed by the local model
+    - behavior remains robust to topology, record order, bit-axis, shot-count, width, and size shifts
+  constraints:
+    - NumPy and Python standard library only; no global 2^n state enumeration
+    - validation measurements are audit-only and cannot affect model fitting or queries
+    - one process, no network, no links, no extra files, deterministic output
+  prohibited_dependencies:
+    - source paper
+    - official source repository
+    - private evaluator files
+    - undeclared network access
+
+paper_blindness:
+  neutralized_identifiers:
+    - paper title, authors, theorem labels, and source method names
+    - source repository, package, and experiment filenames
+    - published numerical examples
+  withheld_author_information:
+    - hidden generator seeds and cases
+    - latent factors, private queries, anomaly labels, exact thresholds, weights, and mutants
+  leakage_checks:
+    - recursive identifier and private-value scan of participant projection
+    - clean-room solver path audit and network denial
+    - participant inventory checked against private and author projections
+  source_lookup_should_not_solve_task: true
+
+specification_closure:
+  decisions:
+    - decision: binary values, table endianness, and local variable-axis order
+      status: disclosed
+      public_location_or_rationale: TASK.md Table convention with a complete two-variable example
+    - decision: rooted tree, separators, introduced variables, and global factorization
+      status: disclosed
+      public_location_or_rationale: TASK.md Scientific model and reconstruction target
+    - decision: estimator for inconsistent finite-shot local tables
+      status: evaluator_method_agnostic
+      public_location_or_rationale: predictive latent-model behavior is scored; pseudocount direct conditionals are a documented baseline
+    - decision: count likelihood, shot totals, zero cells, and smoothing
+      status: disclosed
+      public_location_or_rationale: TASK.md reconstruction target and count schema
+    - decision: query semantics, empty evidence, unknown/repeated variables, order and numeric domain
+      status: disclosed
+      public_location_or_rationale: TASK.md queries and query output
+    - decision: validation parity event, z formula, direction, ties and top-k
+      status: disclosed
+      public_location_or_rationale: TASK.md validation and audit output
+    - decision: diagnostic definitions and weighting
+      status: disclosed
+      public_location_or_rationale: TASK.md diagnostics schema
+    - decision: inference and reconciliation algorithms/data structures
+      status: evaluator_method_agnostic
+      public_location_or_rationale: any normalized bounded-resource model with accurate behavior is accepted
+    - decision: hidden ranges, resource limits, dependencies and invocation
+      status: disclosed
+      public_location_or_rationale: TASK.md Environment and resource limits
+  all_closed: true
+  paper_blind_review:
+    reviewer_has_seen_source: false
+    task_restatement_correct: true
+    material_ambiguities: []
+    status: pass
+  unresolved_items: []
+
+intrinsic_difficulty:
+  provisional_label: structurally_hard_candidate
+  challenge_sources:
+    - noisy overlapping tables require statistically stable reconciliation across arbitrary rooted layouts
+    - local table axes, clique record order, topology, shot counts, and variable identities vary independently
+    - normalized non-enumerative partial-evidence inference must work across many cliques
+    - validation parity prediction and uncertainty-aware ranking integrate model inference with held-out auditing
+    - four recomputably linked artifacts expose omitted stages and stale or fabricated outputs
+  non_difficulty_factors: [formatting, hidden threshold, raw output volume]
+  shortcut_tests:
+    - name: normalize independent cliques or ignore separator context
+      result: rejected
+      evidence: private mutant ignore_context
+    - name: reverse flat-table bit convention
+      result: rejected
+      evidence: private mutant wrong_endian
+    - name: answer cross-clique evidence as independent singleton product
+      result: rejected
+      evidence: private mutant query_product
+    - name: hard-code/stale public instance outputs
+      result: rejected
+      evidence: private mutant stale_identity
+    - name: fit model correctly but reverse anomaly ranking
+      result: rejected
+      evidence: private mutant ascending_audit
+    - name: fail only one disclosed topology while averaging well elsewhere
+      result: rejected by per-case and topology floors
+      evidence: private mutant single_topology_failure
+    - name: use validation measurements while fitting the model
+      result: hard-gate rejection on paired validation-only interventions
+      evidence: private mutant validation_contamination
+    - name: emit hash-seed-dependent model factors or sidecars
+      result: hard-gate rejection on same-input repeated execution
+      evidence: private mutant hash_nondeterminism
+  expected_human_workflow: 8-16 expert hours to implement schemas, robust local estimation, normalized factors, generic sum-product, parity messages, diagnostics, and adversarial tests
+  agent_calibration:
+    status: not_run
+    exact_task_build_id: sha256:9716962c4c4f3338ef2b66a7aea69e10289c8575db33edd64cbadb81e8a62573
+    participant_projection_build_id: participant-tree-sha256-f095d644815187489501b6a83567f01888b929b47164156f140b9bc6f0841834
+    pinned_agent_systems: []
+
+private_evaluation:
+  evaluation_spec_path: private/evaluation_spec.yaml
+  hidden_input_paths:
+    - private/hidden_inputs/suite_manifest.json
+    - private/hidden_inputs/cases/
+  reference_paths:
+    - private/reference/truth/
+    - private/reference/oracle_outputs/
+    - private/reference/oracle_submission/
+  grader_paths:
+    - private/grader/core.py
+    - private/grader/grade.py
+  exact_thresholds_private: true
+  exact_weights_private: true
+
+reference_generation:
+  privileged_oracle:
+    path: author/oracle/generate.py
+    may_use_source_information: true
+    last_run_status: pass
+  public_input_reference_solver:
+    path: author/reference_solver/solve.py
+    reads_only_participant_package: true
+    declared_environment_only: true
+    last_run_status: pass
+    score: 0.9260558303777712
+    runtime_seconds: 0.213
+  alternative_solver:
+    path: author/alternative_solver/solve.py
+    available: true
+    independence_notes: empirical-Bayes context shrinkage differs from direct half-count conditional estimator; both implement inference independently of the grader
+
+instance_generation:
+  supported: true
+  trusted_generator: private/generator/generate.py
+  private_seed_policy: distinct fixed retired author seeds; use server-secret seeds before scored release
+  varying_factors:
+    - n from 47 to 88 in review build, chain/branch/fork topology, clique width 4-7, depth, IDs and record order
+    - local variable-axis permutations, root position, shot totals, sparse cells, query scopes, and parity probes
+    - ordinary, validation-anomaly, low-shot OOD, and wider-clique OOD regimes
+  invariants_preserved:
+    - running intersection and exactly-once variable introduction
+    - strictly normalized positive latent local factors and independent multinomial clique observations
+    - query target remains the disclosed-tree latent projection; validation shifts never contaminate model counts
+  public_review_instances_retired: true
+
+scientific_scope:
+  physicality_disclaimer: >
+    The latent q* is a generic classical binary junction-tree law over abstract error indicators. It is not asserted to be an observed-error-rate distribution of a locally Clifford-twirled Pauli channel, and no inverse 2/3 visibility/Pauli-support nonnegativity constraint is imposed. The task evaluates the paper-motivated bounded-local inference workflow, not physical channel realizability.
+
+provenance:
+  path_base: task_root
+  source_manifest_path: ../../authoring/source_manifest.yaml
+  evidence_map_path: ../../authoring/evidence_map.yaml
+  workflow_graph_path: ../../authoring/workflow_graph.yaml
+  candidate_record_path: ../../authoring/task_candidates.yaml
+
+release:
+  verification_report_path: author/verification_report.md
+  checklist_complete: false
+  decision: needs_agent_calibration
+  blocking_issues:
+    - pinned frontier-agent calibration has not been run
+    - collaborator should review the synthetic validation-intervention model before scored release
+    - collaborator should judge whether the generic classical nonphysical q* abstraction is appropriate for the paper-motivated workflow

@@ -1,0 +1,147 @@
+schema_version: paper2ale.codex-session/v1
+
+session:
+  paper_id: "arxiv:1411.0660v2"
+  paper_path_or_url: "sources/1411.0660v2.pdf"
+  supplement_path_or_url: "sources/1411.0660v2.pdf#pages=6-7"
+  official_code_hint: null
+  data_hint: null
+  output_root: "tasks/heisenberg_mbl_edge"
+  preferred_task_count: 2
+  maximum_task_count: 2
+  priority: "hard_only"
+  overwrite: false
+
+source_policy:
+  find_official_code: true
+  find_official_data: true
+  pin_exact_versions: true
+  record_licenses: true
+  permit_unofficial_forks: false
+  allow_synthetic_inputs_when_grounded: true
+  allow_paper_only_reconstruction: true
+
+task_policy:
+  allowed_modes:
+    - "audit"
+    - "masked_workflow_completion"
+    - "debugging_and_repair"
+    - "method_selection"
+    - "comparison_and_ablation"
+  prefer_one_strong_task: true
+  use_leaf_as_target_not_default_task_boundary: true
+  minimum_meaningful_operations: 4
+  minimum_dependency_depth: 3
+  minimum_independent_challenge_sources: 2
+  require_private_generalization_test: true
+  require_multiple_output_artifacts_when_natural: true
+  reject_easy_and_medium_final_tasks: true
+  retain_intermediate_results_as_private_rubrics: true
+  selected_task_ids:
+    - "spectral-scaling-audit-v1"
+    - "disordered-sector-audit-v1"
+  task_directories:
+    spectral-scaling-audit-v1: "../tasks/spectral_scaling_audit"
+    disordered-sector-audit-v1: "../tasks/disordered_sector_audit"
+
+participant_environment:
+  os: "cross-platform Python host"
+  cpu_count: 4
+  memory_gb: 16
+  gpu: null
+  wall_time_minutes: 60
+  disk_gb: 20
+  network:
+    enabled: false
+    allowlist: []
+  allowed_languages:
+    - "python"
+  required_packages:
+    - "numpy>=1.26,<3"
+  notes:
+    - "Task-local specifications may narrow this envelope but may not expand it without review."
+    - "No SciPy or provider implementation is assumed at participant runtime."
+
+verification_policy:
+  require_privileged_oracle: true
+  require_public_input_reference_solver: true
+  require_alternative_valid_solution_when_practical: true
+  require_realistic_mutants: true
+  minimum_mutant_categories: 5
+  require_metamorphic_tests_when_applicable: true
+  require_repeated_deterministic_evaluator_runs: true
+  numeric_comparison: "calibrated_abs_and_rel_tolerance"
+  stochastic_comparison: "multi_seed_or_multi_instance"
+  scientific_metrics_use_continuous_scores: true
+  exact_hidden_thresholds_private: true
+  required_clean_room_boundary: "participant package plus declared solver and environment only"
+
+difficulty_policy:
+  provisional_label: "structurally_hard_candidate"
+  require_shortcut_audit: true
+  require_clean_room_run: true
+  require_frontier_agent_calibration_for_frontier_claim: true
+  frontier_agent_calibration_status: "not_run"
+
+release_policy:
+  default_status_without_agent_calibration: "needs_agent_calibration"
+  fail_on_specification_gap: true
+  fail_on_reference_solver_failure: true
+  fail_on_mutant_acceptance: true
+  fail_on_hidden_information_leakage: true
+  allow_no_viable_task_outcome: true
+
+authoring_scope:
+  source_retrieval_date: "2026-08-15"
+  source_content_trust: "untrusted_evidence"
+  provider_commands_executed: false
+  source_software_executed: false
+  paper_blind_participant_required: true
+  source_bytes_visibility: "author_only"
+  current_phase: "collaborator_review_ready"
+
+verified_task_builds:
+  shared_release_disposition: "accepted_for_collaborator_review"
+  task_status_without_agent_calibration: "needs_agent_calibration"
+  production_release_ready: false
+  spectral-scaling-audit-v1:
+    build_identity: "sha256:42c4b45503175b7bfce961de20a9fa5ab40f63a374ee8114ca25ddafbce7a8eb"
+    build_file_count: 126
+    authoritative_ledger: "../tasks/spectral_scaling_audit/author/verification_results.json"
+    authoritative_ledger_sha256: "b6b53838fb5d2ae27825ea2e09b0c2d695a831dc679784f97f44eeebc6fded45"
+    verification_report: "../tasks/spectral_scaling_audit/author/verification_report.md"
+    verification_report_sha256: "6d83f207aa4aca671a9210f2b5034d2200061b8b15a4f53856789b33dadf6436"
+    verification_command: "python -B tasks/heisenberg_mbl_edge/tasks/spectral_scaling_audit/scripts/verify.py --results tasks/heisenberg_mbl_edge/tasks/spectral_scaling_audit/author/verification_results.json --jobs 2 --command-timeout 600"
+    verification_status: "pass_14_of_14"
+    runtime_seconds: 310.8380135
+    independent_same_build_runtime_seconds: 308.4586444
+    clean_room_reference_score: 0.8996699182281552
+    independent_alternative_score: 0.8723372222137469
+    scientific_mutants_rejected: "15/15 across 14 categories"
+    robustness_probes: "14/14 plus analyzer/output hard-link rejection and 6/6 hostile NPZ preflight rejection"
+    metamorphic_relations: "6/6 for reference and alternative solvers"
+    exact_diagonalization_realism_fixture: "pass twice byte-identically"
+    paper_blind_review: "pass on exact participant hashes"
+    provisional_difficulty: "structurally_hard_candidate"
+    task_status: "needs_agent_calibration"
+    release_disposition: "accepted_for_collaborator_review"
+  disordered-sector-audit-v1:
+    build_identity: "sha256:9dc29e54c250afdb07aa10391431147535ece606b2f4eee3cd9fcd0c00cc6b73"
+    authoritative_ledger: "../tasks/disordered_sector_audit/author/verification_results.json"
+    authoritative_ledger_sha256: "0d9f3e2bfe2e647d90dc7efeb4c0ec41bfceeb77859572cde4b73a5ef6f5b995"
+    verification_report: "../tasks/disordered_sector_audit/author/verification_report.md"
+    verification_report_sha256: "f303080e80df6f74f51a5553299a913b7aa908a8906e5d2e6ea438bdf889ddc0"
+    verification_command: "python tasks/heisenberg_mbl_edge/tasks/disordered_sector_audit/scripts/verify.py"
+    verification_status: "pass"
+    runtime_seconds: 49.1263065
+    clean_room_reference_score: 1.0
+    independent_alternative_score: 1.0
+    deterministic_private_repetitions: 2
+    scientific_mutants_rejected: "12/12"
+    metamorphic_relations: "5/5 in oracle, reference, and alternative layers"
+    analytic_fixture_checks: "4/4"
+    robustness_checks: "27 live passed/rejected safely; 5 platform-specific checks unavailable on the Windows host"
+    paper_blind_review: "pass"
+    provisional_difficulty: "structurally_hard_candidate"
+    task_status: "needs_agent_calibration"
+    release_disposition: "accepted_for_collaborator_review"

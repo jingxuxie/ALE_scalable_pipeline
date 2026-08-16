@@ -1,0 +1,9 @@
+{
+  "basis_size": 5,
+  "device_cells": 5,
+  "input_sha256": "07b53bb1650ab79b89bb69c701a12f9133df115368eb5ae9bbe14b55fe3c2bfa",
+  "max_hermiticity_residual": 0.0,
+  "max_surface_residual": 7.306053696766006e-16,
+  "model_id": "hidden_energy_shift_shifted",
+  "schema_version": "periodic-orbital-transport-output/v1"
+}

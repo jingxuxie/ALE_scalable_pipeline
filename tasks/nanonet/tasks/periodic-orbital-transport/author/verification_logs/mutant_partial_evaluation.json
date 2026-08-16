@@ -1,0 +1,147 @@
+{
+  "aggregate_expanded_output_bytes": 0,
+  "aggregate_output_bytes": 0,
+  "cases": [
+    {
+      "hard_gates": {
+        "failures": [
+          "hidden_cutoff_edge: output artifact set mismatch; missing=['diagnostics.json', 'self_energies.npz', 'spectra.npz'], unexpected=[]"
+        ],
+        "passed": false
+      },
+      "metrics": {},
+      "model_id": "hidden_cutoff_edge",
+      "passed": false,
+      "total_score": 0.0
+    },
+    {
+      "hard_gates": {
+        "failures": [
+          "hidden_energy_shift_base: output artifact set mismatch; missing=['diagnostics.json', 'self_energies.npz', 'spectra.npz'], unexpected=[]"
+        ],
+        "passed": false
+      },
+      "metrics": {},
+      "model_id": "hidden_energy_shift_base",
+      "passed": false,
+      "total_score": 0.0
+    },
+    {
+      "hard_gates": {
+        "failures": [
+          "hidden_energy_shift_shifted: output artifact set mismatch; missing=['diagnostics.json', 'self_energies.npz', 'spectra.npz'], unexpected=[]"
+        ],
+        "passed": false
+      },
+      "metrics": {},
+      "model_id": "hidden_energy_shift_shifted",
+      "passed": false,
+      "total_score": 0.0
+    },
+    {
+      "hard_gates": {
+        "failures": [
+          "hidden_heterogeneous_s_sp: output artifact set mismatch; missing=['diagnostics.json', 'self_energies.npz', 'spectra.npz'], unexpected=[]"
+        ],
+        "passed": false
+      },
+      "metrics": {},
+      "model_id": "hidden_heterogeneous_s_sp",
+      "passed": false,
+      "total_score": 0.0
+    },
+    {
+      "hard_gates": {
+        "failures": [
+          "hidden_ordinary_permutation: output artifact set mismatch; missing=['diagnostics.json', 'self_energies.npz', 'spectra.npz'], unexpected=[]"
+        ],
+        "passed": false
+      },
+      "metrics": {},
+      "model_id": "hidden_ordinary_permutation",
+      "passed": false,
+      "total_score": 0.0
+    },
+    {
+      "hard_gates": {
+        "failures": [
+          "hidden_ordinary_rotation: output artifact set mismatch; missing=['diagnostics.json', 'self_energies.npz', 'spectra.npz'], unexpected=[]"
+        ],
+        "passed": false
+      },
+      "metrics": {},
+      "model_id": "hidden_ordinary_rotation",
+      "passed": false,
+      "total_score": 0.0
+    },
+    {
+      "hard_gates": {
+        "failures": [
+          "hidden_site_permutation_base: output artifact set mismatch; missing=['diagnostics.json', 'self_energies.npz', 'spectra.npz'], unexpected=[]"
+        ],
+        "passed": false
+      },
+      "metrics": {},
+      "model_id": "hidden_site_permutation_base",
+      "passed": false,
+      "total_score": 0.0
+    },
+    {
+      "hard_gates": {
+        "failures": [
+          "hidden_site_permutation_permuted: output artifact set mismatch; missing=['diagnostics.json', 'self_energies.npz', 'spectra.npz'], unexpected=[]"
+        ],
+        "passed": false
+      },
+      "metrics": {},
+      "model_id": "hidden_site_permutation_permuted",
+      "passed": false,
+      "total_score": 0.0
+    },
+    {
+      "hard_gates": {
+        "failures": [
+          "hidden_strong_defect: output artifact set mismatch; missing=['diagnostics.json', 'self_energies.npz', 'spectra.npz'], unexpected=[]"
+        ],
+        "passed": false
+      },
+      "metrics": {},
+      "model_id": "hidden_strong_defect",
+      "passed": false,
+      "total_score": 0.0
+    },
+    {
+      "hard_gates": {
+        "failures": [
+          "hidden_weak_contact: output artifact set mismatch; missing=['diagnostics.json', 'self_energies.npz', 'spectra.npz'], unexpected=[]"
+        ],
+        "passed": false
+      },
+      "metrics": {},
+      "model_id": "hidden_weak_contact",
+      "passed": false,
+      "total_score": 0.0
+    }
+  ],
+  "evaluator_error": null,
+  "hard_gates": {
+    "failures": [
+      "hidden_cutoff_edge: output artifact set mismatch; missing=['diagnostics.json', 'self_energies.npz', 'spectra.npz'], unexpected=[]",
+      "hidden_energy_shift_base: output artifact set mismatch; missing=['diagnostics.json', 'self_energies.npz', 'spectra.npz'], unexpected=[]",
+      "hidden_energy_shift_shifted: output artifact set mismatch; missing=['diagnostics.json', 'self_energies.npz', 'spectra.npz'], unexpected=[]",
+      "hidden_heterogeneous_s_sp: output artifact set mismatch; missing=['diagnostics.json', 'self_energies.npz', 'spectra.npz'], unexpected=[]",
+      "hidden_ordinary_permutation: output artifact set mismatch; missing=['diagnostics.json', 'self_energies.npz', 'spectra.npz'], unexpected=[]",
+      "hidden_ordinary_rotation: output artifact set mismatch; missing=['diagnostics.json', 'self_energies.npz', 'spectra.npz'], unexpected=[]",
+      "hidden_site_permutation_base: output artifact set mismatch; missing=['diagnostics.json', 'self_energies.npz', 'spectra.npz'], unexpected=[]",
+      "hidden_site_permutation_permuted: output artifact set mismatch; missing=['diagnostics.json', 'self_energies.npz', 'spectra.npz'], unexpected=[]",
+      "hidden_strong_defect: output artifact set mismatch; missing=['diagnostics.json', 'self_energies.npz', 'spectra.npz'], unexpected=[]",
+      "hidden_weak_contact: output artifact set mismatch; missing=['diagnostics.json', 'self_energies.npz', 'spectra.npz'], unexpected=[]"
+    ],
+    "passed": false
+  },
+  "metrics": {},
+  "mode": "execute",
+  "passed": false,
+  "schema_version": "periodic-orbital-transport-evaluation/v1",
+  "total_score": 0.0
+}

@@ -1,0 +1,326 @@
+schema_version: paper2ale.codex-task-spec/v1
+
+task:
+  task_id: spinful-packet-dynamics
+  title: Spinful wave-packet dynamics on a disordered open lattice
+  status: needs_agent_calibration
+  task_mode: method_masked_rediscovery
+  derivation_type: reported_workflow_slice_with_grounded_synthetic_instances
+  target_claim_leaf_id: leaf-spin-precession
+  summary: >
+    Reconstruct a spinful tight-binding Hamiltonian for multiple controlled
+    disorder realizations, validate affine spectral scaling, generate reusable
+    Chebyshev basis vectors, contract time-domain observables, aggregate two
+    ensembles, and produce an evidence-linked comparison.
+
+workflow_subgraph:
+  operation_ids:
+    - op-spin-assemble
+    - op-spin-packet
+    - op-spin-rescale
+    - op-spin-recurrence
+    - op-spin-contract
+    - op-spin-observables
+    - op-spin-ensemble
+    - op-spin-analysis
+  public_input_artifact_ids:
+    - artifact-spin-public-systems
+  participant_output_artifact_ids:
+    - artifact-spin-basis
+    - artifact-spin-trajectories
+    - artifact-spin-ensemble
+    - artifact-spin-analysis
+  private_rubric_artifact_ids:
+    - artifact-spin-hamiltonians
+    - artifact-spin-scaled-hamiltonians
+    - artifact-spin-bounds
+    - artifact-spin-packets
+    - artifact-spin-states
+    - artifact-spin-hidden-trajectories
+    - artifact-spin-hidden-times
+  meaningful_operation_count: 8
+  dependency_depth: 6
+  branch_count: 4
+  tool_count: 1
+
+participant:
+  task_description_path: participant/TASK.md
+  visible_inputs:
+    - id: lattice-sites
+      path: participant/input/sites.csv
+      format: CSV
+      purpose: Authoritative site order and coordinates.
+      source: benchmark-authored synthetic
+      redistribution_status: allowed
+    - id: oriented-bonds
+      path: participant/input/bonds.csv
+      format: CSV
+      purpose: Open-boundary graph and explicit Peierls phases.
+      source: benchmark-authored synthetic
+      redistribution_status: allowed
+    - id: explicit-onsite-fields
+      path: participant/input/onsite.csv
+      format: CSV
+      purpose: Scalar and Ising onsite values for every realization/site pair.
+      source: benchmark-authored synthetic
+      redistribution_status: allowed
+    - id: realization-scaling
+      path: participant/input/realizations.csv
+      format: CSV
+      purpose: Model labels and supplied affine rescaling values.
+      source: benchmark-authored synthetic
+      redistribution_status: allowed
+    - id: instance-configuration
+      path: participant/input/config.json
+      format: JSON
+      purpose: Physical constants, packet parameters, basis order, and instance ID.
+      source: benchmark-authored synthetic
+      redistribution_status: allowed
+    - id: public-contraction-times
+      path: participant/input/times.csv
+      format: CSV
+      purpose: Times for required public trajectories.
+      source: benchmark-authored synthetic
+      redistribution_status: allowed
+  starter_software:
+    - path: participant/software/bessel.py
+      purpose: Numerically validated integer-order Bessel helper.
+      removed_solution_components:
+        - Hamiltonian construction
+        - Initial-state construction
+        - Spectral validation and scaling
+        - Chebyshev recurrence
+        - Contraction, observables, aggregation, and analysis
+  environment:
+    os: cross-platform
+    cpu_count: 4
+    memory_gb: 4
+    gpu: null
+    wall_time_minutes: 10
+    disk_gb: 0.1
+    network:
+      enabled: false
+      allowlist: []
+    packages:
+      - Python>=3.11
+      - numpy==2.3.5
+  required_outputs:
+    - id: chebyshev-basis
+      path: output/basis.npz
+      format: NumPy NPZ without pickle/object arrays
+      schema_or_shape: basis complex128 (6,52,72,2) plus exact ID/order metadata arrays
+      purpose: Reusable polynomial basis for behavioral hidden-time contraction.
+      required: true
+    - id: trajectories
+      path: output/trajectories.csv
+      format: CSV
+      schema_or_shape: 42 unique realization/time rows and 9 numeric observables
+      purpose: Public-time spin and spatial dynamics.
+      required: true
+    - id: ensemble-summary
+      path: output/ensemble.csv
+      format: CSV
+      schema_or_shape: 14 unique model/time rows with means and population standard deviations
+      purpose: Controlled scalar versus scalar-plus-Ising aggregation.
+      required: true
+    - id: comparison-analysis
+      path: output/analysis.json
+      format: JSON
+      schema_or_shape: Bounds, time contrasts, and evidence-derived final categories.
+      purpose: Bound validation and structured scientific comparison.
+      required: true
+  public_success_criteria:
+    - Hamiltonians are Hermitian and follow all disclosed block/index/orientation conventions.
+    - Supplied rescaling intervals are validated and used without re-fitting.
+    - The normalized packet and all Chebyshev vectors follow the disclosed definitions.
+    - Basis contraction reproduces finite, norm-conserving dynamics at public and undisclosed in-range times.
+    - Ensemble statistics and analysis are reproducible from realization trajectories.
+  constraints:
+    - Submission consists of exactly four regular non-symlink data files.
+    - Double-precision construction and calculation are required.
+    - Total submission storage is at most 20 MiB.
+    - Evaluator does not execute participant content.
+  prohibited_dependencies:
+    - source paper
+    - official source repository
+    - private evaluator files
+    - undeclared network access
+
+paper_blindness:
+  neutralized_identifiers:
+    - paper title and method acronym
+    - author and repository names
+    - original example filenames and figure labels
+  withheld_author_information:
+    - private contraction times
+    - oracle artifacts
+    - exact evaluator weights and pass thresholds
+    - mutation suite
+  leakage_checks:
+    - Case-insensitive source-identifier scan over every participant text file.
+    - Exact participant file allowlist and symlink/cache rejection.
+    - Public/private time disjointness check.
+    - Clean-room solver static path/network audit.
+  source_lookup_should_not_solve_task: true
+
+specification_closure:
+  decisions:
+    - decision: Site/spin index and output axis order
+      status: disclosed
+      public_location_or_rationale: TASK.md Scientific conventions and basis.npz schema.
+    - decision: Onsite and oriented hopping/SOC block signs
+      status: disclosed
+      public_location_or_rationale: TASK.md equations and explicit Pauli matrices.
+    - decision: Boundary condition and Hermitian reverse blocks
+      status: disclosed
+      public_location_or_rationale: TASK.md states open boundary, insert listed blocks once, and use the dagger reverse.
+    - decision: Spectral center, half-width, validation, and scaling
+      status: disclosed
+      public_location_or_rationale: realizations.csv and TASK.md scaling definition.
+    - decision: Gaussian plane-wave spinor and normalization
+      status: disclosed
+      public_location_or_rationale: config.json parameters and complete TASK.md formula.
+    - decision: Chebyshev recurrence and basis length
+      status: disclosed
+      public_location_or_rationale: TASK.md recurrence and config.json basis_order.
+    - decision: Truncated propagation coefficients
+      status: disclosed
+      public_location_or_rationale: TASK.md contraction formula plus public Bessel helper.
+    - decision: Spin and spatial observables
+      status: disclosed
+      public_location_or_rationale: TASK.md gives every formula and normalization.
+    - decision: Ensemble and comparison rules
+      status: disclosed
+      public_location_or_rationale: TASK.md specifies grouping, ddof, spread, deltas, and categorical ties.
+    - decision: Numeric implementation beyond disclosed definitions
+      status: evaluator_method_agnostic
+      public_location_or_rationale: Any double-precision implementation meeting tolerances is accepted.
+  all_closed: true
+  paper_blind_review:
+    reviewer_has_seen_source: false
+    task_restatement_correct: true
+    material_ambiguities: []
+    status: pass
+  unresolved_items: []
+
+intrinsic_difficulty:
+  provisional_label: structurally_hard_candidate
+  challenge_sources:
+    - Multi-stage complex-valued block-Hamiltonian implementation with phase, SOC, coordinate, spin, and Hermitian conventions.
+    - Stable long polynomial recurrence followed by time contraction and nine coupled observables.
+    - Multiple controlled disorder branches, stochastic-style ensemble aggregation, and evidence-linked comparison.
+    - Reusable behavioral artifact tested at undisclosed times rather than public-row reproduction alone.
+  non_difficulty_factors:
+    - formatting
+    - hidden thresholds
+    - raw output volume
+    - excessive compute
+  shortcut_tests:
+    - name: Hard-coded public trajectories with empty higher-order basis
+      result: rejected
+      evidence: author/verification_results.json structural mutant hardcoded_public.
+    - name: Correct basis with fabricated analysis
+      result: rejected
+      evidence: author/verification_results.json structural mutant fabricated.
+    - name: One-step power recurrence instead of Chebyshev recurrence
+      result: rejected
+      evidence: author/verification_results.json scientific mutant first_order_recurrence.
+    - name: Ignore Ising branch
+      result: rejected
+      evidence: author/verification_results.json scientific mutant omit_ising_disorder.
+    - name: Clone and run original repository
+      result: rejected
+      evidence: Inputs and output contract are a new synthetic NumPy-only instance with no source-compatible configuration.
+  expected_human_workflow: 8-16 hours for an expert to implement, validate signs/indexing, diagnose recurrence/contraction errors, and audit aggregation.
+  agent_calibration:
+    status: not_run
+    exact_task_build_id: sha256:1723af0f244159dee47f96d153123e6e6e8b80bb02509ad75c765360f6163ca1
+    pinned_agent_systems: []
+
+private_evaluation:
+  evaluation_spec_path: private/evaluation_spec.yaml
+  hidden_input_paths:
+    - private/hidden_inputs/private_times.json
+  reference_paths:
+    - private/reference/basis.npz
+    - private/reference/trajectories.csv
+    - private/reference_hidden/hidden_trajectories.csv
+    - private/reference/ensemble.csv
+    - private/reference/analysis.json
+  grader_paths:
+    - private/grader/grade.py
+  exact_thresholds_private: true
+  exact_weights_private: true
+
+reference_generation:
+  privileged_oracle:
+    path: author/oracle.py
+    may_use_source_information: true
+    last_run_status: pass
+    score: 0.9999997412138324
+    generation_runtime_seconds: 0.19774400000005699
+    grader_runtime_seconds:
+      - 0.14900160000070173
+      - 0.1403444000006857
+  public_input_reference_solver:
+    path: author/reference_solver/solve.py
+    reads_only_participant_package: true
+    declared_environment_only: true
+    last_run_status: pass
+    score: 0.9999992243019628
+    runtime_seconds: 0.18488570000045002
+    grader_runtime_seconds:
+      - 0.15037730000040028
+      - 0.15418249999947875
+    output_bytes:
+      basis.npz: 689721
+      trajectories.csv: 8706
+      ensemble.csv: 5318
+      analysis.json: 3917
+  alternative_solver:
+    path: author/alternative_solver/solve.py
+    available: true
+    independence_notes: Uses edge-accumulated Hamiltonian action for recurrence; privileged oracle uses spectral polynomial evaluation.
+    last_run_status: pass
+    score: 0.9999992285440962
+    runtime_seconds: 0.5921001999995497
+    grader_runtime_seconds:
+      - 0.14827059999970515
+      - 0.14749440000014147
+
+instance_generation:
+  supported: true
+  trusted_generator: author/generate_instance.py
+  current_instance_id: spd-d8891b6fae09a0e09103273b
+  last_run_status: pass
+  runtime_seconds: 0.20778799999970943
+  canonicalization_policy: Spectral center and half-width are formatted to nine decimal places and parsed back before public serialization, instance hashing, and downstream reference generation.
+  regeneration_policy: Temporary regeneration must match checked participant inputs exactly and checked reference artifacts semantically under the evaluator tolerance rule.
+  private_seed_policy: Separate fixed author seed domains for public scalar fields, Ising fields, and withheld contraction times; rotate for production.
+  varying_factors:
+    - explicit scalar disorder realization
+    - explicit site-dependent Ising field
+    - private contraction time
+    - evaluator metamorphic transformations
+  invariants_preserved:
+    - Hermiticity and open boundaries
+    - spectrum strictly within the supplied Chebyshev scaling interval
+    - unit-norm finite-dimensional evolution
+    - controlled paired scalar fields across model branches
+  public_review_instances_retired: true
+
+provenance:
+  source_manifest_path: ../../authoring/source_manifest.yaml
+  evidence_map_path: ../../authoring/evidence_map.yaml
+  workflow_graph_path: ../../authoring/workflow_graph.yaml
+  candidate_record_path: ../../authoring/task_candidates.yaml
+
+release:
+  verification_report_path: author/verification_report.md
+  checklist_complete: false
+  decision: needs_agent_calibration
+  blocking_issues:
+    - Exact task build has not been calibrated against pinned frontier-agent systems.
+    - Independent scientific-domain review of the reduced-model abstraction is pending.
+    - ALE compiler/publication integration and production resource measurement, including peak RSS, are pending.
+    - A distribution license for the independently authored participant assets must be selected; the upstream LGPL/GPL metadata conflict is recorded.

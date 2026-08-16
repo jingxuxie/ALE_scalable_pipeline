@@ -1,0 +1,168 @@
+schema_version: paper2ale.codex-source-manifest/v1
+
+paper:
+  paper_id: "arxiv-1910.05194v2"
+  title: "KITE: high-performance accurate modelling of electronic structure and response functions of large molecules, disordered crystals and heterostructures"
+  local_path: "authoring/sources/1910.05194.pdf"
+  public_url: "https://arxiv.org/pdf/1910.05194v2"
+  version: "arXiv v2, published version, revised 2020-03-13"
+  sha256: "df4bea7b0fb8d4059bc16e0a20357912450cfaf63799cc2ac8ada97453dd3e82"
+  license: "arXiv non-exclusive license to distribute 1.0; author-only evidence, not redistributed to participants"
+  retrieved_at: "2026-08-15"
+  citation: "S. M. Joao et al., R. Soc. Open Sci. 7, 191809 (2020), doi:10.1098/rsos.191809"
+
+supplements: []
+
+repositories:
+  - repository_id: "kite-v1.0-zenodo"
+    official: true
+    url: "https://doi.org/10.5281/zenodo.3485089"
+    local_path: "authoring/sources/kite_v1.0/quantum-kite-kite-7bb1fc4"
+    archive_path: "authoring/sources/kite-1.0.zip"
+    commit: "7bb1fc44d2b5a67ef65524fe33702e9c2cdef416"
+    git_tree: "510dd52f3fd77b59e0b31d0c7336a1188509287f"
+    archive_sha256: "09c45bd2b4ac7f4bcb6a0bb7b4a51ed00e1c4ac017424ece38196ba0ee34fefd"
+    archive_md5: "39ec4e2aa4cb04e44daca53c379dec9d"
+    tree_sha256: "0e7c71ab1b9c13d4d6d9ae5a82f39e5f40f83467c6b8dfb791e3ff7567c724ad"
+    license: "conflicting upstream declarations: LICENSE.md is LGPL-3.0; README and Zenodo state GPL-3.0"
+    retrieved_at: "2026-08-15"
+    role: "official implementation, examples, and configurations archived with the paper"
+  - repository_id: "kite-current-upstream-observation"
+    official: true
+    url: "https://github.com/quantum-kite/kite"
+    local_path: null
+    commit: "560a4c9d86a9b34f153abcb402334a7fc2780585"
+    tree_sha256: null
+    license: "upstream page remains internally inconsistent between LGPL-3.0 file labeling and GPL-3.0 README text"
+    retrieved_at: "2026-08-15"
+    role: "metadata and documentation comparison only; not used to generate answers"
+
+datasets:
+  - dataset_id: "kite-v1.0-paper-examples"
+    url: "https://zenodo.org/records/3485089"
+    local_path: "authoring/sources/kite_v1.0/quantum-kite-kite-7bb1fc4/examples"
+    version: "1.0"
+    sha256_or_tree_sha256: "covered by repository tree sha256 0e7c71ab1b9c13d4d6d9ae5a82f39e5f40f83467c6b8dfb791e3ff7567c724ad"
+    license: "upstream license conflict; author-only inspection"
+    redistribution: "not redistributed"
+    role: "workflow corroboration only"
+  - dataset_id: "benchmark-authored-kite-synthetic-v1"
+    url: null
+    local_path: "tasks"
+    version: "review build 2026-08-15"
+    sha256_or_tree_sha256: "bound by the exact per-task build identities recorded in each author/task_spec.yaml"
+    license: "independently authored benchmark assets; downstream distribution license pending"
+    redistribution: "eligible after downstream license selection"
+    role: "participant inputs and private review instances for the two selected grounded extensions"
+
+environments:
+  - environment_id: "codex-bundled-python-2026-08-15"
+    type: "manual"
+    path_or_digest: "Codex primary runtime bundle 26.813.12317"
+    os: "Windows-11-10.0.26200-SP0"
+    python: "3.12.13"
+    packages:
+      - "numpy==2.3.5"
+      - "pypdf>=5,<7"
+    system_dependencies:
+      - "Poppler/pdfinfo/pdftoppm from bundled runtime or TeX Live 2025"
+  - environment_id: "participant-portable"
+    type: "declared"
+    path_or_digest: "participant/TASK.md"
+    python: ">=3.11"
+    packages:
+      - "numpy==2.3.5"
+    system_dependencies: []
+
+source_execution:
+  commands:
+    - command: "pdfinfo authoring/sources/1910.05194.pdf"
+      working_directory: "tasks/kite"
+      environment_id: "codex-bundled-python-2026-08-15"
+      exit_code: 0
+      runtime_seconds: null
+      stdout_log: null
+      stderr_log: null
+      outputs:
+        - "38-page unencrypted A4 PDF metadata"
+    - command: "pdftotext -layout authoring/sources/1910.05194.pdf <temporary text>"
+      working_directory: "tasks/kite"
+      environment_id: "codex-bundled-python-2026-08-15"
+      exit_code: 0
+      runtime_seconds: null
+      stdout_log: null
+      stderr_log: null
+      outputs:
+        - "temporary author-only text extraction"
+    - command: "safe archive member audit followed by Expand-Archive"
+      working_directory: "tasks/kite"
+      environment_id: "codex-bundled-python-2026-08-15"
+      exit_code: 0
+      runtime_seconds: null
+      stdout_log: null
+      stderr_log: null
+      outputs:
+        - "306 archive entries inspected; zero rooted or parent-traversal entries"
+        - "265 extracted files"
+    - command: "official provider code not executed"
+      working_directory: "tasks/kite/authoring/sources/kite_v1.0/quantum-kite-kite-7bb1fc4"
+      environment_id: "codex-bundled-python-2026-08-15"
+      exit_code: null
+      runtime_seconds: null
+      stdout_log: null
+      stderr_log: null
+      outputs: []
+  observed_artifacts:
+    - path: "authoring/sources/1910.05194.pdf"
+      sha256: "df4bea7b0fb8d4059bc16e0a20357912450cfaf63799cc2ac8ada97453dd3e82"
+      purpose: "paper evidence"
+    - path: "authoring/sources/kite-1.0.zip"
+      sha256: "09c45bd2b4ac7f4bcb6a0bb7b4a51ed00e1c4ac017424ece38196ba0ee34fefd"
+      purpose: "official source snapshot"
+
+conflicts:
+  - conflict_id: "conflict-license-001"
+    topic: "official source license declaration"
+    paper_statement: "The paper describes KITE as open source and points to Zenodo."
+    code_behavior: "LICENSE.md contains LGPL-3.0; README says GPL-3.0."
+    observed_behavior: "Zenodo metadata uses other-open and its description says GPL-3.0."
+    resolution: "benchmark-choice"
+    rationale: "No upstream source bytes or code are placed in participant packages; all participant assets are independently authored synthetic data and code."
+  - conflict_id: "conflict-moment-normalization-002"
+    topic: "Chebyshev moment normalization"
+    paper_statement: "Printed Eqs. 2.7 and 2.17 use a factor inconsistent with Eqs. 2.12 and 2.16."
+    code_behavior: "tools/src/dos.cpp reconstructs stored raw moments with the required n=0 divisor; tools/src/functions.cpp applies the same divisor to Green coefficients."
+    observed_behavior: "Independent dense-eigensystem checks support the raw-moment convention used in the benchmark."
+    resolution: "benchmark-choice"
+    rationale: "The participant specification discloses an unambiguous raw-moment convention and is graded against independent oracles."
+  - conflict_id: "conflict-release-tag-003"
+    topic: "v1.0 repository tag naming"
+    paper_statement: "The cited Zenodo software is KITE version 1.0."
+    code_behavior: "The current Git repository exposes tags 0.1 and 1.1, while Zenodo links to a historical tree/1.0 URL."
+    observed_behavior: "The Zenodo archive root identifies commit 7bb1fc4, resolved to full commit 7bb1fc44d2b5a67ef65524fe33702e9c2cdef416."
+    resolution: "observed"
+    rationale: "The immutable Zenodo archive, checksum, and resolved commit are the pinned source."
+  - conflict_id: "conflict-time-phase-004"
+    topic: "Chebyshev-Bessel time-propagation phase"
+    paper_statement: "Equation 4.13 prints c_n=(-1)^n J_n(delta_e_minus*t/hbar)."
+    code_behavior: "Src/SimulationGaussianWavePacket.cpp:135-138 uses pow(-i,n), the standard unitary expansion coefficient."
+    observed_behavior: "Independent dense unitary propagation agrees with (-i)^n and not with (-1)^n."
+    resolution: "benchmark-choice"
+    rationale: "The participant task explicitly states (-i)^n; no paper lookup is required."
+  - conflict_id: "conflict-wavepacket-envelope-005"
+    topic: "Gaussian wave-packet envelope"
+    paper_statement: "Equation 4.15 prints a dimensionally malformed inverse-r-squared exponent."
+    code_behavior: "Src/KPM_Vector2D.cpp:235-280 uses exp(-0.5*gauss) with a code-specific lattice-coordinate width."
+    observed_behavior: "The benchmark defines exp(-|r-r0|^2/(4*sigma^2)), so sigma is the probability-density standard deviation."
+    resolution: "benchmark-choice"
+    rationale: "The public amplitude convention is explicit, normalized, and independently verified."
+
+license_and_privacy_decision:
+  participant_assets_redistributable: true
+  restricted_assets:
+    - "authoring/sources/1910.05194.pdf"
+    - "authoring/sources/kite-1.0.zip"
+    - "authoring/sources/kite_v1.0/"
+  sensitive_or_personal_data_present: false
+  decision: "eligible"
+  notes: "Participant inputs are deterministic synthetic systems and contain no copied paper, code, configuration, figure, or reported answer bytes. Eligibility is an authorship/provenance conclusion; the downstream ALE publication process must still select and record an explicit distribution license for the benchmark-authored participant assets."

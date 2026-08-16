@@ -1,0 +1,328 @@
+schema_version: paper2ale.codex-task-spec/v1
+
+task:
+  task_id: "periodic-orbital-transport"
+  title: "Periodic orbital Hamiltonian and open-boundary transport"
+  status: "needs_agent_calibration"
+  task_mode: "masked_workflow_completion"
+  derivation_type: "grounded_extension"
+  target_claim_leaf_id: "claim-leaf-periodic-bands-dos-transmission"
+  summary: >
+    Implement an end-to-end spinless tight-binding workflow that converts
+    periodic site geometry and two-center orbital parameters into one-cell
+    Hamiltonian blocks, Bloch bands, retarded lead self-energies, finite-device
+    density of states, cell-resolved LDOS, transmission, and numerical evidence
+    diagnostics. The task uses a fully disclosed synthetic input contract and
+    does not require the source paper or its software.
+
+workflow_subgraph:
+  operation_ids:
+    - "op-enumerate-neighbors"
+    - "op-assemble-orbital-blocks"
+    - "op-assemble-h0-h1"
+    - "op-compute-bloch-bands"
+    - "op-build-finite-device"
+    - "op-solve-retarded-surfaces"
+    - "op-compute-transport-observables"
+    - "op-report-diagnostics"
+  public_input_artifact_ids:
+    - "art-public-instance-json"
+  participant_output_artifact_ids:
+    - "art-hamiltonian-npz"
+    - "art-self-energies-npz"
+    - "art-spectra-npz"
+    - "art-diagnostics-json"
+  private_rubric_artifact_ids:
+    - "art-neighbor-pairs"
+    - "art-orbital-hopping-blocks"
+    - "art-bloch-bands"
+    - "art-finite-device-hamiltonian"
+    - "art-retarded-surface-greens"
+    - "art-device-green-functions"
+    - "art-private-reference-suite"
+  meaningful_operation_count: 8
+  dependency_depth: 7
+  branch_count: 2
+  tool_count: 1
+
+participant:
+  task_description_path: "participant/TASK.md"
+  visible_inputs:
+    - id: "art-public-input-schema"
+      path: "participant/input/schema.json"
+      format: "JSON Schema draft 2020-12"
+      purpose: "Machine-readable instance structure and bounded public domain."
+      source: "benchmark_choice"
+      redistribution_status: "allowed; benchmark-authored"
+    - id: "art-public-scalar-diatomic"
+      path: "participant/input/public_scalar_diatomic.json"
+      format: "UTF-8 JSON"
+      purpose: "Small public review instance with two scalar-orbital sites."
+      source: "synthetic"
+      redistribution_status: "allowed; benchmark-generated"
+    - id: "art-public-rotated-multispecies"
+      path: "participant/input/public_rotated_multispecies.json"
+      format: "UTF-8 JSON"
+      purpose: "Public review instance exercising rotated multi-species s/sp3 geometry."
+      source: "synthetic"
+      redistribution_status: "allowed; benchmark-generated"
+  starter_software:
+    - path: "participant/software/io_utils.py"
+      purpose: "Optional strict JSON/NPZ validation, hashing, and atomic-write helpers."
+      removed_solution_components:
+        - "neighbor enumeration"
+        - "Slater-Koster hopping assembly"
+        - "Hamiltonian and Bloch-band construction"
+        - "retarded surface Green-function solver"
+        - "finite-device transport observables"
+    - path: "participant/software/solution.py"
+      purpose: "Command-line entry-point stub with the required interface."
+      removed_solution_components:
+        - "all scientific implementation"
+  environment:
+    os: "cross-platform Linux, macOS, or Windows"
+    cpu_count: 4
+    memory_gb: 8
+    gpu: null
+    wall_time_minutes: 30
+    disk_gb: 1
+    network:
+      enabled: false
+      allowlist: []
+    packages:
+      - "python>=3.11"
+      - "numpy>=1.26,<3"
+  required_outputs:
+    - id: "art-solution-source"
+      path: "output/solution.py"
+      format: "UTF-8 Python source"
+      schema_or_shape: "self-contained CLI accepting --input INPUT.json --output OUTPUT_DIR"
+      purpose: "Executable participant implementation."
+      required: true
+    - id: "art-hamiltonian-npz"
+      path: "OUTPUT_DIR/hamiltonian.npz"
+      format: "safe NumPy NPZ without pickle"
+      schema_or_shape: "h0 complex128[N,N], h1 complex128[N,N], basis_site int64[N]"
+      purpose: "One-cell intra-cell and forward periodic Hamiltonian evidence."
+      required: true
+    - id: "art-self-energies-npz"
+      path: "OUTPUT_DIR/self_energies.npz"
+      format: "safe NumPy NPZ without pickle"
+      schema_or_shape: "energies float64[K], sigma_left/right complex128[K,N,N]"
+      purpose: "Retarded contact self-energy evidence for both leads."
+      required: true
+    - id: "art-spectra-npz"
+      path: "OUTPUT_DIR/spectra.npz"
+      format: "safe NumPy NPZ without pickle"
+      schema_or_shape: "phases[P], bands[P,N], energies[K], dos_total[K], ldos_cells[K,C], transmission[K]"
+      purpose: "Periodic bands and finite-device spectral/transport results."
+      required: true
+    - id: "art-diagnostics-json"
+      path: "OUTPUT_DIR/diagnostics.json"
+      format: "UTF-8 JSON"
+      schema_or_shape: "periodic-orbital-transport-output/v1 with exactly seven documented fields"
+      purpose: "Input identity, dimensions, and independently checkable residual claims."
+      required: true
+  public_success_criteria:
+    - "Correct site-major basis, inclusive cutoff, signed directional orbital blocks, and H0/H1 orientation."
+    - "Accurate Bloch bands, causal retarded self-energies, DOS/LDOS, and coherent transmission on unseen structures."
+    - "Robustness to rotations, site/species permutations, cutoff edges, contact asymmetry, and nonuniform devices."
+    - "Small surface/Dyson and Hermiticity residuals with internally consistent intermediate and final artifacts."
+    - "Deterministic, finite, schema-valid outputs within the declared resource limits."
+  constraints:
+    - "Preserve input phase and energy ordering, including duplicates."
+    - "Use z = E + i*eta and the exact public left/right coupling conventions."
+    - "Use only Python standard-library modules and NumPy; SciPy and external executables are unavailable."
+    - "Submission source is at most 200 KiB; evaluator outputs are at most 50 MiB aggregate compressed and expanded."
+    - "Do not special-case public model IDs, labels, filenames, grids, or examples."
+  prohibited_dependencies:
+    - "source paper"
+    - "official source repository"
+    - "private evaluator files"
+    - "author-only files"
+    - "undeclared network access"
+
+paper_blindness:
+  neutralized_identifiers:
+    - "paper title and NanoNET acronym"
+    - "authors, citation, and arXiv identifier"
+    - "official repository name and source API identifiers"
+    - "source example and nanowire filenames"
+  withheld_author_information:
+    - "ten hidden inputs and their seeds"
+    - "private reference arrays"
+    - "exact numerical tolerances, score weights, and pass thresholds"
+    - "mutant implementations and expected per-mutant scores"
+    - "oracle implementation and convergence parameters"
+  leakage_checks:
+    - "Participant files use neutral task identifiers and contain no paper citation or repository reference."
+    - "Participant projection contains only TASK.md, input/, and software/."
+    - "Private and author projections are outside participant/ and are forbidden at runtime."
+    - "Submission source scanning rejects source-paper, repository, hidden-suite, and private-reference markers."
+  source_lookup_should_not_solve_task: true
+
+specification_closure:
+  decisions:
+    - decision: "Basis ordering and orbital sets"
+      status: "disclosed"
+      public_location_or_rationale: "TASK.md, Basis convention and Input contract"
+    - decision: "Neighbor images, pair direction, cutoff inclusion, and zero-distance exclusion"
+      status: "disclosed"
+      public_location_or_rationale: "TASK.md, Neighbor enumeration and hopping blocks"
+    - decision: "s/p two-center hopping signs and matrix elements"
+      status: "disclosed"
+      public_location_or_rationale: "TASK.md, Neighbor enumeration and hopping blocks"
+    - decision: "H0/H1 orientation and Bloch phase convention"
+      status: "disclosed"
+      public_location_or_rationale: "TASK.md, Periodic Hamiltonian"
+    - decision: "Finite-device potentials, bond scales, and block order"
+      status: "disclosed"
+      public_location_or_rationale: "TASK.md, Finite device"
+    - decision: "Retarded broadening, outward lead orientation, and contact self-energy"
+      status: "disclosed"
+      public_location_or_rationale: "TASK.md, Retarded lead surfaces and contacts"
+    - decision: "Surface-equation numerical algorithm"
+      status: "evaluator_method_agnostic"
+      public_location_or_rationale: "Any stable algorithm selecting the causal retarded branch may pass behavioral checks."
+    - decision: "DOS, cell LDOS, transmission, normalization, and spin convention"
+      status: "disclosed"
+      public_location_or_rationale: "TASK.md, Retarded lead surfaces and contacts"
+    - decision: "Artifact names, keys, dtypes, shapes, diagnostics, and CLI"
+      status: "disclosed"
+      public_location_or_rationale: "TASK.md, Required entry point and Required outputs"
+    - decision: "Scientific equivalence tolerances and hidden aggregation"
+      status: "evaluator_method_agnostic"
+      public_location_or_rationale: "TASK.md discloses qualitative accuracy criteria; private tolerances allow independent double-precision solvers."
+  all_closed: true
+  paper_blind_review:
+    reviewer_has_seen_source: false
+    task_restatement_correct: true
+    material_ambiguities: []
+    status: "pass"
+  unresolved_items: []
+
+intrinsic_difficulty:
+  provisional_label: "structurally_hard_candidate"
+  challenge_sources:
+    - "Geometry-dependent heterogeneous s/sp3 block assembly with directional signs, periodic image orientation, and basis permutations."
+    - "Stable causal solution of nonlinear matrix surface equations for two differently oriented semi-infinite leads."
+    - "Integration of periodic, finite-device, spectral, and transport stages with evidence consistency across four artifacts."
+  non_difficulty_factors:
+    - "formatting"
+    - "hidden threshold"
+    - "raw output volume"
+    - "excessive compute"
+    - "paper trivia"
+  shortcut_tests:
+    - name: "clone and run the official project"
+      result: "rejected_by_contract"
+      evidence: "Synthetic schema, neutral interface, and declared NumPy-only runtime do not match a source example entry point."
+    - name: "one formula or one library call"
+      result: "rejected_by_workflow"
+      evidence: "Eight dependent operations span geometry, matrix assembly, nonlinear leads, and finite-device observables; SciPy is unavailable."
+    - name: "hard-code the two public examples"
+      result: "rejected_by_hidden_suite_design"
+      evidence: "Ten hidden instances vary geometry, ordering, basis, cutoff, contacts, defects, and metamorphic transforms."
+    - name: "fabricate diagnostics without consistent arrays"
+      result: "rejected_by_recomputation"
+      evidence: "private/grader/evaluate.py recomputes bands, device observables, Hermiticity, Dyson residuals, causality, and LDOS sum identity."
+  expected_human_workflow: >
+    A numerical-transport practitioner is expected to spend roughly eight to
+    sixteen focused hours translating the conventions, implementing and
+    testing orbital assembly, choosing a stable retarded surface solver,
+    integrating the finite device, and validating invariants on both public
+    instances.
+  agent_calibration:
+    status: "not_run"
+    exact_task_build_id: "sha256:ccc4469029e0ac6da765061bd0f315d659ac9e8f3b48581db32dd0d77a3a5005"
+    pinned_agent_systems: []
+
+private_evaluation:
+  evaluation_spec_path: "private/evaluation_spec.yaml"
+  hidden_input_paths:
+    - "private/hidden_inputs/hidden_cutoff_edge.json"
+    - "private/hidden_inputs/hidden_energy_shift_base.json"
+    - "private/hidden_inputs/hidden_energy_shift_shifted.json"
+    - "private/hidden_inputs/hidden_heterogeneous_s_sp.json"
+    - "private/hidden_inputs/hidden_ordinary_permutation.json"
+    - "private/hidden_inputs/hidden_ordinary_rotation.json"
+    - "private/hidden_inputs/hidden_site_permutation_base.json"
+    - "private/hidden_inputs/hidden_site_permutation_permuted.json"
+    - "private/hidden_inputs/hidden_strong_defect.json"
+    - "private/hidden_inputs/hidden_weak_contact.json"
+  reference_paths:
+    - "private/reference/hidden_cutoff_edge/"
+    - "private/reference/hidden_energy_shift_base/"
+    - "private/reference/hidden_energy_shift_shifted/"
+    - "private/reference/hidden_heterogeneous_s_sp/"
+    - "private/reference/hidden_ordinary_permutation/"
+    - "private/reference/hidden_ordinary_rotation/"
+    - "private/reference/hidden_site_permutation_base/"
+    - "private/reference/hidden_site_permutation_permuted/"
+    - "private/reference/hidden_strong_defect/"
+    - "private/reference/hidden_weak_contact/"
+  grader_paths:
+    - "private/grader/evaluate.py"
+    - "private/grader/science.py"
+    - "private/grader/__init__.py"
+  exact_thresholds_private: true
+  exact_weights_private: true
+
+reference_generation:
+  privileged_oracle:
+    path: "author/oracle/generate_assets.py"
+    may_use_source_information: true
+    last_run_status: "pass"
+  public_input_reference_solver:
+    path: "author/reference_solver/solve.py"
+    reads_only_participant_package: true
+    declared_environment_only: true
+    last_run_status: "pass"
+    score: 1.0
+    runtime_seconds: 0.632
+  alternative_solver:
+    path: "author/alternative_solver/solve.py"
+    available: true
+    independence_notes: >
+      Uses damped Dyson fixed-point continuation instead of the reference
+      solver's Lopez-Sancho decimation; it independently reimplements input
+      handling, assembly, device construction, and output writing. It scored
+      1.0 on all ten hidden cases.
+
+instance_generation:
+  supported: true
+  trusted_generator: "author/oracle/generate_assets.py"
+  private_seed_policy: >
+    Ten distinct author-only fixed literal seeds generate a pinned hidden
+    suite; public, hidden, and transform seeds are disjoint and none appears in
+    participant files. New production suites must use new private seeds.
+  varying_factors:
+    - "three-dimensional rigid rotations"
+    - "site-list and species-label permutations"
+    - "heterogeneous s and sp3 orbital bases"
+    - "inclusive neighbor-cutoff boundary"
+    - "lead contact asymmetry"
+    - "cell/site potentials and internal bond contrast"
+    - "global energy-origin shift"
+  invariants_preserved:
+    - "directional two-center orbital coupling law"
+    - "retarded surface Dyson equation and causality"
+    - "Bloch and finite-device observable definitions"
+    - "global energy-shift covariance"
+    - "site-list permutation equivariance"
+  public_review_instances_retired: true
+
+provenance:
+  source_manifest_path: "../../authoring/source_manifest.yaml"
+  evidence_map_path: "../../authoring/evidence_map.yaml"
+  workflow_graph_path: "../../authoring/workflow_graph.yaml"
+  candidate_record_path: "../../authoring/task_candidates.yaml"
+
+release:
+  verification_report_path: "author/verification_report.md"
+  checklist_complete: false
+  decision: "needs_agent_calibration"
+  blocking_issues:
+    - "Pinned frontier-agent calibration has not been run on an immutable exact task build."
+    - "A production ALE outer OS sandbox run is pending; direct evaluator execution is author calibration only."
+    - "Independent scientific expert review is pending."

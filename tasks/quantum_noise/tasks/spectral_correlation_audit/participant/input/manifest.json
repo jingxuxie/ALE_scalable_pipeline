@@ -1,0 +1,72 @@
+{
+  "bit_count": 7,
+  "count_columns": [
+    "length",
+    "sequence_id",
+    "target_mask",
+    "observed_mask",
+    "count"
+  ],
+  "count_file": "raw_counts.csv",
+  "experiment_id": "cedar-array",
+  "local_model": {
+    "cliques": [
+      [
+        0,
+        1,
+        2
+      ],
+      [
+        1,
+        2,
+        3
+      ],
+      [
+        2,
+        3,
+        4
+      ],
+      [
+        3,
+        4,
+        5
+      ],
+      [
+        4,
+        5,
+        6
+      ]
+    ],
+    "top_k_nonlocal": 3,
+    "tree_edges": [
+      [
+        0,
+        1
+      ],
+      [
+        1,
+        2
+      ],
+      [
+        2,
+        3
+      ],
+      [
+        3,
+        4
+      ]
+    ],
+    "type": "junction_tree_clique_marginals"
+  },
+  "mask_convention": "unsigned decimal; unit 0 is the least-significant bit",
+  "schema_version": "spectral-correlation-audit-input/v1",
+  "sequence_lengths": [
+    0,
+    1,
+    2,
+    3,
+    5,
+    8,
+    12
+  ]
+}

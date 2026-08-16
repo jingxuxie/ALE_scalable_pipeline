@@ -1,0 +1,44 @@
+{
+  "cases": [
+    {
+      "case_id": "case_amber",
+      "class": "ordinary",
+      "derivation_type": "grounded_extension",
+      "input": "../hidden_inputs/case_amber",
+      "oracle_output": "case_amber/oracle_output",
+      "truth": "case_amber/truth.npz"
+    },
+    {
+      "case_id": "case_indigo",
+      "class": "distribution_shift",
+      "derivation_type": "grounded_extension",
+      "input": "../hidden_inputs/case_indigo",
+      "oracle_output": "case_indigo/oracle_output",
+      "truth": "case_indigo/truth.npz"
+    },
+    {
+      "case_id": "case_sable",
+      "class": "ordinary",
+      "derivation_type": "grounded_extension",
+      "input": "../hidden_inputs/case_sable",
+      "oracle_output": "case_sable/oracle_output",
+      "truth": "case_sable/truth.npz"
+    },
+    {
+      "case_id": "case_verdant",
+      "class": "distribution_shift",
+      "derivation_type": "grounded_extension",
+      "input": "../hidden_inputs/case_verdant",
+      "oracle_output": "case_verdant/oracle_output",
+      "truth": "case_verdant/truth.npz"
+    }
+  ],
+  "realism_cases": [
+    {
+      "case_id": "heisenberg_ed_fixed_sector",
+      "path": "private/realism/heisenberg_ed_fixed_sector",
+      "role": "generator-invariant realism fixture; not a scored scaling case"
+    }
+  ],
+  "schema_version": "spectral-scaling-hidden-suite/v1"
+}

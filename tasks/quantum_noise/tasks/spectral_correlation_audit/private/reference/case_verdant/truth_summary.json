@@ -1,0 +1,28 @@
+{
+  "clique_topology": "chain",
+  "experiment_id": "verdant-array",
+  "injected_nonlocal_pairs": [
+    [
+      0,
+      7
+    ],
+    [
+      1,
+      6
+    ],
+    [
+      2,
+      5
+    ],
+    [
+      0,
+      5
+    ]
+  ],
+  "maximum_eigenvalue": 1.0,
+  "minimum_eigenvalue": 0.5101803009546515,
+  "minimum_pauli_support_probability": 5.715357517013917e-08,
+  "minimum_probability": 4.3641196527332425e-09,
+  "normalization_error": 0.0,
+  "schema_version": "spectral-correlation-audit-truth-summary/v1"
+}

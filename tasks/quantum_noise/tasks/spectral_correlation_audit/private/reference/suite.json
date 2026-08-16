@@ -1,0 +1,33 @@
+{
+  "cases": [
+    {
+      "case_id": "case_amber",
+      "class": "ordinary",
+      "input": "../hidden_inputs/case_amber",
+      "topology": "branched",
+      "truth": "case_amber/truth.npz"
+    },
+    {
+      "case_id": "case_indigo",
+      "class": "distribution_shift",
+      "input": "../hidden_inputs/case_indigo",
+      "topology": "chain",
+      "truth": "case_indigo/truth.npz"
+    },
+    {
+      "case_id": "case_sable",
+      "class": "ordinary",
+      "input": "../hidden_inputs/case_sable",
+      "topology": "chain",
+      "truth": "case_sable/truth.npz"
+    },
+    {
+      "case_id": "case_verdant",
+      "class": "distribution_shift",
+      "input": "../hidden_inputs/case_verdant",
+      "topology": "chain",
+      "truth": "case_verdant/truth.npz"
+    }
+  ],
+  "schema_version": "spectral-correlation-audit-hidden-suite/v1"
+}

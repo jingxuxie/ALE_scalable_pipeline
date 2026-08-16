@@ -1,0 +1,10 @@
+{
+  "factor_max_normalization_error": 2.220446049250313e-16,
+  "instance_id": "review_branch_47",
+  "interaction_count": 22,
+  "max_model_separator_tv": 1.6653345369377348e-16,
+  "max_raw_separator_tv": 0.029921602615190793,
+  "query_count": 18,
+  "schema_version": "local-noise-diagnostics/v1",
+  "weighted_clique_tv_to_smoothed_counts": 0.01856665007579819
+}

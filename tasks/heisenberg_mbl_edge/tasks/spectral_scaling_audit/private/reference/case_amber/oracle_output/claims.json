@@ -1,0 +1,12 @@
+{
+  "case_id": "case_amber",
+  "case_token": "hidden-amber-31d86a0f",
+  "finite_size_crossover": true,
+  "high_control_mean_r": 0.3905736926484297,
+  "low_control_mean_r": 0.5261584592134183,
+  "n_groups": 108,
+  "n_realizations": 3132,
+  "n_targets": 3,
+  "phase_direction": "mean_r_decreases_with_control",
+  "schema_version": "spectral-scaling-claims/v1"
+}

@@ -1,0 +1,165 @@
+{
+  "flagged_interaction_ids": [
+    "v_018_8805",
+    "v_007_5035",
+    "v_010_2321"
+  ],
+  "instance_id": "review_branch_47",
+  "interactions": [
+    {
+      "absolute_z": 2.040964593569436,
+      "interaction_id": "v_000_4528",
+      "predicted_probability": 0.4999964921326101,
+      "rank": 6,
+      "z_score": -2.040964593569436
+    },
+    {
+      "absolute_z": 0.4160735925783858,
+      "interaction_id": "v_001_7110",
+      "predicted_probability": 0.4984885841824019,
+      "rank": 20,
+      "z_score": -0.4160735925783858
+    },
+    {
+      "absolute_z": 1.645409194868248,
+      "interaction_id": "v_002_5133",
+      "predicted_probability": 0.5029580759728237,
+      "rank": 7,
+      "z_score": 1.645409194868248
+    },
+    {
+      "absolute_z": 2.250084033139288,
+      "interaction_id": "v_003_8621",
+      "predicted_probability": 0.5074910214854546,
+      "rank": 5,
+      "z_score": 2.250084033139288
+    },
+    {
+      "absolute_z": 0.1885774926497689,
+      "interaction_id": "v_004_8180",
+      "predicted_probability": 0.4980211194045425,
+      "rank": 22,
+      "z_score": -0.1885774926497689
+    },
+    {
+      "absolute_z": 1.1437693821186878,
+      "interaction_id": "v_005_8524",
+      "predicted_probability": 0.5062374705860863,
+      "rank": 10,
+      "z_score": 1.1437693821186878
+    },
+    {
+      "absolute_z": 1.0329713417473403,
+      "interaction_id": "v_006_3200",
+      "predicted_probability": 0.5070287532079741,
+      "rank": 12,
+      "z_score": 1.0329713417473403
+    },
+    {
+      "absolute_z": 27.25976534131238,
+      "interaction_id": "v_007_5035",
+      "predicted_probability": 0.4997705153445905,
+      "rank": 2,
+      "z_score": 27.25976534131238
+    },
+    {
+      "absolute_z": 2.4187897923907045,
+      "interaction_id": "v_008_7717",
+      "predicted_probability": 0.49998676228256245,
+      "rank": 4,
+      "z_score": -2.4187897923907045
+    },
+    {
+      "absolute_z": 0.6125649463241242,
+      "interaction_id": "v_009_3559",
+      "predicted_probability": 0.4998247005024652,
+      "rank": 18,
+      "z_score": 0.6125649463241242
+    },
+    {
+      "absolute_z": 23.894078467214488,
+      "interaction_id": "v_010_2321",
+      "predicted_probability": 0.4994027315345414,
+      "rank": 3,
+      "z_score": 23.894078467214488
+    },
+    {
+      "absolute_z": 0.8422652183749814,
+      "interaction_id": "v_011_4332",
+      "predicted_probability": 0.4988775582294511,
+      "rank": 15,
+      "z_score": 0.8422652183749814
+    },
+    {
+      "absolute_z": 1.283450643598089,
+      "interaction_id": "v_012_5548",
+      "predicted_probability": 0.4964110635405701,
+      "rank": 9,
+      "z_score": -1.283450643598089
+    },
+    {
+      "absolute_z": 0.8570609705269515,
+      "interaction_id": "v_013_4345",
+      "predicted_probability": 0.4970160404636328,
+      "rank": 14,
+      "z_score": -0.8570609705269515
+    },
+    {
+      "absolute_z": 0.7583031458436661,
+      "interaction_id": "v_014_2206",
+      "predicted_probability": 0.498083521098059,
+      "rank": 17,
+      "z_score": 0.7583031458436661
+    },
+    {
+      "absolute_z": 1.3426742618294871,
+      "interaction_id": "v_015_2171",
+      "predicted_probability": 0.49999592765733514,
+      "rank": 8,
+      "z_score": -1.3426742618294871
+    },
+    {
+      "absolute_z": 0.7919526453166641,
+      "interaction_id": "v_016_1421",
+      "predicted_probability": 0.5002987007885777,
+      "rank": 16,
+      "z_score": -0.7919526453166641
+    },
+    {
+      "absolute_z": 0.9005439972087128,
+      "interaction_id": "v_017_3466",
+      "predicted_probability": 0.5264712554483182,
+      "rank": 13,
+      "z_score": -0.9005439972087128
+    },
+    {
+      "absolute_z": 29.82064876302529,
+      "interaction_id": "v_018_8805",
+      "predicted_probability": 0.5000439856395235,
+      "rank": 1,
+      "z_score": -29.82064876302529
+    },
+    {
+      "absolute_z": 0.4425467942546406,
+      "interaction_id": "v_019_2656",
+      "predicted_probability": 0.46824799725508437,
+      "rank": 19,
+      "z_score": 0.4425467942546406
+    },
+    {
+      "absolute_z": 0.2779693826712482,
+      "interaction_id": "v_020_3668",
+      "predicted_probability": 0.49970737388454267,
+      "rank": 21,
+      "z_score": 0.2779693826712482
+    },
+    {
+      "absolute_z": 1.059997293281078,
+      "interaction_id": "v_021_2003",
+      "predicted_probability": 0.45142209862310545,
+      "rank": 11,
+      "z_score": 1.059997293281078
+    }
+  ],
+  "schema_version": "local-noise-audit/v1"
+}

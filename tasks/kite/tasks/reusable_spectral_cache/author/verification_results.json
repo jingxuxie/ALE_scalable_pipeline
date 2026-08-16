@@ -1,0 +1,412 @@
+{
+  "build_identity": "sha256:439d24074b7efc721570f33b64e0433427dfa6488945274a4aedbd78ee4b3f54",
+  "checks": [
+    {
+      "check_id": "preflight",
+      "details": {
+        "numpy": "2.3.5",
+        "python": "3.12.13",
+        "required_file_count": 20
+      },
+      "required": true,
+      "runtime_seconds": 0.0027452000003904686,
+      "status": "pass"
+    },
+    {
+      "check_id": "participant-leakage-and-input-audit",
+      "details": {
+        "file_count": 14,
+        "source_identifier_leaks": 0,
+        "total_bytes": 298034
+      },
+      "required": true,
+      "runtime_seconds": 0.019382800000130374,
+      "status": "pass"
+    },
+    {
+      "check_id": "oracle-generation-and-determinism",
+      "details": {
+        "runs": 2,
+        "runtime_seconds": [
+          0.7292670999995607,
+          0.7320650000001478
+        ],
+        "scaled_max_abs_eigenvalue": [
+          0.7201179437856918,
+          0.7402459692226919,
+          0.7401282552807953
+        ]
+      },
+      "required": true,
+      "runtime_seconds": 1.5523653000000195,
+      "status": "pass"
+    },
+    {
+      "check_id": "oracle-grading",
+      "details": {
+        "grader_runtime": {
+          "first_seconds": 0.15942529999938415,
+          "second_seconds": 0.16393169999992097
+        },
+        "metrics": {
+          "diagnostics_consistency": {
+            "failed_fields": [],
+            "score": 1.0
+          },
+          "hidden_contraction_accuracy": {
+            "normalized_rmse": 0.0,
+            "query_count": 18,
+            "score": 1.0
+          },
+          "public_response_consistency": {
+            "normalized_rmse": 0.0,
+            "query_count": 21,
+            "score": 1.0
+          },
+          "raw_moment_accuracy": {
+            "normalized_rmse": 0.0,
+            "score": 1.0
+          }
+        },
+        "score": 1.0
+      },
+      "required": true,
+      "runtime_seconds": 0.34385850000035134,
+      "status": "pass"
+    },
+    {
+      "check_id": "clean-room-audit-guard-selftest",
+      "details": {
+        "socket_denied": true,
+        "source_read_denied": true
+      },
+      "required": true,
+      "runtime_seconds": 0.12089759999980743,
+      "status": "pass"
+    },
+    {
+      "check_id": "clean-room-reference-and-determinism",
+      "details": {
+        "hidden_access_audit": "audit hook denied source task paths, sockets, and subprocesses",
+        "metrics": {
+          "diagnostics_consistency": {
+            "failed_fields": [],
+            "score": 1.0
+          },
+          "hidden_contraction_accuracy": {
+            "normalized_rmse": 2.5366512261424098e-08,
+            "query_count": 18,
+            "score": 1.0
+          },
+          "public_response_consistency": {
+            "normalized_rmse": 1.7393196703770574e-07,
+            "query_count": 21,
+            "score": 1.0
+          },
+          "raw_moment_accuracy": {
+            "normalized_rmse": 2.720110680285313e-06,
+            "score": 1.0
+          }
+        },
+        "runs": 2,
+        "scores": [
+          1.0,
+          1.0
+        ],
+        "solver_runtime_seconds": [
+          0.24549930000011955,
+          0.2512471000000005
+        ]
+      },
+      "required": true,
+      "runtime_seconds": 1.235103799999706,
+      "status": "pass"
+    },
+    {
+      "check_id": "alternative-valid-implementation",
+      "details": {
+        "grader_runtime": {
+          "first_seconds": 0.15947349999987637,
+          "second_seconds": 0.1733075000001918
+        },
+        "metrics": {
+          "diagnostics_consistency": {
+            "failed_fields": [],
+            "score": 1.0
+          },
+          "hidden_contraction_accuracy": {
+            "normalized_rmse": 9.664985105593449e-08,
+            "query_count": 18,
+            "score": 1.0
+          },
+          "public_response_consistency": {
+            "normalized_rmse": 1.7476689965463272e-07,
+            "query_count": 21,
+            "score": 1.0
+          },
+          "raw_moment_accuracy": {
+            "normalized_rmse": 6.317493822937515e-05,
+            "score": 1.0
+          }
+        },
+        "score": 1.0,
+        "solver_runtime_seconds": 0.6022575000006327
+      },
+      "required": true,
+      "runtime_seconds": 0.9553311999998186,
+      "status": "pass"
+    },
+    {
+      "check_id": "scientific-mutants",
+      "details": {
+        "build_runtime_seconds": 0.8674335000005158,
+        "count": 15,
+        "results": {
+          "advanced_branch_swap": {
+            "metric_scores": {
+              "diagnostics_consistency": 1.0,
+              "hidden_contraction_accuracy": 1.0,
+              "public_response_consistency": 0.0,
+              "raw_moment_accuracy": 1.0
+            },
+            "score": 0.9
+          },
+          "diagnostics_inconsistent": {
+            "metric_scores": {
+              "diagnostics_consistency": 0.5384615384615384,
+              "hidden_contraction_accuracy": 1.0,
+              "public_response_consistency": 1.0,
+              "raw_moment_accuracy": 1.0
+            },
+            "score": 0.9769230769230769
+          },
+          "double_order_zero": {
+            "metric_scores": {
+              "diagnostics_consistency": 1.0,
+              "hidden_contraction_accuracy": 1.0,
+              "public_response_consistency": 0.0,
+              "raw_moment_accuracy": 1.0
+            },
+            "score": 0.9
+          },
+          "eta_not_scaled": {
+            "metric_scores": {
+              "diagnostics_consistency": 1.0,
+              "hidden_contraction_accuracy": 1.0,
+              "public_response_consistency": 0.0,
+              "raw_moment_accuracy": 1.0
+            },
+            "score": 0.9
+          },
+          "extra_probe_normalization": {
+            "metric_scores": {
+              "diagnostics_consistency": 1.0,
+              "hidden_contraction_accuracy": 0.0,
+              "public_response_consistency": 1.0,
+              "raw_moment_accuracy": 0.0
+            },
+            "score": 0.15000000000000002
+          },
+          "kernelized_cache": {
+            "metric_scores": {
+              "diagnostics_consistency": 1.0,
+              "hidden_contraction_accuracy": 0.0,
+              "public_response_consistency": 1.0,
+              "raw_moment_accuracy": 0.0
+            },
+            "score": 0.15000000000000002
+          },
+          "omit_response_jacobian": {
+            "metric_scores": {
+              "diagnostics_consistency": 1.0,
+              "hidden_contraction_accuracy": 1.0,
+              "public_response_consistency": 0.0,
+              "raw_moment_accuracy": 1.0
+            },
+            "score": 0.9
+          },
+          "prefix_ignored": {
+            "metric_scores": {
+              "diagnostics_consistency": 1.0,
+              "hidden_contraction_accuracy": 1.0,
+              "public_response_consistency": 0.0,
+              "raw_moment_accuracy": 1.0
+            },
+            "score": 0.9
+          },
+          "probe_collapse": {
+            "metric_scores": {
+              "diagnostics_consistency": 1.0,
+              "hidden_contraction_accuracy": 0.0,
+              "public_response_consistency": 1.0,
+              "raw_moment_accuracy": 0.0
+            },
+            "score": 0.15000000000000002
+          },
+          "public_grid_hardcode": {
+            "metric_scores": {
+              "diagnostics_consistency": 1.0,
+              "hidden_contraction_accuracy": 0.0,
+              "public_response_consistency": 0.0,
+              "raw_moment_accuracy": 0.0
+            },
+            "score": 0.05
+          },
+          "recurrence_missing_two": {
+            "metric_scores": {
+              "diagnostics_consistency": 1.0,
+              "hidden_contraction_accuracy": 0.0,
+              "public_response_consistency": 1.0,
+              "raw_moment_accuracy": 0.0
+            },
+            "score": 0.15000000000000002
+          },
+          "shifted_order": {
+            "metric_scores": {
+              "diagnostics_consistency": 1.0,
+              "hidden_contraction_accuracy": 0.0,
+              "public_response_consistency": 1.0,
+              "raw_moment_accuracy": 0.0
+            },
+            "score": 0.15000000000000002
+          },
+          "stale_system_swap": {
+            "metric_scores": {
+              "diagnostics_consistency": 1.0,
+              "hidden_contraction_accuracy": 0.0,
+              "public_response_consistency": 1.0,
+              "raw_moment_accuracy": 0.0
+            },
+            "score": 0.15000000000000002
+          },
+          "truncated_zero_pad": {
+            "metric_scores": {
+              "diagnostics_consistency": 1.0,
+              "hidden_contraction_accuracy": 0.0,
+              "public_response_consistency": 1.0,
+              "raw_moment_accuracy": 0.0
+            },
+            "score": 0.15000000000000002
+          },
+          "wrong_affine_halfwidth": {
+            "metric_scores": {
+              "diagnostics_consistency": 1.0,
+              "hidden_contraction_accuracy": 0.0,
+              "public_response_consistency": 1.0,
+              "raw_moment_accuracy": 0.0
+            },
+            "score": 0.15000000000000002
+          }
+        }
+      },
+      "required": true,
+      "runtime_seconds": 6.054765099999713,
+      "status": "pass"
+    },
+    {
+      "check_id": "parser-security-and-tolerance-controls",
+      "details": {
+        "byte_identifier_control_score": 1.0,
+        "hard_gate_case_count": 14,
+        "hard_gate_results": {
+          "corrupt_npz": [
+            "moments.npz is not a ZIP/NPZ archive"
+          ],
+          "directory_artifact": [
+            "required artifact is not a regular file: diagnostics.json"
+          ],
+          "duplicate_json_key": [
+            "invalid JSON in diagnostics.json: duplicate JSON key: schema_version"
+          ],
+          "expanded_npz_bomb": [
+            "NPZ member exceeds uncompressed size cap"
+          ],
+          "extra_file": [
+            "artifact inventory mismatch; missing=[], unexpected=['unexpected.txt']"
+          ],
+          "hardlink_artifact": [
+            "hard-linked artifact is not permitted: diagnostics.json"
+          ],
+          "missing_artifact": [
+            "artifact inventory mismatch; missing=['diagnostics.json'], unexpected=[]"
+          ],
+          "nan_moment": [
+            "tau_real contains NaN or infinity"
+          ],
+          "nonfinite_json": [
+            "invalid JSON in diagnostics.json: non-standard JSON numeric constant: NaN"
+          ],
+          "object_array_npz": [
+            "cannot safely load moments.npz: Object arrays cannot be loaded when allow_pickle=False"
+          ],
+          "oversized_artifact": [
+            "moments.npz exceeds 2000000 bytes"
+          ],
+          "partial_csv": [
+            "public_response.csv has the wrong row count"
+          ],
+          "stale_ids": [
+            "system_ids do not match the manifest order"
+          ],
+          "wrong_shape": [
+            "tau_real must have shape (3, 4, 384) and dtype float64"
+          ]
+        },
+        "high_compression_control": {
+          "max_member_ratio": 272.0,
+          "score": 1.0
+        },
+        "near_tolerance_control_score": 1.0,
+        "symlink_tests": {
+          "leaf": "platform_unavailable: [WinError 1314] \u5ba2\u6237\u7aef\u6ca1\u6709\u6240\u9700\u7684\u7279\u6743\u3002: 'E:\\\\Desktop2026.2.1\\\\ALE\\\\scalable_pipeline\\\\tasks\\\\kite\\\\tasks\\\\reusable_spectral_cache\\\\private\\\\reference\\\\oracle_submission\\\\moments.npz' -> 'C:\\\\Users\\\\Jingxu\\\\AppData\\\\Local\\\\Temp\\\\spectral-robustness-dsc6u8f3\\\\symlink_artifact\\\\moments.npz'",
+          "submission_root": "platform_unavailable: [WinError 1314] \u5ba2\u6237\u7aef\u6ca1\u6709\u6240\u9700\u7684\u7279\u6743\u3002: 'C:\\\\Users\\\\Jingxu\\\\AppData\\\\Local\\\\Temp\\\\spectral-robustness-dsc6u8f3\\\\symlink_root_target' -> 'C:\\\\Users\\\\Jingxu\\\\AppData\\\\Local\\\\Temp\\\\spectral-robustness-dsc6u8f3\\\\symlink_root'"
+        }
+      },
+      "required": true,
+      "runtime_seconds": 4.886203099999875,
+      "status": "pass"
+    },
+    {
+      "check_id": "metamorphic-oracle-and-determinism",
+      "details": {
+        "affine_covariance": {
+          "moment_max_error": 3.3522977328509564e-16,
+          "response_abs_error": 1.1123893155135927e-16
+        },
+        "basis_permutation_max_error": 7.771561992277053e-16,
+        "causality": {
+          "conjugacy_error": 0.0,
+          "density": 0.2487660448147592,
+          "density_identity_error": 0.0
+        },
+        "direct_resolvent": {
+          "absolute_error": 0.00034218275297914557,
+          "tail_bound": 0.03633813951928277
+        },
+        "dos_normalization_and_global_convergence": {
+          "expected_mass": 1.0,
+          "integrated_mass": 0.9968158395529134,
+          "long_prefix_l2": 5.685551555125088e-07,
+          "short_prefix_l2": 0.007766639247093888
+        },
+        "global_probe_phase_max_error": 1.1147135598463049e-16,
+        "moment_invariants": {
+          "max_absolute": 1.0,
+          "max_imaginary": 1.2628340673991933e-16,
+          "max_tau0_error": 0.0
+        },
+        "prefix_suffix_independence_error": 0.0
+      },
+      "required": true,
+      "runtime_seconds": 0.5343365000007907,
+      "status": "pass"
+    }
+  ],
+  "provisional_difficulty": "structurally_hard_candidate",
+  "release_decision": "needs_agent_calibration",
+  "required_failures": [],
+  "schema_version": "spectral-task-verification/v1",
+  "status": "pass",
+  "task_id": "reusable-chebyshev-spectral-cache-v1",
+  "total_runtime_seconds": 15.716184599999906
+}

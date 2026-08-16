@@ -1,0 +1,350 @@
+{
+  "comparisons": [
+    {
+      "comparison_id": "weak-vs-strong-center",
+      "query_id": "center",
+      "strong_condition": "strong",
+      "weak_condition": "weak"
+    },
+    {
+      "comparison_id": "weak-vs-strong-offset",
+      "query_id": "offset",
+      "strong_condition": "strong",
+      "weak_condition": "weak"
+    }
+  ],
+  "experiment_id": "retired-demo-01",
+  "records": [
+    {
+      "L": 8,
+      "condition_id": "weak",
+      "exchange": 1.0,
+      "fields": [
+        -0.7959852155688822,
+        -0.4747000653449548,
+        -0.3641814242794307,
+        0.7937555093873733,
+        -0.6647184172334062,
+        -0.8935325178517295,
+        -0.3509084429470517,
+        0.692725409784248
+      ],
+      "n_up": 4,
+      "queries": [
+        {
+          "epsilon": 0.5,
+          "packet_size": 7,
+          "query_id": "center",
+          "subsystem_size": 4,
+          "subsystem_start": 0
+        },
+        {
+          "epsilon": 0.68,
+          "packet_size": 9,
+          "query_id": "offset",
+          "subsystem_size": 3,
+          "subsystem_start": 2
+        }
+      ],
+      "record_id": "weak-r01"
+    },
+    {
+      "L": 8,
+      "condition_id": "strong",
+      "exchange": 1.0,
+      "fields": [
+        2.1682535530857407,
+        -5.065553800819902,
+        -4.88228809293567,
+        -3.814561165163391,
+        3.2406973600205866,
+        -5.483437431646811,
+        -1.9353319351477376,
+        -5.527416456616568
+      ],
+      "n_up": 4,
+      "queries": [
+        {
+          "epsilon": 0.5,
+          "packet_size": 7,
+          "query_id": "center",
+          "subsystem_size": 4,
+          "subsystem_start": 0
+        },
+        {
+          "epsilon": 0.68,
+          "packet_size": 9,
+          "query_id": "offset",
+          "subsystem_size": 3,
+          "subsystem_start": 2
+        }
+      ],
+      "record_id": "strong-r01"
+    },
+    {
+      "L": 8,
+      "condition_id": "strong",
+      "exchange": 1.0,
+      "fields": [
+        0.9565398177834394,
+        5.191865269711052,
+        0.07695387021684841,
+        6.022210897710062,
+        -4.3788651959762035,
+        -4.669294307951533,
+        -0.4015042376312845,
+        -6.095020717616178
+      ],
+      "n_up": 4,
+      "queries": [
+        {
+          "epsilon": 0.5,
+          "packet_size": 5,
+          "query_id": "center",
+          "subsystem_size": 4,
+          "subsystem_start": 0
+        },
+        {
+          "epsilon": 0.68,
+          "packet_size": 7,
+          "query_id": "offset",
+          "subsystem_size": 3,
+          "subsystem_start": 2
+        }
+      ],
+      "record_id": "strong-r00"
+    },
+    {
+      "L": 8,
+      "condition_id": "weak",
+      "exchange": 1.0,
+      "fields": [
+        -0.6712758165734096,
+        -0.1385877753855015,
+        0.25501557398607677,
+        -0.2903566718559778,
+        0.37433039148272995,
+        0.23605706558452855,
+        -0.6430335870085304,
+        0.2183546372118942
+      ],
+      "n_up": 4,
+      "queries": [
+        {
+          "epsilon": 0.5,
+          "packet_size": 9,
+          "query_id": "center",
+          "subsystem_size": 4,
+          "subsystem_start": 0
+        },
+        {
+          "epsilon": 0.68,
+          "packet_size": 6,
+          "query_id": "offset",
+          "subsystem_size": 3,
+          "subsystem_start": 2
+        }
+      ],
+      "record_id": "weak-r02"
+    },
+    {
+      "L": 8,
+      "condition_id": "weak",
+      "exchange": 1.0,
+      "fields": [
+        -0.06256064316038312,
+        0.1435952855149506,
+        -0.7831331117277408,
+        -0.08446696818529731,
+        0.5178612761577787,
+        0.8688912000278833,
+        0.4366867055200653,
+        -0.3936174261701655
+      ],
+      "n_up": 4,
+      "queries": [
+        {
+          "epsilon": 0.5,
+          "packet_size": 5,
+          "query_id": "center",
+          "subsystem_size": 4,
+          "subsystem_start": 0
+        },
+        {
+          "epsilon": 0.68,
+          "packet_size": 7,
+          "query_id": "offset",
+          "subsystem_size": 3,
+          "subsystem_start": 2
+        }
+      ],
+      "record_id": "weak-r00"
+    },
+    {
+      "L": 8,
+      "condition_id": "strong",
+      "exchange": 1.0,
+      "fields": [
+        -4.254529812818147,
+        -0.27777590962311827,
+        -0.34594618630425167,
+        -1.1726083625913066,
+        -4.989909945330464,
+        -6.48996671074437,
+        -3.753371769011248,
+        0.7031349647564173
+      ],
+      "n_up": 4,
+      "queries": [
+        {
+          "epsilon": 0.5,
+          "packet_size": 9,
+          "query_id": "center",
+          "subsystem_size": 4,
+          "subsystem_start": 0
+        },
+        {
+          "epsilon": 0.68,
+          "packet_size": 6,
+          "query_id": "offset",
+          "subsystem_size": 3,
+          "subsystem_start": 2
+        }
+      ],
+      "record_id": "strong-r02"
+    },
+    {
+      "L": 8,
+      "condition_id": "strong",
+      "exchange": 1.0,
+      "fields": [
+        0.3190790712431175,
+        -2.951725530997844,
+        -5.1903539517249335,
+        5.920229853279812,
+        0.9391628496705895,
+        -4.820104863078657,
+        -6.374303827238027,
+        4.086568285772872
+      ],
+      "n_up": 4,
+      "queries": [
+        {
+          "epsilon": 0.5,
+          "packet_size": 6,
+          "query_id": "center",
+          "subsystem_size": 4,
+          "subsystem_start": 0
+        },
+        {
+          "epsilon": 0.68,
+          "packet_size": 8,
+          "query_id": "offset",
+          "subsystem_size": 3,
+          "subsystem_start": 2
+        }
+      ],
+      "record_id": "strong-r03"
+    },
+    {
+      "L": 8,
+      "condition_id": "weak",
+      "exchange": 1.0,
+      "fields": [
+        0.164260881470211,
+        0.5243122139491124,
+        -0.1287047623659916,
+        -0.4788177815589993,
+        -0.5248684965627388,
+        -0.6342273750600089,
+        -0.10474953343201732,
+        0.5215701408203944
+      ],
+      "n_up": 4,
+      "queries": [
+        {
+          "epsilon": 0.5,
+          "packet_size": 6,
+          "query_id": "center",
+          "subsystem_size": 4,
+          "subsystem_start": 0
+        },
+        {
+          "epsilon": 0.68,
+          "packet_size": 8,
+          "query_id": "offset",
+          "subsystem_size": 3,
+          "subsystem_start": 2
+        }
+      ],
+      "record_id": "weak-r03"
+    },
+    {
+      "L": 8,
+      "condition_id": "weak",
+      "exchange": 1.0,
+      "fields": [
+        0.6994792872070309,
+        0.8648703449768808,
+        -0.18109795992762256,
+        0.6276062295140713,
+        -0.1373707963978933,
+        0.5709076333477335,
+        -0.8595241835762435,
+        -0.3250923961157307
+      ],
+      "n_up": 4,
+      "queries": [
+        {
+          "epsilon": 0.5,
+          "packet_size": 8,
+          "query_id": "center",
+          "subsystem_size": 4,
+          "subsystem_start": 0
+        },
+        {
+          "epsilon": 0.68,
+          "packet_size": 5,
+          "query_id": "offset",
+          "subsystem_size": 3,
+          "subsystem_start": 2
+        }
+      ],
+      "record_id": "weak-r04"
+    },
+    {
+      "L": 8,
+      "condition_id": "strong",
+      "exchange": 1.0,
+      "fields": [
+        2.239175834836633,
+        -3.144250216781275,
+        0.2946244091227843,
+        -1.341451092323088,
+        -3.26689457918868,
+        -3.7367764339141183,
+        -5.130643974228005,
+        2.5851233782328755
+      ],
+      "n_up": 4,
+      "queries": [
+        {
+          "epsilon": 0.5,
+          "packet_size": 8,
+          "query_id": "center",
+          "subsystem_size": 4,
+          "subsystem_start": 0
+        },
+        {
+          "epsilon": 0.68,
+          "packet_size": 5,
+          "query_id": "offset",
+          "subsystem_size": 3,
+          "subsystem_start": 2
+        }
+      ],
+      "record_id": "strong-r04"
+    }
+  ],
+  "schema_version": "sector-audit-experiment/v1"
+}

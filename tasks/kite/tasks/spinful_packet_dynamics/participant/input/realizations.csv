@@ -1,0 +1,7 @@
+realization_id,disorder_model,center,half_width
+scalar_0,scalar,-0.062630580,4.176700789
+scalar_1,scalar,0.006900062,4.217408816
+scalar_2,scalar,-0.038020518,4.214622564
+scalar_ising_0,scalar_ising,0.009303377,4.210170418
+scalar_ising_1,scalar_ising,-0.072590802,4.198936565
+scalar_ising_2,scalar_ising,0.017697423,4.248158102

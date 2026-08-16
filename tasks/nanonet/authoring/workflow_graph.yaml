@@ -1,0 +1,798 @@
+schema_version: paper2ale.codex-workflow-graph/v1
+
+paper:
+  paper_id: "arxiv-2010.07463v1"
+  title: "NanoNET: an extendable Python framework for semi-empirical tight-binding models"
+  source_manifest_path: "authoring/source_manifest.yaml"
+
+claim_tree:
+  root:
+    id: "claim-root"
+    question: "How can atomic geometry and two-center tight-binding parameters be transformed into reliable periodic electronic-structure and open-boundary transport observables?"
+    children:
+      - id: "claim-branch-coordinate-to-hamiltonian"
+        question: "Can the orbital-resolved intra-cell and inter-cell Hamiltonians be constructed reproducibly from geometry?"
+        children:
+          - id: "claim-leaf-geometry-to-periodic-blocks"
+            type: "finding_leaf"
+            statement: "Coordinate and orbital lookup workflows construct H0 and directional periodic coupling blocks from local two-center interactions."
+            scientific_importance: "central"
+            supporting_artifact_ids:
+              - "art-hamiltonian-npz"
+            reported_evidence_ids:
+              - "evidence-paper-algorithm-1"
+              - "evidence-paper-algorithm-2"
+              - "evidence-paper-slater-koster"
+            private_instance_potential: "high"
+
+      - id: "claim-branch-periodic-physics"
+        question: "Do the constructed Hamiltonians support consistent bands and coherent transport under periodic and open boundary conditions?"
+        children:
+          - id: "claim-leaf-periodic-bands-dos-transmission"
+            type: "finding_leaf"
+            statement: "An end-to-end tight-binding and retarded-NEGF workflow produces mutually consistent periodic bands, density of states, and coherent transmission, exemplified in the paper by Figure 9 for a silicon nanowire."
+            scientific_importance: "central"
+            supporting_artifact_ids:
+              - "art-hamiltonian-npz"
+              - "art-self-energies-npz"
+              - "art-spectra-npz"
+              - "art-diagnostics-json"
+            reported_evidence_ids:
+              - "evidence-paper-architecture"
+              - "evidence-paper-bloch-hamiltonian"
+              - "evidence-paper-lead-self-energies"
+              - "evidence-paper-retarded-green-function"
+              - "evidence-paper-transport-observables"
+              - "evidence-paper-figure-9"
+            private_instance_potential: "high"
+
+      - id: "claim-branch-block-efficiency"
+        question: "Can matrix ordering and decomposition expose block-tridiagonal structure that reduces transport cost?"
+        children:
+          - id: "claim-leaf-block-structure-performance"
+            type: "finding_leaf"
+            statement: "The reported greedy and recursive decomposition produces useful diagonal blocks and changes recursive Green-function scaling."
+            scientific_importance: "supporting"
+            supporting_artifact_ids: []
+            reported_evidence_ids:
+              - "evidence-paper-block-structure"
+              - "evidence-paper-performance"
+            private_instance_potential: "medium"
+
+      - id: "claim-branch-material-transfer"
+        question: "Does the same framework extend to a multi-neighbor, spin-orbit-coupled material?"
+        children:
+          - id: "claim-leaf-bismuth-band-structure"
+            type: "finding_leaf"
+            statement: "The paper reports a bulk-bismuth band structure using an sp3 basis, spin-orbit coupling, and three neighbor shells."
+            scientific_importance: "supporting"
+            supporting_artifact_ids: []
+            reported_evidence_ids:
+              - "evidence-paper-bismuth-example"
+            private_instance_potential: "medium"
+
+workflow:
+  artifacts:
+    - id: "art-public-instance-json"
+      role: "input"
+      origin: "trusted_generator"
+      visibility: "participant"
+      format: "UTF-8 JSON conforming to periodic-orbital-device/v1"
+      provenance_ids:
+        - "evidence-benchmark-explicit-contract"
+        - "evidence-oracle-generated-suite"
+
+    - id: "art-neighbor-pairs"
+      role: "intermediate"
+      origin: "participant"
+      visibility: "private_rubric"
+      format: "Implicit ordered records (image, row site, column site, displacement, direction)"
+      provenance_ids:
+        - "evidence-paper-algorithm-1"
+        - "evidence-paper-algorithm-2"
+
+    - id: "art-orbital-hopping-blocks"
+      role: "intermediate"
+      origin: "participant"
+      visibility: "private_rubric"
+      format: "Real variable-size site-to-site s/p matrices"
+      provenance_ids:
+        - "evidence-paper-slater-koster"
+        - "evidence-repo-diatomic-elements"
+
+    - id: "art-hamiltonian-npz"
+      role: "intermediate_output"
+      origin: "participant"
+      visibility: "participant_output"
+      format: "NPZ with complex128 h0/h1 and int64 basis_site"
+      provenance_ids:
+        - "evidence-paper-algorithm-1"
+        - "evidence-paper-algorithm-2"
+        - "evidence-paper-bloch-hamiltonian"
+      supports_claim_leaf_ids:
+        - "claim-leaf-geometry-to-periodic-blocks"
+        - "claim-leaf-periodic-bands-dos-transmission"
+
+    - id: "art-bloch-bands"
+      role: "intermediate"
+      origin: "participant"
+      visibility: "private_rubric"
+      format: "float64 phase-by-band array"
+      provenance_ids:
+        - "evidence-paper-bloch-hamiltonian"
+      supports_claim_leaf_ids:
+        - "claim-leaf-periodic-bands-dos-transmission"
+
+    - id: "art-finite-device-hamiltonian"
+      role: "intermediate"
+      origin: "participant"
+      visibility: "private_rubric"
+      format: "complex128 cell-block matrix with site potentials and scaled bonds"
+      provenance_ids:
+        - "evidence-paper-retarded-green-function"
+        - "evidence-benchmark-explicit-contract"
+
+    - id: "art-retarded-surface-greens"
+      role: "intermediate"
+      origin: "participant"
+      visibility: "private_rubric"
+      format: "Two energy-indexed complex128 causal surface Green-function arrays"
+      provenance_ids:
+        - "evidence-paper-lead-self-energies"
+        - "evidence-repo-surface-self-energy"
+
+    - id: "art-self-energies-npz"
+      role: "intermediate_output"
+      origin: "participant"
+      visibility: "participant_output"
+      format: "NPZ with energies and left/right complex128 contact self-energies"
+      provenance_ids:
+        - "evidence-paper-lead-self-energies"
+        - "evidence-benchmark-explicit-contract"
+      supports_claim_leaf_ids:
+        - "claim-leaf-periodic-bands-dos-transmission"
+
+    - id: "art-device-green-functions"
+      role: "intermediate"
+      origin: "participant"
+      visibility: "private_rubric"
+      format: "Energy-indexed retarded device resolvents or equivalent computed blocks"
+      provenance_ids:
+        - "evidence-paper-retarded-green-function"
+        - "evidence-repo-recursive-green-function"
+
+    - id: "art-spectra-npz"
+      role: "output"
+      origin: "participant"
+      visibility: "participant_output"
+      format: "NPZ with phases, bands, energies, total DOS, cell LDOS, and transmission"
+      provenance_ids:
+        - "evidence-paper-transport-observables"
+        - "evidence-paper-figure-9"
+        - "evidence-benchmark-explicit-contract"
+      supports_claim_leaf_ids:
+        - "claim-leaf-periodic-bands-dos-transmission"
+
+    - id: "art-diagnostics-json"
+      role: "output"
+      origin: "participant"
+      visibility: "participant_output"
+      format: "UTF-8 JSON conforming to periodic-orbital-transport-output/v1"
+      provenance_ids:
+        - "evidence-benchmark-explicit-contract"
+      supports_claim_leaf_ids:
+        - "claim-leaf-periodic-bands-dos-transmission"
+
+    - id: "art-block-candidate-matrix"
+      role: "candidate_input"
+      origin: "paper_asset_or_trusted_generator"
+      visibility: "candidate_boundary_only"
+      format: "Sparse Hamiltonian plus site coordinates and lead endpoint sets"
+      provenance_ids:
+        - "evidence-paper-block-structure"
+        - "evidence-repo-site-sorting"
+
+    - id: "art-site-permutation"
+      role: "candidate_output"
+      origin: "participant"
+      visibility: "candidate_boundary_only"
+      format: "Integer permutation of sites/orbitals"
+      provenance_ids:
+        - "evidence-repo-site-sorting"
+
+    - id: "art-sparsity-profiles"
+      role: "candidate_intermediate"
+      origin: "participant"
+      visibility: "candidate_boundary_only"
+      format: "Forward and reflected structural reach profiles"
+      provenance_ids:
+        - "evidence-repo-block-decomposition"
+
+    - id: "art-block-sizes"
+      role: "candidate_output"
+      origin: "participant"
+      visibility: "candidate_boundary_only"
+      format: "Positive diagonal block sizes summing to matrix dimension"
+      provenance_ids:
+        - "evidence-paper-block-structure"
+        - "evidence-repo-block-decomposition"
+
+    - id: "art-reconstructed-block-matrix"
+      role: "candidate_intermediate"
+      origin: "participant"
+      visibility: "candidate_boundary_only"
+      format: "Block-tridiagonal reconstruction under the proposed permutation"
+      provenance_ids:
+        - "evidence-repo-block-decomposition"
+
+    - id: "art-cost-report"
+      role: "candidate_output"
+      origin: "participant"
+      visibility: "candidate_boundary_only"
+      format: "Structured validity and sum-of-cubes cost report"
+      provenance_ids:
+        - "evidence-paper-performance"
+
+    - id: "art-generalized-lead-modes"
+      role: "candidate_intermediate"
+      origin: "participant"
+      visibility: "candidate_boundary_only"
+      format: "Complex Bloch factors and modal vectors"
+      provenance_ids:
+        - "evidence-paper-complex-band-equation"
+
+    - id: "art-complex-bands"
+      role: "candidate_output"
+      origin: "participant"
+      visibility: "candidate_boundary_only"
+      format: "Energy-indexed complex Bloch-factor spectra"
+      provenance_ids:
+        - "evidence-paper-complex-band-equation"
+
+    - id: "art-mode-classification"
+      role: "candidate_intermediate"
+      origin: "participant"
+      visibility: "candidate_boundary_only"
+      format: "Left/right propagating and decaying mode partitions"
+      provenance_ids:
+        - "evidence-paper-lead-self-energies"
+
+    - id: "art-bismuth-source-spec"
+      role: "candidate_input"
+      origin: "paper_reported"
+      visibility: "candidate_boundary_only"
+      format: "Primitive cell, spinful orbitals, shell parameters, spin-orbit constant, and k path"
+      provenance_ids:
+        - "evidence-paper-bismuth-example"
+
+    - id: "art-spinful-basis"
+      role: "candidate_intermediate"
+      origin: "participant"
+      visibility: "candidate_boundary_only"
+      format: "Spin-resolved sp3 orbital index map"
+      provenance_ids:
+        - "evidence-paper-bismuth-example"
+
+    - id: "art-neighbor-shells"
+      role: "candidate_intermediate"
+      origin: "participant"
+      visibility: "candidate_boundary_only"
+      format: "Distance-classified first, second, and third neighbor records"
+      provenance_ids:
+        - "evidence-paper-bismuth-example"
+
+    - id: "art-bismuth-hamiltonian"
+      role: "candidate_intermediate"
+      origin: "participant"
+      visibility: "candidate_boundary_only"
+      format: "Spin-orbit-coupled periodic Hamiltonian"
+      provenance_ids:
+        - "evidence-paper-bismuth-example"
+
+    - id: "art-bismuth-bands"
+      role: "candidate_output"
+      origin: "participant"
+      visibility: "candidate_boundary_only"
+      format: "High-symmetry-path band-energy array"
+      provenance_ids:
+        - "evidence-paper-bismuth-example"
+      supports_claim_leaf_ids:
+        - "claim-leaf-bismuth-band-structure"
+
+    - id: "art-private-reference-suite"
+      role: "private_reference"
+      origin: "privileged_oracle"
+      visibility: "private"
+      format: "Ten hidden JSON instances with trusted NPZ/JSON references"
+      provenance_ids:
+        - "evidence-oracle-generated-suite"
+        - "evidence-oracle-surface-validation"
+
+    - id: "art-private-scorecard"
+      role: "evaluation"
+      origin: "private_evaluator"
+      visibility: "private"
+      format: "JSON metric and hard-gate report"
+      provenance_ids:
+        - "evidence-reference-evaluator-pass"
+        - "evidence-alternative-evaluator-pass"
+
+  operations:
+    - id: "op-enumerate-neighbors"
+      name: "Enumerate same-cell and forward-image neighbors"
+      authority: "participant"
+      inputs:
+        - "art-public-instance-json"
+      outputs:
+        - "art-neighbor-pairs"
+      tool: "Python/NumPy"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 5
+      provenance_ids:
+        - "evidence-paper-algorithm-1"
+        - "evidence-paper-algorithm-2"
+      origin_class: "grounded_extension"
+
+    - id: "op-assemble-orbital-blocks"
+      name: "Evaluate signed directional s/p two-center blocks"
+      authority: "participant"
+      inputs:
+        - "art-public-instance-json"
+        - "art-neighbor-pairs"
+      outputs:
+        - "art-orbital-hopping-blocks"
+      tool: "Python/NumPy"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 20
+      provenance_ids:
+        - "evidence-paper-slater-koster"
+        - "evidence-repo-diatomic-elements"
+        - "evidence-benchmark-explicit-contract"
+      origin_class: "grounded_extension"
+
+    - id: "op-assemble-h0-h1"
+      name: "Assemble intra-cell and oriented forward-cell Hamiltonians"
+      authority: "participant"
+      inputs:
+        - "art-public-instance-json"
+        - "art-orbital-hopping-blocks"
+      outputs:
+        - "art-hamiltonian-npz"
+      tool: "Python/NumPy"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 20
+      provenance_ids:
+        - "evidence-paper-algorithm-1"
+        - "evidence-paper-algorithm-2"
+        - "evidence-repo-hamiltonian-assembly"
+      origin_class: "grounded_extension"
+
+    - id: "op-compute-bloch-bands"
+      name: "Construct phase-dependent Hermitian Bloch matrices and diagonalize them"
+      authority: "participant"
+      inputs:
+        - "art-public-instance-json"
+        - "art-hamiltonian-npz"
+      outputs:
+        - "art-bloch-bands"
+      tool: "Python/NumPy"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 10
+      provenance_ids:
+        - "evidence-paper-bloch-hamiltonian"
+        - "evidence-repo-periodic-couplings"
+      origin_class: "reported_workflow_slice"
+
+    - id: "op-build-finite-device"
+      name: "Build a cell-dependent finite device from H0 and H1"
+      authority: "participant"
+      inputs:
+        - "art-public-instance-json"
+        - "art-hamiltonian-npz"
+      outputs:
+        - "art-finite-device-hamiltonian"
+      tool: "Python/NumPy"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 15
+      provenance_ids:
+        - "evidence-paper-retarded-green-function"
+        - "evidence-benchmark-explicit-contract"
+      origin_class: "grounded_extension"
+
+    - id: "op-solve-retarded-surfaces"
+      name: "Select causal left and right semi-infinite surface solutions"
+      authority: "participant"
+      inputs:
+        - "art-public-instance-json"
+        - "art-hamiltonian-npz"
+      outputs:
+        - "art-retarded-surface-greens"
+        - "art-self-energies-npz"
+      tool: "Python/NumPy"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 60
+      provenance_ids:
+        - "evidence-paper-lead-self-energies"
+        - "evidence-repo-surface-self-energy"
+        - "evidence-benchmark-explicit-contract"
+      origin_class: "grounded_extension"
+
+    - id: "op-compute-transport-observables"
+      name: "Solve the open device and compute DOS, LDOS, and Caroli transmission"
+      authority: "participant"
+      inputs:
+        - "art-public-instance-json"
+        - "art-bloch-bands"
+        - "art-finite-device-hamiltonian"
+        - "art-self-energies-npz"
+      outputs:
+        - "art-device-green-functions"
+        - "art-spectra-npz"
+      tool: "Python/NumPy"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 45
+      provenance_ids:
+        - "evidence-paper-retarded-green-function"
+        - "evidence-paper-transport-observables"
+        - "evidence-repo-recursive-green-function"
+      origin_class: "grounded_extension"
+
+    - id: "op-report-diagnostics"
+      name: "Report deterministic identifiers and numerical residual diagnostics"
+      authority: "participant"
+      inputs:
+        - "art-public-instance-json"
+        - "art-hamiltonian-npz"
+        - "art-self-energies-npz"
+        - "art-spectra-npz"
+      outputs:
+        - "art-diagnostics-json"
+      tool: "Python/NumPy"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 10
+      provenance_ids:
+        - "evidence-benchmark-explicit-contract"
+      origin_class: "benchmark_choice"
+
+    - id: "op-order-sites"
+      name: "Order sites to reduce matrix bandwidth"
+      authority: "candidate_participant"
+      inputs: ["art-block-candidate-matrix"]
+      outputs: ["art-site-permutation"]
+      tool: "Python/NumPy"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 20
+      provenance_ids: ["evidence-repo-site-sorting"]
+      origin_class: "reported_workflow_slice"
+
+    - id: "op-extract-sparsity-profiles"
+      name: "Extract forward and reflected reach profiles"
+      authority: "candidate_participant"
+      inputs: ["art-block-candidate-matrix", "art-site-permutation"]
+      outputs: ["art-sparsity-profiles"]
+      tool: "Python/NumPy"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 15
+      provenance_ids: ["evidence-repo-block-decomposition"]
+      origin_class: "code_present"
+
+    - id: "op-select-recursive-cuts"
+      name: "Select constrained recursive block cuts"
+      authority: "candidate_participant"
+      inputs: ["art-sparsity-profiles"]
+      outputs: ["art-block-sizes"]
+      tool: "Python/NumPy"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 30
+      provenance_ids: ["evidence-paper-block-structure", "evidence-repo-block-decomposition"]
+      origin_class: "reported_workflow_slice"
+
+    - id: "op-validate-block-transport"
+      name: "Validate reconstruction, cost, and transport invariance"
+      authority: "candidate_participant"
+      inputs: ["art-block-candidate-matrix", "art-site-permutation", "art-block-sizes"]
+      outputs: ["art-reconstructed-block-matrix", "art-cost-report"]
+      tool: "Python/NumPy"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 30
+      provenance_ids: ["evidence-paper-performance", "evidence-repo-block-decomposition"]
+      origin_class: "grounded_extension"
+
+    - id: "op-linearize-quadratic-eigenproblem"
+      name: "Linearize the fixed-energy complex-band problem"
+      authority: "candidate_participant"
+      inputs: ["art-hamiltonian-npz"]
+      outputs: ["art-generalized-lead-modes", "art-complex-bands"]
+      tool: "Python plus generalized eigensolver"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 30
+      provenance_ids: ["evidence-paper-complex-band-equation"]
+      origin_class: "reported_workflow_slice"
+
+    - id: "op-classify-left-right-modes"
+      name: "Classify propagating and decaying lead modes"
+      authority: "candidate_participant"
+      inputs: ["art-generalized-lead-modes"]
+      outputs: ["art-mode-classification"]
+      tool: "Python/NumPy"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 30
+      provenance_ids: ["evidence-paper-lead-self-energies", "evidence-paper-complex-band-equation"]
+      origin_class: "reported_workflow_slice"
+
+    - id: "op-form-modal-self-energies"
+      name: "Form left and right self-energies from classified modes"
+      authority: "candidate_participant"
+      inputs: ["art-hamiltonian-npz", "art-generalized-lead-modes", "art-mode-classification"]
+      outputs: ["art-self-energies-npz"]
+      tool: "Python/NumPy"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 20
+      provenance_ids: ["evidence-paper-lead-self-energies", "evidence-repo-surface-self-energy"]
+      origin_class: "reported_workflow_slice"
+
+    - id: "op-build-spinful-basis"
+      name: "Build the spin-resolved bismuth sp3 basis"
+      authority: "candidate_participant"
+      inputs: ["art-bismuth-source-spec"]
+      outputs: ["art-spinful-basis"]
+      tool: "Python/NumPy"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 15
+      provenance_ids: ["evidence-paper-bismuth-example"]
+      origin_class: "reported_workflow_slice"
+
+    - id: "op-classify-neighbor-shells"
+      name: "Classify bismuth pairs into three distance shells"
+      authority: "candidate_participant"
+      inputs: ["art-bismuth-source-spec"]
+      outputs: ["art-neighbor-shells"]
+      tool: "Python/NumPy"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 15
+      provenance_ids: ["evidence-paper-bismuth-example"]
+      origin_class: "reported_workflow_slice"
+
+    - id: "op-assemble-spin-orbit-hamiltonian"
+      name: "Assemble multi-shell hopping and spin-orbit Hamiltonians"
+      authority: "candidate_participant"
+      inputs: ["art-bismuth-source-spec", "art-spinful-basis", "art-neighbor-shells"]
+      outputs: ["art-bismuth-hamiltonian"]
+      tool: "Python/NumPy"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 45
+      provenance_ids: ["evidence-paper-bismuth-example"]
+      origin_class: "reported_workflow_slice"
+
+    - id: "op-compute-high-symmetry-bands"
+      name: "Compute bismuth bands along the reported symmetry path"
+      authority: "candidate_participant"
+      inputs: ["art-bismuth-source-spec", "art-bismuth-hamiltonian"]
+      outputs: ["art-bismuth-bands"]
+      tool: "Python/NumPy"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 15
+      provenance_ids: ["evidence-paper-bismuth-example"]
+      origin_class: "reported_workflow_slice"
+
+    - id: "op-evaluate-hidden-behavior"
+      name: "Recompute hidden behavior and score intermediate and final artifacts"
+      authority: "private_evaluator"
+      inputs:
+        - "art-hamiltonian-npz"
+        - "art-self-energies-npz"
+        - "art-spectra-npz"
+        - "art-diagnostics-json"
+        - "art-private-reference-suite"
+      outputs:
+        - "art-private-scorecard"
+      tool: "Trusted Python/NumPy evaluator"
+      meaningful_operation: false
+      stochastic: false
+      estimated_runtime_minutes: 3
+      provenance_ids:
+        - "evidence-reference-evaluator-pass"
+        - "evidence-alternative-evaluator-pass"
+      origin_class: "benchmark_choice"
+
+  edges:
+    - {from: "art-public-instance-json", to: "op-enumerate-neighbors", type: "consumed_by"}
+    - {from: "op-enumerate-neighbors", to: "art-neighbor-pairs", type: "produces"}
+    - {from: "art-public-instance-json", to: "op-assemble-orbital-blocks", type: "consumed_by"}
+    - {from: "art-neighbor-pairs", to: "op-assemble-orbital-blocks", type: "consumed_by"}
+    - {from: "op-assemble-orbital-blocks", to: "art-orbital-hopping-blocks", type: "produces"}
+    - {from: "art-public-instance-json", to: "op-assemble-h0-h1", type: "consumed_by"}
+    - {from: "art-orbital-hopping-blocks", to: "op-assemble-h0-h1", type: "consumed_by"}
+    - {from: "op-assemble-h0-h1", to: "art-hamiltonian-npz", type: "produces"}
+    - {from: "art-public-instance-json", to: "op-compute-bloch-bands", type: "consumed_by"}
+    - {from: "art-hamiltonian-npz", to: "op-compute-bloch-bands", type: "consumed_by"}
+    - {from: "op-compute-bloch-bands", to: "art-bloch-bands", type: "produces"}
+    - {from: "art-public-instance-json", to: "op-build-finite-device", type: "consumed_by"}
+    - {from: "art-hamiltonian-npz", to: "op-build-finite-device", type: "consumed_by"}
+    - {from: "op-build-finite-device", to: "art-finite-device-hamiltonian", type: "produces"}
+    - {from: "art-public-instance-json", to: "op-solve-retarded-surfaces", type: "consumed_by"}
+    - {from: "art-hamiltonian-npz", to: "op-solve-retarded-surfaces", type: "consumed_by"}
+    - {from: "op-solve-retarded-surfaces", to: "art-retarded-surface-greens", type: "produces"}
+    - {from: "op-solve-retarded-surfaces", to: "art-self-energies-npz", type: "produces"}
+    - {from: "art-public-instance-json", to: "op-compute-transport-observables", type: "consumed_by"}
+    - {from: "art-bloch-bands", to: "op-compute-transport-observables", type: "consumed_by"}
+    - {from: "art-finite-device-hamiltonian", to: "op-compute-transport-observables", type: "consumed_by"}
+    - {from: "art-self-energies-npz", to: "op-compute-transport-observables", type: "consumed_by"}
+    - {from: "op-compute-transport-observables", to: "art-device-green-functions", type: "produces"}
+    - {from: "op-compute-transport-observables", to: "art-spectra-npz", type: "produces"}
+    - {from: "art-public-instance-json", to: "op-report-diagnostics", type: "consumed_by"}
+    - {from: "art-hamiltonian-npz", to: "op-report-diagnostics", type: "consumed_by"}
+    - {from: "art-self-energies-npz", to: "op-report-diagnostics", type: "consumed_by"}
+    - {from: "art-spectra-npz", to: "op-report-diagnostics", type: "consumed_by"}
+    - {from: "op-report-diagnostics", to: "art-diagnostics-json", type: "produces"}
+    - {from: "art-block-candidate-matrix", to: "op-order-sites", type: "consumed_by"}
+    - {from: "op-order-sites", to: "art-site-permutation", type: "produces"}
+    - {from: "art-block-candidate-matrix", to: "op-extract-sparsity-profiles", type: "consumed_by"}
+    - {from: "art-site-permutation", to: "op-extract-sparsity-profiles", type: "consumed_by"}
+    - {from: "op-extract-sparsity-profiles", to: "art-sparsity-profiles", type: "produces"}
+    - {from: "art-sparsity-profiles", to: "op-select-recursive-cuts", type: "consumed_by"}
+    - {from: "op-select-recursive-cuts", to: "art-block-sizes", type: "produces"}
+    - {from: "art-block-candidate-matrix", to: "op-validate-block-transport", type: "consumed_by"}
+    - {from: "art-site-permutation", to: "op-validate-block-transport", type: "consumed_by"}
+    - {from: "art-block-sizes", to: "op-validate-block-transport", type: "consumed_by"}
+    - {from: "op-validate-block-transport", to: "art-reconstructed-block-matrix", type: "produces"}
+    - {from: "op-validate-block-transport", to: "art-cost-report", type: "produces"}
+    - {from: "art-hamiltonian-npz", to: "op-linearize-quadratic-eigenproblem", type: "consumed_by"}
+    - {from: "op-linearize-quadratic-eigenproblem", to: "art-generalized-lead-modes", type: "produces"}
+    - {from: "op-linearize-quadratic-eigenproblem", to: "art-complex-bands", type: "produces"}
+    - {from: "art-generalized-lead-modes", to: "op-classify-left-right-modes", type: "consumed_by"}
+    - {from: "op-classify-left-right-modes", to: "art-mode-classification", type: "produces"}
+    - {from: "art-hamiltonian-npz", to: "op-form-modal-self-energies", type: "consumed_by"}
+    - {from: "art-generalized-lead-modes", to: "op-form-modal-self-energies", type: "consumed_by"}
+    - {from: "art-mode-classification", to: "op-form-modal-self-energies", type: "consumed_by"}
+    - {from: "op-form-modal-self-energies", to: "art-self-energies-npz", type: "produces"}
+    - {from: "art-bismuth-source-spec", to: "op-build-spinful-basis", type: "consumed_by"}
+    - {from: "op-build-spinful-basis", to: "art-spinful-basis", type: "produces"}
+    - {from: "art-bismuth-source-spec", to: "op-classify-neighbor-shells", type: "consumed_by"}
+    - {from: "op-classify-neighbor-shells", to: "art-neighbor-shells", type: "produces"}
+    - {from: "art-bismuth-source-spec", to: "op-assemble-spin-orbit-hamiltonian", type: "consumed_by"}
+    - {from: "art-spinful-basis", to: "op-assemble-spin-orbit-hamiltonian", type: "consumed_by"}
+    - {from: "art-neighbor-shells", to: "op-assemble-spin-orbit-hamiltonian", type: "consumed_by"}
+    - {from: "op-assemble-spin-orbit-hamiltonian", to: "art-bismuth-hamiltonian", type: "produces"}
+    - {from: "art-bismuth-source-spec", to: "op-compute-high-symmetry-bands", type: "consumed_by"}
+    - {from: "art-bismuth-hamiltonian", to: "op-compute-high-symmetry-bands", type: "consumed_by"}
+    - {from: "op-compute-high-symmetry-bands", to: "art-bismuth-bands", type: "produces"}
+    - {from: "art-hamiltonian-npz", to: "op-evaluate-hidden-behavior", type: "consumed_by"}
+    - {from: "art-self-energies-npz", to: "op-evaluate-hidden-behavior", type: "consumed_by"}
+    - {from: "art-spectra-npz", to: "op-evaluate-hidden-behavior", type: "consumed_by"}
+    - {from: "art-diagnostics-json", to: "op-evaluate-hidden-behavior", type: "consumed_by"}
+    - {from: "art-private-reference-suite", to: "op-evaluate-hidden-behavior", type: "consumed_by"}
+    - {from: "op-evaluate-hidden-behavior", to: "art-private-scorecard", type: "produces"}
+
+leaf_workflow_links:
+  - leaf_id: "claim-leaf-periodic-bands-dos-transmission"
+    target_artifact_ids:
+      - "art-hamiltonian-npz"
+      - "art-self-energies-npz"
+      - "art-spectra-npz"
+      - "art-diagnostics-json"
+    backward_slice_operation_ids:
+      - "op-enumerate-neighbors"
+      - "op-assemble-orbital-blocks"
+      - "op-assemble-h0-h1"
+      - "op-compute-bloch-bands"
+      - "op-build-finite-device"
+      - "op-solve-retarded-surfaces"
+      - "op-compute-transport-observables"
+      - "op-report-diagnostics"
+    backward_slice_artifact_ids:
+      - "art-public-instance-json"
+      - "art-neighbor-pairs"
+      - "art-orbital-hopping-blocks"
+      - "art-hamiltonian-npz"
+      - "art-bloch-bands"
+      - "art-finite-device-hamiltonian"
+      - "art-retarded-surface-greens"
+      - "art-self-energies-npz"
+      - "art-device-green-functions"
+      - "art-spectra-npz"
+      - "art-diagnostics-json"
+    closure_status: "closed"
+    closure_notes: "Every solution-critical convention and input needed by the eight-operation backward slice is public; exact hidden cases, references, tolerances, and weights are not needed to solve it."
+
+  - leaf_id: "claim-leaf-geometry-to-periodic-blocks"
+    target_artifact_ids: ["art-hamiltonian-npz"]
+    backward_slice_operation_ids:
+      - "op-enumerate-neighbors"
+      - "op-assemble-orbital-blocks"
+      - "op-assemble-h0-h1"
+    backward_slice_artifact_ids:
+      - "art-public-instance-json"
+      - "art-neighbor-pairs"
+      - "art-orbital-hopping-blocks"
+      - "art-hamiltonian-npz"
+    closure_status: "closed"
+    closure_notes: "Scientifically closed but rejected as too short for the hard-only final task policy."
+
+  - leaf_id: "claim-leaf-block-structure-performance"
+    target_artifact_ids: ["art-site-permutation", "art-block-sizes", "art-cost-report"]
+    backward_slice_operation_ids:
+      - "op-order-sites"
+      - "op-extract-sparsity-profiles"
+      - "op-select-recursive-cuts"
+      - "op-validate-block-transport"
+    backward_slice_artifact_ids:
+      - "art-block-candidate-matrix"
+      - "art-site-permutation"
+      - "art-sparsity-profiles"
+      - "art-block-sizes"
+      - "art-reconstructed-block-matrix"
+      - "art-cost-report"
+    closure_status: "has-gap"
+    closure_notes: "A generalized method-agnostic objective and calibration suite would need to be authored; exact published partitions are unsuitable as the final target."
+
+  - leaf_id: "claim-leaf-bismuth-band-structure"
+    target_artifact_ids: ["art-bismuth-bands"]
+    backward_slice_operation_ids:
+      - "op-build-spinful-basis"
+      - "op-classify-neighbor-shells"
+      - "op-assemble-spin-orbit-hamiltonian"
+      - "op-compute-high-symmetry-bands"
+    backward_slice_artifact_ids:
+      - "art-bismuth-source-spec"
+      - "art-spinful-basis"
+      - "art-neighbor-shells"
+      - "art-bismuth-hamiltonian"
+      - "art-bismuth-bands"
+    closure_status: "closed"
+    closure_notes: "Closed as a reproduction but rejected because the paper prints nearly the whole setup and the candidate ends at one easily source-traceable band artifact."
+
+conflicts:
+  - id: "conflict-dos-normalization"
+    paper_evidence_ids: ["evidence-paper-transport-observables", "evidence-conflict-dos-normalization"]
+    code_evidence_ids: ["evidence-repo-silicon-example"]
+    observed_evidence_ids: ["evidence-reference-evaluator-pass", "evidence-alternative-evaluator-pass"]
+    resolution: "benchmark-choice"
+    rationale: "Use publicly disclosed spinless -Im(trace)/pi definitions with no per-block averaging."
+
+  - id: "conflict-damping-type"
+    paper_evidence_ids: ["evidence-paper-retarded-green-function"]
+    code_evidence_ids: ["evidence-conflict-damping"]
+    observed_evidence_ids: ["evidence-oracle-surface-validation"]
+    resolution: "benchmark-choice"
+    rationale: "Use a real positive eta only through z=E+i*eta."
+
+  - id: "conflict-surface-return-order"
+    paper_evidence_ids: ["evidence-paper-lead-self-energies"]
+    code_evidence_ids: ["evidence-conflict-surface-order"]
+    observed_evidence_ids: ["evidence-oracle-surface-validation", "evidence-alternative-evaluator-pass"]
+    resolution: "benchmark-choice"
+    rationale: "Disclose B_left=H1^H, B_right=H1 and corresponding contacts; grade behavior rather than variable names."
+
+  - id: "conflict-missing-silicon-assets"
+    paper_evidence_ids: ["evidence-paper-figure-9", "evidence-limitation-missing-silicon-assets"]
+    code_evidence_ids: ["evidence-repo-silicon-example"]
+    observed_evidence_ids: []
+    resolution: "benchmark-choice"
+    rationale: "Use neutral synthetic geometries and complete public parameter tables instead of exact Figure 9 values."
+
+  - id: "conflict-version-drift"
+    paper_evidence_ids: ["evidence-paper-framework-purpose"]
+    code_evidence_ids: ["evidence-version-pinning"]
+    observed_evidence_ids: []
+    resolution: "observed"
+    rationale: "Preserve current and pre-paper snapshots solely as author evidence; no source code is a participant dependency."

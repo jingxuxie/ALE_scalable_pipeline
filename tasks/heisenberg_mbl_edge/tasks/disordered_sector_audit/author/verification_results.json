@@ -1,0 +1,697 @@
+{
+  "build_identity": "sha256:9dc29e54c250afdb07aa10391431147535ece606b2f4eee3cd9fcd0c00cc6b73",
+  "checks": {
+    "alternative": {
+      "grade": {
+        "hard_gates": {
+          "failures": [],
+          "passed": true
+        },
+        "metrics": {
+          "entanglement_participation": {
+            "experiment_count": 3,
+            "mean_normalized_rmse": 8.303536599048535e-07,
+            "minimum_experiment_score": 1.0,
+            "score": 1.0
+          },
+          "evidence_consistency": {
+            "experiment_count": 3,
+            "mean_normalized_rmse": 5.702373440387377e-07,
+            "minimum_experiment_score": 1.0,
+            "score": 1.0
+          },
+          "magnetization": {
+            "experiment_count": 3,
+            "mean_normalized_rmse": 1.0757749718989657e-06,
+            "minimum_experiment_score": 1.0,
+            "score": 1.0
+          },
+          "realization_aggregation": {
+            "experiment_count": 3,
+            "mean_normalized_rmse": 3.1143529697218177e-07,
+            "minimum_experiment_score": 1.0,
+            "score": 1.0
+          },
+          "spectral_packet": {
+            "experiment_count": 3,
+            "mean_index_fraction": 1.0,
+            "mean_normalized_rmse": 1.6332860154785777e-06,
+            "minimum_experiment_score": 1.0,
+            "score": 1.0
+          }
+        },
+        "passed": true,
+        "total_score": 1.0
+      },
+      "grader_runtime_seconds": {
+        "first_seconds": 1.3539851999994426,
+        "second_seconds": 1.3248026000001119
+      }
+    },
+    "alternative_public_determinism": {
+      "metrics": {
+        "entanglement_participation": {
+          "normalized_rmse": 5.650225396672773e-07,
+          "score": 1.0
+        },
+        "evidence_consistency": {
+          "normalized_rmse": 5.7244702585811757e-08,
+          "score": 1.0
+        },
+        "magnetization": {
+          "normalized_rmse": 9.02852786700195e-07,
+          "score": 1.0
+        },
+        "realization_aggregation": {
+          "normalized_rmse": 5.976356215251312e-08,
+          "score": 1.0
+        },
+        "spectral_packet": {
+          "index_fraction": 1.0,
+          "normalized_rmse": 2.843364319992945e-07,
+          "score": 1.0
+        }
+      },
+      "result_bytes": 79890,
+      "runtime_seconds": [
+        0.13329560000056517,
+        0.13187640000251122
+      ],
+      "sha256": "48fb3ff685fd72b8373adec3972790af1ebe9dd4e9c9a2a354d9a5b6d17cab66"
+    },
+    "analytic_fixtures": {
+      "bell_state_max_error": 4.440892098500626e-16,
+      "product_state_max_error": 0.0,
+      "projected_imaginary_max_error": 0.0,
+      "projected_kronecker_hamiltonian_max_error": 1.1102230246251565e-16
+    },
+    "clean_room_public": {
+      "metrics": {
+        "entanglement_participation": {
+          "normalized_rmse": 1.057441279928608e-06,
+          "score": 1.0
+        },
+        "evidence_consistency": {
+          "normalized_rmse": 1.0226373769421594e-07,
+          "score": 1.0
+        },
+        "magnetization": {
+          "normalized_rmse": 4.783987933125131e-07,
+          "score": 1.0
+        },
+        "realization_aggregation": {
+          "normalized_rmse": 1.0340781412254649e-07,
+          "score": 1.0
+        },
+        "spectral_packet": {
+          "index_fraction": 1.0,
+          "normalized_rmse": 3.0795700108425123e-07,
+          "score": 1.0
+        }
+      },
+      "result_bytes": 79873,
+      "runtime_seconds": [
+        0.15957600000183447,
+        0.16137040000103298
+      ],
+      "sha256": "2cbebda0376a7772bce7e3be2279784f0d94e1820e73460271383e9044a1f54b"
+    },
+    "contract_identity": {
+      "metric_ids": [
+        "entanglement_participation",
+        "evidence_consistency",
+        "magnetization",
+        "realization_aggregation",
+        "spectral_packet"
+      ],
+      "participant_output_artifact_ids": [
+        "artifact-dsa-conclusion",
+        "artifact-dsa-ensembles",
+        "artifact-dsa-solution-source",
+        "artifact-dsa-states"
+      ],
+      "runtime_result_artifact_count": 3,
+      "submitted_artifact_count": 1,
+      "task_id": "disordered-sector-audit-v1"
+    },
+    "input_suite": {
+      "checked_reference_query_packet_counts": 86,
+      "experiments": [
+        {
+          "L": [
+            8
+          ],
+          "comparison_count": 2,
+          "condition_sequence": [
+            "weak",
+            "strong",
+            "strong",
+            "weak",
+            "weak",
+            "strong",
+            "strong",
+            "weak",
+            "weak",
+            "strong"
+          ],
+          "exchange": [
+            1.0
+          ],
+          "experiment_id": "retired-demo-01",
+          "n_up": [
+            4
+          ],
+          "query_count_per_record": [
+            2
+          ],
+          "record_count": 10,
+          "records_with_query_packet_variation": 10
+        },
+        {
+          "L": [
+            9
+          ],
+          "comparison_count": 2,
+          "condition_sequence": [
+            "c-a17",
+            "c-a92",
+            "c-a17",
+            "c-a92",
+            "c-a92",
+            "c-a17",
+            "c-a92",
+            "c-a17",
+            "c-a92",
+            "c-a17"
+          ],
+          "exchange": [
+            1.0
+          ],
+          "experiment_id": "hidden-alpha-01",
+          "n_up": [
+            4
+          ],
+          "query_count_per_record": [
+            2
+          ],
+          "record_count": 10,
+          "records_with_query_packet_variation": 10
+        },
+        {
+          "L": [
+            10
+          ],
+          "comparison_count": 2,
+          "condition_sequence": [
+            "c-b81",
+            "c-b81",
+            "c-b81",
+            "c-b24",
+            "c-b24",
+            "c-b81",
+            "c-b24",
+            "c-b24"
+          ],
+          "exchange": [
+            1.35
+          ],
+          "experiment_id": "hidden-beta-01",
+          "n_up": [
+            5
+          ],
+          "query_count_per_record": [
+            2
+          ],
+          "record_count": 8,
+          "records_with_query_packet_variation": 8
+        },
+        {
+          "L": [
+            12
+          ],
+          "comparison_count": 3,
+          "condition_sequence": [
+            "c-g13",
+            "c-g86",
+            "c-g86",
+            "c-g13",
+            "c-g13",
+            "c-g86",
+            "c-g13",
+            "c-g86",
+            "c-g13",
+            "c-g86"
+          ],
+          "exchange": [
+            0.8
+          ],
+          "experiment_id": "hidden-gamma-01",
+          "n_up": [
+            5
+          ],
+          "query_count_per_record": [
+            3
+          ],
+          "record_count": 10,
+          "records_with_query_packet_variation": 10
+        }
+      ],
+      "hidden_exchange_values": [
+        0.8,
+        1.0,
+        1.35
+      ],
+      "hidden_identifier_sets_are_public_disjoint_suite_specific_and_opaque": true,
+      "hidden_interleaved_record_order": true,
+      "hidden_max_queries_per_record": 3,
+      "hidden_packet_size_max": 15,
+      "hidden_packet_size_min": 2,
+      "hidden_query_packet_variation_records": 28,
+      "hidden_record_count": 28,
+      "minimum_scaled_eigengap": 3.149862920187654e-08,
+      "minimum_scaled_packet_cutoff_margin": 1.0406177967731297e-07
+    },
+    "metamorphic": {
+      "oracle_kernel": {
+        "common_hamiltonian_scaling": {
+          "eigenvalue": 1.7763568394002505e-15,
+          "entanglement": 1.1546319456101628e-14,
+          "gap_ratio": 2.433608869978343e-13,
+          "normalized_energy": 2.498001805406602e-16,
+          "participation_s1": 1.0658141036401503e-14,
+          "participation_s2": 2.220446049250313e-14,
+          "subsystem_mz_variance": 1.3988810110276972e-14
+        },
+        "global_spin_flip_nonzero_sector": {
+          "eigenvalue": 1.7763568394002505e-15,
+          "entanglement": 1.4210854715202004e-14,
+          "gap_ratio": 1.580957587066223e-13,
+          "normalized_energy": 2.7755575615628914e-16,
+          "participation_s1": 2.1316282072803006e-14,
+          "participation_s2": 3.6415315207705135e-14,
+          "subsystem_mz_mean": 2.936539900133539e-14,
+          "subsystem_mz_variance": 1.5987211554602254e-14
+        },
+        "record_permutation": {
+          "max_error": 0.0
+        },
+        "site_relabeling": {
+          "entanglement": 1.4210854715202004e-14,
+          "gap_ratio": 1.6919798895287386e-13,
+          "normalized_energy": 1.6653345369377348e-16,
+          "participation_s1": 1.4210854715202004e-14,
+          "participation_s2": 2.930988785010413e-14,
+          "subsystem_mz_variance": 2.0872192862952943e-14
+        },
+        "uniform_field_shift": {
+          "eigenvalue": 8.881784197001252e-16,
+          "entanglement": 1.0658141036401503e-14,
+          "gap_ratio": 2.1366242108911138e-13,
+          "normalized_energy": 1.6653345369377348e-16,
+          "participation_s1": 1.509903313490213e-14,
+          "participation_s2": 3.375077994860476e-14,
+          "subsystem_mz_variance": 1.7985612998927536e-14
+        }
+      },
+      "participant_facing_solvers": {
+        "alternative": {
+          "base_runtime_seconds": 0.13360000000102445,
+          "common_hamiltonian_scaling": {
+            "aggregate_max_error": 1.2601031329495527e-14,
+            "conclusion_max_error": 1.326716514427062e-14,
+            "max_error": 6.905587213168474e-14,
+            "runtime_seconds": 0.12319019999995362,
+            "state_max_error": 6.905587213168474e-14
+          },
+          "global_spin_flip_nonzero_sector": {
+            "aggregate_max_error": 1.3100631690576847e-14,
+            "conclusion_max_error": 1.4099832412739488e-14,
+            "max_error": 9.725553695716371e-14,
+            "runtime_seconds": 0.11939400000119349,
+            "state_max_error": 9.725553695716371e-14
+          },
+          "record_permutation": {
+            "aggregate_max_error": 0.0,
+            "conclusion_max_error": 0.0,
+            "max_error": 0.0,
+            "runtime_seconds": 0.12204319999727886,
+            "state_max_error": 0.0
+          },
+          "site_relabeling": {
+            "aggregate_max_error": 2.86090595658095e-14,
+            "conclusion_max_error": 1.84297022087776e-14,
+            "max_error": 1.6364687382974807e-13,
+            "runtime_seconds": 0.11891439999817521,
+            "state_max_error": 1.6364687382974807e-13
+          },
+          "uniform_field_shift": {
+            "aggregate_max_error": 1.2795320358804929e-14,
+            "conclusion_max_error": 1.199040866595169e-14,
+            "max_error": 8.859579736508749e-14,
+            "runtime_seconds": 0.12214850000236765,
+            "state_max_error": 8.859579736508749e-14
+          }
+        },
+        "reference": {
+          "base_runtime_seconds": 0.1342770000010205,
+          "common_hamiltonian_scaling": {
+            "aggregate_max_error": 9.194034422677078e-15,
+            "conclusion_max_error": 6.217248937900877e-15,
+            "max_error": 4.2299497238218464e-14,
+            "runtime_seconds": 0.1174393000001146,
+            "state_max_error": 4.2299497238218464e-14
+          },
+          "global_spin_flip_nonzero_sector": {
+            "aggregate_max_error": 7.771561172376096e-15,
+            "conclusion_max_error": 7.771561172376096e-15,
+            "max_error": 4.773959005888173e-14,
+            "runtime_seconds": 0.11474989999987883,
+            "state_max_error": 4.773959005888173e-14
+          },
+          "record_permutation": {
+            "aggregate_max_error": 0.0,
+            "conclusion_max_error": 0.0,
+            "max_error": 0.0,
+            "runtime_seconds": 0.12561460000142688,
+            "state_max_error": 0.0
+          },
+          "site_relabeling": {
+            "aggregate_max_error": 1.6854573292590658e-14,
+            "conclusion_max_error": 1.2656542480726785e-14,
+            "max_error": 1.1368683772161603e-13,
+            "runtime_seconds": 0.11959980000028736,
+            "state_max_error": 1.1368683772161603e-13
+          },
+          "uniform_field_shift": {
+            "aggregate_max_error": 1.7763568394002505e-14,
+            "conclusion_max_error": 2.1316282072803006e-14,
+            "max_error": 1.4788170688007085e-13,
+            "runtime_seconds": 0.12041039999894565,
+            "state_max_error": 1.4788170688007085e-13
+          }
+        }
+      }
+    },
+    "mutants": {
+      "category_count": 12,
+      "count": 12,
+      "results": [
+        {
+          "category": "operator normalization",
+          "expected_metric": "spectral_packet",
+          "expected_metric_score": 0.0,
+          "mutant_id": "pauli_scale",
+          "passed": false,
+          "runtime_seconds": 1.7509234999997716,
+          "score": 0.0
+        },
+        {
+          "category": "input-parameter handling",
+          "expected_metric": "spectral_packet",
+          "expected_metric_score": 0.3333333333333333,
+          "mutant_id": "unit_exchange",
+          "passed": false,
+          "runtime_seconds": 1.757150499997806,
+          "score": 0.3333333333333333
+        },
+        {
+          "category": "Hamiltonian topology",
+          "expected_metric": "spectral_packet",
+          "expected_metric_score": 0.0,
+          "mutant_id": "open_boundary",
+          "passed": false,
+          "runtime_seconds": 1.8532228999974905,
+          "score": 0.0
+        },
+        {
+          "category": "energy convention",
+          "expected_metric": "spectral_packet",
+          "expected_metric_score": 0.0,
+          "mutant_id": "wrong_energy_normalization",
+          "passed": false,
+          "runtime_seconds": 1.7996032000010018,
+          "score": 0.0
+        },
+        {
+          "category": "packet selection",
+          "expected_metric": "spectral_packet",
+          "expected_metric_score": 0.0,
+          "mutant_id": "one_sided_packet",
+          "passed": false,
+          "runtime_seconds": 1.7495635000013863,
+          "score": 0.0
+        },
+        {
+          "category": "observable substitution",
+          "expected_metric": "entanglement_participation",
+          "expected_metric_score": 0.0,
+          "mutant_id": "shannon_entanglement",
+          "passed": false,
+          "runtime_seconds": 1.7326217999980145,
+          "score": 0.4
+        },
+        {
+          "category": "logarithm convention",
+          "expected_metric": "entanglement_participation",
+          "expected_metric_score": 0.0,
+          "mutant_id": "log2_entanglement",
+          "passed": false,
+          "runtime_seconds": 1.7580421999991813,
+          "score": 0.4
+        },
+        {
+          "category": "participation definition",
+          "expected_metric": "entanglement_participation",
+          "expected_metric_score": 0.0,
+          "mutant_id": "s2_ipr",
+          "passed": false,
+          "runtime_seconds": 1.7010730000001786,
+          "score": 0.4
+        },
+        {
+          "category": "magnetization moment",
+          "expected_metric": "magnetization",
+          "expected_metric_score": 0.0,
+          "mutant_id": "mz_second_moment",
+          "passed": false,
+          "runtime_seconds": 1.7566621000005398,
+          "score": 0.65
+        },
+        {
+          "category": "realization weighting",
+          "expected_metric": "realization_aggregation",
+          "expected_metric_score": 0.0,
+          "mutant_id": "naive_aggregation",
+          "passed": false,
+          "runtime_seconds": 1.7923350000019127,
+          "score": 0.7
+        },
+        {
+          "category": "cluster uncertainty",
+          "expected_metric": "realization_aggregation",
+          "expected_metric_score": 0.0,
+          "mutant_id": "sem_over_states",
+          "passed": false,
+          "runtime_seconds": 1.8261894999996002,
+          "score": 0.8
+        },
+        {
+          "category": "fabricated evidence",
+          "expected_metric": "evidence_consistency",
+          "expected_metric_score": 0.0,
+          "mutant_id": "stale_evidence",
+          "passed": false,
+          "runtime_seconds": 1.8423185999999987,
+          "score": 0.7
+        }
+      ]
+    },
+    "oracle": {
+      "artifact_count": 9,
+      "runtime_seconds": [
+        1.7776449999983015,
+        1.7876510999994935
+      ],
+      "summary": {
+        "experiments": [
+          {
+            "effects": {
+              "weak-vs-strong-center::entanglement": 1.5345776168303487,
+              "weak-vs-strong-center::gap_ratio": 0.12242304186432962,
+              "weak-vs-strong-center::participation_s1": 2.164077182482399,
+              "weak-vs-strong-center::participation_s2": 2.1048205426086577,
+              "weak-vs-strong-offset::entanglement": 1.0036797559897204,
+              "weak-vs-strong-offset::gap_ratio": 0.18153129642980664,
+              "weak-vs-strong-offset::participation_s1": 2.1567149544460515,
+              "weak-vs-strong-offset::participation_s2": 2.0612015200000395
+            },
+            "experiment_id": "retired-demo-01",
+            "input_sha256": "de2574d6032aa18dd903ef9ec7bdff2521ac28cd6dfae6403402aeb187761c07",
+            "record_count": 10,
+            "reference_sha256": "2b3bc5664304ffed78dab04e335dfe1a6a0214bf04f42cea47a76facaafff18e",
+            "state_row_count": 140
+          },
+          {
+            "effects": {
+              "cmp-a08::entanglement": 2.000841737360379,
+              "cmp-a08::gap_ratio": 0.1451250394261962,
+              "cmp-a08::participation_s1": 3.1467852764728814,
+              "cmp-a08::participation_s2": 2.9696079812577327,
+              "cmp-a63::entanglement": 1.784536553102908,
+              "cmp-a63::gap_ratio": 0.052730025664115776,
+              "cmp-a63::participation_s1": 3.111146948156253,
+              "cmp-a63::participation_s2": 2.834208342426095
+            },
+            "experiment_id": "hidden-alpha-01",
+            "input_sha256": "ac8ec753afb8befb83d5b2f0660fb6312770a0d8728915e3fa5208877478d164",
+            "record_count": 10,
+            "reference_sha256": "62e4e82a69d49414c7177aa65cf70ae99ec1716c44fb6c9a41a0a242b7e113ca",
+            "state_row_count": 140
+          },
+          {
+            "effects": {
+              "cmp-b14::entanglement": 2.295796623409888,
+              "cmp-b14::gap_ratio": 0.09139067174717036,
+              "cmp-b14::participation_s1": 3.65031611553932,
+              "cmp-b14::participation_s2": 3.5140788804334306,
+              "cmp-b76::entanglement": 1.7294101773564912,
+              "cmp-b76::gap_ratio": 0.21919790595764954,
+              "cmp-b76::participation_s1": 3.3066322378425133,
+              "cmp-b76::participation_s2": 3.1157036642799287
+            },
+            "experiment_id": "hidden-beta-01",
+            "input_sha256": "1cd15047227738572d2fd50834221eff0a17cdae2d0f8175613ca6f04b831568",
+            "record_count": 8,
+            "reference_sha256": "be815d77b016305daa857c8535b41ea07bc9b564ef2e5e5e49617f3e7468424d",
+            "state_row_count": 114
+          },
+          {
+            "effects": {
+              "cmp-g05::entanglement": 3.0441750562026333,
+              "cmp-g05::gap_ratio": 0.21512384288167807,
+              "cmp-g05::participation_s1": 4.712897898634532,
+              "cmp-g05::participation_s2": 4.667626596320035,
+              "cmp-g47::entanglement": 1.9640153046225142,
+              "cmp-g47::gap_ratio": 0.09568634973564027,
+              "cmp-g47::participation_s1": 4.139347101755295,
+              "cmp-g47::participation_s2": 3.883728331640028,
+              "cmp-g88::entanglement": 2.056182069579798,
+              "cmp-g88::gap_ratio": 0.2584346809229865,
+              "cmp-g88::participation_s1": 4.4897675638005055,
+              "cmp-g88::participation_s2": 4.191868844225715
+            },
+            "experiment_id": "hidden-gamma-01",
+            "input_sha256": "243a97a46d59420d95fae417a086988553241f60d7424ab751ff8853da8418fe",
+            "record_count": 10,
+            "reference_sha256": "79a9337462eb57c5a5c8af65868efe13e1438b9a6dc4388bda6ee82f1ee60de0",
+            "state_row_count": 240
+          }
+        ],
+        "schema_version": "sector-audit-oracle-summary/v1"
+      }
+    },
+    "package": {
+      "byte_count": 21092,
+      "file_count": 4,
+      "forbidden_hits": [],
+      "no_bytecode_cache": true,
+      "no_reparse_or_linked_files": true,
+      "validator_extra_file_rejected": "INVALID: submission must contain exactly solution.py",
+      "validator_valid_case": "VALID STRUCTURE: scientific correctness is not checked"
+    },
+    "reference": {
+      "grade": {
+        "hard_gates": {
+          "failures": [],
+          "passed": true
+        },
+        "metrics": {
+          "entanglement_participation": {
+            "experiment_count": 3,
+            "mean_normalized_rmse": 4.3420386277383383e-07,
+            "minimum_experiment_score": 1.0,
+            "score": 1.0
+          },
+          "evidence_consistency": {
+            "experiment_count": 3,
+            "mean_normalized_rmse": 4.476642245444491e-07,
+            "minimum_experiment_score": 1.0,
+            "score": 1.0
+          },
+          "magnetization": {
+            "experiment_count": 3,
+            "mean_normalized_rmse": 4.4375460657159093e-07,
+            "minimum_experiment_score": 1.0,
+            "score": 1.0
+          },
+          "realization_aggregation": {
+            "experiment_count": 3,
+            "mean_normalized_rmse": 1.750273702964519e-07,
+            "minimum_experiment_score": 1.0,
+            "score": 1.0
+          },
+          "spectral_packet": {
+            "experiment_count": 3,
+            "mean_index_fraction": 1.0,
+            "mean_normalized_rmse": 2.275782769983356e-06,
+            "minimum_experiment_score": 1.0,
+            "score": 1.0
+          }
+        },
+        "passed": true,
+        "total_score": 1.0
+      },
+      "grader_runtime_seconds": {
+        "first_seconds": 1.812795100002404,
+        "second_seconds": 1.7219624999997905
+      }
+    },
+    "resource_probe": {
+      "L": 12,
+      "dense_matrix_bytes": 6830208,
+      "query_count": 2,
+      "runtime_seconds": 0.19561999999859836,
+      "sector_dimension": 924,
+      "state_row_count": 14
+    },
+    "robustness": {
+      "aggregate_epsilon_context": "aggregate ('c-a17::q-a31',).epsilon does not match the experiment",
+      "builtin_global_tamper": "solution failed under the evaluation guard: -8')\r   File \"C:\\Users\\Jingxu\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\Lib\\pathlib.py\", line 1027, in read_text\r     with self.open(mode='r', encoding=encoding, errors=errors) as f:\r          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r   File \"C:\\Users\\Jingxu\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\Lib\\pathlib.py\", line 1013, in open\r     return io.open(self, mode, buffering, encoding, errors, newline)\r            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r   File \"C:\\Users\\Jingxu\\AppData\\Local\\Temp\\sector-audit-run-o_n4l4cd\\guard.py\", line 119, in audit\r     raise permission_error(\"evaluation guard denied read outside staged/runtime roots\")\r PermissionError: evaluation guard denied read outside staged/runtime roots\r ",
+      "conclusion_relation": "conclusion ('cmp-a08::gap_ratio',).effect is inconsistent with its aggregates",
+      "environment_allowlist": "solution failed under the evaluation guard: Traceback (most recent call last):\r   File \"C:\\Users\\Jingxu\\AppData\\Local\\Temp\\sector-audit-run-mxh3xyd6\\guard.py\", line 148, in <module>\r     raise SystemExit(main(tuple(sys.argv)))\r                      ^^^^^^^^^^^^^^^^^^^^^\r   File \"C:\\Users\\Jingxu\\AppData\\Local\\Temp\\sector-audit-run-mxh3xyd6\\guard.py\", line 143, in main\r     runpy.run_path(solution, run_name=\"__main__\")\r   File \"<frozen runpy>\", line 287, in run_path\r   File \"<frozen runpy>\", line 98, in _run_module_code\r   File \"<frozen runpy>\", line 88, in _run_code\r   File \"C:\\Users\\Jingxu\\AppData\\Local\\Temp\\sector-audit-run-mxh3xyd6\\source\\solution.py\", line 6, in <module>\r     raise RuntimeError('environment allowlist confirmed')\r RuntimeError: environment allowlist confirmed\r ",
+      "extra_submission_file": "submission must contain exactly solution.py",
+      "frame_global_escape": "solution failed under the evaluation guard: ctor-audit-run-2tawyhuj\\guard.py\", line 148, in <module>\r     raise SystemExit(main(tuple(sys.argv)))\r                      ^^^^^^^^^^^^^^^^^^^^^\r   File \"C:\\Users\\Jingxu\\AppData\\Local\\Temp\\sector-audit-run-2tawyhuj\\guard.py\", line 143, in main\r     runpy.run_path(solution, run_name=\"__main__\")\r   File \"<frozen runpy>\", line 287, in run_path\r   File \"<frozen runpy>\", line 98, in _run_module_code\r   File \"<frozen runpy>\", line 88, in _run_code\r   File \"C:\\Users\\Jingxu\\AppData\\Local\\Temp\\sector-audit-run-2tawyhuj\\source\\solution.py\", line 5, in <module>\r     sys._getframe()\r   File \"C:\\Users\\Jingxu\\AppData\\Local\\Temp\\sector-audit-run-2tawyhuj\\guard.py\", line 104, in audit\r     raise permission_error(\"evaluation guard denied \" + event)\r PermissionError: evaluation guard denied sys._getframe\r ",
+      "hardcoded_retired_reference": "result experiment_id is stale or wrong",
+      "hardlink_result": "hard-linked result files are forbidden",
+      "hardlink_solution": "hard-linked solution.py is forbidden",
+      "hardlink_unavailable_status_contract": "platform_unavailable:PermissionError",
+      "link_creation": "solution failed under the evaluation guard:  148, in <module>\r     raise SystemExit(main(tuple(sys.argv)))\r                      ^^^^^^^^^^^^^^^^^^^^^\r   File \"C:\\Users\\Jingxu\\AppData\\Local\\Temp\\sector-audit-run-f6r69cda\\guard.py\", line 143, in main\r     runpy.run_path(solution, run_name=\"__main__\")\r   File \"<frozen runpy>\", line 287, in run_path\r   File \"<frozen runpy>\", line 98, in _run_module_code\r   File \"<frozen runpy>\", line 88, in _run_code\r   File \"C:\\Users\\Jingxu\\AppData\\Local\\Temp\\sector-audit-run-f6r69cda\\source\\solution.py\", line 5, in <module>\r     os.link(Path(a.experiment)/'experiment.json',Path(a.output))\r   File \"C:\\Users\\Jingxu\\AppData\\Local\\Temp\\sector-audit-run-f6r69cda\\guard.py\", line 104, in audit\r     raise permission_error(\"evaluation guard denied \" + event)\r PermissionError: evaluation guard denied os.link\r ",
+      "malformed_json": "invalid result JSON: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)",
+      "nan_json": "invalid result JSON: non-standard JSON constant NaN",
+      "network_access": "solution failed under the evaluation guard: ctor-audit-run-zm6tz7m_\\guard.py\", line 143, in main\r     runpy.run_path(solution, run_name=\"__main__\")\r   File \"<frozen runpy>\", line 287, in run_path\r   File \"<frozen runpy>\", line 98, in _run_module_code\r   File \"<frozen runpy>\", line 88, in _run_code\r   File \"C:\\Users\\Jingxu\\AppData\\Local\\Temp\\sector-audit-run-zm6tz7m_\\source\\solution.py\", line 5, in <module>\r     socket.socket()\r   File \"C:\\Users\\Jingxu\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\Lib\\socket.py\", line 233, in __init__\r     _socket.socket.__init__(self, family, type, proto, fileno)\r   File \"C:\\Users\\Jingxu\\AppData\\Local\\Temp\\sector-audit-run-zm6tz7m_\\guard.py\", line 104, in audit\r     raise permission_error(\"evaluation guard denied \" + event)\r PermissionError: evaluation guard denied socket.__new__\r ",
+      "os_fork": "platform_unavailable",
+      "os_forkpty": "platform_unavailable",
+      "os_posix_spawn": "platform_unavailable",
+      "os_startfile": "solution failed under the evaluation guard: y\", line 148, in <module>\r     raise SystemExit(main(tuple(sys.argv)))\r                      ^^^^^^^^^^^^^^^^^^^^^\r   File \"C:\\Users\\Jingxu\\AppData\\Local\\Temp\\sector-audit-run-1cbg9uih\\guard.py\", line 143, in main\r     runpy.run_path(solution, run_name=\"__main__\")\r   File \"<frozen runpy>\", line 287, in run_path\r   File \"<frozen runpy>\", line 98, in _run_module_code\r   File \"<frozen runpy>\", line 88, in _run_code\r   File \"C:\\Users\\Jingxu\\AppData\\Local\\Temp\\sector-audit-run-1cbg9uih\\source\\solution.py\", line 5, in <module>\r     os.startfile(str(Path(a.experiment)/'missing'))\r   File \"C:\\Users\\Jingxu\\AppData\\Local\\Temp\\sector-audit-run-1cbg9uih\\guard.py\", line 104, in audit\r     raise permission_error(\"evaluation guard denied \" + event)\r PermissionError: evaluation guard denied os.startfile\r ",
+      "oversized_result": "result exceeded the size limit during execution",
+      "oversized_solution": "solution.py violates the size limit",
+      "partial_result": "result top-level schema mismatch",
+      "private_file_access": "solution failed under the evaluation guard: -8')\r   File \"C:\\Users\\Jingxu\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\Lib\\pathlib.py\", line 1027, in read_text\r     with self.open(mode='r', encoding=encoding, errors=errors) as f:\r          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r   File \"C:\\Users\\Jingxu\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\Lib\\pathlib.py\", line 1013, in open\r     return io.open(self, mode, buffering, encoding, errors, newline)\r            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r   File \"C:\\Users\\Jingxu\\AppData\\Local\\Temp\\sector-audit-run-za3avo5s\\guard.py\", line 119, in audit\r     raise permission_error(\"evaluation guard denied read outside staged/runtime roots\")\r PermissionError: evaluation guard denied read outside staged/runtime roots\r ",
+      "private_path_traversal": "solution failed under the evaluation guard: -8')\r   File \"C:\\Users\\Jingxu\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\Lib\\pathlib.py\", line 1027, in read_text\r     with self.open(mode='r', encoding=encoding, errors=errors) as f:\r          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r   File \"C:\\Users\\Jingxu\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\Lib\\pathlib.py\", line 1013, in open\r     return io.open(self, mode, buffering, encoding, errors, newline)\r            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r   File \"C:\\Users\\Jingxu\\AppData\\Local\\Temp\\sector-audit-run-jo9e84kp\\guard.py\", line 119, in audit\r     raise permission_error(\"evaluation guard denied read outside staged/runtime roots\")\r PermissionError: evaluation guard denied read outside staged/runtime roots\r ",
+      "rename_input": "solution failed under the evaluation guard:   raise SystemExit(main(tuple(sys.argv)))\r                      ^^^^^^^^^^^^^^^^^^^^^\r   File \"C:\\Users\\Jingxu\\AppData\\Local\\Temp\\sector-audit-run-1sxb8_xj\\guard.py\", line 143, in main\r     runpy.run_path(solution, run_name=\"__main__\")\r   File \"<frozen runpy>\", line 287, in run_path\r   File \"<frozen runpy>\", line 98, in _run_module_code\r   File \"<frozen runpy>\", line 88, in _run_code\r   File \"C:\\Users\\Jingxu\\AppData\\Local\\Temp\\sector-audit-run-1sxb8_xj\\source\\solution.py\", line 5, in <module>\r     os.rename(Path(a.experiment)/'experiment.json',Path(a.experiment)/'moved.json')\r   File \"C:\\Users\\Jingxu\\AppData\\Local\\Temp\\sector-audit-run-1sxb8_xj\\guard.py\", line 104, in audit\r     raise permission_error(\"evaluation guard denied \" + event)\r PermissionError: evaluation guard denied os.rename\r ",
+      "stale_public_result": "result experiment_id is stale or wrong",
+      "state_condition_context": "state ('ra17-r00', 'q-a31', 0).condition_id does not match its record",
+      "stderr_flood_fast": "solution emitted excessive console output",
+      "stdout_flood_fast": "solution emitted excessive console output",
+      "subprocess_access": "solution failed under the evaluation guard: -runtimes\\codex-primary-runtime\\dependencies\\python\\Lib\\subprocess.py\", line 548, in run\r     with Popen(*popenargs, **kwargs) as process:\r          ^^^^^^^^^^^^^^^^^^^^^^^^^^^\r   File \"C:\\Users\\Jingxu\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\Lib\\subprocess.py\", line 1026, in __init__\r     self._execute_child(args, executable, preexec_fn, close_fds,\r   File \"C:\\Users\\Jingxu\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\Lib\\subprocess.py\", line 1534, in _execute_child\r     sys.audit(\"subprocess.Popen\", executable, args, cwd, env)\r   File \"C:\\Users\\Jingxu\\AppData\\Local\\Temp\\sector-audit-run-66l88lwh\\guard.py\", line 104, in audit\r     raise permission_error(\"evaluation guard denied \" + event)\r PermissionError: evaluation guard denied subprocess.Popen\r ",
+      "symlink_creation": "solution failed under the evaluation guard: in <module>\r     raise SystemExit(main(tuple(sys.argv)))\r                      ^^^^^^^^^^^^^^^^^^^^^\r   File \"C:\\Users\\Jingxu\\AppData\\Local\\Temp\\sector-audit-run-4jrq67ed\\guard.py\", line 143, in main\r     runpy.run_path(solution, run_name=\"__main__\")\r   File \"<frozen runpy>\", line 287, in run_path\r   File \"<frozen runpy>\", line 98, in _run_module_code\r   File \"<frozen runpy>\", line 88, in _run_code\r   File \"C:\\Users\\Jingxu\\AppData\\Local\\Temp\\sector-audit-run-4jrq67ed\\source\\solution.py\", line 5, in <module>\r     os.symlink(Path(a.experiment)/'experiment.json',Path(a.output))\r   File \"C:\\Users\\Jingxu\\AppData\\Local\\Temp\\sector-audit-run-4jrq67ed\\guard.py\", line 104, in audit\r     raise permission_error(\"evaluation guard denied \" + event)\r PermissionError: evaluation guard denied os.symlink\r ",
+      "symlink_solution": "platform_unavailable:OSError",
+      "symlink_submission_root": "platform_unavailable:OSError",
+      "syntax_error": "solution.py is not valid UTF-8 Python: invalid syntax (solution.py, line 1)"
+    }
+  },
+  "runtime_seconds": 49.1263065000021,
+  "schema_version": "sector-audit-verification/v1",
+  "status": "pass",
+  "task_id": "disordered-sector-audit-v1"
+}

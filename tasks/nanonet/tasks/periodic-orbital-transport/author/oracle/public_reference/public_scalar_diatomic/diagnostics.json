@@ -1,0 +1,9 @@
+{
+  "basis_size": 2,
+  "device_cells": 4,
+  "input_sha256": "5db8c2f452b01dc1da9c01ad0a32aa1fb6673ec6fb1eb50c0a344df97b1ed2ee",
+  "max_hermiticity_residual": 0.0,
+  "max_surface_residual": 1.968552123949753e-15,
+  "model_id": "public_scalar_diatomic",
+  "schema_version": "periodic-orbital-transport-output/v1"
+}

@@ -1,0 +1,173 @@
+schema_version: paper2ale.codex-source-manifest/v1
+
+paper:
+  paper_id: "arxiv-2010.07463v1"
+  title: "NanoNET: an extendable Python framework for semi-empirical tight-binding models"
+  local_path: "authoring/sources/2010.07463.pdf"
+  public_url: "https://arxiv.org/abs/2010.07463"
+  version: "arXiv v1, submitted 2020-10-15; preprint corresponding to CPC 259 (2021) 107676"
+  sha256: "d239584d5be9d87d2f39cdedf97e401f828176f4bb8cc68d8c42ca568e287f91"
+  size_bytes: 4179539
+  page_count: 14
+  license: "unknown; no redistribution license was asserted from the inspected PDF"
+  retrieved_at: "2026-08-15"
+  citation: "M. V. Klymenko, J. A. Vaitkus, J. S. Smith, and J. H. Cole, Computer Physics Communications 259 (2021) 107676, doi:10.1016/j.cpc.2020.107676"
+
+supplements: []
+
+repositories:
+  - repository_id: "nanonet-official-current"
+    official: true
+    url: "https://github.com/freude/NanoNet"
+    local_path: "authoring/sources/NanoNet_official"
+    commit: "0c71da6c53129fcc0794efa7f35610ed9f44e135"
+    commit_date: "2026-08-14T09:28:14+10:00"
+    git_tree_oid_sha1: "e2c2a9ab2f3eca0cc12fadf35e90fa553f85c24a"
+    tree_sha256: null
+    declared_version: "1.9.9"
+    license: "MIT"
+    retrieved_at: "2026-08-15"
+    role: "Current official implementation, used only for static corroboration and conflict discovery; it postdates the paper by nearly six years."
+
+  - repository_id: "nanonet-official-paper-era"
+    official: true
+    url: "https://github.com/freude/NanoNet"
+    local_path: "authoring/sources/NanoNet-paper-era-50d02856.tar"
+    commit: "50d02856b5bcfcf9a91de6d46ebd54bf24938797"
+    commit_date: "2020-09-22T15:17:26+10:00"
+    git_tree_oid_sha1: "65997107ad32b4515e6d310c7909925844b43774"
+    tree_sha256: null
+    archive_sha256: "ad51448dfca44e58971a65bf6a25c5869ce40adc6497662b2f38f9c0848bb6f4"
+    archive_size_bytes: 3747840
+    license: "MIT"
+    retrieved_at: "2026-08-15"
+    role: "Nearest official commit preceding arXiv v1; archived as read-only provenance evidence, not exposed to participants."
+
+datasets: []
+
+environments:
+  - environment_id: "authoring-python-2026-08-15"
+    type: "manual"
+    path_or_digest: "bundled Codex primary runtime"
+    python: "3.12.13"
+    packages:
+      - "numpy==2.3.5"
+    system_dependencies:
+      - "Git"
+      - "Poppler pdftotext/pdftoppm"
+
+source_execution:
+  commands:
+    - command: "Invoke-WebRequest -Uri https://arxiv.org/pdf/2010.07463 -OutFile tasks/nanonet/authoring/sources/2010.07463.pdf"
+      working_directory: "."
+      environment_id: "authoring-python-2026-08-15"
+      exit_code: 0
+      runtime_seconds: null
+      stdout_log: null
+      stderr_log: null
+      outputs:
+        - "authoring/sources/2010.07463.pdf"
+    - command: "git clone https://github.com/freude/NanoNet tasks/nanonet/authoring/sources/NanoNet_official"
+      working_directory: "."
+      environment_id: "authoring-python-2026-08-15"
+      exit_code: 0
+      runtime_seconds: null
+      stdout_log: null
+      stderr_log: null
+      outputs:
+        - "authoring/sources/NanoNet_official"
+    - command: "git -C tasks/nanonet/authoring/sources/NanoNet_official archive --format=tar --output ../NanoNet-paper-era-50d02856.tar 50d02856b5bcfcf9a91de6d46ebd54bf24938797"
+      working_directory: "."
+      environment_id: "authoring-python-2026-08-15"
+      exit_code: 0
+      runtime_seconds: null
+      stdout_log: null
+      stderr_log: null
+      outputs:
+        - "authoring/sources/NanoNet-paper-era-50d02856.tar"
+    - command: "pdftoppm -png -r 144 tasks/nanonet/authoring/sources/2010.07463.pdf $env:TEMP/nanonet_pdf_inspect/page"
+      working_directory: "OS temporary directory"
+      environment_id: "authoring-python-2026-08-15"
+      exit_code: 0
+      runtime_seconds: null
+      stdout_log: null
+      stderr_log: null
+      outputs:
+        - "14 temporary page renders inspected visually and removed"
+  observed_artifacts:
+    - path: "authoring/sources/2010.07463.pdf"
+      sha256: "d239584d5be9d87d2f39cdedf97e401f828176f4bb8cc68d8c42ca568e287f91"
+      purpose: "Pinned primary paper evidence."
+    - path: "authoring/sources/NanoNet-paper-era-50d02856.tar"
+      sha256: "ad51448dfca44e58971a65bf6a25c5869ce40adc6497662b2f38f9c0848bb6f4"
+      purpose: "Immutable snapshot of the nearest official pre-paper commit."
+    - path: "tasks/periodic-orbital-transport/author/oracle/manifest.json"
+      sha256: "bc64645dab6efc2123fe2d36525f18eeaea46e93f16bcb2cebd882b5b787fc9"
+      purpose: "Deterministic generated-instance inventory and oracle/metamorphic trace; scripts/verify.py also regenerates and checks it."
+
+conflicts:
+  - conflict_id: "conflict-dos-normalization"
+    topic: "Density-of-states normalization"
+    paper_statement: "Equation (10) writes DOS = i/pi Tr(G-G^dagger), which evaluates to -2 Im Tr(G)/pi."
+    code_behavior: "The silicon transport example accumulates -Tr(Im G_block)/number_of_blocks, with neither the equation's factor nor pi normalization."
+    observed_behavior: "The benchmark defines the conventional spinless total DOS as -Im Tr(G)/pi and LDOS as the same trace over each cell block."
+    resolution: "benchmark-choice"
+    rationale: "The participant-visible convention is dimensionally explicit, partition invariant, and closes a paper/code discrepancy without requiring source access."
+
+  - conflict_id: "conflict-damping-type"
+    topic: "Retarded broadening convention"
+    paper_statement: "Equation (2) uses E+i0+ and the example passes damp=0.001j."
+    code_behavior: "recursive_greens_functions.py adds 1j*damp; an imaginary damp therefore becomes a real energy shift. Other surface routines use E+damp."
+    observed_behavior: "Independent oracle and alternative solvers agree when the public contract uses z=E+i*eta with real positive eta."
+    resolution: "benchmark-choice"
+    rationale: "The explicit retarded convention removes an implementation-dependent double-imaginary ambiguity."
+
+  - conflict_id: "conflict-surface-return-order"
+    topic: "Left/right surface self-energy orientation"
+    paper_statement: "Equation (8) distinguishes left and right mode-selected self-energies."
+    code_behavior: "greens_functions.py documents sgf_l then sgf_r, computes variables with those names, crops opposite ends, and returns sgf_r, sgf_l at line 260."
+    observed_behavior: "Nonnormal lead checks distinguish the two orientations and match finite-slab references when outward couplings are explicitly B_left=H1^H and B_right=H1."
+    resolution: "benchmark-choice"
+    rationale: "The task states both Dyson equations and contact matrices, so orientation is testable without inheriting ambiguous names."
+
+  - conflict_id: "conflict-version-drift"
+    topic: "Repository version corresponding to the paper"
+    paper_statement: "arXiv v1 is dated 2020-10-15 and cites the official repository."
+    code_behavior: "The current checkout is commit 0c71da6 from 2026-08-14 and declares version 1.9.9."
+    observed_behavior: "Commit 50d02856 from 2020-09-22 is the nearest located official commit preceding arXiv v1."
+    resolution: "observed"
+    rationale: "Both snapshots are pinned and differentiated; neither is a participant dependency."
+
+  - conflict_id: "conflict-complex-band-equation"
+    topic: "Linearized complex-band equation"
+    paper_statement: "Equation (7) prints a lower-left block resembling -H1^{-1}H_{-1} but a lower-right block resembling H1(E-H0), apparently lacking a matching inverse."
+    code_behavior: "The implementation solves a generalized eigenproblem rather than literally applying the printed block matrix."
+    observed_behavior: "The selected task does not require complex-band eigenvalues; it evaluates direct Hermitian Bloch bands from the explicitly stated H(theta)."
+    resolution: "benchmark-choice"
+    rationale: "Excluding this ambiguous side branch avoids a hidden reconstruction dependency while retaining the reported periodic-band workflow."
+
+  - conflict_id: "conflict-greedy-optimality"
+    topic: "Meaning of optimal block decomposition"
+    paper_statement: "The summary calls the recursive greedy construction non-optimal and separately proposes polynomial block-size optimization."
+    code_behavior: "find_optimal_cut minimizes a local sum-of-cubes separator objective recursively; no global optimum proof or exhaustive comparator is present."
+    observed_behavior: "Static review found little direct test coverage for the optimized splitting path."
+    resolution: "unresolved"
+    rationale: "The block-optimization candidate was rejected, so this unresolved terminology is not a participant requirement."
+
+  - conflict_id: "conflict-missing-silicon-assets"
+    topic: "Exact reproduction of Figure 9"
+    paper_statement: "The silicon coordinates are said to be in supplementary material and the example uses predefined silicon/hydrogen parameter tables."
+    code_behavior: "The official repository contains SiNW2.xyz and parameter definitions, but those are external to the paper PDF."
+    observed_behavior: "No supplementary file or complete silicon parameter table was present in the inspected PDF."
+    resolution: "benchmark-choice"
+    rationale: "Exact Figure 9 reproduction was rejected. The selected grounded extension publishes all geometry and parameters in neutral synthetic JSON inputs."
+
+license_and_privacy_decision:
+  participant_assets_redistributable: true
+  restricted_assets:
+    - "authoring/sources/2010.07463.pdf"
+    - "authoring/sources/NanoNet_official"
+    - "authoring/sources/NanoNet-paper-era-50d02856.tar"
+  sensitive_or_personal_data_present: false
+  decision: "eligible"
+  notes: "The participant package contains only newly authored documentation, schema/helper code, and deterministic synthetic instances. No paper text, official source, proprietary data, or personal data is redistributed."

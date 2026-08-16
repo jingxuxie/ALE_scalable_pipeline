@@ -1,0 +1,43 @@
+{
+  "hidden_cases": [
+    {
+      "anomaly_count": 0,
+      "category": "ordinary",
+      "instance_id": "inst_8f2c7a13",
+      "private_query_count": 28
+    },
+    {
+      "anomaly_count": 0,
+      "category": "ordinary",
+      "instance_id": "inst_41de9b76",
+      "private_query_count": 28
+    },
+    {
+      "anomaly_count": 4,
+      "category": "anomaly",
+      "instance_id": "inst_c5a30e84",
+      "private_query_count": 28
+    },
+    {
+      "anomaly_count": 5,
+      "category": "anomaly",
+      "instance_id": "inst_729bf016",
+      "private_query_count": 28
+    },
+    {
+      "anomaly_count": 3,
+      "category": "ood_low_shots",
+      "instance_id": "inst_e14c6952",
+      "private_query_count": 28
+    },
+    {
+      "anomaly_count": 4,
+      "category": "ood_width",
+      "instance_id": "inst_36a8d2f9",
+      "private_query_count": 28
+    }
+  ],
+  "public_instance_id": "review_branch_47",
+  "schema_version": "local-noise-oracle-summary/v1",
+  "truth_definition": "latent normalized rooted junction-tree factors; validation shifts are private independent audit interventions"
+}

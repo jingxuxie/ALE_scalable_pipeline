@@ -1,0 +1,15 @@
+{
+  "cases": [],
+  "evaluator_error": null,
+  "hard_gates": {
+    "failures": [
+      "submission contains forbidden source/private indicators: private/reference"
+    ],
+    "passed": false
+  },
+  "metrics": {},
+  "mode": "execute",
+  "passed": false,
+  "schema_version": "periodic-orbital-transport-evaluation/v1",
+  "total_score": 0.0
+}

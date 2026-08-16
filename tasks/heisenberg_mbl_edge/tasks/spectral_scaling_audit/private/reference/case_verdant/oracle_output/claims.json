@@ -1,0 +1,12 @@
+{
+  "case_id": "case_verdant",
+  "case_token": "hidden-verdant-08e5d91a",
+  "finite_size_crossover": true,
+  "high_control_mean_r": 0.398655763185197,
+  "low_control_mean_r": 0.5260902913759252,
+  "n_groups": 108,
+  "n_realizations": 2806,
+  "n_targets": 3,
+  "phase_direction": "mean_r_decreases_with_control",
+  "schema_version": "spectral-scaling-claims/v1"
+}

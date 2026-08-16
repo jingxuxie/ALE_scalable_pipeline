@@ -1,0 +1,16 @@
+{
+  "bootstrap_replicates": 20,
+  "halfwidths": [
+    0.7,
+    0.9,
+    1.1
+  ],
+  "interval_level": 0.68,
+  "min_sizes": [
+    9,
+    14
+  ],
+  "primary_halfwidth": 0.9,
+  "primary_min_size": 14,
+  "schema_version": "spectral-scaling-analysis-grid/v1"
+}

@@ -1,0 +1,442 @@
+schema_version: paper2ale.codex-evaluation-spec/v1
+
+task_id: "spectral-scaling-audit-v1"
+
+visibility: "private"
+
+hard_gates:
+  - gate_id: "submission-inventory"
+    description: "Submission contains exactly one top-level output/ directory and exactly one single-link regular file at output/analyze.py; roots, directories, junctions, symlinks, special files, and hard links are rejected, and the analyzer is at most 250000 bytes."
+    implementation: "private/grader/core.py::grade_submission"
+  - gate_id: "guarded-execution"
+    description: "After trusted-case preflight succeeds, the five single-link regular input files are copied into a fresh flat child root with the copied analyzer and guard. No repository, truth, or oracle path is exposed; the analyzer must exit successfully within the exact v1 limit of 180 seconds while filesystem, import, process, dynamic-code, and network audit restrictions are active."
+    implementation: "private/grader/core.py::{run_analyzer,_stage_flat_input,_minimal_child_environment} through private/grader/guarded_runner.py"
+  - gate_id: "required-artifacts"
+    description: "The invocation output contains exactly the six required single-link regular artifacts and no extra entries; linked directories, junctions, symlinks, hard links, and special files are rejected before trusted copies are parsed."
+    implementation: "private/grader/core.py::{require_single_link_regular_file,_copy_checked_outputs,inspect_output}"
+  - gate_id: "schema"
+    description: "All CSV/JSON artifacts parse, have exact headers or keys, unique keys, declared IDs, and complete case-derived row coverage."
+    implementation: "private/grader/core.py::parse_output"
+  - gate_id: "finite-values-and-ranges"
+    description: "Numeric outputs are finite and obey public count, ordering, positivity, probability, flag, and uncertainty bounds."
+    implementation: "private/grader/core.py::parse_output"
+  - gate_id: "resource-and-security"
+    description: "Total invocation output is at most the case manifest's positive output_bytes value and never more than 4000000 bytes; reads and writes stay within declared roots; subprocess, network, symlink, and dynamic-execution capabilities are denied. Input physical-byte, cardinality, preload, ZIP/NPY, field-width, integer-lexeme, and numeric-conditioning failures are trusted configuration errors handled before participant execution, not participant hard-gate failures."
+    implementation: "private/grader/core.py::inspect_output and private/grader/guarded_runner.py audit hook"
+
+trusted_configuration_policy:
+  exception_type: "private/grader/core.py::EvaluatorConfigurationError"
+  preflight: >
+    Before any participant code runs, _load_expected_case validates and snapshots
+    the exact five-file inventory; safe bounded manifest filenames; single-link
+    regular files; 256 MiB total input; 65,536-byte JSONs; exact Python 3.11+,
+    NumPy 2.3.5, network-disabled, 180-second resource contract; exact ordered
+    columns; 1--20-digit ASCII integer lexemes and 128-byte CSV fields; all
+    public cardinalities; uint64-safe derived bootstrap seeds; the 0.005-span
+    diagnostic-shift rule; fit support; and the output-capacity formula.
+  archive_preload: >
+    The physical NPZ is checked before np.load or participant execution: exactly
+    schema_version.npy and energies.npy as distinct normalized/original ZIP
+    names; no NUL, encryption, directory, unsupported compression, truncation,
+    trailing payload, or excessive header/expansion; native-endian float64
+    energies with exact payload length and bounded shape.
+  numeric_conditioning: >
+    Trusted cases guarantee all disclosed intermediate bounds: abs(x)<=2.1e36,
+    training abs(z)<=1+8*eps, query abs(z)<=2, rank four, condition<=1e12,
+    abs(coeff)<=1e6, weighted residual-square sum<=1e35, and finite raw query
+    polynomial abs(value)<=2e7 before clipping.
+  failure_semantics: >
+    Any trusted suite/input/reference configuration violation raises
+    EvaluatorConfigurationError and aborts evaluation. It is never converted to
+    a participant score or listed as a participant hard-gate failure.
+
+metrics:
+  - metric_id: "realization_statistics"
+    description: "Independently reselect and sort raw energies, recompute adjacent-gap ratios, and compare every realization mean and ratio count."
+    direction: "higher_is_better"
+    weight: 0.17
+    hidden_inputs:
+      - "hidden_inputs/case_amber/"
+      - "hidden_inputs/case_indigo/"
+      - "hidden_inputs/case_sable/"
+      - "hidden_inputs/case_verdant/"
+    reference:
+      type: "trusted-recomputation"
+      path: "grader/core.py::expected_statistics"
+    scoring:
+      type: "piecewise-linear mean-plus-upper-quantile absolute error; wrong counts force zero"
+      parameters:
+        aggregate: "0.7*mean_absolute_error + 0.3*90th-percentile_absolute_error"
+        excellent: 0.0000002
+        minimum: 0.012
+    tolerance:
+      type: "absolute"
+      absolute: 0.0000002
+      relative: 0.0
+      derivation: "Tight rounding allowance for a deterministic bounded statistic; the minimum knot separates realistic packet/ratio mutants."
+
+  - metric_id: "grouped_statistics"
+    description: "Compare realization-first group means, sample SEM across realization means, and exact realization/ratio counts."
+    direction: "higher_is_better"
+    weight: 0.16
+    hidden_inputs:
+      - "hidden_inputs/case_amber/"
+      - "hidden_inputs/case_indigo/"
+      - "hidden_inputs/case_sable/"
+      - "hidden_inputs/case_verdant/"
+    reference:
+      type: "trusted-recomputation"
+      path: "grader/core.py::expected_statistics"
+    scoring:
+      type: "weighted piecewise-linear absolute errors; wrong counts force zero"
+      parameters:
+        group_mean_weight: 0.58
+        sem_weight: 0.42
+        mean_excellent: 0.0000003
+        mean_minimum: 0.012
+        sem_excellent: 0.0000003
+        sem_minimum: 0.006
+    tolerance:
+      type: "absolute"
+      absolute: 0.0000003
+      relative: 0.0
+      derivation: "Direct deterministic recomputation; separate SEM knot is calibrated to reject state-level pooling and wrong cluster weighting."
+
+  - metric_id: "heldout_prediction"
+    description: "Compare predicted disorder-mean ratios at unseen size/control points with independent analytic family expectations."
+    direction: "higher_is_better"
+    weight: 0.22
+    hidden_inputs:
+      - "hidden_inputs/case_amber/queries.csv"
+      - "hidden_inputs/case_indigo/queries.csv"
+      - "hidden_inputs/case_sable/queries.csv"
+      - "hidden_inputs/case_verdant/queries.csv"
+    reference:
+      type: "analytic-grounded-extension-oracle"
+      path: "reference/<case>/truth.npz::query_mean_r"
+    scoring:
+      type: "piecewise-linear mean-plus-upper-quantile absolute error"
+      parameters:
+        aggregate: "0.7*mean_absolute_error + 0.3*90th-percentile_absolute_error"
+        excellent: 0.010
+        minimum: 0.065
+    tolerance:
+      type: "absolute"
+      absolute: 0.010
+      relative: 0.0
+      derivation: "Allows sampling noise and method-equivalent smooth fits while rejecting interpolation-only, mirrored-target, and no-size-scaling behavior."
+
+  - metric_id: "critical_curve_and_exponent"
+    description: "Compare every target's finite-size crossing coordinate and positive scaling exponent with independent generated truth."
+    direction: "higher_is_better"
+    weight: 0.18
+    hidden_inputs:
+      - "hidden_inputs/case_amber/"
+      - "hidden_inputs/case_indigo/"
+      - "hidden_inputs/case_sable/"
+      - "hidden_inputs/case_verdant/"
+    reference:
+      type: "analytic-grounded-extension-oracle"
+      path: "reference/<case>/truth.npz::{h_c,nu}"
+    scoring:
+      type: "weighted piecewise-linear absolute errors"
+      parameters:
+        h_c_weight: 0.68
+        nu_weight: 0.32
+        h_c_excellent: 0.10
+        h_c_minimum: 0.52
+        nu_excellent: 0.18
+        nu_minimum: 0.95
+    tolerance:
+      type: "component-specific absolute"
+      absolute: "0.10 for h_c; 0.18 for nu at the excellent knot"
+      relative: 0.0
+      derivation: "Finite-size corrections and optimizer equivalence require materially wider tolerances than direct statistics; scales are calibrated separately for coordinate and dimensionless exponent."
+
+  - metric_id: "stability_sweep"
+    description: "Compare h_c, nu, and validation RMSE for every target/minimum-size/halfwidth variant with the trusted oracle sweep; a literal copied one-signature sweep across a nontrivial grid is forced to zero."
+    direction: "higher_is_better"
+    weight: 0.12
+    hidden_inputs:
+      - "hidden_inputs/case_amber/analysis_grid.json"
+      - "hidden_inputs/case_indigo/analysis_grid.json"
+      - "hidden_inputs/case_sable/analysis_grid.json"
+      - "hidden_inputs/case_verdant/analysis_grid.json"
+    reference:
+      type: "oracle-output"
+      path: "reference/<case>/oracle_output/stability.csv"
+    scoring:
+      type: "weighted piecewise-linear absolute errors"
+      parameters:
+        h_c_weight: 0.50
+        nu_weight: 0.30
+        validation_rmse_weight: 0.20
+        h_c_excellent: 0.035
+        h_c_minimum: 0.42
+        nu_excellent: 0.08
+        nu_minimum: 0.75
+        rmse_excellent: 0.002
+        rmse_minimum: 0.045
+        copied_sweep_rule: "If the grid has more than one variant and every target repeats exactly one (h_c,nu,n_groups) signature over all rows, the metric is zero."
+    tolerance:
+      type: "component-specific absolute"
+      absolute: "0.035 h_c; 0.08 nu; 0.002 validation RMSE at the excellent knots"
+      relative: 0.0
+      derivation: "Variant-to-variant behavior is compared to one disclosed reference method with continuous credit; minimum knots admit independent valid fits but reject omitted/repeated sweeps."
+
+  - metric_id: "uncertainty"
+    description: "Score truth coverage and logarithmic interval-width agreement for transitions and held-out predictions."
+    direction: "higher_is_better"
+    weight: 0.08
+    hidden_inputs:
+      - "hidden_inputs/case_amber/"
+      - "hidden_inputs/case_indigo/"
+      - "hidden_inputs/case_sable/"
+      - "hidden_inputs/case_verdant/"
+    reference:
+      type: "analytic truth plus oracle interval widths"
+      path: "reference/<case>/{truth.npz,oracle_output/}"
+    scoring:
+      type: "coverage-and-log-width composite"
+      parameters:
+        total_coverage_weight: 0.58
+        width_calibration_weight: 0.42
+        transition_coverage_share: 0.45
+        query_coverage_share: 0.55
+        query_coverage_slack: 0.004
+        transition_width_excellent_log_error: 0.08
+        transition_width_minimum_log_error: 2.2
+        query_width_excellent_log_error: 0.08
+        query_width_minimum_log_error: 1.8
+    tolerance:
+      type: "coverage plus multiplicative-width"
+      absolute: 0.004
+      relative: "log interval-width ratio"
+      derivation: "Coverage prevents spuriously narrow intervals; log-width comparison penalizes both severe under- and over-estimation without demanding byte-identical bootstrap samples."
+
+  - metric_id: "evidence_consistency"
+    description: "Recompute ten categorical, count, direction, identity, and summary claims from hidden inputs and submitted CSV evidence."
+    direction: "higher_is_better"
+    weight: 0.07
+    hidden_inputs:
+      - "hidden_inputs/case_amber/"
+      - "hidden_inputs/case_indigo/"
+      - "hidden_inputs/case_sable/"
+      - "hidden_inputs/case_verdant/"
+    reference:
+      type: "trusted-recomputation"
+      path: "grader/core.py::score_case evidence_checks"
+    scoring:
+      type: "fraction_correct"
+      parameters:
+        summary_absolute_tolerance: 0.0000005
+        check_count_per_case: 10
+    tolerance:
+      type: "exact categorical and tight absolute numeric"
+      absolute: 0.0000005
+      relative: 0.0
+      derivation: "Claims summarize already deterministic submitted/recomputed evidence, so only decimal serialization allowance is needed."
+
+score_contract:
+  hard_gate_failure_score: 0.0
+  metric_weights_sum_to_one: true
+  score_range:
+    minimum: 0.0
+    maximum: 1.0
+  pass_rule:
+    type: "total_score_and_mandatory_submetrics"
+    total_score_threshold: 0.76
+    across_case_component_aggregation: "0.80*mean(case component) + 0.20*minimum(case component)"
+    mandatory_metric_thresholds:
+      realization_statistics: 0.90
+      grouped_statistics: 0.90
+      heldout_prediction: 0.52
+      critical_curve_and_exponent: 0.50
+      stability_sweep: 0.38
+      uncertainty: 0.50
+      evidence_consistency: 1.00
+    per_case_mandatory_metric_thresholds:
+      realization_statistics: 0.85
+      grouped_statistics: 0.72
+      heldout_prediction: 0.40
+      critical_curve_and_exponent: 0.20
+      stability_sweep: 0.30
+      uncertainty: 0.25
+      evidence_consistency: 1.00
+
+stochastic_policy:
+  stochastic: true
+  hidden_seed_count: 4
+  aggregation: "For each component, 0.80 times the unweighted four-case mean plus 0.20 times the worst-case minimum; every case must also clear private per-component floors."
+  confidence_or_variance_rule: "Uncertainty is scored by transition/query truth coverage and by multiplicative agreement with oracle widths; submitted bootstrap sampling must be deterministic from the case manifest."
+  baseline_relative: false
+
+hidden_suite:
+  ordinary_cases:
+    count: 2
+    source: "author/oracle/generate.py clustered-gamma-gap families case_amber and case_sable"
+  distribution_shift_cases:
+    count: 2
+    description: "case_indigo and case_verdant shift size/control grids, crossover shape, target dependence, correction behavior, and sampling balance relative to the retired case."
+  adversarial_cases:
+    count: 6
+    description: "Verification-only row/packet/ID permutation, affine energy, affine control covariance, target mirror, and shard split/rejoin transformations."
+  anti_hardcoding_cases:
+    count: 4
+    description: "Every scoring case has unpublished identifiers, coordinates, targets, parameters, and seed distinct from retired_cedar."
+
+structural_and_security_probes:
+  count: 14
+  manifest: "probes/manifest.json"
+  categories:
+    - "inventory"
+    - "malformed"
+    - "nonfinite"
+    - "oversize"
+    - "partial"
+    - "security"
+  expected: "Every probe is rejected safely with score zero; valid scientific mutants are evaluated separately and must not rely on hard-gate rejection."
+
+valid_solutions:
+  - id: "privileged-oracle"
+    path: "reference/<case>/oracle_output/ and ../author/oracle/generate.py"
+    expected: "pass"
+  - id: "clean-room-reference"
+    path: "../author/reference_solver/"
+    expected: "pass"
+  - id: "alternative-valid"
+    path: "../author/alternative_solver/"
+    expected: "pass"
+
+mutations:
+  - mutant_id: "use_shift_energy"
+    category: "acquisition_shift_semantics"
+    path: "mutants/cases/use_shift_energy/output/analyze.py"
+    expected: "fail"
+  - mutant_id: "pool_gaps"
+    category: "realization_aggregation"
+    path: "mutants/cases/pool_gaps/output/analyze.py"
+    expected: "fail"
+  - mutant_id: "gap_sem"
+    category: "clustered_uncertainty"
+    path: "mutants/cases/gap_sem/output/analyze.py"
+    expected: "fail"
+  - mutant_id: "unsorted"
+    category: "spectral_ordering"
+    path: "mutants/cases/unsorted/output/analyze.py"
+    expected: "fail"
+  - mutant_id: "raw_ratio"
+    category: "observable_definition"
+    path: "mutants/cases/raw_ratio/output/analyze.py"
+    expected: "fail"
+  - mutant_id: "no_size_scaling"
+    category: "finite_size_coordinate"
+    path: "mutants/cases/no_size_scaling/output/analyze.py"
+    expected: "fail"
+  - mutant_id: "wrong_l_exponent"
+    category: "finite_size_coordinate"
+    path: "mutants/cases/wrong_l_exponent/output/analyze.py"
+    expected: "fail"
+  - mutant_id: "target_mirror"
+    category: "energy_window_semantics"
+    path: "mutants/cases/target_mirror/output/analyze.py"
+    expected: "fail"
+  - mutant_id: "constant_edge"
+    category: "critical_curve_model"
+    path: "mutants/cases/constant_edge/output/analyze.py"
+    expected: "fail"
+  - mutant_id: "hardcoded_public"
+    category: "anti_hardcoding"
+    path: "mutants/cases/hardcoded_public/output/analyze.py"
+    expected: "fail"
+  - mutant_id: "largest_size_only"
+    category: "finite_size_shortcut"
+    path: "mutants/cases/largest_size_only/output/analyze.py"
+    expected: "fail"
+  - mutant_id: "no_stability"
+    category: "stability_analysis"
+    path: "mutants/cases/no_stability/output/analyze.py"
+    expected: "fail"
+  - mutant_id: "skip_bootstrap"
+    category: "uncertainty_propagation"
+    path: "mutants/cases/skip_bootstrap/output/analyze.py"
+    expected: "fail"
+  - mutant_id: "stale"
+    category: "provenance_integrity"
+    path: "mutants/cases/stale/output/analyze.py"
+    expected: "fail"
+  - mutant_id: "fabricated_claims"
+    category: "evidence_consistency"
+    path: "mutants/cases/fabricated_claims/output/analyze.py"
+    expected: "fail"
+
+excluded_mutation_candidates:
+  - mutant_id: "wrong_group_weight"
+    reason: "Public analysis permits independently implemented deterministic response weighting; calibration showed this weighting change remained behaviorally valid, so it is not a required reject mutant."
+
+metamorphic_tests:
+  - test_id: "row-packet-permutation"
+    applicability: "applicable"
+    implementation: "scripts/verify.py creates a semantically identical case with packet rows and matching flat packet slices permuted."
+    expected_relation: "All ID-aligned scientific outputs are invariant after canonical sorting for comparison."
+  - test_id: "realization-id-bijection"
+    applicability: "applicable"
+    implementation: "scripts/verify.py applies a one-to-one relabeling of realization IDs."
+    expected_relation: "Relabeled realization rows are equivariant and all grouped, transition, stability, prediction, and claim values are invariant."
+  - test_id: "positive-affine-energy"
+    applicability: "Applicable only for a finite map with 0.5<=a<=2.0, finite b, baseline/transformed magnitudes <=1e100, chunk containment, diagnostic-shift fraction <=0.005, retain-cutoff margin >=max(1e-8*S,2**20*ulp(M)), selected-gap margin >=max(1e-9*S,2**20*ulp(M)), exact stable selected prefix and retained energy order, and maximum retained-ratio perturbation <=1e-10 in both coordinates."
+    implementation: "scripts/verify.py applies the calibrated map E'=1.625*E-4.75 only after private/metamorphic/harness.py checks the public float64 predicate against the .17g case that the analyzer will read."
+    expected_relation: "Selected levels correspond and every adjacent-gap ratio and downstream result is invariant within numeric tolerance."
+  - test_id: "affine-control-covariance"
+    applicability: "Applicable only for a>0 transformations for which every canonical transformed analysis halfwidth remains in [0.4,1e6], ten-decimal canonicalization commutes with the chosen map on all keys, transformed keys remain distinct, and every candidate row is more than 1e-8*max(1,halfwidth) from every relevant window boundary before and after transformation."
+    implementation: "scripts/verify.py applies h' = a*h+b to observations and queries and scales every canonical analysis halfwidth by a; public window membership remains abs(control-center) <= halfwidth*(1+1e-12)."
+    expected_relation: "h_c and its interval transform to a*h_c+b, halfwidth-like quantities transform by a, nu/fit_ok/stable are invariant, and predictions, ratio evidence, and dimensionless residual diagnostics are invariant at transformed queries within numerical tolerance."
+  - test_id: "target-mirror-equivariance"
+    applicability: "applicable"
+    implementation: "scripts/verify.py reflects target to 1-target while consistently remapping packet targeting and query labels."
+    expected_relation: "Target-indexed curves and predictions are equivariant under the reflection."
+  - test_id: "shard-split-rejoin"
+    applicability: "applicable"
+    implementation: "scripts/verify.py partitions packet records/energy slices and reconstructs a semantically identical case in a different concatenation order."
+    expected_relation: "ID-aligned output is invariant to storage sharding and deterministic rejoin order."
+
+metamorphic_negative_controls:
+  - test_id: "rejected-affine-preflight"
+    input: "positive-affine energy map with scale 3.0 and offset -4.75"
+    expected: "The map is rejected with ValueError before its destination case is created because the private allowed scale interval is [0.5,2.0]."
+  - test_id: "structured-metamorphic-cli-failure"
+    input: "an empty malformed case directory"
+    expected: >
+      Exit 1, empty stderr, and byte-identical stdout/--report JSON equal to
+      {schema_version: spectral-scaling-metamorphic-report/v1, passed: false,
+      fatal_error: metamorphic_suite_exception}; the input directory remains
+      unchanged and transformed analysis never starts.
+
+determinism:
+  repeated_grader_runs: 2
+  require_identical_parsed_scores: true
+  require_identical_process_status: true
+
+leakage_and_security:
+  participant_must_not_access:
+    - "private/"
+    - "author/"
+    - "source paper"
+    - "official source repository"
+    - "authoring records"
+  network_policy: "off"
+  path_and_symlink_checks: true
+  output_size_limit_bytes: 4000000
+  executable_submission_sandbox: >
+    Each hidden case is copied into a fresh child-root alongside copied analyzer
+    and guard files. Child argv, cwd, and an allowlisted non-secret environment
+    contain only staged paths; reference, truth, private-repository, and author
+    paths are not exposed. CPython runs in isolated mode through a trusted audit
+    hook. Reads are restricted to staged input/analyzer and Python runtime roots;
+    writes are restricted to the staged output directory; imports are
+    allowlisted; subprocess, network, dynamic execution, unsafe filesystem
+    mutation, links, and traversal are denied. Output streams are drained
+    concurrently while only bounded tails are retained. All submitted and
+    produced files must be regular files with exactly one filesystem link.
+    Production ALE must additionally enforce OS-level process, resource,
+    filesystem, and network isolation.

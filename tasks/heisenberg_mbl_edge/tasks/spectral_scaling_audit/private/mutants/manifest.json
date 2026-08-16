@@ -1,0 +1,182 @@
+{
+  "schema_version": "spectral-scaling-audit-mutants/v1",
+  "source": "../../author/reference_solver/analyze.py",
+  "contract": {
+    "entrypoint": "output/analyze.py",
+    "expected_result": "reject",
+    "schema_valid": true
+  },
+  "excluded_modes": [
+    {
+      "mode": "wrong_group_weight",
+      "reason": "The public contract permits any deterministic response model and weighting scheme. Hidden calibration confirmed that this alternative weighting remains behaviorally valid, so forcing its rejection would overfit the evaluator to the reference implementation."
+    }
+  ],
+  "mutants": [
+    {
+      "mutant_id": "target_mirror",
+      "mode": "target_mirror",
+      "category": "energy_window_semantics",
+      "description": "Select the spectral packet at one minus the requested normalized-energy target while retaining the original target label.",
+      "expected_result": "reject",
+      "expected_fail_rationale": "Asymmetric target-dependent hidden cases make the realization statistics, inferred crossover curve, and held-out predictions disagree with the requested energy coordinate.",
+      "expected_component": "realization_statistics",
+      "schema_valid": true,
+      "path": "cases/target_mirror/output/analyze.py"
+    },
+    {
+      "mutant_id": "use_shift_energy",
+      "mode": "use_shift_energy",
+      "category": "acquisition_shift_semantics",
+      "description": "Select levels around the packet acquisition-centering shift_energy instead of reconstructing the requested normalized-energy target from e_min and e_max.",
+      "expected_result": "reject",
+      "expected_fail_rationale": "The acquisition shift is an independent nuisance coordinate rather than the requested spectral target; hidden packets decorrelate the two, so per-realization gap-ratio statistics disagree at their first scientific stage.",
+      "expected_component": "realization_statistics",
+      "schema_valid": true,
+      "path": "cases/use_shift_energy/output/analyze.py"
+    },
+    {
+      "mutant_id": "unsorted",
+      "mode": "unsorted",
+      "category": "spectral_ordering",
+      "description": "Compute adjacent gaps in shuffled archive-storage order instead of sorting selected eigenvalues by energy.",
+      "expected_result": "reject",
+      "expected_fail_rationale": "The input deliberately shuffles each raw eigenvalue packet, so storage-order gaps corrupt per-realization gap-ratio means and violate packet-permutation invariance.",
+      "expected_component": "realization_statistics",
+      "schema_valid": true,
+      "path": "cases/unsorted/output/analyze.py"
+    },
+    {
+      "mutant_id": "raw_ratio",
+      "mode": "raw_ratio",
+      "category": "observable_definition",
+      "description": "Use min(delta_i divided by delta_{i+1}, one) instead of min(delta_i, delta_{i+1}) divided by max(delta_i, delta_{i+1}).",
+      "expected_result": "reject",
+      "expected_fail_rationale": "The one-sided ratio is not invariant under exchanging adjacent gaps and produces biased realization and packet statistics on raw spectra.",
+      "expected_component": "realization_statistics",
+      "schema_valid": true,
+      "path": "cases/raw_ratio/output/analyze.py"
+    },
+    {
+      "mutant_id": "pool_gaps",
+      "mode": "pool_gaps",
+      "category": "realization_aggregation",
+      "description": "Pool every adjacent-gap ratio within a group before computing its mean and standard error.",
+      "expected_result": "reject",
+      "expected_fail_rationale": "Variable packet counts and realization-level fluctuations require equal-weight realization-first aggregation; pooling silently reweights realizations by their number of ratios.",
+      "expected_component": "grouped_statistics",
+      "schema_valid": true,
+      "path": "cases/pool_gaps/output/analyze.py"
+    },
+    {
+      "mutant_id": "gap_sem",
+      "mode": "gap_sem",
+      "category": "clustered_uncertainty",
+      "description": "Keep the realization-first mean but compute the group SEM from individual gap ratios as if they were independent.",
+      "expected_result": "reject",
+      "expected_fail_rationale": "Ratios from one disorder realization are clustered; the gap-level SEM is overconfident and disagrees with the required SEM over realization means.",
+      "expected_component": "grouped_statistics",
+      "schema_valid": true,
+      "path": "cases/gap_sem/output/analyze.py"
+    },
+    {
+      "mutant_id": "no_size_scaling",
+      "mode": "no_size_scaling",
+      "category": "finite_size_coordinate",
+      "description": "Fit the crossover against control minus h_c without any system-size factor and force nu to one.",
+      "expected_result": "reject",
+      "expected_fail_rationale": "It cannot represent the size-dependent sharpening built into the hidden families, so the exponent, critical curve, and held-out predictions fail together.",
+      "expected_component": "critical_curve_and_exponent",
+      "schema_valid": true,
+      "path": "cases/no_size_scaling/output/analyze.py"
+    },
+    {
+      "mutant_id": "wrong_l_exponent",
+      "mode": "wrong_l_exponent",
+      "category": "finite_size_coordinate",
+      "description": "Divide by L to the power one over nu instead of multiplying by it in the scaling coordinate.",
+      "expected_result": "reject",
+      "expected_fail_rationale": "The sign-reversed size exponent predicts a crossover that broadens rather than sharpens with size and cannot generalize to held-out sizes.",
+      "expected_component": "critical_curve_and_exponent",
+      "schema_valid": true,
+      "path": "cases/wrong_l_exponent/output/analyze.py"
+    },
+    {
+      "mutant_id": "largest_size_only",
+      "mode": "largest_size_only",
+      "category": "finite_size_shortcut",
+      "description": "Estimate h_c from only the largest-size control-range midpoint, fix nu to one, and repeat that single-size estimate across every requested stability variant while emitting all artifacts.",
+      "expected_result": "reject",
+      "expected_fail_rationale": "A largest-size-only shortcut cannot perform the required minimum-size and window refits, so its repeated stability estimates fail the behavioral sweep gate even though the output schema is complete.",
+      "expected_component": "stability_sweep",
+      "schema_valid": true,
+      "path": "cases/largest_size_only/output/analyze.py"
+    },
+    {
+      "mutant_id": "constant_edge",
+      "mode": "constant_edge",
+      "category": "critical_curve_model",
+      "description": "Replace every target-specific h_c estimate by one common median control value.",
+      "expected_result": "reject",
+      "expected_fail_rationale": "Hidden cases have nonconstant crossover curves across normalized energy, so a common edge misses target-specific transition locations and queries.",
+      "expected_component": "critical_curve_and_exponent",
+      "schema_valid": true,
+      "path": "cases/constant_edge/output/analyze.py"
+    },
+    {
+      "mutant_id": "hardcoded_public",
+      "mode": "hardcoded_public",
+      "category": "anti_hardcoding",
+      "description": "Use fixed public-case values h_c equals 2.75 and nu equals 0.95 for every target and case.",
+      "expected_result": "reject",
+      "expected_fail_rationale": "Shifted and reshaped hidden families make retired-case constants fail crossover covariance, exponent recovery, and held-out prediction checks.",
+      "expected_component": "critical_curve_and_exponent",
+      "schema_valid": true,
+      "path": "cases/hardcoded_public/output/analyze.py"
+    },
+    {
+      "mutant_id": "no_stability",
+      "mode": "no_stability",
+      "category": "stability_analysis",
+      "description": "Repeat the primary fit unchanged for every minimum-size and control-window sweep cell.",
+      "expected_result": "reject",
+      "expected_fail_rationale": "The hidden evaluator independently refits the requested sweep; identical copied rows disagree with window and size-cut sensitivity.",
+      "expected_component": "stability_sweep",
+      "schema_valid": true,
+      "path": "cases/no_stability/output/analyze.py"
+    },
+    {
+      "mutant_id": "skip_bootstrap",
+      "mode": "skip_bootstrap",
+      "category": "uncertainty_propagation",
+      "description": "Replace realization-cluster bootstrap and stability uncertainty by nearly zero transition intervals.",
+      "expected_result": "reject",
+      "expected_fail_rationale": "The resulting intervals are incompatible with finite realization sampling and the observed stability spread, so uncertainty calibration fails.",
+      "expected_component": "uncertainty",
+      "schema_valid": true,
+      "path": "cases/skip_bootstrap/output/analyze.py"
+    },
+    {
+      "mutant_id": "stale",
+      "mode": "stale",
+      "category": "provenance_integrity",
+      "description": "Emit a retired public case token while otherwise analyzing the current hidden case.",
+      "expected_result": "reject",
+      "expected_fail_rationale": "The claims artifact no longer proves that its evidence was produced from the mounted case, and the exact hidden case-token consistency check rejects it.",
+      "expected_component": "evidence_consistency",
+      "schema_valid": true,
+      "path": "cases/stale/output/analyze.py"
+    },
+    {
+      "mutant_id": "fabricated_claims",
+      "mode": "fabricated_claims",
+      "category": "evidence_consistency",
+      "description": "Falsify the reported group count and reverse the phase-direction claim while retaining otherwise valid numeric artifacts.",
+      "expected_result": "reject",
+      "expected_fail_rationale": "Cross-artifact recomputation exposes both the impossible row count and the phase-direction claim contradicted by the grouped statistics.",
+      "expected_component": "evidence_consistency",
+      "schema_valid": true,
+      "path": "cases/fabricated_claims/output/analyze.py"
+    }
+  ]
+}

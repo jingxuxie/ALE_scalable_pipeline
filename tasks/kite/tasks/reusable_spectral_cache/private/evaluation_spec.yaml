@@ -1,0 +1,228 @@
+schema_version: paper2ale.codex-evaluation-spec/v1
+
+task_id: reusable-chebyshev-spectral-cache-v1
+visibility: private
+
+hard_gates:
+  - gate_id: required-artifacts
+    description: Exactly three required artifacts exist as bounded regular non-link files.
+    implementation: private/grader/core.py::validate_output_directory
+  - gate_id: safe-schema
+    description: NPZ, CSV, and JSON parse without pickle and match exact keys, IDs, shapes, dtypes, and row counts.
+    implementation: private/grader/core.py::load_moments/load_response/load_diagnostics
+  - gate_id: finite-values
+    description: All submitted numeric values are finite and within a numeric safety range.
+    implementation: private/grader/core.py safe loaders
+  - gate_id: resource-and-path-policy
+    description: File, archive expansion, member count, hard-link, symlink, reparse, and output inventory limits hold.
+    implementation: private/grader/core.py::require_regular_file/_inspect_npz
+
+metrics:
+  - metric_id: raw_moment_accuracy
+    description: Probe-resolved complex raw moments are compared with the independently generated oracle cache.
+    direction: higher_is_better
+    weight: 0.50
+    reference:
+      type: oracle
+      path: reference/oracle_submission/moments.npz
+    scoring:
+      type: piecewise_linear_normalized_rmse
+      parameters:
+        excellent: 1.0
+        minimum: 35.0
+    tolerance:
+      type: abs_and_rel
+      absolute: 2.0e-11
+      relative: 4.0e-10
+      derivation: sparse recurrence versus dense recurrence and spectral-decomposition disagreement
+
+  - metric_id: hidden_contraction_accuracy
+    description: Submitted moments are contracted on held-out system, E, eta, sector, and prefix tuples.
+    direction: higher_is_better
+    weight: 0.35
+    hidden_inputs:
+      - hidden_inputs/queries.csv
+    reference:
+      type: oracle
+      path: reference/hidden_response.csv
+    scoring:
+      type: piecewise_linear_normalized_rmse
+      parameters:
+        excellent: 1.0
+        minimum: 35.0
+    tolerance:
+      type: abs_and_rel
+      absolute: 4.0e-10
+      relative: 4.0e-9
+      derivation: contraction conditioning at minimum hidden eta and cross-implementation disagreement
+
+  - metric_id: public_response_consistency
+    description: Public response values are recomputed from the submitted cache and public query metadata.
+    direction: higher_is_better
+    weight: 0.10
+    scoring:
+      type: piecewise_linear_normalized_rmse
+      parameters:
+        excellent: 1.0
+        minimum: 35.0
+    tolerance:
+      type: abs_and_rel
+      absolute: 4.0e-10
+      relative: 4.0e-9
+      derivation: same finite contraction tolerance as held-out queries
+
+  - metric_id: diagnostics_consistency
+    description: Every deterministic diagnostic is recomputed from public inputs and submitted moments.
+    direction: higher_is_better
+    weight: 0.05
+    scoring:
+      type: fraction_correct
+      parameters:
+        all_fields_required: true
+
+score_contract:
+  hard_gate_failure_score: 0.0
+  metric_weights_sum_to_one: true
+  score_range:
+    minimum: 0.0
+    maximum: 1.0
+  pass_rule:
+    type: total_score_and_mandatory_submetrics
+    total_score_threshold: 0.95
+    mandatory_metric_thresholds:
+      raw_moment_accuracy: 0.93
+      hidden_contraction_accuracy: 0.93
+      public_response_consistency: 0.93
+      diagnostics_consistency: 1.0
+
+stochastic_policy:
+  stochastic: false
+  hidden_seed_count: 1
+  aggregation: deterministic_all_queries
+  confidence_or_variance_rule: null
+  baseline_relative: false
+
+hidden_suite:
+  ordinary_cases:
+    count: 9
+    source: deterministic trusted synthetic generator
+  distribution_shift_cases:
+    count: 6
+    description: non-public prefixes and broadenings, including near-edge energies
+  adversarial_cases:
+    count: 3
+    description: low broadening, non-power-of-two prefix, and advanced-sector cases
+  anti_hardcoding_cases:
+    count: 3
+    description: response tuples absent from the visible response grid
+
+valid_solutions:
+  - id: privileged-oracle
+    path: reference/oracle_submission/
+    expected: pass
+  - id: clean-room-reference
+    path: ../author/reference_solver/
+    expected: pass
+  - id: alternative-valid
+    path: ../author/alternative_solver/
+    expected: pass
+
+mutations:
+  - mutant_id: wrong-affine-halfwidth
+    category: affine-scaling
+    path: mutants/cases/wrong_affine_halfwidth/
+    expected: fail
+  - mutant_id: recurrence-missing-two
+    category: recurrence
+    path: mutants/cases/recurrence_missing_two/
+    expected: fail
+  - mutant_id: extra-probe-normalization
+    category: normalization
+    path: mutants/cases/extra_probe_normalization/
+    expected: fail
+  - mutant_id: kernelized-cache
+    category: wrong-artifact-semantics
+    path: mutants/cases/kernelized_cache/
+    expected: fail
+  - mutant_id: shifted-order
+    category: indexing
+    path: mutants/cases/shifted_order/
+    expected: fail
+  - mutant_id: truncated-zero-pad
+    category: incomplete-computation
+    path: mutants/cases/truncated_zero_pad/
+    expected: fail
+  - mutant_id: probe-collapse
+    category: aggregation
+    path: mutants/cases/probe_collapse/
+    expected: fail
+  - mutant_id: stale-system-swap
+    category: stale-output
+    path: mutants/cases/stale_system_swap/
+    expected: fail
+  - mutant_id: omit-response-jacobian
+    category: units
+    path: mutants/cases/omit_response_jacobian/
+    expected: fail
+  - mutant_id: eta-not-scaled
+    category: units
+    path: mutants/cases/eta_not_scaled/
+    expected: fail
+  - mutant_id: advanced-branch-swap
+    category: complex-branch
+    path: mutants/cases/advanced_branch_swap/
+    expected: fail
+  - mutant_id: double-order-zero
+    category: normalization
+    path: mutants/cases/double_order_zero/
+    expected: fail
+  - mutant_id: prefix-ignored
+    category: prefix-semantics
+    path: mutants/cases/prefix_ignored/
+    expected: fail
+  - mutant_id: public-grid-hardcode
+    category: anti-hardcoding
+    path: mutants/cases/public_grid_hardcode/
+    expected: fail
+  - mutant_id: diagnostics-inconsistent
+    category: report-fabrication
+    path: mutants/cases/diagnostics_inconsistent/
+    expected: fail
+
+metamorphic_tests:
+  - test_id: basis-permutation
+    applicability: applicable
+    implementation: scripts/verify.py::metamorphic_tests
+    expected_relation: simultaneous site permutation of H and probes leaves every raw moment invariant
+  - test_id: positive-affine-covariance
+    applicability: applicable
+    implementation: scripts/verify.py::metamorphic_tests
+    expected_relation: transformed moments are invariant and physical resolvents scale by inverse energy scale
+  - test_id: retarded-advanced-conjugacy
+    applicability: applicable
+    implementation: scripts/verify.py::metamorphic_tests
+    expected_relation: GA is the conjugate of GR and DOS equals -Im(GR)/pi
+  - test_id: direct-resolvent-tail-bound
+    applicability: applicable
+    implementation: scripts/verify.py::metamorphic_tests
+    expected_relation: finite contraction agrees with dense linear solve within its geometric tail bound
+  - test_id: dos-normalization-and-prefix-convergence
+    applicability: applicable
+    implementation: scripts/verify.py::metamorphic_tests
+    expected_relation: integrated broadened mass is near tau0 and global long-prefix error is lower than short-prefix error
+
+determinism:
+  repeated_grader_runs: 2
+  require_identical_parsed_scores: true
+  require_identical_process_status: true
+
+leakage_and_security:
+  participant_must_not_access:
+    - private evaluation assets
+    - author evidence and solvers
+    - source paper
+    - official source repository
+  network_policy: "off"
+  path_and_symlink_checks: true
+  output_size_limit_bytes: 3000000
+  executable_submission_sandbox: not applicable; evaluator consumes only three data artifacts

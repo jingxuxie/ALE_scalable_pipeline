@@ -1,0 +1,1805 @@
+{
+  "agent_calibration": "not_run",
+  "build_file_count": 126,
+  "build_identity": "sha256:42c4b45503175b7bfce961de20a9fa5ab40f63a374ee8114ca25ddafbce7a8eb",
+  "duration_seconds": 310.83801350000067,
+  "environment": {
+    "implementation": "CPython",
+    "numpy": "2.3.5",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python": "3.12.13"
+  },
+  "gate_count": 14,
+  "gates": [
+    {
+      "details": {
+        "hidden_case_count": 4,
+        "hidden_classes": [
+          "distribution_shift",
+          "ordinary"
+        ],
+        "participant_file_count": 8,
+        "realism_case_count": 1,
+        "release_checklist": "author/RELEASE_CHECKLIST.md",
+        "required_file_count": 22,
+        "retired_case": "retired_cedar"
+      },
+      "duration_seconds": 0.009961200001271209,
+      "name": "inventory",
+      "passed": true
+    },
+    {
+      "details": {
+        "hardlink_count": 0,
+        "hidden_identifiers_checked": 18,
+        "participant_files_scanned": 8,
+        "participant_text_bytes_scanned": 426334,
+        "participant_text_files_scanned": 7,
+        "symlink_count": 0
+      },
+      "duration_seconds": 0.027484499998536194,
+      "name": "participant_private_separation",
+      "passed": true
+    },
+    {
+      "details": {
+        "alternative_line_similarity": 0.23735670937289277,
+        "analyzer_imports": {
+          "alternative": [
+            "__future__",
+            "argparse",
+            "csv",
+            "json",
+            "math",
+            "numpy",
+            "pathlib"
+          ],
+          "reference": [
+            "__future__",
+            "argparse",
+            "csv",
+            "json",
+            "math",
+            "numpy",
+            "pathlib"
+          ]
+        },
+        "analyzer_source_bytes": {
+          "alternative": 40296,
+          "reference": 26911
+        },
+        "bootstrap_seed_maximum": 18446744073709544552,
+        "case_bytes": {
+          "case_amber": 1447319,
+          "case_indigo": 1365406,
+          "case_sable": 1434578,
+          "case_verdant": 1291778,
+          "retired_cedar": 1380577
+        },
+        "case_resource_bounds": {
+          "case_amber": {
+            "bootstrap_replicates": 20,
+            "bootstrap_seed": 202944,
+            "case_id": "case_amber",
+            "conservative_required_output_bytes": 1691648,
+            "controls_per_curve_range": [
+              9,
+              9
+            ],
+            "cross_platform_data_filenames": {
+              "analysis_grid": "analysis_grid.json",
+              "eigenvalues": "eigenvalues.npz",
+              "packets": "packets.csv",
+              "queries": "queries.csv"
+            },
+            "declared_output_bytes": 4000000,
+            "distinct_sizes": 4,
+            "flat_eigenvalues": 140940,
+            "independent_packet_numeric_envelope": {
+              "canonical_coordinate_collisions": 0,
+              "chunk_extrema_containment": true,
+              "distinct_raw_group_coordinates": 108,
+              "exact_energy_sorted_indices_preserved": true,
+              "exact_selected_prefix_preserved": true,
+              "group_count": 108,
+              "maximum_absolute_energy_coordinate": 283.29649523721486,
+              "maximum_absolute_shift_offset": 0.7312500000000739,
+              "maximum_ratio_perturbation": 7.69717622972621e-13,
+              "maximum_shift_span_fraction": 0.003806063444693458,
+              "minimum_absolute_shift_offset": 0.44999999999999996,
+              "minimum_cutoff_requirement_ratio": 334.4194435527209,
+              "minimum_gap_requirement_ratio": 58.07525925239322,
+              "minimum_keep_boundary_margin": 0.0003991334831994209,
+              "minimum_keep_boundary_margin_over_span": 3.3441944355272093e-06,
+              "minimum_keep_boundary_margin_ulps": 45640598204.5,
+              "minimum_selected_gap": 9.955846635989474e-06,
+              "minimum_selected_gap_over_span": 5.807525924601661e-08,
+              "minimum_selected_gap_ulps": 569221595.25,
+              "packets_checked": 3132,
+              "packets_with_keep_boundary": 3132,
+              "transformed_maximum_shift_span_fraction": 0.0038060634446934545,
+              "transformed_minimum_cutoff_requirement_ratio": 334.41944355272096,
+              "transformed_minimum_gap_requirement_ratio": 58.075259246016614
+            },
+            "independent_reference_numeric_envelope": {
+              "bounded_csv_rows_checked": 3288,
+              "diagnostics_checked": 21,
+              "maximum_absolute_cubic_coefficient": 0.569045814341758,
+              "maximum_absolute_query_x": 1.9380679515521841,
+              "maximum_absolute_query_z": 0.6190236555172934,
+              "maximum_absolute_raw_query_polynomial": 0.5378321821579914,
+              "maximum_absolute_training_x": 6.860333688036196,
+              "maximum_absolute_training_z": 1.0,
+              "maximum_weighted_design_condition": 71.74541711121674,
+              "maximum_weighted_residual_square_sum": 65.16938020212305,
+              "queries_checked": 27,
+              "stability_diagnostics_checked": 18,
+              "transition_diagnostics_checked": 3
+            },
+            "interval_level": 0.68,
+            "maximum_absolute_observed_control": 4.65,
+            "maximum_absolute_query_control": 3.7353152,
+            "maximum_derived_target_seed": 204962,
+            "maximum_eigenvalues_per_packet": 45,
+            "maximum_halfwidth": 1.1,
+            "maximum_input_csv_field_bytes": 23,
+            "maximum_input_integer_lexeme_digits": 6,
+            "npz_physical_members": 2,
+            "npz_uncompressed_bytes": 1127900,
+            "observed_curves": 12,
+            "packet_rows": 3132,
+            "physical_bytes": 1447319,
+            "query_rows": 27,
+            "realizations_per_group_range": [
+              29,
+              29
+            ],
+            "reference_numeric_contract": {
+              "bytes": 238514,
+              "files": [
+                "claims.json",
+                "packet_stats.csv",
+                "predictions.csv",
+                "realization_stats.csv",
+                "stability.csv",
+                "transition.csv"
+              ],
+              "groups": 108,
+              "public_scientific_checks": "passed",
+              "queries": 27,
+              "realizations": 3132,
+              "targets": 3
+            },
+            "required_fit_group_count_minimum": 9,
+            "required_fit_size_count_minimum": 3,
+            "resource_python": "3.11+",
+            "stability_cells_per_target": 6,
+            "targets": 3,
+            "wall_time_seconds": 180
+          },
+          "case_indigo": {
+            "bootstrap_replicates": 20,
+            "bootstrap_seed": 445998,
+            "case_id": "case_indigo",
+            "conservative_required_output_bytes": 1580032,
+            "controls_per_curve_range": [
+              9,
+              9
+            ],
+            "cross_platform_data_filenames": {
+              "analysis_grid": "analysis_grid.json",
+              "eigenvalues": "eigenvalues.npz",
+              "packets": "packets.csv",
+              "queries": "queries.csv"
+            },
+            "declared_output_bytes": 4000000,
+            "distinct_sizes": 4,
+            "flat_eigenvalues": 131130,
+            "independent_packet_numeric_envelope": {
+              "canonical_coordinate_collisions": 0,
+              "chunk_extrema_containment": true,
+              "distinct_raw_group_coordinates": 108,
+              "exact_energy_sorted_indices_preserved": true,
+              "exact_selected_prefix_preserved": true,
+              "group_count": 108,
+              "maximum_absolute_energy_coordinate": 167.95747413902777,
+              "maximum_absolute_shift_offset": 0.7312500000000455,
+              "maximum_ratio_perturbation": 5.156985949383852e-13,
+              "maximum_shift_span_fraction": 0.0038047541682639397,
+              "minimum_absolute_shift_offset": 0.4499999999999993,
+              "minimum_cutoff_requirement_ratio": 381.68088330906824,
+              "minimum_gap_requirement_ratio": 256.29876259014515,
+              "minimum_keep_boundary_margin": 0.0005773648386337982,
+              "minimum_keep_boundary_margin_over_span": 3.816808833090682e-06,
+              "minimum_keep_boundary_margin_ulps": 33362355517.0,
+              "minimum_selected_gap": 3.097025095843975e-05,
+              "minimum_selected_gap_over_span": 2.562987625850565e-07,
+              "minimum_selected_gap_ulps": 3541423708.5,
+              "packets_checked": 2914,
+              "packets_with_keep_boundary": 2914,
+              "transformed_maximum_shift_span_fraction": 0.003804754168263925,
+              "transformed_minimum_cutoff_requirement_ratio": 381.680883316576,
+              "transformed_minimum_gap_requirement_ratio": 256.2987625850565
+            },
+            "independent_reference_numeric_envelope": {
+              "bounded_csv_rows_checked": 3070,
+              "diagnostics_checked": 21,
+              "maximum_absolute_cubic_coefficient": 0.4847099815775395,
+              "maximum_absolute_query_x": 30.212783878155005,
+              "maximum_absolute_query_z": 0.968303682506674,
+              "maximum_absolute_raw_query_polynomial": 0.5172365128695954,
+              "maximum_absolute_training_x": 41.11755369031153,
+              "maximum_absolute_training_z": 1.0,
+              "maximum_weighted_design_condition": 20.215267695437877,
+              "maximum_weighted_residual_square_sum": 20.82086505654966,
+              "queries_checked": 27,
+              "stability_diagnostics_checked": 18,
+              "transition_diagnostics_checked": 3
+            },
+            "interval_level": 0.68,
+            "maximum_absolute_observed_control": 4.05,
+            "maximum_absolute_query_control": 3.0614795999999997,
+            "maximum_derived_target_seed": 448016,
+            "maximum_eigenvalues_per_packet": 45,
+            "maximum_halfwidth": 1.1,
+            "maximum_input_csv_field_bytes": 19,
+            "maximum_input_integer_lexeme_digits": 6,
+            "npz_physical_members": 2,
+            "npz_uncompressed_bytes": 1049420,
+            "observed_curves": 12,
+            "packet_rows": 2914,
+            "physical_bytes": 1365406,
+            "query_rows": 27,
+            "realizations_per_group_range": [
+              24,
+              30
+            ],
+            "reference_numeric_contract": {
+              "bytes": 247165,
+              "files": [
+                "claims.json",
+                "packet_stats.csv",
+                "predictions.csv",
+                "realization_stats.csv",
+                "stability.csv",
+                "transition.csv"
+              ],
+              "groups": 108,
+              "public_scientific_checks": "passed",
+              "queries": 27,
+              "realizations": 2914,
+              "targets": 3
+            },
+            "required_fit_group_count_minimum": 9,
+            "required_fit_size_count_minimum": 3,
+            "resource_python": "3.11+",
+            "stability_cells_per_target": 6,
+            "targets": 3,
+            "wall_time_seconds": 180
+          },
+          "case_sable": {
+            "bootstrap_replicates": 20,
+            "bootstrap_seed": 636932,
+            "case_id": "case_sable",
+            "conservative_required_output_bytes": 1651712,
+            "controls_per_curve_range": [
+              8,
+              9
+            ],
+            "cross_platform_data_filenames": {
+              "analysis_grid": "analysis_grid.json",
+              "eigenvalues": "eigenvalues.npz",
+              "packets": "packets.csv",
+              "queries": "queries.csv"
+            },
+            "declared_output_bytes": 4000000,
+            "distinct_sizes": 4,
+            "flat_eigenvalues": 137700,
+            "independent_packet_numeric_envelope": {
+              "canonical_coordinate_collisions": 0,
+              "chunk_extrema_containment": true,
+              "distinct_raw_group_coordinates": 102,
+              "exact_energy_sorted_indices_preserved": true,
+              "exact_selected_prefix_preserved": true,
+              "group_count": 102,
+              "maximum_absolute_energy_coordinate": 329.91254630445695,
+              "maximum_absolute_shift_offset": 0.7312500000000739,
+              "maximum_ratio_perturbation": 4.647393581080905e-13,
+              "maximum_shift_span_fraction": 0.0037944291929229083,
+              "minimum_absolute_shift_offset": 0.44999999999999996,
+              "minimum_cutoff_requirement_ratio": 352.06089464130935,
+              "minimum_gap_requirement_ratio": 10.779245543209647,
+              "minimum_keep_boundary_margin": 0.0004349943800647793,
+              "minimum_keep_boundary_margin_over_span": 3.520608946413093e-06,
+              "minimum_keep_boundary_margin_ulps": 49741263406.0,
+              "minimum_selected_gap": 1.8989006917990991e-06,
+              "minimum_selected_gap_over_span": 1.0779245543209648e-08,
+              "minimum_selected_gap_ulps": 108568896.5,
+              "packets_checked": 3060,
+              "packets_with_keep_boundary": 3060,
+              "transformed_maximum_shift_span_fraction": 0.0037944291929229144,
+              "transformed_minimum_cutoff_requirement_ratio": 352.0608946452906,
+              "transformed_minimum_gap_requirement_ratio": 10.779245561825554
+            },
+            "independent_reference_numeric_envelope": {
+              "bounded_csv_rows_checked": 3210,
+              "diagnostics_checked": 21,
+              "maximum_absolute_cubic_coefficient": 0.8937352935232065,
+              "maximum_absolute_query_x": 1.531067765738517,
+              "maximum_absolute_query_z": 0.6789141707790083,
+              "maximum_absolute_raw_query_polynomial": 0.5546395978395277,
+              "maximum_absolute_training_x": 3.848708112915439,
+              "maximum_absolute_training_z": 1.0,
+              "maximum_weighted_design_condition": 52.18792062019645,
+              "maximum_weighted_residual_square_sum": 150.09756059770916,
+              "queries_checked": 27,
+              "stability_diagnostics_checked": 18,
+              "transition_diagnostics_checked": 3
+            },
+            "interval_level": 0.68,
+            "maximum_absolute_observed_control": 5.3,
+            "maximum_absolute_query_control": 4.0771084,
+            "maximum_derived_target_seed": 638950,
+            "maximum_eigenvalues_per_packet": 45,
+            "maximum_halfwidth": 1.2375,
+            "maximum_input_csv_field_bytes": 19,
+            "maximum_input_integer_lexeme_digits": 6,
+            "npz_physical_members": 2,
+            "npz_uncompressed_bytes": 1101980,
+            "observed_curves": 12,
+            "packet_rows": 3060,
+            "physical_bytes": 1434578,
+            "query_rows": 27,
+            "realizations_per_group_range": [
+              30,
+              30
+            ],
+            "reference_numeric_contract": {
+              "bytes": 254468,
+              "files": [
+                "claims.json",
+                "packet_stats.csv",
+                "predictions.csv",
+                "realization_stats.csv",
+                "stability.csv",
+                "transition.csv"
+              ],
+              "groups": 102,
+              "public_scientific_checks": "passed",
+              "queries": 27,
+              "realizations": 3060,
+              "targets": 3
+            },
+            "required_fit_group_count_minimum": 12,
+            "required_fit_size_count_minimum": 3,
+            "resource_python": "3.11+",
+            "stability_cells_per_target": 6,
+            "targets": 3,
+            "wall_time_seconds": 180
+          },
+          "case_verdant": {
+            "bootstrap_replicates": 20,
+            "bootstrap_seed": 907128,
+            "case_id": "case_verdant",
+            "conservative_required_output_bytes": 1524736,
+            "controls_per_curve_range": [
+              9,
+              9
+            ],
+            "cross_platform_data_filenames": {
+              "analysis_grid": "analysis_grid.json",
+              "eigenvalues": "eigenvalues.npz",
+              "packets": "packets.csv",
+              "queries": "queries.csv"
+            },
+            "declared_output_bytes": 4000000,
+            "distinct_sizes": 4,
+            "flat_eigenvalues": 126270,
+            "independent_packet_numeric_envelope": {
+              "canonical_coordinate_collisions": 0,
+              "chunk_extrema_containment": true,
+              "distinct_raw_group_coordinates": 108,
+              "exact_energy_sorted_indices_preserved": true,
+              "exact_selected_prefix_preserved": true,
+              "group_count": 108,
+              "maximum_absolute_energy_coordinate": 345.95524349808005,
+              "maximum_absolute_shift_offset": 0.7312500000000668,
+              "maximum_ratio_perturbation": 6.473710456589288e-13,
+              "maximum_shift_span_fraction": 0.003810879609185012,
+              "minimum_absolute_shift_offset": 0.44999999999999996,
+              "minimum_cutoff_requirement_ratio": 157.335246114524,
+              "minimum_gap_requirement_ratio": 116.57301292018352,
+              "minimum_keep_boundary_margin": 0.00019374501722069226,
+              "minimum_keep_boundary_margin_over_span": 1.57335246114524e-06,
+              "minimum_keep_boundary_margin_ulps": 22154589524.0,
+              "minimum_selected_gap": 1.747270707141979e-05,
+              "minimum_selected_gap_over_span": 1.1657301292018352e-07,
+              "minimum_selected_gap_ulps": 998995119.0,
+              "packets_checked": 2806,
+              "packets_with_keep_boundary": 2806,
+              "transformed_maximum_shift_span_fraction": 0.0038108796091850276,
+              "transformed_minimum_cutoff_requirement_ratio": 157.33524612295724,
+              "transformed_minimum_gap_requirement_ratio": 116.57301293476979
+            },
+            "independent_reference_numeric_envelope": {
+              "bounded_csv_rows_checked": 2962,
+              "diagnostics_checked": 21,
+              "maximum_absolute_cubic_coefficient": 0.5017817205523895,
+              "maximum_absolute_query_x": 35.76121382266816,
+              "maximum_absolute_query_z": 0.6545041472847258,
+              "maximum_absolute_raw_query_polynomial": 0.5214677683783716,
+              "maximum_absolute_training_x": 189.15406546310444,
+              "maximum_absolute_training_z": 1.0,
+              "maximum_weighted_design_condition": 109.73856236946209,
+              "maximum_weighted_residual_square_sum": 18.64649821063258,
+              "queries_checked": 27,
+              "stability_diagnostics_checked": 18,
+              "transition_diagnostics_checked": 3
+            },
+            "interval_level": 0.68,
+            "maximum_absolute_observed_control": 4.65,
+            "maximum_absolute_query_control": 3.4992676,
+            "maximum_derived_target_seed": 909146,
+            "maximum_eigenvalues_per_packet": 45,
+            "maximum_halfwidth": 1.2375,
+            "maximum_input_csv_field_bytes": 20,
+            "maximum_input_integer_lexeme_digits": 6,
+            "npz_physical_members": 2,
+            "npz_uncompressed_bytes": 1010540,
+            "observed_curves": 12,
+            "packet_rows": 2806,
+            "physical_bytes": 1291778,
+            "query_rows": 27,
+            "realizations_per_group_range": [
+              23,
+              29
+            ],
+            "reference_numeric_contract": {
+              "bytes": 217033,
+              "files": [
+                "claims.json",
+                "packet_stats.csv",
+                "predictions.csv",
+                "realization_stats.csv",
+                "stability.csv",
+                "transition.csv"
+              ],
+              "groups": 108,
+              "public_scientific_checks": "passed",
+              "queries": 27,
+              "realizations": 2806,
+              "targets": 3
+            },
+            "required_fit_group_count_minimum": 9,
+            "required_fit_size_count_minimum": 3,
+            "resource_python": "3.11+",
+            "stability_cells_per_target": 6,
+            "targets": 3,
+            "wall_time_seconds": 180
+          },
+          "retired_cedar": {
+            "bootstrap_replicates": 20,
+            "bootstrap_seed": 818282,
+            "case_id": "retired_cedar",
+            "conservative_required_output_bytes": 1636352,
+            "controls_per_curve_range": [
+              9,
+              9
+            ],
+            "cross_platform_data_filenames": {
+              "analysis_grid": "analysis_grid.json",
+              "eigenvalues": "eigenvalues.npz",
+              "packets": "packets.csv",
+              "queries": "queries.csv"
+            },
+            "declared_output_bytes": 4000000,
+            "distinct_sizes": 4,
+            "flat_eigenvalues": 136080,
+            "independent_packet_numeric_envelope": {
+              "canonical_coordinate_collisions": 0,
+              "chunk_extrema_containment": true,
+              "distinct_raw_group_coordinates": 108,
+              "exact_energy_sorted_indices_preserved": true,
+              "exact_selected_prefix_preserved": true,
+              "group_count": 108,
+              "maximum_absolute_energy_coordinate": 226.45158797673065,
+              "maximum_absolute_shift_offset": 0.7312500000000455,
+              "maximum_ratio_perturbation": 7.87370169064161e-13,
+              "maximum_shift_span_fraction": 0.003803561003950116,
+              "minimum_absolute_shift_offset": 0.44999999999999996,
+              "minimum_cutoff_requirement_ratio": 226.29367706120513,
+              "minimum_gap_requirement_ratio": 56.15501993734693,
+              "minimum_keep_boundary_margin": 0.0002711634967411669,
+              "minimum_keep_boundary_margin_over_span": 2.2629367706120513e-06,
+              "minimum_keep_boundary_margin_ulps": 31007331443.5,
+              "minimum_selected_gap": 6.774832741029968e-06,
+              "minimum_selected_gap_over_span": 5.6155019937346934e-08,
+              "minimum_selected_gap_ulps": 774696767.0,
+              "packets_checked": 3024,
+              "packets_with_keep_boundary": 3024,
+              "transformed_maximum_shift_span_fraction": 0.0038035610039501436,
+              "transformed_minimum_cutoff_requirement_ratio": 226.29367708446773,
+              "transformed_minimum_gap_requirement_ratio": 56.155019937346935
+            },
+            "independent_reference_numeric_envelope": "checked by the clean-room reference gate",
+            "interval_level": 0.68,
+            "maximum_absolute_observed_control": 4.1,
+            "maximum_absolute_query_control": 3.0905632,
+            "maximum_derived_target_seed": 820300,
+            "maximum_eigenvalues_per_packet": 45,
+            "maximum_halfwidth": 0.9625,
+            "maximum_input_csv_field_bytes": 22,
+            "maximum_input_integer_lexeme_digits": 6,
+            "npz_physical_members": 2,
+            "npz_uncompressed_bytes": 1089020,
+            "observed_curves": 12,
+            "packet_rows": 3024,
+            "physical_bytes": 1380577,
+            "query_rows": 27,
+            "realizations_per_group_range": [
+              28,
+              28
+            ],
+            "reference_numeric_contract": "checked by the clean-room public-validation gate",
+            "required_fit_group_count_minimum": 9,
+            "required_fit_size_count_minimum": 3,
+            "resource_python": "3.11+",
+            "stability_cells_per_target": 6,
+            "targets": 3,
+            "wall_time_seconds": 180
+          }
+        },
+        "npz_preflight_self_tests": {
+          "duplicate_physical_member": {
+            "eager_np_load_calls": 0,
+            "physical_archive_bytes": 605,
+            "public_error": "ValueError: eigenvalue NPZ must have exactly the two physical members schema_version.npy and energies.npy",
+            "public_validator_rejected": true,
+            "semantic_digest_rejected": true,
+            "semantic_error": "VerificationFailure: NPZ contains duplicate physical member names: eigenvalues.npz"
+          },
+          "header_declared_oversize": {
+            "eager_np_load_calls": 0,
+            "physical_archive_bytes": 431,
+            "public_error": "ValueError: energies.npy: physical size does not match its NPY header",
+            "public_validator_rejected": true,
+            "semantic_digest_rejected": true,
+            "semantic_error": "VerificationFailure: NPY physical size disagrees with its header: eigenvalues.npz:energies.npy"
+          },
+          "negative_dimensions": {
+            "eager_np_load_calls": 0,
+            "physical_archive_bytes": 431,
+            "public_error": "ValueError: energies.npy: physical size does not match its NPY header",
+            "public_validator_rejected": true,
+            "semantic_digest_rejected": true,
+            "semantic_error": "VerificationFailure: NPY dimension is negative or exceeds the semantic-load bound: eigenvalues.npz:energies.npy"
+          },
+          "nul_truncated_member_name": {
+            "eager_np_load_calls": 0,
+            "physical_archive_bytes": 434,
+            "public_error": "ValueError: NPZ physical member names must be exact and contain no NUL",
+            "public_validator_rejected": true,
+            "semantic_digest_rejected": true,
+            "semantic_error": "VerificationFailure: NPZ physical member names are inexact or contain NUL: eigenvalues.npz"
+          },
+          "oversized_zero_length_itemsize": {
+            "eager_np_load_calls": 0,
+            "physical_archive_bytes": 435,
+            "public_error": "ValueError: energies.npy header must declare one-dimensional float64 data",
+            "public_validator_rejected": true,
+            "semantic_digest_rejected": true,
+            "semantic_error": "VerificationFailure: NPY itemsize is zero or exceeds the semantic-load bound: eigenvalues.npz:energies.npy"
+          },
+          "zero_itemsize_huge_shape": {
+            "eager_np_load_calls": 0,
+            "physical_archive_bytes": 430,
+            "public_error": "ValueError: energies.npy header must declare one-dimensional float64 data",
+            "public_validator_rejected": true,
+            "semantic_digest_rejected": true,
+            "semantic_error": "VerificationFailure: NPY itemsize is zero or exceeds the semantic-load bound: eigenvalues.npz:energies.npy"
+          }
+        },
+        "numpy_version": "2.3.5",
+        "participant_bytes": 1468388,
+        "public_numeric_contract_constants": {
+          "AFFINE_CUTOFF_RELATIVE_MARGIN": 1e-08,
+          "AFFINE_GAP_RELATIVE_MARGIN": 1e-09,
+          "AFFINE_ULP_MULTIPLIER": 1048576,
+          "CSV_PARSER_FIELD_LIMIT": 1024,
+          "MAX_BOOTSTRAP_SEED": 18446744073709544552,
+          "MAX_CASE_INPUT_BYTES": 268435456,
+          "MAX_CSV_FIELD_BYTES": 128,
+          "MAX_CUBIC_COEFFICIENT": 1000000.0,
+          "MAX_CUBIC_CONDITION": 1000000000000.0,
+          "MAX_INTEGER_TEXT_DIGITS": 20,
+          "MAX_MANIFEST_BYTES": 65536,
+          "MAX_NPY_HEADER_BYTES": 4096,
+          "MAX_NPZ_UNCOMPRESSED_BYTES": 40020000,
+          "MAX_RAW_CUBIC_PREDICTION": 20000000.0,
+          "MAX_SCALING_COORDINATE": 2.1e+36,
+          "MAX_STANDARDIZED_QUERY": 2.0,
+          "UINT64_MAX": 18446744073709551615
+        },
+        "public_validator_contract_audit": "passed for every packaged case",
+        "python_resource_contract": "3.11+",
+        "python_runtime": "3.12.13",
+        "task_bytes": 9431329,
+        "uint64_maximum": 18446744073709551615
+      },
+      "duration_seconds": 2.25755879999997,
+      "name": "package_sizes_and_imports",
+      "passed": true
+    },
+    {
+      "details": {
+        "hidden_inputs_match": {
+          "file_count": 20,
+          "semantic_sha256": "ca7490d363a3bd43090f1e2847c33b9ac61afb54bd1d01e35a23e4fe37dfa971"
+        },
+        "packaged_reference_match": true,
+        "realism_fixture_match": {
+          "file_count": 4,
+          "semantic_sha256": "ee30c5e264fca4b946c56658298a6ba7ffe73bddcfc1b8d2177a49bd9088748a"
+        },
+        "reference_file_count": 34,
+        "repeated_generation": {
+          "file_count": 63,
+          "semantic_sha256": "8d46007e2b1589cfc08f8bb12e2a6cac9f0fa02e26cab0d2a7392aad4fe65029"
+        },
+        "retired_case_match": {
+          "file_count": 5,
+          "semantic_sha256": "9e89c210e77f67c25a51e11ec904d58116a627771927f49d54c46e5cb2dd724f"
+        }
+      },
+      "duration_seconds": 65.6112549999998,
+      "name": "oracle_generation_determinism",
+      "passed": true
+    },
+    {
+      "details": {
+        "byte_identical_repetitions": 2,
+        "generated": {
+          "file_count": 4,
+          "sha256": {
+            "eigenvalues.npz": "82d3f6828288fba0f65f65e0217c0b3bfdc92e5b9aa9dec4bdb8c457c6df05c2",
+            "manifest.json": "383252ba3cb16f3fec0c542298de12b914aca4af386361f7a217739a0a172fcb",
+            "packets.csv": "bf3a3c8508e30e70bcceb541f7bec88a646abd7559d475445ea7d0b743124dff",
+            "truth_summary.json": "1dc546f7f9e3c6e85febc56b606c703223f4deb826b34222fed34af6e646fcef"
+          }
+        },
+        "invariants": {
+          "bounded_adjacent_gap_ratios": true,
+          "complete_raw_sector_spectra_stored": true,
+          "every_size_target_group_orders_weak_above_strong": true,
+          "fixed_sector_dimensions_match_binomial": true,
+          "hamiltonians_are_real_symmetric": true,
+          "normalized_target_selection_used": true,
+          "spectra_are_finite": true,
+          "weak_field_mean_exceeds_strong_field_mean": true
+        },
+        "minimum_group_weak_minus_strong": 0.07309571411437954,
+        "observed_ratio_range": [
+          0.25316171807023113,
+          0.6401027249147097
+        ],
+        "packaged_match": {
+          "file_count": 4,
+          "sha256": {
+            "eigenvalues.npz": "82d3f6828288fba0f65f65e0217c0b3bfdc92e5b9aa9dec4bdb8c457c6df05c2",
+            "manifest.json": "383252ba3cb16f3fec0c542298de12b914aca4af386361f7a217739a0a172fcb",
+            "packets.csv": "bf3a3c8508e30e70bcceb541f7bec88a646abd7559d475445ea7d0b743124dff",
+            "truth_summary.json": "1dc546f7f9e3c6e85febc56b606c703223f4deb826b34222fed34af6e646fcef"
+          }
+        },
+        "packet_count": 144,
+        "raw_eigenvalue_count": 23184,
+        "sector_dimensions": {
+          "10": 252,
+          "8": 70
+        },
+        "strong_mean_r": 0.3967747341652005,
+        "unique_spectrum_count": 48,
+        "weak_mean_r": 0.5031222903864401,
+        "weak_minus_strong": 0.10634755622123959
+      },
+      "duration_seconds": 0.6613972999984981,
+      "name": "exact_diagonalization_realism_determinism",
+      "passed": true
+    },
+    {
+      "details": {
+        "case_count": 4,
+        "cases": {
+          "case_amber": {
+            "critical_curve_span": 0.7450624000000001,
+            "independent_conditioning_match": true,
+            "independent_packet_numeric_envelope": {
+              "canonical_coordinate_collisions": 0,
+              "chunk_extrema_containment": true,
+              "distinct_raw_group_coordinates": 108,
+              "exact_energy_sorted_indices_preserved": true,
+              "exact_selected_prefix_preserved": true,
+              "group_count": 108,
+              "maximum_absolute_energy_coordinate": 283.29649523721486,
+              "maximum_absolute_shift_offset": 0.7312500000000739,
+              "maximum_ratio_perturbation": 7.69717622972621e-13,
+              "maximum_shift_span_fraction": 0.003806063444693458,
+              "minimum_absolute_shift_offset": 0.44999999999999996,
+              "minimum_cutoff_requirement_ratio": 334.4194435527209,
+              "minimum_gap_requirement_ratio": 58.07525925239322,
+              "minimum_keep_boundary_margin": 0.0003991334831994209,
+              "minimum_keep_boundary_margin_over_span": 3.3441944355272093e-06,
+              "minimum_keep_boundary_margin_ulps": 45640598204.5,
+              "minimum_selected_gap": 9.955846635989474e-06,
+              "minimum_selected_gap_over_span": 5.807525924601661e-08,
+              "minimum_selected_gap_ulps": 569221595.25,
+              "packets_checked": 3132,
+              "packets_with_keep_boundary": 3132,
+              "transformed_maximum_shift_span_fraction": 0.0038060634446934545,
+              "transformed_minimum_cutoff_requirement_ratio": 334.41944355272096,
+              "transformed_minimum_gap_requirement_ratio": 58.075259246016614
+            },
+            "invariants": [
+              "affine_energy_invariance",
+              "bounded_gap_ratio",
+              "common_size_crossing",
+              "realization_cluster_is_sampling_unit",
+              "weak_control_mean_exceeds_strong_control_mean"
+            ],
+            "numeric_conditioning": {
+              "affine_energy_offset": -4.75,
+              "affine_energy_scale": 1.625,
+              "maximum_absolute_energy_coordinate": 283.29649523721486,
+              "maximum_absolute_shift_offset": 0.7312500000000739,
+              "maximum_ratio_perturbation": 7.69717622972621e-13,
+              "maximum_shift_offset_over_span": 0.003806063444693458,
+              "minimum_absolute_shift_offset": 0.44999999999999996,
+              "minimum_keep_boundary_margin": 0.0003991334831994209,
+              "minimum_keep_boundary_margin_over_span": 3.3441944355272093e-06,
+              "minimum_keep_boundary_margin_ulps": 45640598204.5,
+              "minimum_selected_gap": 9.955846635989474e-06,
+              "minimum_selected_gap_over_span": 5.807525924601661e-08,
+              "minimum_selected_gap_ulps": 569221595.25,
+              "selected_index_prefix_exactly_preserved": true
+            },
+            "physical_case_input_bytes": 1447319,
+            "weak_minus_strong_minimum": 0.14486137322948833
+          },
+          "case_indigo": {
+            "critical_curve_span": 0.7403031999999996,
+            "independent_conditioning_match": true,
+            "independent_packet_numeric_envelope": {
+              "canonical_coordinate_collisions": 0,
+              "chunk_extrema_containment": true,
+              "distinct_raw_group_coordinates": 108,
+              "exact_energy_sorted_indices_preserved": true,
+              "exact_selected_prefix_preserved": true,
+              "group_count": 108,
+              "maximum_absolute_energy_coordinate": 167.95747413902777,
+              "maximum_absolute_shift_offset": 0.7312500000000455,
+              "maximum_ratio_perturbation": 5.156985949383852e-13,
+              "maximum_shift_span_fraction": 0.0038047541682639397,
+              "minimum_absolute_shift_offset": 0.4499999999999993,
+              "minimum_cutoff_requirement_ratio": 381.68088330906824,
+              "minimum_gap_requirement_ratio": 256.29876259014515,
+              "minimum_keep_boundary_margin": 0.0005773648386337982,
+              "minimum_keep_boundary_margin_over_span": 3.816808833090682e-06,
+              "minimum_keep_boundary_margin_ulps": 33362355517.0,
+              "minimum_selected_gap": 3.097025095843975e-05,
+              "minimum_selected_gap_over_span": 2.562987625850565e-07,
+              "minimum_selected_gap_ulps": 3541423708.5,
+              "packets_checked": 2914,
+              "packets_with_keep_boundary": 2914,
+              "transformed_maximum_shift_span_fraction": 0.003804754168263925,
+              "transformed_minimum_cutoff_requirement_ratio": 381.680883316576,
+              "transformed_minimum_gap_requirement_ratio": 256.2987625850565
+            },
+            "invariants": [
+              "affine_energy_invariance",
+              "bounded_gap_ratio",
+              "common_size_crossing",
+              "realization_cluster_is_sampling_unit",
+              "weak_control_mean_exceeds_strong_control_mean"
+            ],
+            "numeric_conditioning": {
+              "affine_energy_offset": -4.75,
+              "affine_energy_scale": 1.625,
+              "maximum_absolute_energy_coordinate": 167.95747413902777,
+              "maximum_absolute_shift_offset": 0.7312500000000455,
+              "maximum_ratio_perturbation": 5.156985949383852e-13,
+              "maximum_shift_offset_over_span": 0.0038047541682639397,
+              "minimum_absolute_shift_offset": 0.4499999999999993,
+              "minimum_keep_boundary_margin": 0.0005773648386337982,
+              "minimum_keep_boundary_margin_over_span": 3.816808833090682e-06,
+              "minimum_keep_boundary_margin_ulps": 33362355517.0,
+              "minimum_selected_gap": 3.097025095843975e-05,
+              "minimum_selected_gap_over_span": 2.562987625850565e-07,
+              "minimum_selected_gap_ulps": 3541423708.5,
+              "selected_index_prefix_exactly_preserved": true
+            },
+            "physical_case_input_bytes": 1365406,
+            "weak_minus_strong_minimum": 0.14065556086987213
+          },
+          "case_sable": {
+            "critical_curve_span": 0.5587584000000003,
+            "independent_conditioning_match": true,
+            "independent_packet_numeric_envelope": {
+              "canonical_coordinate_collisions": 0,
+              "chunk_extrema_containment": true,
+              "distinct_raw_group_coordinates": 102,
+              "exact_energy_sorted_indices_preserved": true,
+              "exact_selected_prefix_preserved": true,
+              "group_count": 102,
+              "maximum_absolute_energy_coordinate": 329.91254630445695,
+              "maximum_absolute_shift_offset": 0.7312500000000739,
+              "maximum_ratio_perturbation": 4.647393581080905e-13,
+              "maximum_shift_span_fraction": 0.0037944291929229083,
+              "minimum_absolute_shift_offset": 0.44999999999999996,
+              "minimum_cutoff_requirement_ratio": 352.06089464130935,
+              "minimum_gap_requirement_ratio": 10.779245543209647,
+              "minimum_keep_boundary_margin": 0.0004349943800647793,
+              "minimum_keep_boundary_margin_over_span": 3.520608946413093e-06,
+              "minimum_keep_boundary_margin_ulps": 49741263406.0,
+              "minimum_selected_gap": 1.8989006917990991e-06,
+              "minimum_selected_gap_over_span": 1.0779245543209648e-08,
+              "minimum_selected_gap_ulps": 108568896.5,
+              "packets_checked": 3060,
+              "packets_with_keep_boundary": 3060,
+              "transformed_maximum_shift_span_fraction": 0.0037944291929229144,
+              "transformed_minimum_cutoff_requirement_ratio": 352.0608946452906,
+              "transformed_minimum_gap_requirement_ratio": 10.779245561825554
+            },
+            "invariants": [
+              "affine_energy_invariance",
+              "bounded_gap_ratio",
+              "common_size_crossing",
+              "realization_cluster_is_sampling_unit",
+              "weak_control_mean_exceeds_strong_control_mean"
+            ],
+            "numeric_conditioning": {
+              "affine_energy_offset": -4.75,
+              "affine_energy_scale": 1.625,
+              "maximum_absolute_energy_coordinate": 329.91254630445695,
+              "maximum_absolute_shift_offset": 0.7312500000000739,
+              "maximum_ratio_perturbation": 4.647393581080905e-13,
+              "maximum_shift_offset_over_span": 0.0037944291929229144,
+              "minimum_absolute_shift_offset": 0.44999999999999996,
+              "minimum_keep_boundary_margin": 0.0004349943800647793,
+              "minimum_keep_boundary_margin_over_span": 3.520608946413093e-06,
+              "minimum_keep_boundary_margin_ulps": 49741263406.0,
+              "minimum_selected_gap": 1.8989006917990991e-06,
+              "minimum_selected_gap_over_span": 1.0779245543209648e-08,
+              "minimum_selected_gap_ulps": 108568896.5,
+              "selected_index_prefix_exactly_preserved": true
+            },
+            "physical_case_input_bytes": 1434578,
+            "weak_minus_strong_minimum": 0.14486148025792922
+          },
+          "case_verdant": {
+            "critical_curve_span": 0.6562175999999997,
+            "independent_conditioning_match": true,
+            "independent_packet_numeric_envelope": {
+              "canonical_coordinate_collisions": 0,
+              "chunk_extrema_containment": true,
+              "distinct_raw_group_coordinates": 108,
+              "exact_energy_sorted_indices_preserved": true,
+              "exact_selected_prefix_preserved": true,
+              "group_count": 108,
+              "maximum_absolute_energy_coordinate": 345.95524349808005,
+              "maximum_absolute_shift_offset": 0.7312500000000668,
+              "maximum_ratio_perturbation": 6.473710456589288e-13,
+              "maximum_shift_span_fraction": 0.003810879609185012,
+              "minimum_absolute_shift_offset": 0.44999999999999996,
+              "minimum_cutoff_requirement_ratio": 157.335246114524,
+              "minimum_gap_requirement_ratio": 116.57301292018352,
+              "minimum_keep_boundary_margin": 0.00019374501722069226,
+              "minimum_keep_boundary_margin_over_span": 1.57335246114524e-06,
+              "minimum_keep_boundary_margin_ulps": 22154589524.0,
+              "minimum_selected_gap": 1.747270707141979e-05,
+              "minimum_selected_gap_over_span": 1.1657301292018352e-07,
+              "minimum_selected_gap_ulps": 998995119.0,
+              "packets_checked": 2806,
+              "packets_with_keep_boundary": 2806,
+              "transformed_maximum_shift_span_fraction": 0.0038108796091850276,
+              "transformed_minimum_cutoff_requirement_ratio": 157.33524612295724,
+              "transformed_minimum_gap_requirement_ratio": 116.57301293476979
+            },
+            "invariants": [
+              "affine_energy_invariance",
+              "bounded_gap_ratio",
+              "common_size_crossing",
+              "realization_cluster_is_sampling_unit",
+              "weak_control_mean_exceeds_strong_control_mean"
+            ],
+            "numeric_conditioning": {
+              "affine_energy_offset": -4.75,
+              "affine_energy_scale": 1.625,
+              "maximum_absolute_energy_coordinate": 345.95524349808005,
+              "maximum_absolute_shift_offset": 0.7312500000000668,
+              "maximum_ratio_perturbation": 6.473710456589288e-13,
+              "maximum_shift_offset_over_span": 0.0038108796091850276,
+              "minimum_absolute_shift_offset": 0.44999999999999996,
+              "minimum_keep_boundary_margin": 0.00019374501722069226,
+              "minimum_keep_boundary_margin_over_span": 1.57335246114524e-06,
+              "minimum_keep_boundary_margin_ulps": 22154589524.0,
+              "minimum_selected_gap": 1.747270707141979e-05,
+              "minimum_selected_gap_over_span": 1.1657301292018352e-07,
+              "minimum_selected_gap_ulps": 998995119.0,
+              "selected_index_prefix_exactly_preserved": true
+            },
+            "physical_case_input_bytes": 1291778,
+            "weak_minus_strong_minimum": 0.14409450592857553
+          }
+        },
+        "realism_case_count": 1,
+        "realism_cases": {
+          "heisenberg_ed_fixed_sector": {
+            "derivation_type": "small_exact_diagonalization",
+            "invariant_count": 8,
+            "packet_count": 144,
+            "weak_minus_strong": 0.10634755622123959
+          }
+        }
+      },
+      "duration_seconds": 0.8946976000006543,
+      "name": "oracle_scientific_invariants",
+      "passed": true
+    },
+    {
+      "details": {
+        "alternative": {
+          "clean_room_participant_unchanged": true,
+          "deterministic_public_output": {
+            "file_count": 6,
+            "sha256": {
+              "claims.json": "35be5564d9e083d7bceb7dad04ad2aa6871670cf7325d78c7b1701f4ef96b20c",
+              "packet_stats.csv": "06bb097f57f2016f41e6d2acb85a411e7928e9f817089e4339918249f6a34c2f",
+              "predictions.csv": "c454ede0f02028becdfd9ee5d798d5928725402f98795f1aa92dc61aba426f75",
+              "realization_stats.csv": "2d8bc70f5d6b8e85bf4d7698d336e403c754651a6d991285f7c59c8e6be6e4f1",
+              "stability.csv": "89b3c34879962119b7b30bec3cfc00157e8a40dc54d20023baea5cf6c62903fa",
+              "transition.csv": "738af90c098b47fb99d967725071de491918b96b08971b907a6c7e1644cb8e34"
+            }
+          },
+          "deterministic_public_repetitions": 2,
+          "independent_public_reference_numeric_envelope": null,
+          "public_run": {
+            "bytes": 223165,
+            "files": [
+              "claims.json",
+              "packet_stats.csv",
+              "predictions.csv",
+              "realization_stats.csv",
+              "stability.csv",
+              "transition.csv"
+            ],
+            "groups": 108,
+            "public_scientific_checks": "passed",
+            "queries": 27,
+            "realizations": 3024,
+            "targets": 3
+          },
+          "source_sha256": "b4e0d1cf5896757bef8e3864e7290aede310b319d93d7e6229d2e3be4de532b5",
+          "submission_inventory": [
+            "output/analyze.py"
+          ]
+        },
+        "reference": {
+          "clean_room_participant_unchanged": true,
+          "deterministic_public_output": {
+            "file_count": 6,
+            "sha256": {
+              "claims.json": "35be5564d9e083d7bceb7dad04ad2aa6871670cf7325d78c7b1701f4ef96b20c",
+              "packet_stats.csv": "06bb097f57f2016f41e6d2acb85a411e7928e9f817089e4339918249f6a34c2f",
+              "predictions.csv": "f802027b7fb4527348d0e58c077fb44fc0c500402f7bea83b435a8a1fab8df34",
+              "realization_stats.csv": "2d8bc70f5d6b8e85bf4d7698d336e403c754651a6d991285f7c59c8e6be6e4f1",
+              "stability.csv": "0e89b2e8e7734331805e5a25ac001775f92836ee92d8a6f63eb7d0301f9bbafb",
+              "transition.csv": "87d64ed7d2d86860d2d36002bfe534b934e0d33d60ff0eeb91a6557e55f4cd90"
+            }
+          },
+          "deterministic_public_repetitions": 2,
+          "independent_public_reference_numeric_envelope": {
+            "bounded_csv_rows_checked": 3180,
+            "diagnostics_checked": 21,
+            "maximum_absolute_cubic_coefficient": 0.48200565134812606,
+            "maximum_absolute_query_x": 9.936038915537452,
+            "maximum_absolute_query_z": 0.9086999432516589,
+            "maximum_absolute_raw_query_polynomial": 0.5370105151219711,
+            "maximum_absolute_training_x": 22.23004159760812,
+            "maximum_absolute_training_z": 1.0,
+            "maximum_weighted_design_condition": 12.398141740043112,
+            "maximum_weighted_residual_square_sum": 21.049555475497897,
+            "queries_checked": 27,
+            "stability_diagnostics_checked": 18,
+            "transition_diagnostics_checked": 3
+          },
+          "public_run": {
+            "bytes": 223195,
+            "files": [
+              "claims.json",
+              "packet_stats.csv",
+              "predictions.csv",
+              "realization_stats.csv",
+              "stability.csv",
+              "transition.csv"
+            ],
+            "groups": 108,
+            "public_scientific_checks": "passed",
+            "queries": 27,
+            "realizations": 3024,
+            "targets": 3
+          },
+          "source_sha256": "9b153a2b2ac7f561f40f321c1f74eb649d725642f8a9152788ce66ea7a1e8ee8",
+          "submission_inventory": [
+            "output/analyze.py"
+          ]
+        }
+      },
+      "duration_seconds": 18.920876000000135,
+      "name": "clean_room_public_validation",
+      "passed": true
+    },
+    {
+      "details": {
+        "alternative": {
+          "case_count": 4,
+          "components": {
+            "critical_curve_and_exponent": 0.707702083967269,
+            "evidence_consistency": 1.0,
+            "grouped_statistics": 1.0,
+            "heldout_prediction": 0.9773965697360711,
+            "realization_statistics": 1.0,
+            "stability_sweep": 0.5005509014379065,
+            "uncertainty": 0.8732186698144256
+          },
+          "deterministic_repetitions": 2,
+          "different_hash_seeds": true,
+          "different_working_directories": true,
+          "passed": true,
+          "score": 0.8723372222137469
+        },
+        "reference": {
+          "case_count": 4,
+          "components": {
+            "critical_curve_and_exponent": 0.5791808745280645,
+            "evidence_consistency": 1.0,
+            "grouped_statistics": 1.0,
+            "heldout_prediction": 0.9264977680056898,
+            "realization_statistics": 1.0,
+            "stability_sweep": 1.0,
+            "uncertainty": 0.8948481481481482
+          },
+          "deterministic_repetitions": 2,
+          "different_hash_seeds": true,
+          "different_working_directories": true,
+          "passed": true,
+          "score": 0.8996699182281552
+        }
+      },
+      "duration_seconds": 50.98174690000087,
+      "name": "private_evaluator_determinism",
+      "passed": true
+    },
+    {
+      "details": {
+        "all_rejected": true,
+        "all_schema_valid": true,
+        "category_count": 14,
+        "mutant_count": 15,
+        "regeneration": {
+          "file_count": 16,
+          "sha256": {
+            "constant_edge/output/analyze.py": "dd9e9ee251bdd01571fbe92123bf20bec27d5ba9a50e566384d5ff5363c0f30a",
+            "fabricated_claims/output/analyze.py": "bc0e4511d5017d223003203a44392b2f7db4bae44857e7d6a3fd6452a267d8e2",
+            "gap_sem/output/analyze.py": "c5a71e1498766761dde9198a68acda84815cc563a0f80224c6be135cf363d85e",
+            "hardcoded_public/output/analyze.py": "ee9e3f8483f5635937b195dfafdbd08a3be9b1f60b3ea57d69aee521f8d8829b",
+            "largest_size_only/output/analyze.py": "89a7749a66d032913d37c10ba04274e02797477d0ec2cf02b6f8bd546db7bf8b",
+            "mutant_manifest.json": "2012424ece234d2cd7aa4ac33a598fd17bc12986dd5b88194885615fde9220fc",
+            "no_size_scaling/output/analyze.py": "31bf79080576129b264365a6a3b7a1af481bb0ece18d28a881429611838038fe",
+            "no_stability/output/analyze.py": "1f9bfc5a39f47774b205043f503afe55cda39e50dbd192f739bd5f582827db03",
+            "pool_gaps/output/analyze.py": "462dc9bd347458cb749a185e9d63572d76e2dbe14df5e330a7673cfdee6183aa",
+            "raw_ratio/output/analyze.py": "624efd14e0c37ccddc0e9f42fbcf39ae1861b6b163a15bff484c3b40c4990255",
+            "skip_bootstrap/output/analyze.py": "fe098afad482f442fb888ce9703ff43144421a3876f1f6613cea7ecdefe68f4d",
+            "stale/output/analyze.py": "018eb5c4643e4e219f599a52535f4786b08b4ec233f330932450c6c5c94aef93",
+            "target_mirror/output/analyze.py": "2177331a4b9bab0b25c835b96e8b86088ddc1b8d2c913dd7e5f50d8f6083cef3",
+            "unsorted/output/analyze.py": "cdf013eae8af1e515ba789431f00aeaf713a9369f129e355265588e5f8b17a07",
+            "use_shift_energy/output/analyze.py": "9ad763899a2f591eb8063028061bfcdb26068a83b34ed4a3b86828e2e702ea40",
+            "wrong_l_exponent/output/analyze.py": "5f9f121684be4b79e4f0a96fca3692f4dbc4dbe35d40612dcda75fde14384288"
+          }
+        },
+        "results": [
+          {
+            "category": "energy_window_semantics",
+            "expected_component": "realization_statistics",
+            "hard_gate_failures": [],
+            "mandatory_failures": [
+              "realization_statistics",
+              "grouped_statistics",
+              "evidence_consistency"
+            ],
+            "mutant_id": "target_mirror",
+            "passed": false,
+            "score": 0.6247764199111627
+          },
+          {
+            "category": "acquisition_shift_semantics",
+            "expected_component": "realization_statistics",
+            "hard_gate_failures": [],
+            "mandatory_failures": [
+              "realization_statistics",
+              "evidence_consistency"
+            ],
+            "mutant_id": "use_shift_energy",
+            "passed": false,
+            "score": 0.7522688410977463
+          },
+          {
+            "category": "spectral_ordering",
+            "expected_component": "realization_statistics",
+            "hard_gate_failures": [],
+            "mandatory_failures": [
+              "realization_statistics",
+              "grouped_statistics",
+              "heldout_prediction",
+              "critical_curve_and_exponent",
+              "stability_sweep",
+              "evidence_consistency"
+            ],
+            "mutant_id": "unsorted",
+            "passed": false,
+            "score": 0.24525477202395646
+          },
+          {
+            "category": "observable_definition",
+            "expected_component": "realization_statistics",
+            "hard_gate_failures": [],
+            "mandatory_failures": [
+              "realization_statistics",
+              "grouped_statistics",
+              "heldout_prediction",
+              "evidence_consistency"
+            ],
+            "mutant_id": "raw_ratio",
+            "passed": false,
+            "score": 0.3020180727683548
+          },
+          {
+            "category": "realization_aggregation",
+            "expected_component": "grouped_statistics",
+            "hard_gate_failures": [],
+            "mandatory_failures": [
+              "grouped_statistics",
+              "evidence_consistency"
+            ],
+            "mutant_id": "pool_gaps",
+            "passed": false,
+            "score": 0.8473686984239975
+          },
+          {
+            "category": "clustered_uncertainty",
+            "expected_component": "grouped_statistics",
+            "hard_gate_failures": [],
+            "mandatory_failures": [
+              "grouped_statistics"
+            ],
+            "mutant_id": "gap_sem",
+            "passed": false,
+            "score": 0.857521032255433
+          },
+          {
+            "category": "finite_size_coordinate",
+            "expected_component": "critical_curve_and_exponent",
+            "hard_gate_failures": [],
+            "mandatory_failures": [
+              "critical_curve_and_exponent",
+              "stability_sweep"
+            ],
+            "mutant_id": "no_size_scaling",
+            "passed": false,
+            "score": 0.6958701096817309
+          },
+          {
+            "category": "finite_size_coordinate",
+            "expected_component": "critical_curve_and_exponent",
+            "hard_gate_failures": [],
+            "mandatory_failures": [
+              "critical_curve_and_exponent",
+              "stability_sweep"
+            ],
+            "mutant_id": "wrong_l_exponent",
+            "passed": false,
+            "score": 0.6896277073796685
+          },
+          {
+            "category": "finite_size_shortcut",
+            "expected_component": "stability_sweep",
+            "hard_gate_failures": [],
+            "mandatory_failures": [
+              "stability_sweep"
+            ],
+            "mutant_id": "largest_size_only",
+            "passed": false,
+            "score": 0.7383250198739754
+          },
+          {
+            "category": "critical_curve_model",
+            "expected_component": "critical_curve_and_exponent",
+            "hard_gate_failures": [],
+            "mandatory_failures": [
+              "critical_curve_and_exponent"
+            ],
+            "mutant_id": "constant_edge",
+            "passed": false,
+            "score": 0.8493440215802439
+          },
+          {
+            "category": "anti_hardcoding",
+            "expected_component": "critical_curve_and_exponent",
+            "hard_gate_failures": [],
+            "mandatory_failures": [
+              "critical_curve_and_exponent"
+            ],
+            "mutant_id": "hardcoded_public",
+            "passed": false,
+            "score": 0.7231143594521261
+          },
+          {
+            "category": "stability_analysis",
+            "expected_component": "stability_sweep",
+            "hard_gate_failures": [],
+            "mandatory_failures": [
+              "stability_sweep"
+            ],
+            "mutant_id": "no_stability",
+            "passed": false,
+            "score": 0.7735891336230301
+          },
+          {
+            "category": "uncertainty_propagation",
+            "expected_component": "uncertainty",
+            "hard_gate_failures": [],
+            "mandatory_failures": [
+              "uncertainty"
+            ],
+            "mutant_id": "skip_bootstrap",
+            "passed": false,
+            "score": 0.8629296853404083
+          },
+          {
+            "category": "provenance_integrity",
+            "expected_component": "evidence_consistency",
+            "hard_gate_failures": [],
+            "mandatory_failures": [
+              "evidence_consistency"
+            ],
+            "mutant_id": "stale",
+            "passed": false,
+            "score": 0.8926699182281552
+          },
+          {
+            "category": "evidence_consistency",
+            "expected_component": "evidence_consistency",
+            "hard_gate_failures": [],
+            "mandatory_failures": [
+              "evidence_consistency"
+            ],
+            "mutant_id": "fabricated_claims",
+            "passed": false,
+            "score": 0.8856699182281552
+          }
+        ]
+      },
+      "duration_seconds": 108.2780915000003,
+      "name": "scientific_mutant_sensitivity",
+      "passed": true
+    },
+    {
+      "details": {
+        "category": "anti_hardcoding",
+        "mandatory_failures": [
+          "critical_curve_and_exponent"
+        ],
+        "mutant_id": "hardcoded_public",
+        "passed": false,
+        "scientific_failure": true,
+        "score": 0.7231143594521261
+      },
+      "duration_seconds": 8.499999239575118e-06,
+      "name": "hardcoded_retired_case_shortcut",
+      "passed": true
+    },
+    {
+      "details": {
+        "all_rejected_safely": true,
+        "categories": [
+          "inventory",
+          "malformed",
+          "nonfinite",
+          "oversize",
+          "partial",
+          "security"
+        ],
+        "probe_count": 14,
+        "results": [
+          {
+            "category": "malformed",
+            "failure": "case_amber: GateFailure: analyzer execution failed: Traceback (most recent call last):\r\n  File \"C:\\Users\\Jingxu\\AppData\\Local\\Temp\\spectral-private-case-00-s48kcy25\\child-root\\runtime\\guarded_runner.py\", line 321, in <module>\r\n  File \"C:\\Users\\Jingxu\\AppData\\Local\\Temp\\spectral-private-case-00-s48kcy25\\child-root\\runtime\\guarded_runner.py\", line 316, in main\r\n  File \"<frozen runpy>\", line 286, in run_path\r\n  File \"<frozen runpy>\", line 259, in _get_code_from_file\r\n  File \"C:\\Users\\Jingxu\\AppData\\Local\\Temp\\spectral-private-case-00-s48kcy25\\child-root\\submission\\output\\analyze.py\", line 1\r\n    def broken(:\r\n               ^\r\nSyntaxError: invalid syntax\r\n",
+            "id": "malformed_source",
+            "passed": false,
+            "score": 0.0
+          },
+          {
+            "category": "malformed",
+            "failure": "case_amber: GateFailure: realization_stats.csv header mismatch",
+            "id": "malformed_csv",
+            "passed": false,
+            "score": 0.0
+          },
+          {
+            "category": "nonfinite",
+            "failure": "case_amber: GateFailure: mean_r is not finite",
+            "id": "nan_statistic",
+            "passed": false,
+            "score": 0.0
+          },
+          {
+            "category": "nonfinite",
+            "failure": "case_amber: GateFailure: mean_r is not finite",
+            "id": "infinite_statistic",
+            "passed": false,
+            "score": 0.0
+          },
+          {
+            "category": "partial",
+            "failure": "case_amber: GateFailure: output inventory mismatch: ['claims.json']",
+            "id": "partial_artifacts",
+            "passed": false,
+            "score": 0.0
+          },
+          {
+            "category": "inventory",
+            "failure": "case_amber: GateFailure: output inventory mismatch: ['claims.json', 'extra.txt', 'packet_stats.csv', 'predictions.csv', 'realization_stats.csv', 'stability.csv', 'transition.csv']",
+            "id": "extra_artifact",
+            "passed": false,
+            "score": 0.0
+          },
+          {
+            "category": "oversize",
+            "failure": "analyzer is oversized",
+            "id": "oversized_source",
+            "passed": false,
+            "score": 0.0
+          },
+          {
+            "category": "oversize",
+            "failure": "case_amber: GateFailure: output byte limit exceeded",
+            "id": "oversized_output",
+            "passed": false,
+            "score": 0.0
+          },
+          {
+            "category": "security",
+            "failure": "case_amber: GateFailure: analyzer execution failed: Traceback (most recent call last):\r\n  File \"C:\\Users\\Jingxu\\AppData\\Local\\Temp\\spectral-private-case-00-xw5e4loo\\child-root\\runtime\\guarded_runner.py\", line 321, in <module>\r\n  File \"C:\\Users\\Jingxu\\AppData\\Local\\Temp\\spectral-private-case-00-xw5e4loo\\child-root\\runtime\\guarded_runner.py\", line 316, in main\r\n  File \"<frozen runpy>\", line 287, in run_path\r\n  File \"<frozen runpy>\", line 98, in _run_module_code\r\n  File \"<frozen runpy>\", line 88, in _run_code\r\n  File \"C:\\Users\\Jingxu\\AppData\\Local\\Temp\\spectral-private-case-00-xw5e4loo\\child-root\\submission\\output\\analyze.py\", line 16, in <module>\r\n    main()\r\n  File \"C:\\Users\\Jingxu\\AppData\\Local\\Temp\\spectral-private-case-00-xw5e4loo\\child-root\\submission\\output\\analyze.py\", line 13, in main\r\n    private_reference.read_text(encoding='utf-8')\r\n  File \"C:\\Users\\Jingxu\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\Lib\\pathlib.py\", line 1027, in read_text\r\n    with self.open(mode='r', encoding=encoding, errors=errors) as f:\r\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\n  File \"C:\\Users\\Jingxu\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\Lib\\pathlib.py\", line 1013, in open\r\n    return io.open(self, mode, buffering, encoding, errors, newline)\r\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\n  File \"C:\\Users\\Jingxu\\AppData\\Local\\Temp\\spectral-private-case-00-xw5e4loo\\child-root\\runtime\\guarded_runner.py\", line 294, in audit\r\n  File \"C:\\Users\\Jingxu\\AppData\\Local\\Temp\\spectral-private-case-00-xw5e4loo\\child-root\\runtime\\guarded_runner.py\", line 226, in require_allowed_path\r\nPermissionError: audit denied filesystem access: open\r\n",
+            "id": "private_path_read",
+            "passed": false,
+            "score": 0.0
+          },
+          {
+            "category": "security",
+            "failure": "case_amber: GateFailure: analyzer execution failed: Traceback (most recent call last):\r\n  File \"C:\\Users\\Jingxu\\AppData\\Local\\Temp\\spectral-private-case-00-p8iquigb\\child-root\\runtime\\guarded_runner.py\", line 321, in <module>\r\n  File \"C:\\Users\\Jingxu\\AppData\\Local\\Temp\\spectral-private-case-00-p8iquigb\\child-root\\runtime\\guarded_runner.py\", line 316, in main\r\n  File \"<frozen runpy>\", line 287, in run_path\r\n  File \"<frozen runpy>\", line 98, in _run_module_code\r\n  File \"<frozen runpy>\", line 88, in _run_code\r\n  File \"C:\\Users\\Jingxu\\AppData\\Local\\Temp\\spectral-private-case-00-p8iquigb\\child-root\\submission\\output\\analyze.py\", line 15, in <module>\r\n    main()\r\n  File \"C:\\Users\\Jingxu\\AppData\\Local\\Temp\\spectral-private-case-00-p8iquigb\\child-root\\submission\\output\\analyze.py\", line 12, in main\r\n    (input_dir / 'manifest.json').write_text('corrupted', encoding='utf-8')\r\n  File \"C:\\Users\\Jingxu\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\Lib\\pathlib.py\", line 1047, in write_text\r\n    with self.open(mode='w', encoding=encoding, errors=errors, newline=newline) as f:\r\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\n  File \"C:\\Users\\Jingxu\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\Lib\\pathlib.py\", line 1013, in open\r\n    return io.open(self, mode, buffering, encoding, errors, newline)\r\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\n  File \"C:\\Users\\Jingxu\\AppData\\Local\\Temp\\spectral-private-case-00-p8iquigb\\child-root\\runtime\\guarded_runner.py\", line 294, in audit\r\n  File \"C:\\Users\\Jingxu\\AppData\\Local\\Temp\\spectral-private-case-00-p8iquigb\\child-root\\runtime\\guarded_runner.py\", line 226, in require_allowed_path\r\nPermissionError: audit denied filesystem access: open\r\n",
+            "id": "input_mutation",
+            "passed": false,
+            "score": 0.0
+          },
+          {
+            "category": "security",
+            "failure": "case_amber: GateFailure: analyzer execution failed: Traceback (most recent call last):\r\n  File \"C:\\Users\\Jingxu\\AppData\\Local\\Temp\\spectral-private-case-00-vj9u0fcd\\child-root\\runtime\\guarded_runner.py\", line 321, in <module>\r\n  File \"C:\\Users\\Jingxu\\AppData\\Local\\Temp\\spectral-private-case-00-vj9u0fcd\\child-root\\runtime\\guarded_runner.py\", line 316, in main\r\n  File \"<frozen runpy>\", line 287, in run_path\r\n  File \"<frozen runpy>\", line 98, in _run_module_code\r\n  File \"<frozen runpy>\", line 88, in _run_code\r\n  File \"C:\\Users\\Jingxu\\AppData\\Local\\Temp\\spectral-private-case-00-vj9u0fcd\\child-root\\submission\\output\\analyze.py\", line 15, in <module>\r\n    main()\r\n  File \"C:\\Users\\Jingxu\\AppData\\Local\\Temp\\spectral-private-case-00-vj9u0fcd\\child-root\\submission\\output\\analyze.py\", line 12, in main\r\n    (output_dir.parent / 'escape.txt').write_text('escaped', encoding='utf-8')\r\n  File \"C:\\Users\\Jingxu\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\Lib\\pathlib.py\", line 1047, in write_text\r\n    with self.open(mode='w', encoding=encoding, errors=errors, newline=newline) as f:\r\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\n  File \"C:\\Users\\Jingxu\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\Lib\\pathlib.py\", line 1013, in open\r\n    return io.open(self, mode, buffering, encoding, errors, newline)\r\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\n  File \"C:\\Users\\Jingxu\\AppData\\Local\\Temp\\spectral-private-case-00-vj9u0fcd\\child-root\\runtime\\guarded_runner.py\", line 294, in audit\r\n  File \"C:\\Users\\Jingxu\\AppData\\Local\\Temp\\spectral-private-case-00-vj9u0fcd\\child-root\\runtime\\guarded_runner.py\", line 226, in require_allowed_path\r\nPermissionError: audit denied filesystem access: open\r\n",
+            "id": "output_parent_escape",
+            "passed": false,
+            "score": 0.0
+          },
+          {
+            "category": "security",
+            "failure": "case_amber: GateFailure: analyzer execution failed: Traceback (most recent call last):\r\n  File \"C:\\Users\\Jingxu\\AppData\\Local\\Temp\\spectral-private-case-00-72cdp8_d\\child-root\\runtime\\guarded_runner.py\", line 321, in <module>\r\n  File \"C:\\Users\\Jingxu\\AppData\\Local\\Temp\\spectral-private-case-00-72cdp8_d\\child-root\\runtime\\guarded_runner.py\", line 316, in main\r\n  File \"<frozen runpy>\", line 287, in run_path\r\n  File \"<frozen runpy>\", line 98, in _run_module_code\r\n  File \"<frozen runpy>\", line 88, in _run_code\r\n  File \"C:\\Users\\Jingxu\\AppData\\Local\\Temp\\spectral-private-case-00-72cdp8_d\\child-root\\submission\\output\\analyze.py\", line 1, in <module>\r\n    import socket\r\n  File \"C:\\Users\\Jingxu\\AppData\\Local\\Temp\\spectral-private-case-00-72cdp8_d\\child-root\\runtime\\guarded_runner.py\", line 274, in audit\r\nPermissionError: audit denied import: socket\r\n",
+            "id": "network_import",
+            "passed": false,
+            "score": 0.0
+          },
+          {
+            "category": "security",
+            "failure": "case_amber: GateFailure: analyzer execution failed: Traceback (most recent call last):\r\n  File \"C:\\Users\\Jingxu\\AppData\\Local\\Temp\\spectral-private-case-00-muo7jokb\\child-root\\runtime\\guarded_runner.py\", line 321, in <module>\r\n  File \"C:\\Users\\Jingxu\\AppData\\Local\\Temp\\spectral-private-case-00-muo7jokb\\child-root\\runtime\\guarded_runner.py\", line 316, in main\r\n  File \"<frozen runpy>\", line 287, in run_path\r\n  File \"<frozen runpy>\", line 98, in _run_module_code\r\n  File \"<frozen runpy>\", line 88, in _run_code\r\n  File \"C:\\Users\\Jingxu\\AppData\\Local\\Temp\\spectral-private-case-00-muo7jokb\\child-root\\submission\\output\\analyze.py\", line 1, in <module>\r\n    import subprocess\r\n  File \"C:\\Users\\Jingxu\\AppData\\Local\\Temp\\spectral-private-case-00-muo7jokb\\child-root\\runtime\\guarded_runner.py\", line 274, in audit\r\nPermissionError: audit denied import: subprocess\r\n",
+            "id": "process_import",
+            "passed": false,
+            "score": 0.0
+          },
+          {
+            "category": "security",
+            "failure": "case_amber: GateFailure: analyzer execution failed: Traceback (most recent call last):\r\n  File \"C:\\Users\\Jingxu\\AppData\\Local\\Temp\\spectral-private-case-00-i0c89m3k\\child-root\\runtime\\guarded_runner.py\", line 321, in <module>\r\n  File \"C:\\Users\\Jingxu\\AppData\\Local\\Temp\\spectral-private-case-00-i0c89m3k\\child-root\\runtime\\guarded_runner.py\", line 316, in main\r\n  File \"<frozen runpy>\", line 287, in run_path\r\n  File \"<frozen runpy>\", line 98, in _run_module_code\r\n  File \"<frozen runpy>\", line 88, in _run_code\r\n  File \"C:\\Users\\Jingxu\\AppData\\Local\\Temp\\spectral-private-case-00-i0c89m3k\\child-root\\submission\\output\\analyze.py\", line 15, in <module>\r\n    main()\r\n  File \"C:\\Users\\Jingxu\\AppData\\Local\\Temp\\spectral-private-case-00-i0c89m3k\\child-root\\submission\\output\\analyze.py\", line 12, in main\r\n    exec('probe_value = 1')\r\n  File \"C:\\Users\\Jingxu\\AppData\\Local\\Temp\\spectral-private-case-00-i0c89m3k\\child-root\\runtime\\guarded_runner.py\", line 262, in audit\r\nPermissionError: audit denied capability: compile\r\n",
+            "id": "dynamic_exec",
+            "passed": false,
+            "score": 0.0
+          }
+        ]
+      },
+      "duration_seconds": 17.229116200000135,
+      "name": "malformed_nan_partial_oversize_security_probes",
+      "passed": true
+    },
+    {
+      "details": {
+        "analyzer_failure": "analyzer is hard-linked",
+        "analyzer_hardlink_rejected": true,
+        "filesystem_supports_hardlinks": true,
+        "produced_output_failure": "GateFailure: output artifact claims.json is hard-linked",
+        "produced_output_hardlink_rejected": true
+      },
+      "duration_seconds": 0.15682700000252225,
+      "name": "hardlink_rejection",
+      "passed": true
+    },
+    {
+      "details": {
+        "alternative": {
+          "case_id": "case_amber",
+          "passed": true,
+          "positive_affine_energy_conditioning": {
+            "baseline_max_magnitude": 177.25938168443992,
+            "baseline_max_shift_span_fraction": 0.003806063444693458,
+            "baseline_min_keep_boundary_margin_in_ulps": 56173043944.0,
+            "baseline_min_keep_boundary_margin_over_span": 3.3441944355272093e-06,
+            "baseline_min_keep_boundary_requirement_ratio": 334.4194435527209,
+            "baseline_min_selected_adjacent_gap_margin_in_ulps": 700580425.0,
+            "baseline_min_selected_adjacent_gap_margin_over_span": 5.807525925239322e-08,
+            "baseline_min_selected_adjacent_gap_requirement_ratio": 58.07525925239322,
+            "exact_energy_sorted_selected_index_sequence_preserved": true,
+            "exact_selected_index_sequence_preserved": true,
+            "exact_stable_selected_prefix_preserved": true,
+            "magnitude_limit": 1e+100,
+            "max_retained_adjacent_gap_ratio_perturbation": 7.69717622972621e-13,
+            "maximum_allowed_retained_adjacent_gap_ratio_perturbation": 1e-10,
+            "maximum_allowed_shift_span_fraction": 0.005,
+            "minimum_required_keep_boundary_span_fraction": 1e-08,
+            "minimum_required_selected_adjacent_gap_span_fraction": 1e-09,
+            "minimum_required_ulp_multiplier": 1048576.0,
+            "offset": -4.75,
+            "packet_count": 3132,
+            "packets_with_keep_boundary": 3132,
+            "scale": 1.625,
+            "scale_maximum": 2.0,
+            "scale_minimum": 0.5,
+            "transformed_max_magnitude": 283.29649523721486,
+            "transformed_max_shift_span_fraction": 0.0038060634446934545,
+            "transformed_min_keep_boundary_margin_in_ulps": 45640598204.5,
+            "transformed_min_keep_boundary_margin_over_span": 3.3441944355272093e-06,
+            "transformed_min_keep_boundary_requirement_ratio": 334.41944355272096,
+            "transformed_min_selected_adjacent_gap_margin_in_ulps": 569221595.25,
+            "transformed_min_selected_adjacent_gap_margin_over_span": 5.807525924601661e-08,
+            "transformed_min_selected_adjacent_gap_requirement_ratio": 58.075259246016614
+          },
+          "relation_metrics": {
+            "affine_control": {
+              "atol": 5e-09,
+              "comparisons": 23071,
+              "max_abs_error": 1.021405182655144e-14,
+              "max_error_to_tolerance_ratio": 2.824808320225016e-07,
+              "relation": "affine_control",
+              "relaxed_uncertainty_checks": 0,
+              "rtol": 5e-08
+            },
+            "positive_affine_energy": {
+              "atol": 5e-09,
+              "comparisons": 23071,
+              "max_abs_error": 2.353672812205332e-14,
+              "max_error_to_tolerance_ratio": 7.976741676994422e-07,
+              "relation": "positive_affine_energy",
+              "relaxed_uncertainty_checks": 0,
+              "rtol": 5e-08
+            },
+            "realization_id_permutation": {
+              "atol": 5e-09,
+              "comparisons": 23032,
+              "max_abs_error": 0.0,
+              "max_error_to_tolerance_ratio": 0.0,
+              "relation": "realization_id_permutation",
+              "relaxed_uncertainty_checks": 30,
+              "rtol": 5e-08
+            },
+            "row_packet_permutation": {
+              "atol": 5e-09,
+              "comparisons": 23071,
+              "max_abs_error": 4.440892098500626e-15,
+              "max_error_to_tolerance_ratio": 6.62244103642803e-08,
+              "relation": "row_packet_permutation",
+              "relaxed_uncertainty_checks": 0,
+              "rtol": 5e-08
+            },
+            "shard_rejoin": {
+              "atol": 5e-09,
+              "comparisons": 23071,
+              "max_abs_error": 2.4313884239290928e-14,
+              "max_error_to_tolerance_ratio": 6.724271979666071e-07,
+              "relation": "shard_rejoin",
+              "relaxed_uncertainty_checks": 0,
+              "rtol": 5e-08
+            },
+            "target_mirror": {
+              "atol": 5e-09,
+              "comparisons": 23032,
+              "max_abs_error": 7.993605777301127e-15,
+              "max_error_to_tolerance_ratio": 1.1109629999833155e-07,
+              "relation": "target_mirror",
+              "relaxed_uncertainty_checks": 30,
+              "rtol": 5e-08
+            }
+          },
+          "shard_integrity": {
+            "eigenvalue_count": 140940,
+            "packet_count": 3132
+          },
+          "tests": {
+            "affine_control": {
+              "atol": 5e-09,
+              "comparisons": 23071,
+              "max_abs_error": 1.021405182655144e-14,
+              "max_error_to_tolerance_ratio": 2.824808320225016e-07,
+              "passed": true,
+              "relation": "affine_control",
+              "relaxed_uncertainty_checks": 0,
+              "rtol": 5e-08
+            },
+            "positive_affine_energy": {
+              "atol": 5e-09,
+              "comparisons": 23071,
+              "max_abs_error": 2.353672812205332e-14,
+              "max_error_to_tolerance_ratio": 7.976741676994422e-07,
+              "passed": true,
+              "relation": "positive_affine_energy",
+              "relaxed_uncertainty_checks": 0,
+              "rtol": 5e-08
+            },
+            "realization_id_permutation": {
+              "atol": 5e-09,
+              "comparisons": 23032,
+              "max_abs_error": 0.0,
+              "max_error_to_tolerance_ratio": 0.0,
+              "passed": true,
+              "relation": "realization_id_permutation",
+              "relaxed_uncertainty_checks": 30,
+              "rtol": 5e-08
+            },
+            "row_packet_permutation": {
+              "atol": 5e-09,
+              "comparisons": 23071,
+              "max_abs_error": 4.440892098500626e-15,
+              "max_error_to_tolerance_ratio": 6.62244103642803e-08,
+              "passed": true,
+              "relation": "row_packet_permutation",
+              "relaxed_uncertainty_checks": 0,
+              "rtol": 5e-08
+            },
+            "shard_rejoin": {
+              "atol": 5e-09,
+              "comparisons": 23071,
+              "max_abs_error": 2.4313884239290928e-14,
+              "max_error_to_tolerance_ratio": 6.724271979666071e-07,
+              "passed": true,
+              "relation": "shard_rejoin",
+              "relaxed_uncertainty_checks": 0,
+              "rtol": 5e-08
+            },
+            "target_mirror": {
+              "atol": 5e-09,
+              "comparisons": 23032,
+              "max_abs_error": 7.993605777301127e-15,
+              "max_error_to_tolerance_ratio": 1.1109629999833155e-07,
+              "passed": true,
+              "relation": "target_mirror",
+              "relaxed_uncertainty_checks": 30,
+              "rtol": 5e-08
+            }
+          }
+        },
+        "reference": {
+          "case_id": "case_amber",
+          "negative_controls": {
+            "allowed_affine_scale_interval": [
+              0.5,
+              2.0
+            ],
+            "destination_created": false,
+            "direct_error_type": "ValueError",
+            "preflight_rejected": true,
+            "rejected_affine_scale": 3.0,
+            "rejected_transform_analysis_started": false,
+            "report_bytes_equal_stdout": true,
+            "structured_cli_exit": 1,
+            "structured_cli_stderr_bytes": 0,
+            "structured_failure_report": {
+              "fatal_error": "metamorphic_suite_exception",
+              "passed": false,
+              "schema_version": "spectral-scaling-metamorphic-report/v1"
+            }
+          },
+          "passed": true,
+          "positive_affine_energy_conditioning": {
+            "baseline_max_magnitude": 177.25938168443992,
+            "baseline_max_shift_span_fraction": 0.003806063444693458,
+            "baseline_min_keep_boundary_margin_in_ulps": 56173043944.0,
+            "baseline_min_keep_boundary_margin_over_span": 3.3441944355272093e-06,
+            "baseline_min_keep_boundary_requirement_ratio": 334.4194435527209,
+            "baseline_min_selected_adjacent_gap_margin_in_ulps": 700580425.0,
+            "baseline_min_selected_adjacent_gap_margin_over_span": 5.807525925239322e-08,
+            "baseline_min_selected_adjacent_gap_requirement_ratio": 58.07525925239322,
+            "exact_energy_sorted_selected_index_sequence_preserved": true,
+            "exact_selected_index_sequence_preserved": true,
+            "exact_stable_selected_prefix_preserved": true,
+            "magnitude_limit": 1e+100,
+            "max_retained_adjacent_gap_ratio_perturbation": 7.69717622972621e-13,
+            "maximum_allowed_retained_adjacent_gap_ratio_perturbation": 1e-10,
+            "maximum_allowed_shift_span_fraction": 0.005,
+            "minimum_required_keep_boundary_span_fraction": 1e-08,
+            "minimum_required_selected_adjacent_gap_span_fraction": 1e-09,
+            "minimum_required_ulp_multiplier": 1048576.0,
+            "offset": -4.75,
+            "packet_count": 3132,
+            "packets_with_keep_boundary": 3132,
+            "scale": 1.625,
+            "scale_maximum": 2.0,
+            "scale_minimum": 0.5,
+            "transformed_max_magnitude": 283.29649523721486,
+            "transformed_max_shift_span_fraction": 0.0038060634446934545,
+            "transformed_min_keep_boundary_margin_in_ulps": 45640598204.5,
+            "transformed_min_keep_boundary_margin_over_span": 3.3441944355272093e-06,
+            "transformed_min_keep_boundary_requirement_ratio": 334.41944355272096,
+            "transformed_min_selected_adjacent_gap_margin_in_ulps": 569221595.25,
+            "transformed_min_selected_adjacent_gap_margin_over_span": 5.807525924601661e-08,
+            "transformed_min_selected_adjacent_gap_requirement_ratio": 58.075259246016614
+          },
+          "relation_metrics": {
+            "affine_control": {
+              "atol": 5e-09,
+              "comparisons": 23071,
+              "max_abs_error": 8.881784197001252e-16,
+              "max_error_to_tolerance_ratio": 1.37157346129198e-08,
+              "relation": "affine_control",
+              "relaxed_uncertainty_checks": 0,
+              "rtol": 5e-08
+            },
+            "positive_affine_energy": {
+              "atol": 5e-09,
+              "comparisons": 23071,
+              "max_abs_error": 1.8096635301390052e-14,
+              "max_error_to_tolerance_ratio": 7.976741676994422e-07,
+              "relation": "positive_affine_energy",
+              "relaxed_uncertainty_checks": 0,
+              "rtol": 5e-08
+            },
+            "realization_id_permutation": {
+              "atol": 5e-09,
+              "comparisons": 23032,
+              "max_abs_error": 0.0,
+              "max_error_to_tolerance_ratio": 0.0,
+              "relation": "realization_id_permutation",
+              "relaxed_uncertainty_checks": 30,
+              "rtol": 5e-08
+            },
+            "row_packet_permutation": {
+              "atol": 5e-09,
+              "comparisons": 23071,
+              "max_abs_error": 4.440892098500626e-16,
+              "max_error_to_tolerance_ratio": 1.198822624390471e-08,
+              "relation": "row_packet_permutation",
+              "relaxed_uncertainty_checks": 0,
+              "rtol": 5e-08
+            },
+            "shard_rejoin": {
+              "atol": 5e-09,
+              "comparisons": 23071,
+              "max_abs_error": 4.440892098500626e-16,
+              "max_error_to_tolerance_ratio": 1.2581008284339841e-08,
+              "relation": "shard_rejoin",
+              "relaxed_uncertainty_checks": 0,
+              "rtol": 5e-08
+            },
+            "target_mirror": {
+              "atol": 5e-09,
+              "comparisons": 23032,
+              "max_abs_error": 4.440892098500626e-16,
+              "max_error_to_tolerance_ratio": 1.198822624390471e-08,
+              "relation": "target_mirror",
+              "relaxed_uncertainty_checks": 30,
+              "rtol": 5e-08
+            }
+          },
+          "shard_integrity": {
+            "eigenvalue_count": 140940,
+            "packet_count": 3132
+          },
+          "tests": {
+            "affine_control": {
+              "atol": 5e-09,
+              "comparisons": 23071,
+              "max_abs_error": 8.881784197001252e-16,
+              "max_error_to_tolerance_ratio": 1.37157346129198e-08,
+              "passed": true,
+              "relation": "affine_control",
+              "relaxed_uncertainty_checks": 0,
+              "rtol": 5e-08
+            },
+            "positive_affine_energy": {
+              "atol": 5e-09,
+              "comparisons": 23071,
+              "max_abs_error": 1.8096635301390052e-14,
+              "max_error_to_tolerance_ratio": 7.976741676994422e-07,
+              "passed": true,
+              "relation": "positive_affine_energy",
+              "relaxed_uncertainty_checks": 0,
+              "rtol": 5e-08
+            },
+            "realization_id_permutation": {
+              "atol": 5e-09,
+              "comparisons": 23032,
+              "max_abs_error": 0.0,
+              "max_error_to_tolerance_ratio": 0.0,
+              "passed": true,
+              "relation": "realization_id_permutation",
+              "relaxed_uncertainty_checks": 30,
+              "rtol": 5e-08
+            },
+            "row_packet_permutation": {
+              "atol": 5e-09,
+              "comparisons": 23071,
+              "max_abs_error": 4.440892098500626e-16,
+              "max_error_to_tolerance_ratio": 1.198822624390471e-08,
+              "passed": true,
+              "relation": "row_packet_permutation",
+              "relaxed_uncertainty_checks": 0,
+              "rtol": 5e-08
+            },
+            "shard_rejoin": {
+              "atol": 5e-09,
+              "comparisons": 23071,
+              "max_abs_error": 4.440892098500626e-16,
+              "max_error_to_tolerance_ratio": 1.2581008284339841e-08,
+              "passed": true,
+              "relation": "shard_rejoin",
+              "relaxed_uncertainty_checks": 0,
+              "rtol": 5e-08
+            },
+            "target_mirror": {
+              "atol": 5e-09,
+              "comparisons": 23032,
+              "max_abs_error": 4.440892098500626e-16,
+              "max_error_to_tolerance_ratio": 1.198822624390471e-08,
+              "passed": true,
+              "relation": "target_mirror",
+              "relaxed_uncertainty_checks": 30,
+              "rtol": 5e-08
+            }
+          }
+        }
+      },
+      "duration_seconds": 45.57500110000183,
+      "name": "metamorphic_covariance",
+      "passed": true
+    },
+    {
+      "details": {
+        "build_identity": "sha256:42c4b45503175b7bfce961de20a9fa5ab40f63a374ee8114ca25ddafbce7a8eb",
+        "file_count": 126,
+        "unchanged": true
+      },
+      "duration_seconds": 0.02586860000155866,
+      "name": "package_unchanged_during_verification",
+      "passed": true
+    }
+  ],
+  "generated_at_utc": "2026-08-16T05:33:58.516920+00:00",
+  "passed": true,
+  "passed_gate_count": 14,
+  "provisional_difficulty": "structurally_hard_candidate",
+  "release_disposition": "accepted_for_collaborator_review",
+  "required_failures": [],
+  "schema_version": "spectral-scaling-verification-results/v1",
+  "status": "pass",
+  "task_id": "spectral-scaling-audit-v1"
+}

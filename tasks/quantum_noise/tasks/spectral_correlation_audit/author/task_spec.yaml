@@ -1,0 +1,263 @@
+schema_version: paper2ale.codex-task-spec/v1
+
+task:
+  task_id: spectral-correlation-audit-v1
+  title: Spectral correlation audit
+  status: needs_agent_calibration
+  task_mode: audit
+  derivation_type: grounded_extension_of_reported_workflow_slice
+  target_claim_leaf_id: claim-leaf-long-range-correlations-and-local-model-mismatch
+  summary: >
+    Build an executable analyzer that corrects randomized binary targets,
+    recovers a nuisance-robust latent error distribution through length-domain
+    spectral fitting, audits an explicit local clique-tree model, and ranks
+    statistically supported interactions outside that model on unseen inputs.
+
+workflow_subgraph:
+  operation_ids:
+    - op-xor-correct-and-aggregate-counts
+    - op-transform-length-histograms
+    - op-fit-nuisance-decays
+    - op-reconstruct-simplex-distribution
+    - op-compute-dependence-diagnostics
+    - op-reconstruct-local-clique-tree-model
+    - op-rank-nonlocal-interactions
+  public_input_artifact_ids:
+    - artifact-randomized-target-histograms
+    - artifact-local-clique-tree-spec
+  participant_output_artifact_ids:
+    - artifact-hidden-generalizing-spectral-analyzer
+  private_rubric_artifact_ids:
+    - artifact-aggregated-histograms
+    - artifact-transformed-spectra
+    - artifact-fitted-decays
+    - artifact-simplex-distribution
+    - artifact-dependence-table
+    - artifact-local-model-audit
+  meaningful_operation_count: 7
+  dependency_depth: 7
+  branch_count: 4
+  tool_count: 2
+
+participant:
+  task_description_path: participant/TASK.md
+  visible_inputs:
+    - id: randomized-counts
+      path: participant/input/raw_counts.csv
+      format: CSV
+      purpose: retired public raw randomized-target histograms for implementation and debugging
+      source: trusted-synthetic
+      redistribution_status: allowed
+    - id: experiment-manifest
+      path: participant/input/manifest.json
+      format: JSON
+      purpose: dimensions, length grid, mask convention, and clique-tree definition
+      source: trusted-synthetic-and-benchmark-choice
+      redistribution_status: allowed
+  starter_software:
+    - path: participant/software/validate_submission.py
+      purpose: public executable-interface and runtime-artifact structural validation
+      removed_solution_components:
+        - XOR aggregation and spectral transform
+        - decay fitting and simplex projection
+        - dependence and local-model analysis
+        - private thresholds, inputs, and references
+  environment:
+    os: cross-platform
+    cpu_count: 4
+    memory_gb: 8
+    gpu: null
+    wall_time_minutes: 10
+    disk_gb: 1
+    network:
+      enabled: false
+      allowlist: []
+    packages:
+      - python==3.12.*
+      - numpy==2.3.5
+  required_outputs:
+    - id: analyzer
+      path: output/analyze.py
+      format: Python source
+      schema_or_shape: one source file implementing the disclosed CLI and six-artifact runtime contract
+      purpose: reusable analysis program evaluated behaviorally on hidden inputs
+      required: true
+  public_success_criteria:
+    - exact XOR-corrected pooled histograms and unnormalized spectra
+    - nuisance-aware bounded decay fits that predict held-out lengths
+    - accurate simplex-valid latent distribution on unseen cases
+    - internally consistent dependence metrics and clique-tree reconstruction
+    - accurate CMI-ranked nonlocal interactions under distribution shift
+  constraints:
+    - standard library and NumPy only under the disclosed import allowlist
+    - no network, child processes, dynamic execution, links, extra submission files, or mutation outside runtime output
+    - source, console, runtime, memory, and time limits stated in TASK.md
+  prohibited_dependencies:
+    - source paper
+    - official source repository
+    - private evaluator files
+    - author reference solvers or oracle
+    - undeclared network access
+
+paper_blindness:
+  neutralized_identifiers:
+    - paper title, authors, DOI, and preprint identifier
+    - source repository, package, notebook, and device names
+    - source-specific acronyms and reported experimental answers
+  withheld_author_information:
+    - exact hidden cases, seeds, latent parameters, references, thresholds, score weights, and mutants
+  leakage_checks:
+    - recursive forbidden-identifier scan over participant text and paths
+    - participant inventory and extension allowlist
+    - clean-room reference receives only participant assets plus its own solver source
+    - hidden experiment identifiers and dimensions differ from the retired public case
+  source_lookup_should_not_solve_task: true
+
+specification_closure:
+  decisions:
+    - decision: decimal mask and unit-index convention
+      status: disclosed
+      public_location_or_rationale: TASK.md Provided files and transform kernel
+    - decision: randomized-target correction and sequence aggregation weighting
+      status: disclosed
+      public_location_or_rationale: TASK.md XOR correction and aggregation
+    - decision: forward and inverse transform normalization and mask order
+      status: disclosed
+      public_location_or_rationale: TASK.md Unnormalized LSB-first spectra
+    - decision: decay objective, bounds, actual length values, mode zero, and RMSE
+      status: disclosed
+      public_location_or_rationale: TASK.md Nuisance-amplitude decay fits
+    - decision: distribution correction after inverse transform
+      status: disclosed
+      public_location_or_rationale: TASK.md requires Euclidean simplex projection
+    - decision: MI and CMI variables, conditioning set, zero terms, logarithm base, and units
+      status: disclosed
+      public_location_or_rationale: TASK.md Dependence diagnostics specifies natural-log nats and all-rest conditioning
+    - decision: Pearson bit encoding and degenerate variance behavior
+      status: disclosed
+      public_location_or_rationale: TASK.md Dependence diagnostics
+    - decision: clique marginal indexing, separator scopes, and junction-tree formula
+      status: disclosed
+      public_location_or_rationale: TASK.md Local-model reconstruction
+    - decision: JS square-root distance versus divergence and log base
+      status: disclosed
+      public_location_or_rationale: TASK.md explicitly selects square-root natural-log convention
+    - decision: nonlocal eligibility, ranking metric, order, and tie break
+      status: disclosed
+      public_location_or_rationale: TASK.md Local-model reconstruction and adequacy
+    - decision: numerical optimizer and internal data structures
+      status: evaluator_method_agnostic
+      public_location_or_rationale: any bounded least-squares implementation producing equivalent behavior is accepted
+    - decision: executable interface, artifact schemas, resource, and security limits
+      status: disclosed
+      public_location_or_rationale: TASK.md Runtime outputs and Environment and limits
+    - decision: finite hidden-input envelope and numerical conditioning
+      status: disclosed
+      public_location_or_rationale: TASK.md caps dimensions, rows, bytes, identifiers and clique count, and quantifies decay separation and separator-marginal floors
+  all_closed: true
+  paper_blind_review:
+    reviewer_has_seen_source: false
+    task_restatement_correct: true
+    material_ambiguities: []
+    status: pass
+  unresolved_items: []
+
+intrinsic_difficulty:
+  provisional_label: structurally_hard_candidate
+  challenge_sources:
+    - normalization- and index-sensitive multi-stage recovery from sparse randomized-target histograms
+    - two-parameter spectral fits under nuisance amplitudes, irregular lengths, finite shots, and missing length zero
+    - simplex geometry and linked distributional diagnostics across six runtime artifacts
+    - all-rest conditional information, junction-tree reconstruction, and hidden nonlocal interaction ranking
+    - executable generalization across unseen dimensions, topologies, targets, and correlation structures
+  non_difficulty_factors:
+    - formatting
+    - hidden threshold
+    - raw output volume
+    - excessive compute
+  shortcut_tests:
+    - name: ignore randomized targets
+      result: rejected
+      evidence: private mutant ignore-target-mask scores below acceptance
+    - name: fit from only visible length zero and one
+      result: rejected
+      evidence: two hidden cases omit length zero and use irregular grids
+    - name: copy public results or emit uniform current-shaped artifacts
+      result: rejected
+      evidence: hidden cases change identifiers, dimensions and grids; uniform-stale-analysis fails
+    - name: output final ranking without valid intermediates
+      result: rejected
+      evidence: exact hidden recomputation of aggregation, spectra, fits, distribution, diagnostics, and local model
+    - name: one-call generic transform or regression
+      result: rejected
+      evidence: thirteen mandatory scientific mutant rejects, one hard linked-ranking reject, and linked artifact consistency checks
+  expected_human_workflow: 8-16 expert hours to implement, validate, diagnose convention errors, and harden the general analyzer
+  agent_calibration:
+    status: not_run
+    exact_task_build_id: sha256:0bba762f4be56c68c2b20c5147c99d37b716f47ae74a8cff88f7f2271e796a1b
+    pinned_agent_systems: []
+
+private_evaluation:
+  evaluation_spec_path: private/evaluation_spec.yaml
+  hidden_input_paths:
+    - private/hidden_inputs/case_amber/
+    - private/hidden_inputs/case_indigo/
+    - private/hidden_inputs/case_sable/
+    - private/hidden_inputs/case_verdant/
+  reference_paths:
+    - private/reference/suite.json
+    - private/reference/case_*/truth.npz
+    - private/reference/canonical_submission/analyze.py
+  grader_paths:
+    - private/grader/core.py
+    - private/grader/grade.py
+    - private/grader/guarded_runner.py
+  exact_thresholds_private: true
+  exact_weights_private: true
+
+reference_generation:
+  privileged_oracle:
+    path: author/oracle/generate.py
+    may_use_source_information: true
+    last_run_status: pass
+  public_input_reference_solver:
+    path: author/reference_solver/
+    reads_only_participant_package: true
+    declared_environment_only: true
+    last_run_status: pass
+    score: 0.996904859452196
+    runtime_seconds: 0.050333600000158185
+  alternative_solver:
+    path: author/alternative_solver/
+    available: true
+    independence_notes: multi-start damped Gauss-Newton fitting and bisection simplex projection replace the reference profile search and sort-threshold projection
+    last_run_status: pass
+    score: 0.996904859477264
+    runtime_seconds: 0.07006809999802499
+
+instance_generation:
+  supported: true
+  trusted_generator: author/oracle/generate.py
+  private_seed_policy: distinct fixed authoring seeds for retired review; server-secret seeds required before scored publication
+  varying_factors:
+    - bit count, sequence lengths, missing length zero, shot allocation, target masks, nuisance rates, clique-tree topology, local potentials, and nonlocal interactions
+  invariants_preserved:
+    - exact XOR-convolution spectral decay law and quantitatively separated positive spectra
+    - observed error truth is the independent two-thirds visibility thinning of a nonnegative normalized Pauli-support distribution
+    - separator marginals remain above the public floor across valid chain and branched running-intersection clique trees
+    - strict simplex truth and detectable nonlocal interactions
+  public_review_instances_retired: true
+
+provenance:
+  path_base: task_root
+  source_manifest_path: ../../authoring/source_manifest.yaml
+  evidence_map_path: ../../authoring/evidence_map.yaml
+  workflow_graph_path: ../../authoring/workflow_graph.yaml
+  candidate_record_path: ../../authoring/task_candidates.yaml
+
+release:
+  verification_report_path: author/verification_report.md
+  checklist_complete: false
+  decision: needs_agent_calibration
+  blocking_issues:
+    - no pinned frontier-agent calibration has been run; collaborator scientific review may proceed under the structurally_hard_candidate label

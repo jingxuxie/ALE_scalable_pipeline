@@ -1,0 +1,985 @@
+schema_version: paper2ale.codex-workflow-graph/v1
+
+paper:
+  paper_id: "arxiv:1411.0660v2"
+  title: "Many-body localization edge in the random-field Heisenberg chain"
+  source_manifest_path: "authoring/source_manifest.yaml"
+
+claim_tree:
+  root:
+    id: "claim-root"
+    question: "Which finite-size spectral and eigenstate signatures distinguish weak and strong disorder in the random-field Heisenberg chain, and what can they support about an energy-resolved crossover?"
+    children:
+      - id: "claim-spectral-statistics"
+        question: "Do realization-aware adjacent-gap statistics exhibit a stable finite-size crossover?"
+        children:
+          - id: "leaf-gap-ratio-fss-audit"
+            type: "finding_leaf"
+            statement: "A realization-first gap-ratio analysis can locate and audit a finite-size crossover only when packet selection, scaling fits, fit-window stability, uncertainty, and held-out behavior agree."
+            scientific_importance: "central"
+            supporting_artifact_ids:
+              - "artifact-paper-fss-fits"
+              - "artifact-paper-stability-scan"
+              - "artifact-ssa-transition"
+              - "artifact-ssa-stability"
+              - "artifact-ssa-predictions"
+              - "artifact-ssa-claims"
+            reported_evidence_ids:
+              - "evidence-gap-ratio-definition"
+              - "evidence-gap-ratio-center-result"
+              - "evidence-realization-first-binning"
+              - "evidence-fss-protocol"
+              - "evidence-stability-grid"
+              - "evidence-bootstrap-systematics"
+              - "evidence-finite-size-caveat"
+            private_instance_potential: "high"
+          - id: "leaf-l22-shiftinvert-reproduction"
+            type: "finding_leaf"
+            statement: "Production-scale shift-invert calculations through L=22 reproduce the reported energy-resolved spectral statistics."
+            scientific_importance: "supporting"
+            supporting_artifact_ids:
+              - "artifact-proposed-l22-eigenpairs"
+            reported_evidence_ids:
+              - "evidence-shift-invert-sampling"
+              - "evidence-missing-numerical-details"
+              - "evidence-no-2015-code-data"
+            private_instance_potential: "low"
+      - id: "claim-eigenstate-signatures"
+        question: "Do independently computed eigenstate observables corroborate the finite-size spectral distinction?"
+        children:
+          - id: "leaf-joint-finite-size-signatures"
+            type: "finding_leaf"
+            statement: "For fully specified small disordered sectors, weak- and strong-disorder groups show jointly distinguishable finite-size spectral and eigenstate signatures without requiring a thermodynamic mobility-edge claim."
+            scientific_importance: "central"
+            supporting_artifact_ids:
+              - "artifact-dsa-states"
+              - "artifact-dsa-realizations"
+              - "artifact-dsa-ensembles"
+              - "artifact-dsa-conclusion"
+            reported_evidence_ids:
+              - "evidence-model-hamiltonian"
+              - "evidence-sectors-energy-coordinate"
+              - "evidence-gap-ratio-definition"
+              - "evidence-entanglement-scaling"
+              - "evidence-bipartite-fluctuation-result"
+              - "evidence-participation-result"
+              - "evidence-realization-first-binning"
+              - "evidence-finite-size-caveat"
+              - "evidence-dsa-small-system-extension"
+              - "evidence-dsa-finite-size-only"
+            private_instance_potential: "high"
+          - id: "leaf-entanglement-ridge"
+            type: "finding_leaf"
+            statement: "A tabulation of the reported half-chain entanglement fluctuation ridge locates the finite-size transition."
+            scientific_importance: "diagnostic"
+            supporting_artifact_ids:
+              - "artifact-proposed-entanglement-ridge-table"
+            reported_evidence_ids:
+              - "evidence-entanglement-scaling"
+              - "evidence-ee-sigma-ambiguity"
+            private_instance_potential: "low"
+          - id: "leaf-no-true-hilbert-localization"
+            type: "finding_leaf"
+            statement: "Accessible-size participation entropy does not establish true localization in Hilbert space."
+            scientific_importance: "supporting"
+            supporting_artifact_ids:
+              - "artifact-paper-participation-samples"
+              - "artifact-paper-phase-evidence"
+            reported_evidence_ids:
+              - "evidence-participation-result"
+              - "evidence-no-true-hilbert-localization"
+              - "evidence-version-multifractality"
+            private_instance_potential: "medium"
+      - id: "claim-edge-synthesis"
+        question: "Can multiple finite-size observables be reconciled into an energy-resolved phase-boundary interpretation?"
+        children:
+          - id: "leaf-multiple-observable-consistency"
+            type: "finding_leaf"
+            statement: "Several reported finite-size observables give broadly consistent energy-resolved crossover estimates, subject to strong finite-size caveats."
+            scientific_importance: "central"
+            supporting_artifact_ids:
+              - "artifact-paper-phase-evidence"
+            reported_evidence_ids:
+              - "evidence-mobility-edge-claim"
+              - "evidence-bipartite-fluctuation-result"
+              - "evidence-dynamic-fraction"
+              - "evidence-finite-size-caveat"
+            private_instance_potential: "medium"
+
+workflow:
+  artifacts:
+    - id: "artifact-paper-model-spec"
+      role: "input"
+      origin: "paper"
+      visibility: "author_only"
+      format: "equation and protocol"
+      provenance_ids: ["evidence-model-hamiltonian", "evidence-sectors-energy-coordinate"]
+
+    - id: "artifact-paper-disorder-realizations"
+      role: "input"
+      origin: "paper"
+      visibility: "author_only"
+      format: "unreleased realization ensemble"
+      provenance_ids: ["evidence-model-hamiltonian", "evidence-no-2015-code-data"]
+
+    - id: "artifact-paper-sector-hamiltonians"
+      role: "intermediate"
+      origin: "paper"
+      visibility: "author_only"
+      format: "sparse sector matrices"
+      provenance_ids: ["evidence-model-hamiltonian", "evidence-sectors-energy-coordinate"]
+
+    - id: "artifact-paper-energy-targets"
+      role: "intermediate"
+      origin: "paper"
+      visibility: "author_only"
+      format: "per-realization normalized target table"
+      provenance_ids: ["evidence-sectors-energy-coordinate", "evidence-shift-invert-sampling"]
+
+    - id: "artifact-paper-eigenpairs"
+      role: "intermediate"
+      origin: "paper"
+      visibility: "author_only"
+      format: "unreleased eigenvalue/eigenvector packets"
+      provenance_ids: ["evidence-shift-invert-sampling", "evidence-no-2015-code-data"]
+
+    - id: "artifact-paper-gap-samples"
+      role: "intermediate"
+      origin: "paper"
+      visibility: "author_only"
+      format: "adjacent-gap ratio samples"
+      provenance_ids: ["evidence-gap-ratio-definition"]
+
+    - id: "artifact-paper-kl-samples"
+      role: "intermediate"
+      origin: "paper"
+      visibility: "author_only"
+      format: "eigenstate KL samples"
+      provenance_ids: ["evidence-kl-signatures", "evidence-kl-pairing-gap"]
+
+    - id: "artifact-paper-entanglement-samples"
+      role: "intermediate"
+      origin: "paper"
+      visibility: "author_only"
+      format: "half-chain entropy and fluctuation samples"
+      provenance_ids: ["evidence-entanglement-scaling", "evidence-ee-sigma-ambiguity", "evidence-bipartite-fluctuation-result"]
+
+    - id: "artifact-paper-participation-samples"
+      role: "intermediate"
+      origin: "paper"
+      visibility: "author_only"
+      format: "participation entropy samples"
+      provenance_ids: ["evidence-participation-result", "evidence-no-true-hilbert-localization"]
+      supports_claim_leaf_ids: ["leaf-no-true-hilbert-localization"]
+
+    - id: "artifact-paper-realization-bins"
+      role: "intermediate"
+      origin: "paper"
+      visibility: "author_only"
+      format: "per-realization binned observables"
+      provenance_ids: ["evidence-realization-first-binning"]
+
+    - id: "artifact-paper-ensemble-curves"
+      role: "intermediate"
+      origin: "paper"
+      visibility: "author_only"
+      format: "ensemble means and standard errors"
+      provenance_ids: ["evidence-realization-first-binning"]
+
+    - id: "artifact-paper-fss-fits"
+      role: "intermediate"
+      origin: "paper"
+      visibility: "author_only"
+      format: "one-parameter scaling fits"
+      provenance_ids: ["evidence-fss-protocol"]
+      supports_claim_leaf_ids: ["leaf-gap-ratio-fss-audit"]
+
+    - id: "artifact-paper-stability-scan"
+      role: "intermediate"
+      origin: "paper"
+      visibility: "author_only"
+      format: "fit-window and minimum-size scan"
+      provenance_ids: ["evidence-stability-grid", "evidence-fit-limitations"]
+      supports_claim_leaf_ids: ["leaf-gap-ratio-fss-audit"]
+
+    - id: "artifact-paper-uncertainty"
+      role: "intermediate"
+      origin: "paper"
+      visibility: "author_only"
+      format: "bootstrap and systematic uncertainty summary"
+      provenance_ids: ["evidence-bootstrap-systematics"]
+
+    - id: "artifact-paper-phase-evidence"
+      role: "output"
+      origin: "paper"
+      visibility: "author_only"
+      format: "figures, tables, and qualified conclusions"
+      provenance_ids: ["evidence-mobility-edge-claim", "evidence-finite-size-caveat", "evidence-dynamic-fraction"]
+      supports_claim_leaf_ids: ["leaf-multiple-observable-consistency", "leaf-no-true-hilbert-localization"]
+
+    - id: "artifact-ssa-public-manifest"
+      role: "input"
+      origin: "grounded_extension_asset"
+      visibility: "participant"
+      format: "manifest.json"
+      provenance_ids: ["evidence-ssa-generated-extension"]
+
+    - id: "artifact-ssa-public-eigenvalues"
+      role: "input"
+      origin: "grounded_extension_asset"
+      visibility: "participant"
+      format: "eigenvalues.npz"
+      provenance_ids: ["evidence-ssa-generated-extension", "evidence-gap-ratio-definition"]
+
+    - id: "artifact-ssa-public-packets"
+      role: "input"
+      origin: "grounded_extension_asset"
+      visibility: "participant"
+      format: "packets.csv"
+      provenance_ids: ["evidence-ssa-generated-extension", "evidence-sectors-energy-coordinate"]
+
+    - id: "artifact-ssa-public-queries"
+      role: "input"
+      origin: "grounded_extension_asset"
+      visibility: "participant"
+      format: "queries.csv"
+      provenance_ids: ["evidence-ssa-generated-extension"]
+
+    - id: "artifact-ssa-public-grid"
+      role: "input"
+      origin: "grounded_extension_asset"
+      visibility: "participant"
+      format: "analysis_grid.json"
+      provenance_ids: ["evidence-stability-grid", "evidence-ssa-generated-extension"]
+
+    - id: "artifact-ssa-analysis-source"
+      role: "output"
+      origin: "participant"
+      visibility: "participant_output"
+      format: "output/analyze.py"
+      provenance_ids: ["evidence-ssa-generated-extension", "evidence-ssa-method-freedom"]
+
+    - id: "artifact-ssa-selected-packets"
+      role: "intermediate"
+      origin: "participant"
+      visibility: "private_rubric"
+      format: "in-memory normalized packet index"
+      provenance_ids: ["evidence-sectors-energy-coordinate", "evidence-ssa-generated-extension"]
+
+    - id: "artifact-ssa-gap-values"
+      role: "intermediate"
+      origin: "participant"
+      visibility: "private_rubric"
+      format: "in-memory adjacent-gap table"
+      provenance_ids: ["evidence-gap-ratio-definition"]
+
+    - id: "artifact-ssa-realization-stats"
+      role: "output"
+      origin: "participant"
+      visibility: "participant_output"
+      format: "realization_stats.csv"
+      provenance_ids: ["evidence-realization-first-binning", "evidence-ssa-generated-extension"]
+
+    - id: "artifact-ssa-packet-stats"
+      role: "output"
+      origin: "participant"
+      visibility: "participant_output"
+      format: "packet_stats.csv"
+      provenance_ids: ["evidence-realization-first-binning", "evidence-ssa-generated-extension"]
+
+    - id: "artifact-ssa-transition"
+      role: "output"
+      origin: "participant"
+      visibility: "participant_output"
+      format: "transition.csv"
+      provenance_ids: ["evidence-fss-protocol", "evidence-ssa-method-freedom"]
+      supports_claim_leaf_ids: ["leaf-gap-ratio-fss-audit"]
+
+    - id: "artifact-ssa-stability"
+      role: "output"
+      origin: "participant"
+      visibility: "participant_output"
+      format: "stability.csv"
+      provenance_ids: ["evidence-stability-grid", "evidence-fit-limitations"]
+      supports_claim_leaf_ids: ["leaf-gap-ratio-fss-audit"]
+
+    - id: "artifact-ssa-uncertainty-summary"
+      role: "intermediate"
+      origin: "participant"
+      visibility: "private_rubric"
+      format: "in-memory cluster-bootstrap summary"
+      provenance_ids: ["evidence-bootstrap-systematics", "evidence-ssa-method-freedom"]
+
+    - id: "artifact-ssa-predictions"
+      role: "output"
+      origin: "participant"
+      visibility: "participant_output"
+      format: "predictions.csv"
+      provenance_ids: ["evidence-ssa-generated-extension", "evidence-ssa-method-freedom"]
+      supports_claim_leaf_ids: ["leaf-gap-ratio-fss-audit"]
+
+    - id: "artifact-ssa-claims"
+      role: "output"
+      origin: "participant"
+      visibility: "participant_output"
+      format: "claims.json"
+      provenance_ids: ["evidence-finite-size-caveat", "evidence-ssa-method-freedom"]
+      supports_claim_leaf_ids: ["leaf-gap-ratio-fss-audit"]
+
+    - id: "artifact-ssa-private-score"
+      role: "evaluation"
+      origin: "private_evaluator"
+      visibility: "private"
+      format: "structured score and diagnostics"
+      provenance_ids: ["evidence-ssa-generated-extension", "evidence-ssa-method-freedom"]
+
+    - id: "artifact-dsa-public-experiments"
+      role: "input"
+      origin: "grounded_extension_asset"
+      visibility: "participant"
+      format: "experiment.json with IDs, L, n_up, exchange, fields, queries, subsystems, and comparisons"
+      provenance_ids: ["evidence-dsa-small-system-extension", "evidence-model-hamiltonian"]
+
+    - id: "artifact-dsa-solution-source"
+      role: "output"
+      origin: "participant"
+      visibility: "participant_output"
+      format: "output/solution.py"
+      provenance_ids: ["evidence-dsa-small-system-extension"]
+
+    - id: "artifact-dsa-normalized-experiments"
+      role: "intermediate"
+      origin: "participant"
+      visibility: "private_rubric"
+      format: "validated in-memory experiment records"
+      provenance_ids: ["evidence-dsa-small-system-extension"]
+
+    - id: "artifact-dsa-sector-bases"
+      role: "intermediate"
+      origin: "participant"
+      visibility: "private_rubric"
+      format: "ordered fixed-n_up bit bases"
+      provenance_ids: ["evidence-sectors-energy-coordinate", "evidence-odd-sector-ambiguity"]
+
+    - id: "artifact-dsa-hamiltonians"
+      role: "intermediate"
+      origin: "participant"
+      visibility: "private_rubric"
+      format: "dense real-symmetric matrices"
+      provenance_ids: ["evidence-model-hamiltonian", "evidence-dsa-small-system-extension"]
+
+    - id: "artifact-dsa-eigensystems"
+      role: "intermediate"
+      origin: "participant"
+      visibility: "private_rubric"
+      format: "ordered eigenvalues and eigenvectors"
+      provenance_ids: ["evidence-dsa-small-system-extension"]
+
+    - id: "artifact-dsa-selected-packets"
+      role: "intermediate"
+      origin: "participant"
+      visibility: "private_rubric"
+      format: "per-realization target packets"
+      provenance_ids: ["evidence-sectors-energy-coordinate", "evidence-dsa-small-system-extension"]
+
+    - id: "artifact-dsa-states"
+      role: "output_section"
+      origin: "participant"
+      visibility: "participant_output"
+      format: "RESULT_JSON.state_rows"
+      provenance_ids: ["evidence-gap-ratio-definition", "evidence-participation-result", "evidence-dsa-small-system-extension"]
+      supports_claim_leaf_ids: ["leaf-joint-finite-size-signatures"]
+
+    - id: "artifact-dsa-realizations"
+      role: "intermediate"
+      origin: "participant"
+      visibility: "private_rubric"
+      format: "in-memory per-record means used for equal-realization aggregation"
+      provenance_ids: ["evidence-realization-first-binning", "evidence-dsa-small-system-extension"]
+      supports_claim_leaf_ids: ["leaf-joint-finite-size-signatures"]
+
+    - id: "artifact-dsa-ensembles"
+      role: "output_section"
+      origin: "participant"
+      visibility: "participant_output"
+      format: "RESULT_JSON.aggregate_rows"
+      provenance_ids: ["evidence-dsa-small-system-extension", "evidence-dsa-finite-size-only"]
+      supports_claim_leaf_ids: ["leaf-joint-finite-size-signatures"]
+
+    - id: "artifact-dsa-conclusion"
+      role: "output_section"
+      origin: "participant"
+      visibility: "participant_output"
+      format: "RESULT_JSON.conclusions"
+      provenance_ids: ["evidence-finite-size-caveat", "evidence-dsa-finite-size-only"]
+      supports_claim_leaf_ids: ["leaf-joint-finite-size-signatures"]
+
+    - id: "artifact-dsa-private-score"
+      role: "evaluation"
+      origin: "private_evaluator"
+      visibility: "private"
+      format: "structured score and diagnostics"
+      provenance_ids: ["evidence-dsa-small-system-extension", "evidence-dsa-finite-size-only"]
+
+    - id: "artifact-proposed-entanglement-ridge-table"
+      role: "proposed_output"
+      origin: "candidate_only"
+      visibility: "author_only"
+      format: "table or digitized curve"
+      provenance_ids: ["evidence-entanglement-scaling", "evidence-ee-sigma-ambiguity"]
+      supports_claim_leaf_ids: ["leaf-entanglement-ridge"]
+
+    - id: "artifact-proposed-l22-eigenpairs"
+      role: "proposed_output"
+      origin: "candidate_only"
+      visibility: "author_only"
+      format: "production-scale eigenpairs and statistics"
+      provenance_ids: ["evidence-shift-invert-sampling", "evidence-missing-numerical-details", "evidence-no-2015-code-data"]
+      supports_claim_leaf_ids: ["leaf-l22-shiftinvert-reproduction"]
+
+  operations:
+    - id: "op-paper-model"
+      name: "Instantiate disorder realizations and fixed-magnetization Hamiltonians"
+      authority: "source_authors"
+      inputs: ["artifact-paper-model-spec", "artifact-paper-disorder-realizations"]
+      outputs: ["artifact-paper-sector-hamiltonians"]
+      tool: "unreleased implementation"
+      meaningful_operation: true
+      stochastic: true
+      estimated_runtime_minutes: null
+      provenance_ids: ["evidence-model-hamiltonian", "evidence-sectors-energy-coordinate", "evidence-no-2015-code-data"]
+      origin_class: "paper_reported"
+
+    - id: "op-paper-energy-targeting"
+      name: "Compute extremal energies and per-realization normalized targets"
+      authority: "source_authors"
+      inputs: ["artifact-paper-sector-hamiltonians"]
+      outputs: ["artifact-paper-energy-targets"]
+      tool: "unreleased eigensolver workflow"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: null
+      provenance_ids: ["evidence-sectors-energy-coordinate", "evidence-shift-invert-sampling"]
+      origin_class: "paper_reported"
+
+    - id: "op-paper-eigenpairs"
+      name: "Solve targeted interior eigenpairs by shift-invert Krylov methods"
+      authority: "source_authors"
+      inputs: ["artifact-paper-sector-hamiltonians", "artifact-paper-energy-targets"]
+      outputs: ["artifact-paper-eigenpairs"]
+      tool: "PETSc/SLEPc plus MUMPS, exact settings unreleased"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: null
+      provenance_ids: ["evidence-shift-invert-sampling", "evidence-missing-numerical-details"]
+      origin_class: "paper_reported"
+
+    - id: "op-paper-gap-ratio"
+      name: "Compute adjacent-gap ratios"
+      authority: "source_authors"
+      inputs: ["artifact-paper-eigenpairs"]
+      outputs: ["artifact-paper-gap-samples"]
+      tool: "unreleased analysis"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: null
+      provenance_ids: ["evidence-gap-ratio-definition", "evidence-gap-ratio-center-result"]
+      origin_class: "paper_reported"
+
+    - id: "op-paper-kl"
+      name: "Compute eigenvector KL diagnostics"
+      authority: "source_authors"
+      inputs: ["artifact-paper-eigenpairs"]
+      outputs: ["artifact-paper-kl-samples"]
+      tool: "unreleased analysis with ambiguous pairing description"
+      meaningful_operation: true
+      stochastic: true
+      estimated_runtime_minutes: null
+      provenance_ids: ["evidence-kl-signatures", "evidence-kl-pairing-gap"]
+      origin_class: "paper_reported"
+
+    - id: "op-paper-entanglement"
+      name: "Compute half-chain entanglement and magnetization fluctuations"
+      authority: "source_authors"
+      inputs: ["artifact-paper-eigenpairs"]
+      outputs: ["artifact-paper-entanglement-samples"]
+      tool: "unreleased analysis"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: null
+      provenance_ids: ["evidence-entanglement-scaling", "evidence-ee-sigma-ambiguity", "evidence-bipartite-fluctuation-result"]
+      origin_class: "paper_reported"
+
+    - id: "op-paper-participation"
+      name: "Compute participation entropies in the computational basis"
+      authority: "source_authors"
+      inputs: ["artifact-paper-eigenpairs"]
+      outputs: ["artifact-paper-participation-samples"]
+      tool: "unreleased analysis"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: null
+      provenance_ids: ["evidence-participation-result", "evidence-no-true-hilbert-localization"]
+      origin_class: "paper_reported"
+
+    - id: "op-paper-realization-binning"
+      name: "Bin state-level observables within each disorder realization"
+      authority: "source_authors"
+      inputs: ["artifact-paper-gap-samples", "artifact-paper-kl-samples", "artifact-paper-entanglement-samples", "artifact-paper-participation-samples"]
+      outputs: ["artifact-paper-realization-bins", "artifact-paper-ensemble-curves"]
+      tool: "unreleased analysis"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: null
+      provenance_ids: ["evidence-realization-first-binning"]
+      origin_class: "paper_reported"
+
+    - id: "op-paper-fss"
+      name: "Fit one-parameter finite-size scaling collapses"
+      authority: "source_authors"
+      inputs: ["artifact-paper-ensemble-curves"]
+      outputs: ["artifact-paper-fss-fits"]
+      tool: "cubic scaling-curve fit; optimizer and weighting unreleased"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: null
+      provenance_ids: ["evidence-fss-protocol", "evidence-missing-numerical-details"]
+      origin_class: "paper_reported"
+
+    - id: "op-paper-stability"
+      name: "Scan fit windows and minimum system sizes"
+      authority: "source_authors"
+      inputs: ["artifact-paper-ensemble-curves", "artifact-paper-fss-fits"]
+      outputs: ["artifact-paper-stability-scan"]
+      tool: "unreleased analysis"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: null
+      provenance_ids: ["evidence-stability-grid", "evidence-fit-limitations"]
+      origin_class: "paper_reported"
+
+    - id: "op-paper-bootstrap"
+      name: "Estimate statistical and fit-choice uncertainty"
+      authority: "source_authors"
+      inputs: ["artifact-paper-realization-bins", "artifact-paper-fss-fits", "artifact-paper-stability-scan"]
+      outputs: ["artifact-paper-uncertainty"]
+      tool: "bootstrap protocol with unreleased resampling details"
+      meaningful_operation: true
+      stochastic: true
+      estimated_runtime_minutes: null
+      provenance_ids: ["evidence-bootstrap-systematics", "evidence-missing-numerical-details"]
+      origin_class: "paper_reported"
+
+    - id: "op-paper-reconcile-observables"
+      name: "Reconcile finite-size observables into qualified phase evidence"
+      authority: "source_authors"
+      inputs: ["artifact-paper-ensemble-curves", "artifact-paper-fss-fits", "artifact-paper-stability-scan", "artifact-paper-uncertainty"]
+      outputs: ["artifact-paper-phase-evidence"]
+      tool: "scientific synthesis"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: null
+      provenance_ids: ["evidence-mobility-edge-claim", "evidence-finite-size-caveat", "evidence-dynamic-fraction"]
+      origin_class: "paper_reported"
+
+    - id: "op-ssa-parse"
+      name: "Validate case schema and select energies nearest each per-realization normalized target"
+      authority: "participant"
+      inputs: ["artifact-ssa-public-manifest", "artifact-ssa-public-eigenvalues", "artifact-ssa-public-packets", "artifact-ssa-public-queries", "artifact-ssa-public-grid"]
+      outputs: ["artifact-ssa-selected-packets"]
+      tool: "Python 3.11 and NumPy"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 2
+      provenance_ids: ["evidence-sectors-energy-coordinate", "evidence-ssa-generated-extension"]
+      origin_class: "grounded_extension"
+
+    - id: "op-ssa-gap"
+      name: "Sort packets and compute adjacent-gap ratios with disclosed edge handling"
+      authority: "participant"
+      inputs: ["artifact-ssa-selected-packets"]
+      outputs: ["artifact-ssa-gap-values"]
+      tool: "Python 3.11 and NumPy"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 2
+      provenance_ids: ["evidence-gap-ratio-definition", "evidence-ssa-generated-extension"]
+      origin_class: "grounded_extension"
+
+    - id: "op-ssa-bin"
+      name: "Aggregate within realization before group means and standard errors"
+      authority: "participant"
+      inputs: ["artifact-ssa-gap-values", "artifact-ssa-selected-packets"]
+      outputs: ["artifact-ssa-realization-stats", "artifact-ssa-packet-stats"]
+      tool: "Python 3.11 and NumPy"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 2
+      provenance_ids: ["evidence-realization-first-binning", "evidence-ssa-generated-extension"]
+      origin_class: "grounded_extension"
+
+    - id: "op-ssa-fit"
+      name: "Fit finite-size crossover parameters and make held-out query predictions"
+      authority: "participant"
+      inputs: ["artifact-ssa-realization-stats", "artifact-ssa-packet-stats", "artifact-ssa-public-queries"]
+      outputs: ["artifact-ssa-transition", "artifact-ssa-predictions"]
+      tool: "Python 3.11 and NumPy"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 5
+      provenance_ids: ["evidence-fss-protocol", "evidence-ssa-method-freedom"]
+      origin_class: "grounded_extension"
+
+    - id: "op-ssa-stability"
+      name: "Sweep public minimum-size and fit-window choices"
+      authority: "participant"
+      inputs: ["artifact-ssa-realization-stats", "artifact-ssa-public-grid"]
+      outputs: ["artifact-ssa-stability"]
+      tool: "Python 3.11 and NumPy"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 4
+      provenance_ids: ["evidence-stability-grid", "evidence-fit-limitations", "evidence-ssa-generated-extension"]
+      origin_class: "grounded_extension"
+
+    - id: "op-ssa-uncertainty"
+      name: "Estimate realization-cluster uncertainty and fit-choice sensitivity"
+      authority: "participant"
+      inputs: ["artifact-ssa-realization-stats", "artifact-ssa-transition", "artifact-ssa-stability"]
+      outputs: ["artifact-ssa-uncertainty-summary"]
+      tool: "Python 3.11 and NumPy"
+      meaningful_operation: true
+      stochastic: true
+      estimated_runtime_minutes: 4
+      provenance_ids: ["evidence-bootstrap-systematics", "evidence-ssa-method-freedom"]
+      origin_class: "grounded_extension"
+
+    - id: "op-ssa-report"
+      name: "Issue evidence-consistent finite-size claims with explicit caveats"
+      authority: "participant"
+      inputs: ["artifact-ssa-transition", "artifact-ssa-stability", "artifact-ssa-uncertainty-summary", "artifact-ssa-predictions"]
+      outputs: ["artifact-ssa-claims"]
+      tool: "Python 3.11"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 1
+      provenance_ids: ["evidence-finite-size-caveat", "evidence-ssa-method-freedom"]
+      origin_class: "grounded_extension"
+
+    - id: "op-ssa-private-evaluate"
+      name: "Recompute outputs and evaluate behavior on unpublished cases and metamorphic variants"
+      authority: "private_evaluator"
+      inputs: ["artifact-ssa-analysis-source", "artifact-ssa-realization-stats", "artifact-ssa-packet-stats", "artifact-ssa-transition", "artifact-ssa-stability", "artifact-ssa-predictions", "artifact-ssa-claims"]
+      outputs: ["artifact-ssa-private-score"]
+      tool: "private/grader/grade.py, verified by scripts/verify.py"
+      meaningful_operation: false
+      stochastic: false
+      estimated_runtime_minutes: 20
+      provenance_ids: ["evidence-ssa-generated-extension", "evidence-ssa-method-freedom"]
+      origin_class: "benchmark_choice"
+
+    - id: "op-dsa-parse"
+      name: "Validate arbitrary experiment identifiers and explicit model records"
+      authority: "participant"
+      inputs: ["artifact-dsa-public-experiments"]
+      outputs: ["artifact-dsa-normalized-experiments"]
+      tool: "Python 3.11 and NumPy"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 1
+      provenance_ids: ["evidence-dsa-small-system-extension"]
+      origin_class: "grounded_extension"
+
+    - id: "op-dsa-enumerate-sector"
+      name: "Enumerate the fixed-n_up computational basis deterministically"
+      authority: "participant"
+      inputs: ["artifact-dsa-normalized-experiments"]
+      outputs: ["artifact-dsa-sector-bases"]
+      tool: "Python 3.11 and NumPy"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 1
+      provenance_ids: ["evidence-sectors-energy-coordinate", "evidence-odd-sector-ambiguity", "evidence-dsa-small-system-extension"]
+      origin_class: "grounded_extension"
+
+    - id: "op-dsa-assemble-hamiltonian"
+      name: "Assemble exchange, spin-flip, periodic closing-bond, and random-field terms"
+      authority: "participant"
+      inputs: ["artifact-dsa-normalized-experiments", "artifact-dsa-sector-bases"]
+      outputs: ["artifact-dsa-hamiltonians"]
+      tool: "Python 3.11 and NumPy"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 3
+      provenance_ids: ["evidence-model-hamiltonian", "evidence-dsa-small-system-extension"]
+      origin_class: "grounded_extension"
+
+    - id: "op-dsa-diagonalize"
+      name: "Compute ordered small-sector eigensystems"
+      authority: "participant"
+      inputs: ["artifact-dsa-hamiltonians"]
+      outputs: ["artifact-dsa-eigensystems"]
+      tool: "numpy.linalg.eigh"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 8
+      provenance_ids: ["evidence-dsa-small-system-extension"]
+      origin_class: "grounded_extension"
+
+    - id: "op-dsa-select-packets"
+      name: "Normalize each realization spectrum and select deterministic target packets"
+      authority: "participant"
+      inputs: ["artifact-dsa-normalized-experiments", "artifact-dsa-eigensystems"]
+      outputs: ["artifact-dsa-selected-packets"]
+      tool: "Python 3.11 and NumPy"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 1
+      provenance_ids: ["evidence-sectors-energy-coordinate", "evidence-dsa-small-system-extension"]
+      origin_class: "grounded_extension"
+
+    - id: "op-dsa-compute-observables"
+      name: "Compute gap ratio, half-chain entropy, participation entropies, and subsystem magnetization moments"
+      authority: "participant"
+      inputs: ["artifact-dsa-normalized-experiments", "artifact-dsa-sector-bases", "artifact-dsa-eigensystems", "artifact-dsa-selected-packets"]
+      outputs: ["artifact-dsa-states"]
+      tool: "Python 3.11 and NumPy"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 6
+      provenance_ids: ["evidence-gap-ratio-definition", "evidence-entanglement-scaling", "evidence-participation-result", "evidence-dsa-small-system-extension"]
+      origin_class: "grounded_extension"
+
+    - id: "op-dsa-realization-bin"
+      name: "Aggregate state metrics within each realization"
+      authority: "participant"
+      inputs: ["artifact-dsa-states"]
+      outputs: ["artifact-dsa-realizations"]
+      tool: "Python 3.11 and NumPy"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 1
+      provenance_ids: ["evidence-realization-first-binning", "evidence-dsa-small-system-extension"]
+      origin_class: "grounded_extension"
+
+    - id: "op-dsa-ensemble-contrast"
+      name: "Aggregate realization means and quantify weak-versus-strong finite-size contrasts"
+      authority: "participant"
+      inputs: ["artifact-dsa-realizations"]
+      outputs: ["artifact-dsa-ensembles"]
+      tool: "Python 3.11 and NumPy"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 1
+      provenance_ids: ["evidence-gap-ratio-definition", "evidence-entanglement-scaling", "evidence-bipartite-fluctuation-result", "evidence-participation-result", "evidence-dsa-finite-size-only"]
+      origin_class: "grounded_extension"
+
+    - id: "op-dsa-evidence-report"
+      name: "Report whether joint finite-size evidence supports the disclosed weak/strong distinction"
+      authority: "participant"
+      inputs: ["artifact-dsa-states", "artifact-dsa-realizations", "artifact-dsa-ensembles"]
+      outputs: ["artifact-dsa-conclusion"]
+      tool: "Python 3.11"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 1
+      provenance_ids: ["evidence-finite-size-caveat", "evidence-dsa-finite-size-only"]
+      origin_class: "grounded_extension"
+
+    - id: "op-dsa-private-evaluate"
+      name: "Recompute small-sector observables and evaluate fresh and metamorphic experiments"
+      authority: "private_evaluator"
+      inputs: ["artifact-dsa-solution-source", "artifact-dsa-states", "artifact-dsa-realizations", "artifact-dsa-ensembles", "artifact-dsa-conclusion"]
+      outputs: ["artifact-dsa-private-score"]
+      tool: "private/grader/grade.py, verified by scripts/verify.py"
+      meaningful_operation: false
+      stochastic: false
+      estimated_runtime_minutes: 20
+      provenance_ids: ["evidence-dsa-small-system-extension", "evidence-dsa-finite-size-only"]
+      origin_class: "benchmark_choice"
+
+  edges:
+    - {from: "artifact-paper-model-spec", to: "op-paper-model", type: "consumed_by"}
+    - {from: "artifact-paper-disorder-realizations", to: "op-paper-model", type: "consumed_by"}
+    - {from: "op-paper-model", to: "artifact-paper-sector-hamiltonians", type: "produces"}
+    - {from: "artifact-paper-sector-hamiltonians", to: "op-paper-energy-targeting", type: "consumed_by"}
+    - {from: "op-paper-energy-targeting", to: "artifact-paper-energy-targets", type: "produces"}
+    - {from: "artifact-paper-sector-hamiltonians", to: "op-paper-eigenpairs", type: "consumed_by"}
+    - {from: "artifact-paper-energy-targets", to: "op-paper-eigenpairs", type: "consumed_by"}
+    - {from: "op-paper-eigenpairs", to: "artifact-paper-eigenpairs", type: "produces"}
+    - {from: "artifact-paper-eigenpairs", to: "op-paper-gap-ratio", type: "consumed_by"}
+    - {from: "op-paper-gap-ratio", to: "artifact-paper-gap-samples", type: "produces"}
+    - {from: "artifact-paper-eigenpairs", to: "op-paper-kl", type: "consumed_by"}
+    - {from: "op-paper-kl", to: "artifact-paper-kl-samples", type: "produces"}
+    - {from: "artifact-paper-eigenpairs", to: "op-paper-entanglement", type: "consumed_by"}
+    - {from: "op-paper-entanglement", to: "artifact-paper-entanglement-samples", type: "produces"}
+    - {from: "artifact-paper-eigenpairs", to: "op-paper-participation", type: "consumed_by"}
+    - {from: "op-paper-participation", to: "artifact-paper-participation-samples", type: "produces"}
+    - {from: "artifact-paper-gap-samples", to: "op-paper-realization-binning", type: "consumed_by"}
+    - {from: "artifact-paper-kl-samples", to: "op-paper-realization-binning", type: "consumed_by"}
+    - {from: "artifact-paper-entanglement-samples", to: "op-paper-realization-binning", type: "consumed_by"}
+    - {from: "artifact-paper-participation-samples", to: "op-paper-realization-binning", type: "consumed_by"}
+    - {from: "op-paper-realization-binning", to: "artifact-paper-realization-bins", type: "produces"}
+    - {from: "op-paper-realization-binning", to: "artifact-paper-ensemble-curves", type: "produces"}
+    - {from: "artifact-paper-ensemble-curves", to: "op-paper-fss", type: "consumed_by"}
+    - {from: "op-paper-fss", to: "artifact-paper-fss-fits", type: "produces"}
+    - {from: "artifact-paper-ensemble-curves", to: "op-paper-stability", type: "consumed_by"}
+    - {from: "artifact-paper-fss-fits", to: "op-paper-stability", type: "consumed_by"}
+    - {from: "op-paper-stability", to: "artifact-paper-stability-scan", type: "produces"}
+    - {from: "artifact-paper-realization-bins", to: "op-paper-bootstrap", type: "consumed_by"}
+    - {from: "artifact-paper-fss-fits", to: "op-paper-bootstrap", type: "consumed_by"}
+    - {from: "artifact-paper-stability-scan", to: "op-paper-bootstrap", type: "consumed_by"}
+    - {from: "op-paper-bootstrap", to: "artifact-paper-uncertainty", type: "produces"}
+    - {from: "artifact-paper-ensemble-curves", to: "op-paper-reconcile-observables", type: "consumed_by"}
+    - {from: "artifact-paper-fss-fits", to: "op-paper-reconcile-observables", type: "consumed_by"}
+    - {from: "artifact-paper-stability-scan", to: "op-paper-reconcile-observables", type: "consumed_by"}
+    - {from: "artifact-paper-uncertainty", to: "op-paper-reconcile-observables", type: "consumed_by"}
+    - {from: "op-paper-reconcile-observables", to: "artifact-paper-phase-evidence", type: "produces"}
+    - {from: "artifact-ssa-analysis-source", to: "op-ssa-parse", type: "implements"}
+    - {from: "artifact-ssa-public-manifest", to: "op-ssa-parse", type: "consumed_by"}
+    - {from: "artifact-ssa-public-eigenvalues", to: "op-ssa-parse", type: "consumed_by"}
+    - {from: "artifact-ssa-public-packets", to: "op-ssa-parse", type: "consumed_by"}
+    - {from: "artifact-ssa-public-queries", to: "op-ssa-parse", type: "consumed_by"}
+    - {from: "artifact-ssa-public-grid", to: "op-ssa-parse", type: "consumed_by"}
+    - {from: "op-ssa-parse", to: "artifact-ssa-selected-packets", type: "produces"}
+    - {from: "artifact-ssa-selected-packets", to: "op-ssa-gap", type: "consumed_by"}
+    - {from: "op-ssa-gap", to: "artifact-ssa-gap-values", type: "produces"}
+    - {from: "artifact-ssa-gap-values", to: "op-ssa-bin", type: "consumed_by"}
+    - {from: "artifact-ssa-selected-packets", to: "op-ssa-bin", type: "consumed_by"}
+    - {from: "op-ssa-bin", to: "artifact-ssa-realization-stats", type: "produces"}
+    - {from: "op-ssa-bin", to: "artifact-ssa-packet-stats", type: "produces"}
+    - {from: "artifact-ssa-realization-stats", to: "op-ssa-fit", type: "consumed_by"}
+    - {from: "artifact-ssa-packet-stats", to: "op-ssa-fit", type: "consumed_by"}
+    - {from: "artifact-ssa-public-queries", to: "op-ssa-fit", type: "consumed_by"}
+    - {from: "op-ssa-fit", to: "artifact-ssa-transition", type: "produces"}
+    - {from: "op-ssa-fit", to: "artifact-ssa-predictions", type: "produces"}
+    - {from: "artifact-ssa-realization-stats", to: "op-ssa-stability", type: "consumed_by"}
+    - {from: "artifact-ssa-public-grid", to: "op-ssa-stability", type: "consumed_by"}
+    - {from: "op-ssa-stability", to: "artifact-ssa-stability", type: "produces"}
+    - {from: "artifact-ssa-realization-stats", to: "op-ssa-uncertainty", type: "consumed_by"}
+    - {from: "artifact-ssa-transition", to: "op-ssa-uncertainty", type: "consumed_by"}
+    - {from: "artifact-ssa-stability", to: "op-ssa-uncertainty", type: "consumed_by"}
+    - {from: "op-ssa-uncertainty", to: "artifact-ssa-uncertainty-summary", type: "produces"}
+    - {from: "artifact-ssa-transition", to: "op-ssa-report", type: "consumed_by"}
+    - {from: "artifact-ssa-stability", to: "op-ssa-report", type: "consumed_by"}
+    - {from: "artifact-ssa-uncertainty-summary", to: "op-ssa-report", type: "consumed_by"}
+    - {from: "artifact-ssa-predictions", to: "op-ssa-report", type: "consumed_by"}
+    - {from: "op-ssa-report", to: "artifact-ssa-claims", type: "produces"}
+    - {from: "artifact-ssa-analysis-source", to: "op-ssa-private-evaluate", type: "consumed_by"}
+    - {from: "artifact-ssa-realization-stats", to: "op-ssa-private-evaluate", type: "consumed_by"}
+    - {from: "artifact-ssa-packet-stats", to: "op-ssa-private-evaluate", type: "consumed_by"}
+    - {from: "artifact-ssa-transition", to: "op-ssa-private-evaluate", type: "consumed_by"}
+    - {from: "artifact-ssa-stability", to: "op-ssa-private-evaluate", type: "consumed_by"}
+    - {from: "artifact-ssa-predictions", to: "op-ssa-private-evaluate", type: "consumed_by"}
+    - {from: "artifact-ssa-claims", to: "op-ssa-private-evaluate", type: "consumed_by"}
+    - {from: "op-ssa-private-evaluate", to: "artifact-ssa-private-score", type: "produces"}
+    - {from: "artifact-dsa-solution-source", to: "op-dsa-parse", type: "implements"}
+    - {from: "artifact-dsa-public-experiments", to: "op-dsa-parse", type: "consumed_by"}
+    - {from: "op-dsa-parse", to: "artifact-dsa-normalized-experiments", type: "produces"}
+    - {from: "artifact-dsa-normalized-experiments", to: "op-dsa-enumerate-sector", type: "consumed_by"}
+    - {from: "op-dsa-enumerate-sector", to: "artifact-dsa-sector-bases", type: "produces"}
+    - {from: "artifact-dsa-normalized-experiments", to: "op-dsa-assemble-hamiltonian", type: "consumed_by"}
+    - {from: "artifact-dsa-sector-bases", to: "op-dsa-assemble-hamiltonian", type: "consumed_by"}
+    - {from: "op-dsa-assemble-hamiltonian", to: "artifact-dsa-hamiltonians", type: "produces"}
+    - {from: "artifact-dsa-hamiltonians", to: "op-dsa-diagonalize", type: "consumed_by"}
+    - {from: "op-dsa-diagonalize", to: "artifact-dsa-eigensystems", type: "produces"}
+    - {from: "artifact-dsa-normalized-experiments", to: "op-dsa-select-packets", type: "consumed_by"}
+    - {from: "artifact-dsa-eigensystems", to: "op-dsa-select-packets", type: "consumed_by"}
+    - {from: "op-dsa-select-packets", to: "artifact-dsa-selected-packets", type: "produces"}
+    - {from: "artifact-dsa-normalized-experiments", to: "op-dsa-compute-observables", type: "consumed_by"}
+    - {from: "artifact-dsa-sector-bases", to: "op-dsa-compute-observables", type: "consumed_by"}
+    - {from: "artifact-dsa-eigensystems", to: "op-dsa-compute-observables", type: "consumed_by"}
+    - {from: "artifact-dsa-selected-packets", to: "op-dsa-compute-observables", type: "consumed_by"}
+    - {from: "op-dsa-compute-observables", to: "artifact-dsa-states", type: "produces"}
+    - {from: "artifact-dsa-states", to: "op-dsa-realization-bin", type: "consumed_by"}
+    - {from: "op-dsa-realization-bin", to: "artifact-dsa-realizations", type: "produces"}
+    - {from: "artifact-dsa-realizations", to: "op-dsa-ensemble-contrast", type: "consumed_by"}
+    - {from: "op-dsa-ensemble-contrast", to: "artifact-dsa-ensembles", type: "produces"}
+    - {from: "artifact-dsa-states", to: "op-dsa-evidence-report", type: "consumed_by"}
+    - {from: "artifact-dsa-realizations", to: "op-dsa-evidence-report", type: "consumed_by"}
+    - {from: "artifact-dsa-ensembles", to: "op-dsa-evidence-report", type: "consumed_by"}
+    - {from: "op-dsa-evidence-report", to: "artifact-dsa-conclusion", type: "produces"}
+    - {from: "artifact-dsa-solution-source", to: "op-dsa-private-evaluate", type: "consumed_by"}
+    - {from: "artifact-dsa-states", to: "op-dsa-private-evaluate", type: "consumed_by"}
+    - {from: "artifact-dsa-realizations", to: "op-dsa-private-evaluate", type: "consumed_by"}
+    - {from: "artifact-dsa-ensembles", to: "op-dsa-private-evaluate", type: "consumed_by"}
+    - {from: "artifact-dsa-conclusion", to: "op-dsa-private-evaluate", type: "consumed_by"}
+    - {from: "op-dsa-private-evaluate", to: "artifact-dsa-private-score", type: "produces"}
+
+leaf_workflow_links:
+  - leaf_id: "leaf-gap-ratio-fss-audit"
+    target_artifact_ids: ["artifact-ssa-transition", "artifact-ssa-stability", "artifact-ssa-predictions", "artifact-ssa-claims"]
+    backward_slice_operation_ids: ["op-ssa-parse", "op-ssa-gap", "op-ssa-bin", "op-ssa-fit", "op-ssa-stability", "op-ssa-uncertainty", "op-ssa-report"]
+    backward_slice_artifact_ids: ["artifact-ssa-public-manifest", "artifact-ssa-public-eigenvalues", "artifact-ssa-public-packets", "artifact-ssa-public-queries", "artifact-ssa-public-grid", "artifact-ssa-analysis-source", "artifact-ssa-selected-packets", "artifact-ssa-gap-values", "artifact-ssa-realization-stats", "artifact-ssa-packet-stats", "artifact-ssa-transition", "artifact-ssa-stability", "artifact-ssa-uncertainty-summary", "artifact-ssa-predictions", "artifact-ssa-claims"]
+    closure_status: "closed"
+    closure_notes: "All input/output, packet, normalization, scaling, stability, uncertainty, numeric-domain, archive, and conditioned-affine conventions are public or behaviorally method-agnostic. Build sha256:42c4b45503175b7bfce961de20a9fa5ab40f63a374ee8114ca25ddafbce7a8eb passed all 14 verifier gates twice, two independent solutions, all 15 scientific mutants, 14 hostile/invalid probes, six metamorphic relations for both solvers, the exact-diagonalization realism fixture, and participant-only specification reviews."
+    verification_status: "pass"
+    task_status: "needs_agent_calibration"
+    release_disposition: "accepted_for_collaborator_review"
+
+  - leaf_id: "leaf-joint-finite-size-signatures"
+    target_artifact_ids: ["artifact-dsa-states", "artifact-dsa-ensembles", "artifact-dsa-conclusion"]
+    backward_slice_operation_ids: ["op-dsa-parse", "op-dsa-enumerate-sector", "op-dsa-assemble-hamiltonian", "op-dsa-diagonalize", "op-dsa-select-packets", "op-dsa-compute-observables", "op-dsa-realization-bin", "op-dsa-ensemble-contrast", "op-dsa-evidence-report"]
+    backward_slice_artifact_ids: ["artifact-dsa-public-experiments", "artifact-dsa-solution-source", "artifact-dsa-normalized-experiments", "artifact-dsa-sector-bases", "artifact-dsa-hamiltonians", "artifact-dsa-eigensystems", "artifact-dsa-selected-packets", "artifact-dsa-states", "artifact-dsa-realizations", "artifact-dsa-ensembles", "artifact-dsa-conclusion"]
+    closure_status: "closed"
+    closure_notes: "All Hamiltonian, basis, packet, subsystem, observable, aggregation, and conclusion conventions are public benchmark choices. The participant-only follow-up review passed; build sha256:9dc29e54c250afdb07aa10391431147535ece606b2f4eee3cd9fcd0c00cc6b73 passed the full verifier, two independent solutions, all mutants, analytic fixtures, and oracle/solver metamorphic relations."
+    verification_status: "pass"
+    task_status: "needs_agent_calibration"
+    release_disposition: "accepted_for_collaborator_review"
+
+  - leaf_id: "leaf-entanglement-ridge"
+    target_artifact_ids: ["artifact-proposed-entanglement-ridge-table"]
+    backward_slice_operation_ids: ["op-paper-entanglement", "op-paper-realization-binning"]
+    backward_slice_artifact_ids: ["artifact-paper-eigenpairs", "artifact-paper-entanglement-samples", "artifact-paper-realization-bins", "artifact-proposed-entanglement-ridge-table"]
+    closure_status: "has-gap"
+    closure_notes: "Raw data are absent, the fluctuation convention conflicts in the source, and a plot/table extraction boundary has only two meaningful operations and weak private generalization."
+
+  - leaf_id: "leaf-l22-shiftinvert-reproduction"
+    target_artifact_ids: ["artifact-proposed-l22-eigenpairs"]
+    backward_slice_operation_ids: ["op-paper-model", "op-paper-energy-targeting", "op-paper-eigenpairs", "op-paper-gap-ratio", "op-paper-realization-binning", "op-paper-fss", "op-paper-stability", "op-paper-bootstrap"]
+    backward_slice_artifact_ids: ["artifact-paper-model-spec", "artifact-paper-disorder-realizations", "artifact-paper-sector-hamiltonians", "artifact-paper-energy-targets", "artifact-paper-eigenpairs", "artifact-paper-gap-samples", "artifact-paper-realization-bins", "artifact-paper-ensemble-curves", "artifact-paper-fss-fits", "artifact-paper-stability-scan", "artifact-paper-uncertainty", "artifact-proposed-l22-eigenpairs"]
+    closure_status: "has-gap"
+    closure_notes: "Production resources, historical code/data, and solution-critical eigensolver and fit settings are unavailable; difficulty would be dominated by HPC access and arbitrary reconstruction gaps."
+
+conflicts:
+  - id: "conflict-kl-pairing-description"
+    paper_evidence_ids: ["evidence-kl-signatures", "evidence-kl-pairing-gap"]
+    code_evidence_ids: []
+    observed_evidence_ids: []
+    resolution: "benchmark-choice"
+    rationale: "The disjoint source descriptions are recorded; any benchmark using KL must disclose one deterministic pairing convention. The selected sector task need not use KL as a required output."
+
+  - id: "conflict-entanglement-fluctuation-name"
+    paper_evidence_ids: ["evidence-entanglement-scaling", "evidence-ee-sigma-ambiguity"]
+    code_evidence_ids: []
+    observed_evidence_ids: []
+    resolution: "unresolved"
+    rationale: "The prose/caption standard-deviation-versus-variance disagreement is not made a hidden requirement and helped reject the table-only candidate."
+
+  - id: "conflict-odd-sector-label"
+    paper_evidence_ids: ["evidence-sectors-energy-coordinate", "evidence-odd-sector-ambiguity"]
+    code_evidence_ids: []
+    observed_evidence_ids: []
+    resolution: "benchmark-choice"
+    rationale: "Selected task inputs identify the sector by n_up, so participants never infer the paper's ambiguous odd-L S^z convention."
+
+  - id: "conflict-v1-v2-multifractality"
+    paper_evidence_ids: ["evidence-participation-result", "evidence-no-true-hilbert-localization", "evidence-version-multifractality"]
+    code_evidence_ids: []
+    observed_evidence_ids: []
+    resolution: "paper"
+    rationale: "Current arXiv v2 and the version of record control; stronger v1 language is historical provenance only."
+
+  - id: "conflict-mobility-edge-versus-finite-size-caveat"
+    paper_evidence_ids: ["evidence-mobility-edge-claim", "evidence-finite-size-caveat"]
+    code_evidence_ids: []
+    observed_evidence_ids: []
+    resolution: "benchmark-choice"
+    rationale: "The scaling audit evaluates a finite-size crossover audit, and the sector task evaluates finite-size weak/strong signatures; neither requires a thermodynamic mobility-edge assertion."
+
+  - id: "conflict-separate-aps-supplement-bytes"
+    paper_evidence_ids: []
+    code_evidence_ids: []
+    observed_evidence_ids: []
+    resolution: "unresolved"
+    rationale: "The APS supplement endpoint was access-controlled. The bundled arXiv v2 supplement is pinned, but byte identity with the separate APS file is not asserted."

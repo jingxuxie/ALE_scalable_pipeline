@@ -1,0 +1,451 @@
+schema_version: paper2ale.codex-task-candidates/v1
+
+paper_id: "arxiv:1411.0660v2"
+authoring_status: "accepted_for_collaborator_review"
+
+candidates:
+  - candidate_id: "spectral-scaling-audit-v1"
+    task_directory: "tasks/heisenberg_mbl_edge/tasks/spectral_scaling_audit"
+    title: "Audit realization-aware spectral crossover scaling"
+    target_leaf_id: "leaf-gap-ratio-fss-audit"
+    task_mode: "audit"
+    derivation_type: "reported_workflow_slice_with_grounded_extension"
+    participant_contract_design:
+      invocation: "python output/analyze.py --input CASE_DIRECTORY --output EMPTY_DIRECTORY"
+      submitted_path: "output/analyze.py"
+      participant_visible_public_case:
+        - "manifest.json"
+        - "packets.csv"
+        - "eigenvalues.npz"
+        - "queries.csv"
+        - "analysis_grid.json"
+      required_outputs:
+        - "realization_stats.csv"
+        - "packet_stats.csv"
+        - "transition.csv"
+        - "stability.csv"
+        - "predictions.csv"
+        - "claims.json"
+      intended_public_scientific_scope: "Finite-size crossover inference and audit only; no thermodynamic mobility-edge conclusion is required."
+    participant_operation_ids:
+      - "op-ssa-parse"
+      - "op-ssa-gap"
+      - "op-ssa-bin"
+      - "op-ssa-fit"
+      - "op-ssa-stability"
+      - "op-ssa-uncertainty"
+      - "op-ssa-report"
+    participant_output_artifact_ids:
+      - "artifact-ssa-analysis-source"
+      - "artifact-ssa-realization-stats"
+      - "artifact-ssa-packet-stats"
+      - "artifact-ssa-transition"
+      - "artifact-ssa-stability"
+      - "artifact-ssa-predictions"
+      - "artifact-ssa-claims"
+    intermediate_private_rubric_artifact_ids:
+      - "artifact-ssa-selected-packets"
+      - "artifact-ssa-gap-values"
+      - "artifact-ssa-realization-stats"
+      - "artifact-ssa-packet-stats"
+      - "artifact-ssa-uncertainty-summary"
+    structural_challenge:
+      meaningful_operation_count: 7
+      dependency_depth: 6
+      branch_count: 3
+      tool_count: 1
+      required_artifact_count: 7
+      challenge_sources:
+        - "robust parsing and per-realization normalized packet selection"
+        - "hierarchical statistics that avoid eigenstate pseudoreplication"
+        - "nonlinear finite-size scaling with held-out prediction"
+        - "fit-window and minimum-size stability analysis"
+        - "cluster-aware uncertainty and evidence reconciliation"
+        - "hidden distribution and metamorphic generalization"
+    grounded_extension:
+      source_workflow_preserved:
+        - "adjacent-gap ratio from ordered levels"
+        - "per-realization normalized energy targeting"
+        - "realization-first aggregation"
+        - "one-parameter finite-size crossover fitting"
+        - "minimum-size and fit-window sensitivity"
+        - "statistical and fit-choice uncertainty"
+      benchmark_authored_changes:
+        - "New synthetic gamma-gap crossover families replace unavailable raw paper data."
+        - "Generated cases preserve bounded gap ratios, GOE-like and Poisson-like limits, common-size crossover structure, and affine-energy invariance."
+        - "The public case is neutral and permanently retired from hidden scoring."
+        - "Missing source optimizer, loss, weighting, packet-edge, and bootstrap details are replaced by public benchmark conventions or outcome-based evaluation."
+      claim_limit: "Finite-size crossover audit, not reproduction of the paper's numerical critical field and not proof of a thermodynamic phase boundary."
+    hidden_evaluation_design:
+      status: "verified_pass"
+      case_families:
+        - "four unpublished shifted, rescaled, curved/asymmetric clustered-gamma-gap finite-size crossover families"
+        - "unequal realization sampling"
+        - "missing size-field grid points"
+        - "spectral-edge target slices"
+        - "ordinary in-distribution cases"
+        - "one deterministic fixed-Sz=0 periodic random-field Heisenberg exact-diagonalization realism fixture at L=8 and 10, used for invariant validation rather than scored scaling truth"
+      verified_metamorphic_relations:
+        - "positive affine energy transformation: reference and alternative pass"
+        - "affine control transformation: reference and alternative pass"
+        - "target reflection: reference and alternative pass"
+        - "row and packet permutation: reference and alternative pass"
+        - "realization-ID permutation: reference and alternative pass"
+        - "input-shard rejoin: reference and alternative pass"
+      evaluator_behavior: "The verifier ran submitted programs on four fresh inputs, independently recomputed realization/group evidence, continuously scored transition curves, uncertainty, stability, and held-out predictions, and checked evidence consistency."
+    shortcut_audit:
+      clone_and_run_source: "not_applicable_no_2015_source_code"
+      one_formula_or_single_library_call: "fails_verified"
+      hardcode_public_examples: "fails_verified"
+      fabricate_reported_metrics: "fails_verified"
+      notes: "Fifteen complete schema-valid scientific mutants across fourteen categories were rejected. The hard-coded public-case mutant scores 0.7231143594521261; pooled-gap and gap-SEM pseudoreplication score 0.8473686984239975 and 0.857521032255433; stale and fabricated claims fail mandatory evidence consistency despite total scores 0.8926699182281552 and 0.8856699182281552."
+    verification:
+      oracle_possible: true
+      public_input_solver_possible: true
+      behavioral_hidden_evaluation_possible: true
+      realistic_mutants_possible: true
+      build_status: "pass"
+      build_identity: "sha256:42c4b45503175b7bfce961de20a9fa5ab40f63a374ee8114ca25ddafbce7a8eb"
+      build_file_count: 126
+      authoritative_ledger: "tasks/heisenberg_mbl_edge/tasks/spectral_scaling_audit/author/verification_results.json"
+      authoritative_ledger_sha256: "b6b53838fb5d2ae27825ea2e09b0c2d695a831dc679784f97f44eeebc6fded45"
+      verification_report: "tasks/heisenberg_mbl_edge/tasks/spectral_scaling_audit/author/verification_report.md"
+      verification_report_sha256: "6d83f207aa4aca671a9210f2b5034d2200061b8b15a4f53856789b33dadf6436"
+      verification_command: "python -B tasks/heisenberg_mbl_edge/tasks/spectral_scaling_audit/scripts/verify.py --results tasks/heisenberg_mbl_edge/tasks/spectral_scaling_audit/author/verification_results.json --jobs 2 --command-timeout 600"
+      verifier_status: "pass_14_of_14"
+      verifier_runtime_seconds: 310.8380135
+      independent_same_build_status: "pass_14_of_14"
+      independent_same_build_runtime_seconds: 308.4586444
+      privileged_oracle_status: "pass_deterministic_twice"
+      clean_room_solver_status: "pass"
+      clean_room_reference_score: 0.8996699182281552
+      independent_alternative_status: "pass"
+      independent_alternative_score: 0.8723372222137469
+      paper_blind_review_status: "pass_participant_only_exact_hashes"
+      private_evaluator_status: "pass_deterministic"
+      mutant_status: "15_of_15_schema_valid_scientific_mutants_rejected_across_14_categories"
+      robustness_probe_status: "14_of_14_rejected_safely_plus_hardlink_and_6_npz_preflight_checks"
+      metamorphic_status: "6_of_6_pass_for_reference_and_alternative"
+      exact_diagonalization_realism_status: "pass_twice_byte_identically"
+      task_status: "needs_agent_calibration"
+      release_disposition: "accepted_for_collaborator_review"
+      tolerance_strategy: "Direct realization/group means use excellent knots 2e-7/3e-7 and minimum-credit 0.012; group SEM uses 3e-7/0.006. Fitted prediction, crossover, exponent, stability, and interval width use continuous calibrated knots stated in the private evaluator. Both independent solvers clear aggregate and per-case floors; every calibrated mutant is rejected."
+    specification_closure:
+      public_requirements:
+        - "input and output schemas, ID semantics, energy normalization, packet selection, gap-ratio edge handling, realization-first aggregation, fit/stability obligations, uncertainty obligations, and qualitative claim vocabulary"
+        - "Python/NumPy environment, network prohibition, CPU, memory, disk, and wall-time limits"
+      private_only:
+        - "fresh case seeds, generated family parameters, reference outputs, evaluator weights, exact gates, exact tolerances, and mutant implementations"
+      invalid_hidden_dependencies: []
+      review_status: "pass"
+    verified_mutant_categories:
+      mutant_count: 15
+      category_count: 14
+      rejected: 15
+      categories:
+        - "energy-window semantics"
+        - "acquisition-shift semantics"
+        - "spectral ordering"
+        - "observable definition"
+        - "realization aggregation"
+        - "clustered uncertainty"
+        - "finite-size coordinate"
+        - "finite-size shortcut"
+        - "critical-curve model"
+        - "anti-hardcoding"
+        - "stability analysis"
+        - "uncertainty propagation"
+        - "provenance integrity"
+        - "evidence consistency"
+    resources:
+      verified_full_verifier_runtime_seconds: 310.8380135
+      independent_same_build_runtime_seconds: 308.4586444
+      memory_budget_gb: 8
+      cpu_count: 4
+      public_input_size: "1,380,577 bytes in the retired case"
+      peak_memory_measured: false
+      bounded: true
+      network_required: false
+    specification_closure_risk: "closed_for_collaborator_review; exact numeric domains, archive bounds, affine conditioning, and raw-key collision rules were independently reviewed"
+    leakage_risk: "low_after_verified_projection_scan_and_clean_room_runs"
+    expected_human_effort: "8-to-16-hours"
+    provisional_difficulty: "structurally_hard_candidate"
+    empirical_calibration: "verification_complete; pinned_frontier_agent_calibration_not_run"
+    decision: "accepted_for_collaborator_review"
+    decision_reason: "The exact hardened build passes all 14 required gates twice, two independent solvers score 0.8996699182281552 and 0.8723372222137469, all 15 scientific mutants and all 14 hostile/invalid probes are rejected, both solvers pass six metamorphic relations, the deterministic Heisenberg exact-diagonalization realism fixture passes, and participant-only reviews find no material specification gap. The task remains needs_agent_calibration and makes only a finite-size crossover claim."
+
+  - candidate_id: "disordered-sector-audit-v1"
+    task_directory: "tasks/heisenberg_mbl_edge/tasks/disordered_sector_audit"
+    title: "Audit joint signatures in small disordered spin sectors"
+    target_leaf_id: "leaf-joint-finite-size-signatures"
+    task_mode: "masked_workflow_completion"
+    derivation_type: "reported_model_and_observables_with_grounded_small_system_extension"
+    participant_contract_design:
+      invocation: "python output/solution.py --experiment EXPERIMENT_DIRECTORY --output RESULT_JSON"
+      submitted_path: "output/solution.py"
+      participant_visible_public_case:
+        - "retired experiment directory containing experiment.json"
+        - "arbitrary experiment, record, condition, query, comparison, and aggregate IDs"
+        - "explicit L, n_up, exchange, fields, subsystem queries, energy targets, packet sizes, and weak/strong comparisons"
+      required_outputs:
+        - "one RESULT_JSON with schema_version, experiment_id, state_rows, aggregate_rows, and conclusions"
+      intended_public_scientific_scope: "Joint weak/strong finite-size spectral and eigenstate signatures; no thermodynamic edge or critical exponent is required."
+    participant_operation_ids:
+      - "op-dsa-parse"
+      - "op-dsa-enumerate-sector"
+      - "op-dsa-assemble-hamiltonian"
+      - "op-dsa-diagonalize"
+      - "op-dsa-select-packets"
+      - "op-dsa-compute-observables"
+      - "op-dsa-realization-bin"
+      - "op-dsa-ensemble-contrast"
+      - "op-dsa-evidence-report"
+    participant_output_artifact_ids:
+      - "artifact-dsa-solution-source"
+      - "artifact-dsa-states"
+      - "artifact-dsa-ensembles"
+      - "artifact-dsa-conclusion"
+    intermediate_private_rubric_artifact_ids:
+      - "artifact-dsa-sector-bases"
+      - "artifact-dsa-hamiltonians"
+      - "artifact-dsa-eigensystems"
+      - "artifact-dsa-selected-packets"
+      - "artifact-dsa-states"
+      - "artifact-dsa-realizations"
+    structural_challenge:
+      meaningful_operation_count: 9
+      dependency_depth: 9
+      branch_count: 4
+      tool_count: 1
+      required_artifact_count: 4
+      challenge_sources:
+        - "fixed-sector combinatorial basis construction"
+        - "correct spin-1/2 Hamiltonian assembly including periodic and off-diagonal exchange terms"
+        - "eigenvalue/eigenvector computation and per-realization target selection"
+        - "multiple independent spectral and eigenstate observables"
+        - "hierarchical realization and ensemble aggregation"
+        - "evidence-limited conclusion on fresh hidden realizations"
+    grounded_extension:
+      source_workflow_preserved:
+        - "periodic random-field spin-1/2 Heisenberg Hamiltonian"
+        - "fixed-magnetization sectors"
+        - "per-realization normalized energy coordinate"
+        - "adjacent-gap statistics"
+        - "half-chain entanglement and computational-basis participation"
+        - "subsystem magnetization fluctuations"
+        - "realization-first ensemble evidence"
+      benchmark_authored_changes:
+        - "Dense exact diagonalization is restricted to fully specified sectors with L at most 14."
+        - "Every basis, periodic-bond, exchange, field, subsystem, packet, and comparison convention is public."
+        - "Fresh benchmark-generated disorder realizations replace unavailable paper raw data."
+        - "The result is framed as finite-size weak/strong evidence rather than a thermodynamic mobility edge."
+      claim_limit: "Finite-size joint signatures only; no direct reproduction of L=22, no universal critical field, and no thermodynamic extrapolation."
+    hidden_evaluation_design:
+      status: "verified_pass"
+      case_families:
+        - "fresh L=9, 10, and 12 weak/strong realization ensembles"
+        - "half and non-half fixed-magnetization sectors with exchange values 0.8, 1.0, and 1.35"
+        - "opaque suite-specific identifiers, shuffled record order, wraparound subsystems, unequal query packet sizes, and packet bounds 2 and 15"
+        - "ordinary and grounded-generalization cases with deterministic packet conditioning"
+      verified_metamorphic_relations:
+        - "cyclic site relabeling: oracle, reference, and alternative pass"
+        - "uniform fixed-sector field shift: oracle, reference, and alternative pass"
+        - "common Hamiltonian scaling: oracle, reference, and alternative pass"
+        - "global spin flip in a nonzero sector: oracle, reference, and alternative pass"
+        - "record permutation: oracle, reference, and alternative pass"
+      evaluator_behavior: "The verifier ran both participant-facing programs on three fresh experiment streams, independently reconstructed state, aggregate, and conclusion evidence, and applied continuous per-experiment mandatory metrics."
+    shortcut_audit:
+      clone_and_run_source: "not_applicable_no_2015_source_code"
+      one_formula_or_single_library_call: "fails_verified"
+      hardcode_public_examples: "fails_verified"
+      fabricate_reported_metrics: "fails_verified"
+      notes: "Twelve complete schema-valid scientific mutants were rejected. Hard-coded retired results fail stale identity; ignored exchange scores 0.333; wrong EE/log definitions score 0.40; naive realization/SEM handling scores 0.70/0.80; stale evidence scores 0.70."
+    verification:
+      oracle_possible: true
+      public_input_solver_possible: true
+      behavioral_hidden_evaluation_possible: true
+      realistic_mutants_possible: true
+      build_status: "pass"
+      build_identity: "sha256:9dc29e54c250afdb07aa10391431147535ece606b2f4eee3cd9fcd0c00cc6b73"
+      authoritative_ledger: "tasks/heisenberg_mbl_edge/tasks/disordered_sector_audit/author/verification_results.json"
+      authoritative_ledger_sha256: "0d9f3e2bfe2e647d90dc7efeb4c0ec41bfceeb77859572cde4b73a5ef6f5b995"
+      verification_report: "tasks/heisenberg_mbl_edge/tasks/disordered_sector_audit/author/verification_report.md"
+      verification_report_sha256: "f303080e80df6f74f51a5553299a913b7aa908a8906e5d2e6ea438bdf889ddc0"
+      verification_command: "python tasks/heisenberg_mbl_edge/tasks/disordered_sector_audit/scripts/verify.py"
+      verifier_status: "pass"
+      verifier_runtime_seconds: 49.1263065
+      privileged_oracle_status: "pass_deterministic_twice"
+      clean_room_solver_status: "pass"
+      clean_room_reference_score: 1.0
+      independent_alternative_status: "pass"
+      independent_alternative_score: 1.0
+      paper_blind_review_status: "pass_participant_only_followup"
+      private_evaluator_status: "pass_reference_and_alternative_twice"
+      mutant_status: "pass_12_of_12_rejected"
+      metamorphic_status: "pass_5_of_5_in_oracle_reference_and_alternative"
+      analytic_fixture_status: "pass_4_of_4"
+      robustness_status: "27_live_checks_passed_or_rejected_safely; 5_platform_specific_checks_unavailable_on_Windows"
+      task_status: "needs_agent_calibration"
+      release_disposition: "accepted_for_collaborator_review"
+      tolerance_strategy: "Exact identities, counts, indices, flags, and categorical relations are hard constraints. State-level eigenvalue, gap, EE, participation, and magnetization values use max(2e-8,1e-7*abs(reference)); realization aggregates/effects use max(5e-8,2e-7*abs(reference)). Independent SVD and reduced-density implementations disagree below 2e-12, analytic fixtures are within 4.44e-16, and every scientific mutant remains outside a mandatory metric."
+    specification_closure:
+      public_requirements:
+        - "spin operator normalization, Hamiltonian sign and periodic-bond convention, exchange and fields, basis order, n_up sector, energy normalization, packet tie-breaking, logarithm bases, subsystem mapping, result-JSON schema, aggregation rules, and permitted conclusion vocabulary"
+        - "L at most 14, Python/NumPy environment, network prohibition, CPU, memory, disk, and wall-time limits"
+      private_only:
+        - "fresh fields and seeds, hidden identifiers and case mixtures, oracle artifacts, evaluator weights, exact gates, exact tolerances, and mutant implementations"
+      invalid_hidden_dependencies: []
+      review_status: "pass"
+    verified_mutant_categories:
+      count: 12
+      rejected: 12
+      categories:
+        - "operator normalization, exchange handling, and topology"
+        - "energy normalization and packet selection"
+        - "entanglement observable and logarithm"
+        - "participation and magnetization definitions"
+        - "realization weighting and clustered SEM"
+        - "fabricated/stale evidence"
+    resources:
+      estimated_reference_runtime_minutes: 20
+      estimated_memory_gb: 8
+      cpu_count: 4
+      maximum_system_size: 14
+      maximum_scored_system_size: 12
+      largest_scored_sector_dimension: 792
+      separate_resource_probe_sector_dimension: 924
+      measured_full_verifier_runtime_seconds: 49.1263065
+      peak_memory_measured: false
+      bounded: true
+      network_required: false
+    specification_closure_risk: "low_participant_only_followup_passed"
+    leakage_risk: "local_projection_and_security_checks_passed; production_OS_isolation_and_privileged_link_CI_remain"
+    expected_human_effort: "8-to-20-hours"
+    provisional_difficulty: "structurally_hard_candidate"
+    empirical_calibration: "two_valid_implementations_and_12_scientific_mutants; frontier_agent_trials_not_run"
+    decision: "accepted_for_collaborator_review"
+    decision_reason: "The target is a concrete joint-signature leaf requiring the complete basis-to-evidence chain. Reference and independent vectorized/reduced-density implementations score 1.0 twice, all 12 scientific mutants are rejected, five metamorphic relations pass at oracle and both solver layers, analytic fixtures pass, security/robustness checks pass subject to recorded platform limitations, and the participant-only specification review passes. The task remains needs_agent_calibration and explicitly stops short of a thermodynamic edge interpretation."
+
+  - candidate_id: "entanglement-ridge-table-v1"
+    task_directory: null
+    title: "Tabulate the reported entanglement-fluctuation ridge"
+    target_leaf_id: "leaf-entanglement-ridge"
+    task_mode: "audit"
+    derivation_type: "reported_plot_or_table_leaf_only"
+    participant_operation_ids:
+      - "op-paper-entanglement"
+      - "op-paper-realization-binning"
+    participant_output_artifact_ids:
+      - "artifact-proposed-entanglement-ridge-table"
+    intermediate_private_rubric_artifact_ids: []
+    structural_challenge:
+      meaningful_operation_count: 2
+      dependency_depth: 2
+      branch_count: 1
+      tool_count: 1
+      required_artifact_count: 1
+      challenge_sources:
+        - "plot extraction or shallow table fitting"
+    shortcut_audit:
+      clone_and_run_source: "not_applicable_no_2015_source_code"
+      one_formula_or_single_library_call: "likely_passes_shortcut"
+      hardcode_public_examples: "likely_passes_shortcut"
+      fabricate_reported_metrics: "high_risk"
+      notes: "Without raw data, the boundary collapses to digitization, transcription, or fitting a small visible table."
+    verification:
+      oracle_possible: false
+      public_input_solver_possible: true
+      behavioral_hidden_evaluation_possible: false
+      realistic_mutants_possible: false
+      build_status: "rejected_before_build"
+      tolerance_strategy: "Not developed because the candidate is rejected."
+    resources:
+      estimated_reference_runtime_minutes: 2
+      estimated_memory_gb: 1
+      bounded: true
+    specification_closure_risk: "high_due_absent_raw_data_and_sigma_ambiguity"
+    leakage_risk: "high"
+    expected_human_effort: "under-2-hours"
+    provisional_difficulty: "easy_or_medium"
+    empirical_calibration: "not_applicable_rejected"
+    decision: "reject"
+    decision_reason: "This is an easy leaf-node question rather than a meaningful backward workflow slice. The unavailable raw data and prose/caption variance-versus-standard-deviation conflict would make any added difficulty arbitrary rather than intrinsic."
+
+  - candidate_id: "l22-shiftinvert-reproduction-v1"
+    task_directory: null
+    title: "Reproduce the production L=22 shift-invert analysis"
+    target_leaf_id: "leaf-l22-shiftinvert-reproduction"
+    task_mode: "masked_workflow_completion"
+    derivation_type: "direct_source_reproduction"
+    participant_operation_ids:
+      - "op-paper-model"
+      - "op-paper-energy-targeting"
+      - "op-paper-eigenpairs"
+      - "op-paper-gap-ratio"
+      - "op-paper-realization-binning"
+      - "op-paper-fss"
+      - "op-paper-stability"
+      - "op-paper-bootstrap"
+    participant_output_artifact_ids:
+      - "artifact-proposed-l22-eigenpairs"
+      - "artifact-paper-ensemble-curves"
+      - "artifact-paper-fss-fits"
+      - "artifact-paper-uncertainty"
+    intermediate_private_rubric_artifact_ids:
+      - "artifact-paper-sector-hamiltonians"
+      - "artifact-paper-energy-targets"
+      - "artifact-paper-eigenpairs"
+      - "artifact-paper-realization-bins"
+    structural_challenge:
+      meaningful_operation_count: 8
+      dependency_depth: 8
+      branch_count: 2
+      tool_count: 4
+      required_artifact_count: 4
+      challenge_sources:
+        - "large sparse shift-invert eigensolution"
+        - "distributed HPC implementation"
+        - "unreleased numerical conventions"
+    shortcut_audit:
+      clone_and_run_source: "not_applicable_no_2015_source_code"
+      one_formula_or_single_library_call: "fails"
+      hardcode_public_examples: "could_be_prevented"
+      fabricate_reported_metrics: "could_be_prevented"
+      notes: "Structural length is not enough: the dominant barriers are unavailable production resources and missing arbitrary implementation details."
+    verification:
+      oracle_possible: false
+      public_input_solver_possible: false
+      behavioral_hidden_evaluation_possible: false
+      realistic_mutants_possible: true
+      build_status: "rejected_before_build"
+      tolerance_strategy: "Not developed because no bounded independent oracle is available."
+    resources:
+      estimated_reference_runtime_minutes: null
+      estimated_memory_gb: null
+      bounded: false
+      network_required: false
+      notes: "Reported L=22 sector dimension is about 705,432 with 50-250 disorder realizations; production shift-invert factorization is outside the declared task budget."
+    specification_closure_risk: "high"
+    leakage_risk: "medium"
+    expected_human_effort: "multi-week_hpc_project"
+    provisional_difficulty: "resource_dominated_not_valid_hard_task"
+    empirical_calibration: "not_applicable_rejected"
+    decision: "reject"
+    decision_reason: "The 2015 implementation and raw data are unavailable, and the source omits eigensolver tolerances, target/packet edge rules, fitting details, and bootstrap settings. Requiring exact L=22 reproduction would test HPC access and guesswork rather than a closed, paper-blind workflow. The later 2018 method-adjacent repository is not the historical implementation and is not used."
+
+selected_candidate_ids:
+  - "spectral-scaling-audit-v1"
+  - "disordered-sector-audit-v1"
+
+rejected_candidate_ids:
+  - "entanglement-ridge-table-v1"
+  - "l22-shiftinvert-reproduction-v1"
+
+selection_rationale: >
+  The governing preference remains one excellent long-horizon task over several
+  weak tasks. Both selected candidates independently pass their complete local
+  verification suites and are accepted for collaborator review as provisional
+  structurally hard candidates. They test complementary long workflow slices:
+  realization-aware finite-size spectral scaling and joint small-sector spectral
+  and eigenstate evidence. Neither candidate is approved for production release
+  or a frontier-difficulty claim until deployment review and agent calibration.

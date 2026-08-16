@@ -1,0 +1,388 @@
+schema_version: paper2ale.codex-evidence-map/v1
+
+paper_id: "arxiv-1910.05194v2"
+
+records:
+  - evidence_id: "evidence-001"
+    type: "claim"
+    statement: "The software uses Chebyshev spectral expansions to compute electronic structure and response functions without dense diagonalization."
+    origin_class: "paper_reported"
+    source: {source_id: "arxiv-1910.05194v2", locator_type: "page/section", locator: {page: 1, section: "Abstract", equation: null, table: null, figure: null, path: null, start_line: null, end_line: null, config_key: null, trace_event: null}}
+    exact_quote_or_value: "Spectral expansion of lattice Green functions with fine control over energy resolution."
+    confidence: "high"
+    corroborating_evidence_ids: ["evidence-015", "evidence-017"]
+    conflicting_evidence_ids: []
+    used_by_claim_ids: ["claim-root"]
+    used_by_operation_ids: []
+    participant_requirement_allowed: true
+    notes: "High-level grounding only."
+
+  - evidence_id: "evidence-002"
+    type: "equation"
+    statement: "Matrix Chebyshev polynomials follow T0=I, T1=H, and T(n+1)=2 H Tn-T(n-1)."
+    origin_class: "paper_reported"
+    source: {source_id: "arxiv-1910.05194v2", locator_type: "page/equation", locator: {page: 5, section: "2(a)", equation: "2.9-2.11", table: null, figure: null, path: null, start_line: null, end_line: null, config_key: null, trace_event: null}}
+    exact_quote_or_value: "T_{n+1}(H)=2 H T_n(H)-T_{n-1}(H)."
+    confidence: "high"
+    corroborating_evidence_ids: ["evidence-015", "evidence-017"]
+    conflicting_evidence_ids: []
+    used_by_claim_ids: ["leaf-spectral-cache", "leaf-spin-precession"]
+    used_by_operation_ids: ["op-spectral-recurrence", "op-spin-recurrence", "op-hall-moments", "op-matrix-recurrence"]
+    participant_requirement_allowed: true
+    notes: "Core recurrence."
+
+  - evidence_id: "evidence-003"
+    type: "protocol"
+    statement: "The Hamiltonian and energies are affinely rescaled using spectral endpoints so the spectrum lies in [-1,1]."
+    origin_class: "paper_reported"
+    source: {source_id: "arxiv-1910.05194v2", locator_type: "page/equation", locator: {page: 6, section: "2(a)", equation: "2.14-2.15", table: null, figure: null, path: null, start_line: null, end_line: null, config_key: null, trace_event: null}}
+    exact_quote_or_value: "H_tilde=(H-delta_e_plus)/delta_e_minus."
+    confidence: "high"
+    corroborating_evidence_ids: []
+    conflicting_evidence_ids: []
+    used_by_claim_ids: ["leaf-spectral-cache", "leaf-spin-precession"]
+    used_by_operation_ids: ["op-spectral-rescale", "op-spin-rescale", "op-spectral-diagnose"]
+    participant_requirement_allowed: true
+    notes: "Benchmarks disclose their own conservative bound policy."
+
+  - evidence_id: "evidence-004"
+    type: "equation"
+    statement: "Average DOS is reconstructed from Chebyshev trace moments."
+    origin_class: "paper_reported"
+    source: {source_id: "arxiv-1910.05194v2", locator_type: "page/equation", locator: {page: 7, section: "2(a)", equation: "2.16-2.18", table: null, figure: null, path: null, start_line: null, end_line: null, config_key: null, trace_event: null}}
+    exact_quote_or_value: "DOS reconstruction from a finite prefix of trace moments."
+    confidence: "high"
+    corroborating_evidence_ids: ["evidence-015"]
+    conflicting_evidence_ids: ["evidence-019"]
+    used_by_claim_ids: ["leaf-spectral-cache"]
+    used_by_operation_ids: ["op-spectral-aggregate", "op-spectral-reconstruct", "op-spectral-diagnose"]
+    participant_requirement_allowed: false
+    notes: "The printed normalization is not used as a hidden requirement."
+
+  - evidence_id: "evidence-005"
+    type: "method"
+    statement: "Lorentz-kernel damping uses g_n=sinh(lambda(1-n/M))/sinh(lambda) and eta=lambda/M in rescaled units."
+    origin_class: "paper_reported"
+    source: {source_id: "arxiv-1910.05194v2", locator_type: "page/section", locator: {page: 7, section: "2(a), paragraph after Eq. 2.18", equation: null, table: null, figure: null, path: null, start_line: null, end_line: null, config_key: null, trace_event: null}}
+    exact_quote_or_value: "Lorentz kernel and effective resolution relation."
+    confidence: "high"
+    corroborating_evidence_ids: ["evidence-016"]
+    conflicting_evidence_ids: []
+    used_by_claim_ids: ["claim-spectral-methods"]
+    used_by_operation_ids: ["op-spectral-reconstruct"]
+    participant_requirement_allowed: true
+    notes: "The public task states physical-to-rescaled broadening conversion."
+
+  - evidence_id: "evidence-006"
+    type: "equation"
+    statement: "The CPGF resolvent expansion has energy- and broadening-dependent complex coefficients reusable with precomputed Chebyshev moments."
+    origin_class: "paper_reported"
+    source: {source_id: "arxiv-1910.05194v2", locator_type: "page/equation", locator: {page: 7, section: "2(a)", equation: "2.19-2.20", table: null, figure: null, path: null, start_line: null, end_line: null, config_key: null, trace_event: null}}
+    exact_quote_or_value: "g_n(z)=-2 i exp[-i n arccos(z)]/sqrt(1-z^2) for the retarded sector."
+    confidence: "high"
+    corroborating_evidence_ids: ["evidence-016"]
+    conflicting_evidence_ids: []
+    used_by_claim_ids: ["leaf-spectral-cache"]
+    used_by_operation_ids: ["op-spectral-reconstruct", "op-spectral-hidden-contract", "op-momentum-resolvent"]
+    participant_requirement_allowed: true
+    notes: "Branch and Jacobian conventions are explicitly closed in TASK.md."
+
+  - evidence_id: "evidence-007"
+    type: "result"
+    statement: "CPGF converges across the interval while Lorentz-KPM overshoots away from the interval center; broadening below level spacing is not physically reliable."
+    origin_class: "paper_reported"
+    source: {source_id: "arxiv-1910.05194v2", locator_type: "page/figure", locator: {page: 6, section: "2(a)", equation: null, table: null, figure: "Figure 1", path: null, start_line: null, end_line: null, config_key: null, trace_event: null}}
+    exact_quote_or_value: "Figure 1(a-d) and discussion on pages 7-8."
+    confidence: "high"
+    corroborating_evidence_ids: []
+    conflicting_evidence_ids: []
+    used_by_claim_ids: ["claim-spectral-methods"]
+    used_by_operation_ids: []
+    participant_requirement_allowed: true
+    notes: "No pointwise-monotone convergence rule is inferred."
+
+  - evidence_id: "evidence-008"
+    type: "protocol"
+    statement: "The expensive recursion returns moments that are subsequently reconstructed at requested resolutions."
+    origin_class: "paper_reported"
+    source: {source_id: "arxiv-1910.05194v2", locator_type: "page/section", locator: {page: 15, section: "4, Listing 3 discussion", equation: null, table: null, figure: null, path: null, start_line: null, end_line: null, config_key: null, trace_event: null}}
+    exact_quote_or_value: "KITEx returns CPGF moments and KITE-tools reconstructs DOS."
+    confidence: "high"
+    corroborating_evidence_ids: ["evidence-015"]
+    conflicting_evidence_ids: []
+    used_by_claim_ids: ["leaf-spectral-cache"]
+    used_by_operation_ids: ["op-spectral-aggregate", "op-spectral-reconstruct", "op-spectral-hidden-contract"]
+    participant_requirement_allowed: true
+    notes: "Grounds private unseen-query reuse."
+
+  - evidence_id: "evidence-009"
+    type: "method"
+    statement: "Trace evaluation can use fixed white-noise vectors with favorable sparse-system error scaling."
+    origin_class: "paper_reported"
+    source: {source_id: "arxiv-1910.05194v2", locator_type: "page/equation", locator: {page: 10, section: "2(c)", equation: "2.34-2.35", table: null, figure: null, path: null, start_line: null, end_line: null, config_key: null, trace_event: null}}
+    exact_quote_or_value: "Stochastic trace average and Z*N*M*R*S work estimate."
+    confidence: "high"
+    corroborating_evidence_ids: []
+    conflicting_evidence_ids: ["evidence-019"]
+    used_by_claim_ids: ["leaf-spectral-cache"]
+    used_by_operation_ids: ["op-spectral-recurrence", "op-spectral-aggregate"]
+    participant_requirement_allowed: true
+    notes: "Public probes are explicit; stochastic error to the exact trace is continuous, not a hard gate."
+
+  - evidence_id: "evidence-010"
+    type: "equation"
+    statement: "Time evolution can be expanded in Chebyshev polynomials with Bessel coefficients, although the printed phase factor conflicts with the implementation."
+    origin_class: "paper_reported"
+    source: {source_id: "arxiv-1910.05194v2", locator_type: "page/equation", locator: {page: 23, section: "4(e)", equation: "4.12-4.13", table: null, figure: null, path: null, start_line: null, end_line: null, config_key: null, trace_event: null}}
+    exact_quote_or_value: "The paper prints c_n=(-1)^n J_n; the benchmark does not silently adopt this phase."
+    confidence: "high"
+    corroborating_evidence_ids: ["evidence-017"]
+    conflicting_evidence_ids: ["evidence-021"]
+    used_by_claim_ids: ["leaf-spin-precession"]
+    used_by_operation_ids: ["op-spin-recurrence", "op-spin-contract", "op-spin-hidden-contract"]
+    participant_requirement_allowed: true
+    notes: "The participant task defines hbar=1."
+
+  - evidence_id: "evidence-011"
+    type: "equation"
+    statement: "A bond-directed Rashba term and scalar or spin-dependent onsite disorder define the spinful lattice dynamics example."
+    origin_class: "paper_reported"
+    source: {source_id: "arxiv-1910.05194v2", locator_type: "page/equation", locator: {page: 24, section: "4(e)", equation: "4.14", table: null, figure: null, path: null, start_line: null, end_line: null, config_key: null, trace_event: null}}
+    exact_quote_or_value: "Nearest-neighbor hopping, Rashba coupling, and onsite disorder."
+    confidence: "high"
+    corroborating_evidence_ids: []
+    conflicting_evidence_ids: []
+    used_by_claim_ids: ["leaf-spin-precession"]
+    used_by_operation_ids: ["op-spin-assemble"]
+    participant_requirement_allowed: true
+    notes: "The benchmark publishes its exact neutral block-matrix convention."
+
+  - evidence_id: "evidence-012"
+    type: "equation"
+    statement: "The initial state is a Gaussian-envelope superposition of plane-wave spinors."
+    origin_class: "paper_reported"
+    source: {source_id: "arxiv-1910.05194v2", locator_type: "page/equation", locator: {page: 25, section: "4(e)", equation: "4.15", table: null, figure: null, path: null, start_line: null, end_line: null, config_key: null, trace_event: null}}
+    exact_quote_or_value: "The printed exponent is dimensionally malformed; only the Gaussian-envelope intent is used."
+    confidence: "medium"
+    corroborating_evidence_ids: []
+    conflicting_evidence_ids: ["evidence-022"]
+    used_by_claim_ids: ["leaf-spin-precession"]
+    used_by_operation_ids: ["op-spin-packet"]
+    participant_requirement_allowed: true
+    notes: "The benchmark discloses its amplitude-width convention."
+
+  - evidence_id: "evidence-013"
+    type: "metric"
+    statement: "Wave-packet outputs include spin expectations, mean position, and mean-square displacement."
+    origin_class: "paper_reported"
+    source: {source_id: "arxiv-1910.05194v2", locator_type: "page/section", locator: {page: 26, section: "4(e), observables list", equation: null, table: null, figure: null, path: null, start_line: null, end_line: null, config_key: null, trace_event: null}}
+    exact_quote_or_value: "Sx,Sy,Sz, mean displacement, and mean square displacement."
+    confidence: "high"
+    corroborating_evidence_ids: ["evidence-017"]
+    conflicting_evidence_ids: []
+    used_by_claim_ids: ["leaf-spin-precession"]
+    used_by_operation_ids: ["op-spin-observables", "op-spin-ensemble", "op-spin-hidden-contract"]
+    participant_requirement_allowed: true
+    notes: "Benchmark outputs use explicitly defined normalized expectations."
+
+  - evidence_id: "evidence-014"
+    type: "result"
+    statement: "Scalar and magnetic disorder produce distinct damped anisotropic spin-precession trajectories."
+    origin_class: "paper_reported"
+    source: {source_id: "arxiv-1910.05194v2", locator_type: "page/figure", locator: {page: 24, section: "4(e)", equation: null, table: null, figure: "Figure 10", path: null, start_line: null, end_line: null, config_key: null, trace_event: null}}
+    exact_quote_or_value: "An additional Ising impurity field changes the precession axes and trajectory."
+    confidence: "high"
+    corroborating_evidence_ids: []
+    conflicting_evidence_ids: []
+    used_by_claim_ids: ["leaf-spin-precession"]
+    used_by_operation_ids: ["op-spin-analysis", "op-spin-ensemble"]
+    participant_requirement_allowed: true
+    notes: "Synthetic instances test the mechanism, not the reported numerical curve."
+
+  - evidence_id: "evidence-015"
+    type: "code"
+    statement: "The archived DOS postprocessor applies an n=0 divisor and energy-scale Jacobian to stored moments."
+    origin_class: "code_present"
+    source: {source_id: "kite-v1.0-zenodo", locator_type: "path-lines", locator: {page: null, section: null, equation: null, table: null, figure: null, path: "tools/src/dos.cpp", start_line: 229, end_line: 252, config_key: null, trace_event: null}}
+    exact_quote_or_value: "Gamma1D stores MU; DOS calculate applies factor 1/(1+(m==0)) and 1/energy_scale."
+    confidence: "high"
+    corroborating_evidence_ids: ["evidence-004", "evidence-008", "evidence-019"]
+    conflicting_evidence_ids: []
+    used_by_claim_ids: ["leaf-spectral-cache"]
+    used_by_operation_ids: ["op-spectral-aggregate", "op-spectral-reconstruct"]
+    participant_requirement_allowed: false
+    notes: "Code is evidence only and is not participant-visible."
+
+  - evidence_id: "evidence-016"
+    type: "code"
+    statement: "The archived postprocessor implements Lorentz and complex Green coefficients with retarded/advanced n=0 handling."
+    origin_class: "code_present"
+    source: {source_id: "kite-v1.0-zenodo", locator_type: "path-lines", locator: {page: null, section: null, equation: null, table: null, figure: null, path: "tools/src/functions.cpp", start_line: 185, end_line: 266, config_key: null, trace_event: null}}
+    exact_quote_or_value: "lorentz, green, greenR, greenA, and delta implementations."
+    confidence: "high"
+    corroborating_evidence_ids: ["evidence-005", "evidence-006"]
+    conflicting_evidence_ids: []
+    used_by_claim_ids: ["leaf-spectral-cache"]
+    used_by_operation_ids: ["op-spectral-reconstruct"]
+    participant_requirement_allowed: false
+    notes: "The benchmark independently reimplements and tests these formulas."
+
+  - evidence_id: "evidence-017"
+    type: "code"
+    statement: "The archived wave-packet module applies Bessel-Chebyshev coefficients and writes spin and spatial moments."
+    origin_class: "code_present"
+    source: {source_id: "kite-v1.0-zenodo", locator_type: "path-lines", locator: {page: null, section: null, equation: null, table: null, figure: null, path: "Src/SimulationGaussianWavePacket.cpp", start_line: 135, end_line: 231, config_key: null, trace_event: null}}
+    exact_quote_or_value: "Bessel coefficient loop, Chebyshev iteration, Sx/Sy/Sz, means, and variances."
+    confidence: "high"
+    corroborating_evidence_ids: ["evidence-010", "evidence-013"]
+    conflicting_evidence_ids: []
+    used_by_claim_ids: ["leaf-spin-precession"]
+    used_by_operation_ids: ["op-spin-recurrence", "op-spin-observables"]
+    participant_requirement_allowed: false
+    notes: "The participant package contains no source-derived code."
+
+  - evidence_id: "evidence-018"
+    type: "config"
+    statement: "The immutable official archive is version 1.0 and maps to commit 7bb1fc44d2b5a67ef65524fe33702e9c2cdef416."
+    origin_class: "dynamically_observed"
+    source: {source_id: "kite-v1.0-zenodo", locator_type: "record/archive", locator: {page: null, section: null, equation: null, table: null, figure: null, path: "tasks/kite/authoring/sources/kite-1.0.zip", start_line: null, end_line: null, config_key: "metadata.version=1.0", trace_event: "sha256 and MD5 verified 2026-08-15"}}
+    exact_quote_or_value: "version 1.0; md5 39ec4e2aa4cb04e44daca53c379dec9d."
+    confidence: "high"
+    corroborating_evidence_ids: []
+    conflicting_evidence_ids: []
+    used_by_claim_ids: ["claim-root"]
+    used_by_operation_ids: []
+    participant_requirement_allowed: false
+    notes: "Author provenance only."
+
+  - evidence_id: "evidence-019"
+    type: "limitation"
+    statement: "The printed Chebyshev moment normalization is internally inconsistent, so it cannot be an undisclosed participant requirement."
+    origin_class: "author_inferred"
+    source: {source_id: "kite-v1.0-zenodo", locator_type: "path-lines", locator: {page: null, section: null, equation: null, table: null, figure: null, path: "tools/src/dos.cpp", start_line: 229, end_line: 252, config_key: null, trace_event: "compared with paper Eqs. 2.7, 2.12, 2.16, and 2.17 plus an independent dense eigensystem check"}}
+    exact_quote_or_value: "The benchmark uses raw probe moments and publishes every factor."
+    confidence: "high"
+    corroborating_evidence_ids: ["evidence-015"]
+    conflicting_evidence_ids: ["evidence-004", "evidence-009"]
+    used_by_claim_ids: ["leaf-spectral-cache"]
+    used_by_operation_ids: ["op-spectral-aggregate", "op-spectral-reconstruct"]
+    participant_requirement_allowed: true
+    notes: "Benchmark choice is explicit and method-agnostic."
+
+  - evidence_id: "evidence-020"
+    type: "data"
+    statement: "Small deterministic synthetic sparse systems preserve the recurrence, resolvent, and spin-precession mechanisms while fitting a CPU-only budget."
+    origin_class: "grounded_extension"
+    source: {source_id: "benchmark-authored-kite-synthetic-v1", locator_type: "directory/generators", locator: {page: null, section: null, equation: null, table: null, figure: null, path: "tasks/kite/tasks", start_line: null, end_line: null, config_key: "author generators use deterministic seeds and explicit realizations", trace_event: "verified by independent oracle and alternative solver"}}
+    exact_quote_or_value: "No reported paper values or provider data are used as participant answers."
+    confidence: "high"
+    corroborating_evidence_ids: ["evidence-002", "evidence-006", "evidence-010", "evidence-011"]
+    conflicting_evidence_ids: []
+    used_by_claim_ids: ["leaf-spectral-cache", "leaf-spin-precession"]
+    used_by_operation_ids: ["op-spectral-assemble", "op-spin-assemble"]
+    participant_requirement_allowed: true
+    notes: "Public task semantics fully disclose all benchmark choices."
+
+  - evidence_id: "evidence-021"
+    type: "limitation"
+    statement: "The paper's printed Bessel phase conflicts with the archived unitary implementation and direct dense propagation."
+    origin_class: "dynamically_observed"
+    source: {source_id: "kite-v1.0-zenodo", locator_type: "path-lines", locator: {page: null, section: null, equation: null, table: null, figure: null, path: "Src/SimulationGaussianWavePacket.cpp", start_line: 135, end_line: 138, config_key: null, trace_event: "compared with paper Eq. 4.13 and a dense unitary cross-check"}}
+    exact_quote_or_value: "Use (-i)^n, disclosed in participant/TASK.md."
+    confidence: "high"
+    corroborating_evidence_ids: ["evidence-017"]
+    conflicting_evidence_ids: ["evidence-010"]
+    used_by_claim_ids: ["leaf-spin-precession"]
+    used_by_operation_ids: ["op-spin-contract"]
+    participant_requirement_allowed: true
+    notes: "Resolved as a public benchmark convention."
+
+  - evidence_id: "evidence-022"
+    type: "limitation"
+    statement: "The paper's printed initial-envelope formula is malformed and the source uses a code-specific width convention."
+    origin_class: "author_inferred"
+    source: {source_id: "kite-v1.0-zenodo", locator_type: "path-lines", locator: {page: null, section: null, equation: null, table: null, figure: null, path: "Src/KPM_Vector2D.cpp", start_line: 235, end_line: 280, config_key: null, trace_event: "compared with paper Eq. 4.15 in a dimensional and implementation audit"}}
+    exact_quote_or_value: "Benchmark amplitude exp(-|r-r0|^2/(4 sigma^2)) is an explicit grounded extension."
+    confidence: "high"
+    corroborating_evidence_ids: []
+    conflicting_evidence_ids: ["evidence-012"]
+    used_by_claim_ids: ["leaf-spin-precession"]
+    used_by_operation_ids: ["op-spin-packet"]
+    participant_requirement_allowed: true
+    notes: "No source-only width choice is hidden."
+
+  - evidence_id: "evidence-023"
+    type: "result"
+    statement: "The spinful honeycomb exchange/Rashba example exhibits a disorder-sensitive quantum anomalous Hall plateau."
+    origin_class: "paper_reported"
+    source: {source_id: "arxiv-1910.05194v2", locator_type: "page/section/equation/figure", locator: {page: 17, section: "4(b)", equation: "4.4", table: null, figure: "Figure 5", path: null, start_line: null, end_line: null, config_key: null, trace_event: null}}
+    exact_quote_or_value: "Model definition and Hall/DOS disorder sweep in Figure 5."
+    confidence: "high"
+    corroborating_evidence_ids: []
+    conflicting_evidence_ids: []
+    used_by_claim_ids: ["leaf-hall-response"]
+    used_by_operation_ids: ["op-hall-assemble", "op-hall-velocities", "op-hall-moments", "op-hall-integrate", "op-hall-audit"]
+    participant_requirement_allowed: false
+    notes: "The candidate was rejected because the paper does not close the complete DC kernel convention."
+
+  - evidence_id: "evidence-024"
+    type: "method"
+    statement: "The implementation applies pattern-encoded Hamiltonians through domain decomposition, ghost exchange, tiling, and fused defects rather than storing the full periodic matrix."
+    origin_class: "paper_reported"
+    source: {source_id: "arxiv-1910.05194v2", locator_type: "page/section/figure", locator: {page: 12, section: "3(a-b)", equation: null, table: null, figure: "Figure 2", path: null, start_line: null, end_line: null, config_key: null, trace_event: null}}
+    exact_quote_or_value: "Pattern rules, domains, ghosts, tiles, and defect application."
+    confidence: "high"
+    corroborating_evidence_ids: ["evidence-002"]
+    conflicting_evidence_ids: []
+    used_by_claim_ids: ["leaf-matrix-free-equivalence"]
+    used_by_operation_ids: ["op-matrix-pattern-parse", "op-matrix-partition", "op-matrix-halo", "op-matrix-defect-fuse", "op-matrix-recurrence", "op-matrix-equivalence"]
+    participant_requirement_allowed: false
+    notes: "A hardware-speed claim was intentionally excluded; only numerical equivalence was considered."
+
+  - evidence_id: "evidence-025"
+    type: "result"
+    statement: "In the bilayer momentum-spectrum example, bias opens a gap, spin-orbit coupling splits bands, and disorder broadens spectral features."
+    origin_class: "paper_reported"
+    source: {source_id: "arxiv-1910.05194v2", locator_type: "page/section/equations/figure", locator: {page: 21, section: "4(d)", equation: "4.5-4.10", table: null, figure: "Figure 8", path: null, start_line: null, end_line: null, config_key: null, trace_event: null}}
+    exact_quote_or_value: "Momentum-resolved clean, spin-orbit, biased, and disordered spectral comparisons."
+    confidence: "high"
+    corroborating_evidence_ids: ["evidence-006"]
+    conflicting_evidence_ids: []
+    used_by_claim_ids: ["leaf-momentum-spectrum"]
+    used_by_operation_ids: ["op-momentum-assemble", "op-momentum-projectors", "op-momentum-resolvent", "op-momentum-average", "op-momentum-ridges", "op-momentum-compare"]
+    participant_requirement_allowed: false
+    notes: "The candidate was rejected because finite-size ridge tolerances were less stable than the selected tasks."
+
+coverage:
+  paper_sections_reviewed:
+    - "Abstract and introduction"
+    - "2(a) Spectral methods"
+    - "2(c) Stochastic trace evaluation"
+    - "3 Organization and workflow"
+    - "4(a-f) application examples"
+    - "5 Benchmarks"
+    - "6 Conclusions and Open Data"
+  repository_paths_reviewed:
+    - "README.md"
+    - "LICENSE.md"
+    - "version.md"
+    - "Src/SimulationDOS.cpp"
+    - "Src/SimulationGaussianWavePacket.cpp"
+    - "tools/src/dos.cpp"
+    - "tools/src/functions.cpp"
+    - "tests/next13/wavepacket_example.py"
+  configurations_reviewed:
+    - "Official examples and tests file inventory"
+    - "Zenodo record 3485089 metadata"
+  dynamic_runs_reviewed:
+    - "PDF hash/text/render inspection"
+    - "Archive traversal and checksum audit"
+    - "Task oracle and solver runs recorded in per-task reports"
+  known_gaps:
+    - "The original HPC-scale paper figures were not rerun."
+    - "The upstream license declaration is internally inconsistent."
+
+validation:
+  every_record_has_locator: true
+  low_confidence_hidden_requirements: []
+  unresolved_conflicts: []

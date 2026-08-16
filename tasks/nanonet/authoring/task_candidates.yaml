@@ -1,0 +1,313 @@
+schema_version: paper2ale.codex-task-candidates/v1
+
+paper_id: "arxiv-2010.07463v1"
+
+candidates:
+  - candidate_id: "candidate-periodic-orbital-transport"
+    title: "Periodic orbital Hamiltonian and open-boundary transport"
+    target_leaf_id: "claim-leaf-periodic-bands-dos-transmission"
+    task_mode: "masked_workflow_completion"
+    derivation_type: "grounded_extension"
+    participant_operation_ids:
+      - "op-enumerate-neighbors"
+      - "op-assemble-orbital-blocks"
+      - "op-assemble-h0-h1"
+      - "op-compute-bloch-bands"
+      - "op-build-finite-device"
+      - "op-solve-retarded-surfaces"
+      - "op-compute-transport-observables"
+      - "op-report-diagnostics"
+    participant_output_artifact_ids:
+      - "art-hamiltonian-npz"
+      - "art-self-energies-npz"
+      - "art-spectra-npz"
+      - "art-diagnostics-json"
+    intermediate_private_rubric_artifact_ids:
+      - "art-neighbor-pairs"
+      - "art-orbital-hopping-blocks"
+      - "art-bloch-bands"
+      - "art-finite-device-hamiltonian"
+      - "art-retarded-surface-greens"
+      - "art-device-green-functions"
+    structural_challenge:
+      meaningful_operation_count: 8
+      dependency_depth: 7
+      branch_count: 2
+      tool_count: 1
+      required_artifact_count: 4
+      challenge_sources:
+        - "Geometric, multi-species, variable-orbital Slater-Koster assembly with signed directional blocks and an oriented periodic coupling."
+        - "Stable causal solution of two non-identical semi-infinite lead surfaces followed by self-energy embedding and open-device NEGF observables."
+        - "Cross-artifact consistency under rotations, site permutations, heterogeneous basis sizes, defects, contact scaling, and cutoff-edge cases."
+    shortcut_audit:
+      clone_and_run_source: "fails"
+      one_formula_or_single_library_call: "fails"
+      hardcode_public_examples: "fails"
+      fabricate_reported_metrics: "fails"
+      notes: "The official source consumes a different representation and contains convention conflicts; hidden geometry/device families change all major stages; the evaluator recomputes intermediate and final behavior."
+    verification:
+      oracle_possible: true
+      public_input_solver_possible: true
+      behavioral_hidden_evaluation_possible: true
+      realistic_mutants_possible: true
+      tolerance_strategy: "Deterministic absolute-plus-relative comparisons, calibrated against machine-precision oracle invariants and an independently structured surface solver."
+    resources:
+      estimated_reference_runtime_minutes: 1
+      estimated_memory_gb: 1
+      bounded: true
+    specification_closure_risk: "low"
+    leakage_risk: "low"
+    expected_human_effort: "8-to-16 hours for an expert numerical-science programmer, including derivation, implementation, and stability debugging"
+    provisional_difficulty: "structurally_hard_candidate"
+    decision: "select"
+    decision_reason: "It is the only candidate that preserves the paper's full geometry-to-Hamiltonian-to-bands/transport dependency while remaining paper-blind, explicitly specified, computationally bounded, and behaviorally testable on diverse private instances."
+
+  - candidate_id: "candidate-exact-figure-9-reproduction"
+    title: "Reproduce a published nanowire band and transport panel"
+    target_leaf_id: "claim-leaf-periodic-bands-dos-transmission"
+    task_mode: "masked_workflow_completion"
+    derivation_type: "reported_workflow_slice"
+    participant_operation_ids:
+      - "op-enumerate-neighbors"
+      - "op-assemble-orbital-blocks"
+      - "op-assemble-h0-h1"
+      - "op-compute-bloch-bands"
+      - "op-solve-retarded-surfaces"
+      - "op-compute-transport-observables"
+    participant_output_artifact_ids:
+      - "art-spectra-npz"
+    intermediate_private_rubric_artifact_ids:
+      - "art-hamiltonian-npz"
+      - "art-self-energies-npz"
+    structural_challenge:
+      meaningful_operation_count: 6
+      dependency_depth: 6
+      branch_count: 2
+      tool_count: 1
+      required_artifact_count: 1
+      challenge_sources:
+        - "Large multi-orbital silicon/hydrogen construction."
+        - "Lead self-energies and coherent transport."
+    shortcut_audit:
+      clone_and_run_source: "passes"
+      one_formula_or_single_library_call: "fails"
+      hardcode_public_examples: "passes"
+      fabricate_reported_metrics: "fails"
+      notes: "If official coordinates and parameter modules were exposed, the task would become source adaptation; without them, it would depend on arbitrary missing information."
+    verification:
+      oracle_possible: true
+      public_input_solver_possible: false
+      behavioral_hidden_evaluation_possible: false
+      realistic_mutants_possible: true
+      tolerance_strategy: "Would require plot/data reconstruction tolerances that cannot repair missing scientific inputs."
+    resources:
+      estimated_reference_runtime_minutes: 10
+      estimated_memory_gb: 4
+      bounded: true
+    specification_closure_risk: "high"
+    leakage_risk: "high"
+    expected_human_effort: "Indeterminate because required supplementary coordinates and full paper-era parameters are absent from the paper PDF"
+    provisional_difficulty: "invalid_hidden_dependency"
+    decision: "reject"
+    decision_reason: "The paper says coordinates are supplementary and does not print the full Si/H basis and parameter tables. Exact reproduction would either require forbidden source lookup or manufacture difficulty through missing information."
+
+  - candidate_id: "candidate-periodic-block-assembly-only"
+    title: "Assemble periodic orbital Hamiltonian blocks"
+    target_leaf_id: "claim-leaf-geometry-to-periodic-blocks"
+    task_mode: "masked_workflow_completion"
+    derivation_type: "grounded_extension"
+    participant_operation_ids:
+      - "op-enumerate-neighbors"
+      - "op-assemble-orbital-blocks"
+      - "op-assemble-h0-h1"
+    participant_output_artifact_ids:
+      - "art-hamiltonian-npz"
+    intermediate_private_rubric_artifact_ids:
+      - "art-neighbor-pairs"
+      - "art-orbital-hopping-blocks"
+    structural_challenge:
+      meaningful_operation_count: 3
+      dependency_depth: 3
+      branch_count: 1
+      tool_count: 1
+      required_artifact_count: 1
+      challenge_sources:
+        - "Variable orbital indexing."
+        - "Directional hopping signs and periodic image orientation."
+    shortcut_audit:
+      clone_and_run_source: "fails"
+      one_formula_or_single_library_call: "fails"
+      hardcode_public_examples: "fails"
+      fabricate_reported_metrics: "fails"
+      notes: "It is technically nontrivial but stops at a leaf-like intermediate and omits the physical consequence that makes orientation errors consequential."
+    verification:
+      oracle_possible: true
+      public_input_solver_possible: true
+      behavioral_hidden_evaluation_possible: true
+      realistic_mutants_possible: true
+      tolerance_strategy: "Tight deterministic matrix comparisons."
+    resources:
+      estimated_reference_runtime_minutes: 1
+      estimated_memory_gb: 1
+      bounded: true
+    specification_closure_risk: "low"
+    leakage_risk: "low"
+    expected_human_effort: "2-to-4 hours"
+    provisional_difficulty: "medium"
+    decision: "reject"
+    decision_reason: "Only three meaningful operations and one output make this an implementation exercise rather than a genuinely hard long-horizon task. It is retained inside the selected task as an intermediate rubric."
+
+  - candidate_id: "candidate-block-decomposition-optimization"
+    title: "Optimize a transport matrix block decomposition"
+    target_leaf_id: "claim-leaf-block-structure-performance"
+    task_mode: "optimization"
+    derivation_type: "reported_workflow_slice"
+    participant_operation_ids:
+      - "op-order-sites"
+      - "op-extract-sparsity-profiles"
+      - "op-select-recursive-cuts"
+      - "op-validate-block-transport"
+    participant_output_artifact_ids:
+      - "art-site-permutation"
+      - "art-block-sizes"
+      - "art-cost-report"
+    intermediate_private_rubric_artifact_ids:
+      - "art-reconstructed-block-matrix"
+    structural_challenge:
+      meaningful_operation_count: 4
+      dependency_depth: 4
+      branch_count: 1
+      tool_count: 1
+      required_artifact_count: 3
+      challenge_sources:
+        - "Combinatorial site ordering and constrained separators."
+        - "Transport-preserving matrix reconstruction."
+    shortcut_audit:
+      clone_and_run_source: "passes"
+      one_formula_or_single_library_call: "fails"
+      hardcode_public_examples: "passes"
+      fabricate_reported_metrics: "fails"
+      notes: "Exact block sizes for the highlighted matrices are published, while a generalized optimization objective would require a substantially different task and calibration campaign."
+    verification:
+      oracle_possible: true
+      public_input_solver_possible: true
+      behavioral_hidden_evaluation_possible: true
+      realistic_mutants_possible: true
+      tolerance_strategy: "Validity gates plus relative cubic-work objective and transport invariance."
+    resources:
+      estimated_reference_runtime_minutes: 5
+      estimated_memory_gb: 4
+      bounded: true
+    specification_closure_risk: "medium"
+    leakage_risk: "medium"
+    expected_human_effort: "4-to-10 hours"
+    provisional_difficulty: "medium_to_structurally_hard_candidate"
+    decision: "reject"
+    decision_reason: "The repository's recursively optimized method is locally heuristic despite optimal naming, has limited tests, and the paper's fixed examples invite hard-coding. This could become a separate benchmark after defining and calibrating a method-agnostic objective, but it is weaker than the selected end-to-end physics workflow."
+
+  - candidate_id: "candidate-complex-band-and-modal-surfaces"
+    title: "Compute complex bands and modal lead self-energies"
+    target_leaf_id: "claim-leaf-periodic-bands-dos-transmission"
+    task_mode: "method_masked_rediscovery"
+    derivation_type: "reported_workflow_slice"
+    participant_operation_ids:
+      - "op-assemble-h0-h1"
+      - "op-linearize-quadratic-eigenproblem"
+      - "op-classify-left-right-modes"
+      - "op-form-modal-self-energies"
+    participant_output_artifact_ids:
+      - "art-complex-bands"
+      - "art-self-energies-npz"
+    intermediate_private_rubric_artifact_ids:
+      - "art-mode-classification"
+    structural_challenge:
+      meaningful_operation_count: 4
+      dependency_depth: 4
+      branch_count: 2
+      tool_count: 1
+      required_artifact_count: 2
+      challenge_sources:
+        - "Generalized non-Hermitian eigenproblem."
+        - "Causal mode classification near the unit circle."
+    shortcut_audit:
+      clone_and_run_source: "passes"
+      one_formula_or_single_library_call: "fails"
+      hardcode_public_examples: "fails"
+      fabricate_reported_metrics: "fails"
+      notes: "A direct implementation would closely track official code and depends on robust generalized eigensolvers unavailable in the declared NumPy-only environment."
+    verification:
+      oracle_possible: true
+      public_input_solver_possible: false
+      behavioral_hidden_evaluation_possible: true
+      realistic_mutants_possible: true
+      tolerance_strategy: "Residual/subspace comparisons rather than eigenvector equality."
+    resources:
+      estimated_reference_runtime_minutes: 2
+      estimated_memory_gb: 2
+      bounded: true
+    specification_closure_risk: "high"
+    leakage_risk: "medium"
+    expected_human_effort: "8-to-20 hours plus a non-NumPy generalized eigensolver dependency"
+    provisional_difficulty: "structurally_hard_candidate_but_not_closed"
+    decision: "reject"
+    decision_reason: "The printed complex-band linearization is apparently inconsistent and robust modal classification would need undeclared numerical machinery. The selected task preserves causal surface physics while allowing any stable nonlinear or decimation method."
+
+  - candidate_id: "candidate-exact-bismuth-bands"
+    title: "Reproduce a multi-neighbor bulk band structure"
+    target_leaf_id: "claim-leaf-bismuth-band-structure"
+    task_mode: "masked_workflow_completion"
+    derivation_type: "reported_workflow_slice"
+    participant_operation_ids:
+      - "op-build-spinful-basis"
+      - "op-classify-neighbor-shells"
+      - "op-assemble-spin-orbit-hamiltonian"
+      - "op-compute-high-symmetry-bands"
+    participant_output_artifact_ids:
+      - "art-bismuth-bands"
+    intermediate_private_rubric_artifact_ids:
+      - "art-bismuth-hamiltonian"
+    structural_challenge:
+      meaningful_operation_count: 4
+      dependency_depth: 4
+      branch_count: 1
+      tool_count: 1
+      required_artifact_count: 1
+      challenge_sources:
+        - "Spinful orbital assembly and spin-orbit coupling."
+        - "Three distance-classified neighbor shells."
+    shortcut_audit:
+      clone_and_run_source: "passes"
+      one_formula_or_single_library_call: "fails"
+      hardcode_public_examples: "passes"
+      fabricate_reported_metrics: "fails"
+      notes: "The paper prints most example code and parameter values, so success would lean toward transcription or source lookup and still end at one band artifact."
+    verification:
+      oracle_possible: true
+      public_input_solver_possible: true
+      behavioral_hidden_evaluation_possible: false
+      realistic_mutants_possible: true
+      tolerance_strategy: "Band-energy comparisons after stable sorting."
+    resources:
+      estimated_reference_runtime_minutes: 2
+      estimated_memory_gb: 1
+      bounded: true
+    specification_closure_risk: "medium"
+    leakage_risk: "high"
+    expected_human_effort: "3-to-8 hours"
+    provisional_difficulty: "medium"
+    decision: "reject"
+    decision_reason: "It is a source-traceable single-material reproduction with weaker private generalization and a shorter physical workflow than the selected task."
+
+selected_candidate_ids:
+  - "candidate-periodic-orbital-transport"
+
+selection_rationale: >
+  The preferred count was two, but no second candidate met the hard-only bar
+  without either stopping at an easy intermediate, depending on missing paper
+  assets, becoming clone-and-run, or requiring an unclosed numerical
+  dependency. The selected task folds Hamiltonian assembly, periodic bands,
+  causal surfaces, and finite-device transport into one coherent backward
+  slice with eight meaningful operations, two independent numerical challenge
+  sources, diverse hidden generalization, and four behaviorally scored
+  artifacts. It remains a structurally_hard_candidate until exact-build agent
+  calibration is performed.

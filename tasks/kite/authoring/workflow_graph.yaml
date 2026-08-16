@@ -1,0 +1,849 @@
+schema_version: paper2ale.codex-workflow-graph/v1
+
+paper:
+  paper_id: "arxiv-1910.05194v2"
+  title: "KITE: high-performance accurate modelling of electronic structure and response functions of large molecules, disordered crystals and heterostructures"
+  source_manifest_path: "authoring/source_manifest.yaml"
+
+claim_tree:
+  root:
+    id: "claim-root"
+    question: "How can sparse tight-binding systems support accurate, reusable electronic-structure and dynamics calculations without dense diagonalization?"
+    children:
+      - id: "claim-spectral-methods"
+        question: "Can polynomial moments reconstruct spectral quantities accurately over energy and resolution queries?"
+        children:
+          - id: "leaf-spectral-cache"
+            type: "finding_leaf"
+            statement: "A single energy-independent Chebyshev moment cache can be reused to answer retarded, advanced, and broadened spectral-density queries at new energies, broadenings, and finite prefixes."
+            scientific_importance: "central"
+            supporting_artifact_ids: ["artifact-spectral-moments", "artifact-spectral-response", "artifact-spectral-diagnostics"]
+            reported_evidence_ids: ["evidence-004", "evidence-006", "evidence-008"]
+            private_instance_potential: "high"
+          - id: "leaf-hall-response"
+            type: "finding_leaf"
+            statement: "A spin-orbit-coupled exchange model supports a quantized Hall plateau that is degraded by disorder."
+            scientific_importance: "supporting"
+            supporting_artifact_ids: ["artifact-hall-moments", "artifact-hall-curves", "artifact-hall-report"]
+            reported_evidence_ids: ["evidence-023"]
+            private_instance_potential: "medium"
+          - id: "leaf-matrix-free-equivalence"
+            type: "finding_leaf"
+            statement: "Pattern-encoded, decomposed Hamiltonian application is numerically equivalent to an explicit sparse operator across valid partitions."
+            scientific_importance: "diagnostic"
+            supporting_artifact_ids: ["artifact-matrix-checkpoints", "artifact-matrix-moments", "artifact-matrix-counters"]
+            reported_evidence_ids: ["evidence-024"]
+            private_instance_potential: "high"
+      - id: "claim-dynamics"
+        question: "Can Chebyshev time propagation recover coupled spin and spatial dynamics in disordered spinful lattices?"
+        children:
+          - id: "leaf-spin-precession"
+            type: "finding_leaf"
+            statement: "Bond-directed spin-orbit coupling produces anisotropic spin precession, and an additional Ising disorder field changes the precession axis and ensemble trajectory."
+            scientific_importance: "central"
+            supporting_artifact_ids: ["artifact-spin-basis", "artifact-spin-trajectories", "artifact-spin-ensemble", "artifact-spin-analysis"]
+            reported_evidence_ids: ["evidence-010", "evidence-011", "evidence-012", "evidence-013", "evidence-014"]
+            private_instance_potential: "high"
+          - id: "leaf-momentum-spectrum"
+            type: "finding_leaf"
+            statement: "Bias, spin-orbit coupling, and disorder respectively open, split, and broaden momentum-resolved spectral bands."
+            scientific_importance: "supporting"
+            supporting_artifact_ids: ["artifact-momentum-map", "artifact-momentum-ridges", "artifact-momentum-report"]
+            reported_evidence_ids: ["evidence-025"]
+            private_instance_potential: "medium"
+
+workflow:
+  estimate_semantics:
+    estimated_runtime_minutes: "expert implementation/debugging attention per workflow stage, not solver wall time; measured machine runtimes are recorded in per-task verification reports"
+  artifacts:
+    - id: "artifact-spectral-public-systems"
+      role: "input"
+      origin: "trusted synthetic generator"
+      visibility: "participant"
+      format: "CSV and JSON"
+      provenance_ids: ["evidence-020"]
+    - id: "artifact-spectral-operator"
+      role: "intermediate"
+      origin: "participant"
+      visibility: "private_rubric"
+      format: "implicit Hermitian sparse operator"
+      provenance_ids: ["evidence-002", "evidence-003"]
+    - id: "artifact-spectral-scaled-operator"
+      role: "intermediate"
+      origin: "participant"
+      visibility: "private_rubric"
+      format: "affinely scaled implicit Hermitian sparse operator"
+      provenance_ids: ["evidence-003"]
+    - id: "artifact-spectral-probe-moments"
+      role: "intermediate"
+      origin: "participant"
+      visibility: "private_rubric"
+      format: "probe-resolved raw Chebyshev moment arrays"
+      provenance_ids: ["evidence-002", "evidence-009"]
+    - id: "artifact-spectral-moments"
+      role: "output"
+      origin: "participant"
+      visibility: "participant_output"
+      format: "NPZ"
+      provenance_ids: ["evidence-004", "evidence-008", "evidence-009", "evidence-019"]
+      supports_claim_leaf_ids: ["leaf-spectral-cache"]
+    - id: "artifact-spectral-response"
+      role: "output"
+      origin: "participant"
+      visibility: "participant_output"
+      format: "CSV"
+      provenance_ids: ["evidence-005", "evidence-006"]
+      supports_claim_leaf_ids: ["leaf-spectral-cache"]
+    - id: "artifact-spectral-hidden-queries"
+      role: "input"
+      origin: "trusted synthetic generator"
+      visibility: "private"
+      format: "CSV"
+      provenance_ids: ["evidence-008", "evidence-020"]
+    - id: "artifact-spectral-hidden-response"
+      role: "evaluation"
+      origin: "private evaluator"
+      visibility: "private"
+      format: "held-out finite contractions and metric inputs"
+      provenance_ids: ["evidence-006", "evidence-008"]
+    - id: "artifact-spectral-diagnostics"
+      role: "output"
+      origin: "participant"
+      visibility: "participant_output"
+      format: "JSON"
+      provenance_ids: ["evidence-003", "evidence-004"]
+      supports_claim_leaf_ids: ["leaf-spectral-cache"]
+    - id: "artifact-spin-public-systems"
+      role: "input"
+      origin: "trusted synthetic generator"
+      visibility: "participant"
+      format: "CSV and JSON"
+      provenance_ids: ["evidence-011", "evidence-020"]
+    - id: "artifact-spin-hamiltonians"
+      role: "intermediate"
+      origin: "participant"
+      visibility: "private_rubric"
+      format: "implicit complex Hermitian operators"
+      provenance_ids: ["evidence-011"]
+    - id: "artifact-spin-scaled-hamiltonians"
+      role: "intermediate"
+      origin: "participant"
+      visibility: "private_rubric"
+      format: "per-realization affinely scaled Hermitian operators"
+      provenance_ids: ["evidence-003", "evidence-011"]
+    - id: "artifact-spin-bounds"
+      role: "intermediate"
+      origin: "participant"
+      visibility: "private_rubric"
+      format: "per-realization spectral-bound diagnostics"
+      provenance_ids: ["evidence-003", "evidence-011"]
+    - id: "artifact-spin-packets"
+      role: "intermediate"
+      origin: "participant"
+      visibility: "private_rubric"
+      format: "normalized complex vectors"
+      provenance_ids: ["evidence-012"]
+    - id: "artifact-spin-basis"
+      role: "output"
+      origin: "participant"
+      visibility: "participant_output"
+      format: "NPZ Chebyshev basis states"
+      provenance_ids: ["evidence-002", "evidence-010"]
+      supports_claim_leaf_ids: ["leaf-spin-precession"]
+    - id: "artifact-spin-states"
+      role: "intermediate"
+      origin: "participant"
+      visibility: "private_rubric"
+      format: "contracted complex state vectors"
+      provenance_ids: ["evidence-010"]
+    - id: "artifact-spin-hidden-times"
+      role: "input"
+      origin: "trusted synthetic generator"
+      visibility: "private"
+      format: "JSON"
+      provenance_ids: ["evidence-010", "evidence-020"]
+    - id: "artifact-spin-hidden-trajectories"
+      role: "evaluation"
+      origin: "private evaluator"
+      visibility: "private"
+      format: "CSV hidden-time contracted observables"
+      provenance_ids: ["evidence-010", "evidence-013"]
+    - id: "artifact-spin-trajectories"
+      role: "output"
+      origin: "participant"
+      visibility: "participant_output"
+      format: "CSV"
+      provenance_ids: ["evidence-013", "evidence-017"]
+      supports_claim_leaf_ids: ["leaf-spin-precession"]
+    - id: "artifact-spin-ensemble"
+      role: "output"
+      origin: "participant"
+      visibility: "participant_output"
+      format: "CSV"
+      provenance_ids: ["evidence-013", "evidence-014"]
+      supports_claim_leaf_ids: ["leaf-spin-precession"]
+    - id: "artifact-spin-analysis"
+      role: "output"
+      origin: "participant"
+      visibility: "participant_output"
+      format: "JSON"
+      provenance_ids: ["evidence-014"]
+      supports_claim_leaf_ids: ["leaf-spin-precession"]
+
+    - id: "artifact-hall-model"
+      role: "input"
+      origin: "proposed trusted synthetic generator"
+      visibility: "participant"
+      format: "JSON and CSV"
+      provenance_ids: ["evidence-023"]
+    - id: "artifact-hall-operator"
+      role: "intermediate"
+      origin: "participant"
+      visibility: "private_rubric"
+      format: "spinful complex Hermitian operator"
+      provenance_ids: ["evidence-023"]
+    - id: "artifact-hall-velocities"
+      role: "intermediate"
+      origin: "participant"
+      visibility: "private_rubric"
+      format: "two velocity operators"
+      provenance_ids: ["evidence-023"]
+    - id: "artifact-hall-moments"
+      role: "output"
+      origin: "participant"
+      visibility: "participant_output"
+      format: "rank-two complex moment tensor"
+      provenance_ids: ["evidence-002", "evidence-023"]
+      supports_claim_leaf_ids: ["leaf-hall-response"]
+    - id: "artifact-hall-curves"
+      role: "output"
+      origin: "participant"
+      visibility: "participant_output"
+      format: "CSV conductivity curves"
+      provenance_ids: ["evidence-023"]
+      supports_claim_leaf_ids: ["leaf-hall-response"]
+    - id: "artifact-hall-report"
+      role: "output"
+      origin: "participant"
+      visibility: "participant_output"
+      format: "JSON plateau audit"
+      provenance_ids: ["evidence-023"]
+      supports_claim_leaf_ids: ["leaf-hall-response"]
+
+    - id: "artifact-matrix-public-patterns"
+      role: "input"
+      origin: "proposed trusted synthetic generator"
+      visibility: "participant"
+      format: "JSON and CSV pattern/decomposition cases"
+      provenance_ids: ["evidence-024"]
+    - id: "artifact-matrix-pattern-operator"
+      role: "intermediate"
+      origin: "participant"
+      visibility: "private_rubric"
+      format: "pattern-encoded operator"
+      provenance_ids: ["evidence-024"]
+    - id: "artifact-matrix-partitions"
+      role: "intermediate"
+      origin: "participant"
+      visibility: "private_rubric"
+      format: "domain and tile partitions"
+      provenance_ids: ["evidence-024"]
+    - id: "artifact-matrix-halo-states"
+      role: "intermediate"
+      origin: "participant"
+      visibility: "private_rubric"
+      format: "ghost/halo exchange states"
+      provenance_ids: ["evidence-024"]
+    - id: "artifact-matrix-defect-operator"
+      role: "intermediate"
+      origin: "participant"
+      visibility: "private_rubric"
+      format: "pattern operator with fused defects"
+      provenance_ids: ["evidence-024"]
+    - id: "artifact-matrix-checkpoints"
+      role: "output"
+      origin: "participant"
+      visibility: "participant_output"
+      format: "NPZ matvec/recurrence checkpoints"
+      provenance_ids: ["evidence-002", "evidence-024"]
+      supports_claim_leaf_ids: ["leaf-matrix-free-equivalence"]
+    - id: "artifact-matrix-moments"
+      role: "output"
+      origin: "participant"
+      visibility: "participant_output"
+      format: "NPZ moment arrays"
+      provenance_ids: ["evidence-002", "evidence-024"]
+      supports_claim_leaf_ids: ["leaf-matrix-free-equivalence"]
+    - id: "artifact-matrix-counters"
+      role: "output"
+      origin: "participant"
+      visibility: "participant_output"
+      format: "JSON equivalence and operation counters"
+      provenance_ids: ["evidence-024"]
+      supports_claim_leaf_ids: ["leaf-matrix-free-equivalence"]
+
+    - id: "artifact-momentum-public-model"
+      role: "input"
+      origin: "proposed trusted synthetic generator"
+      visibility: "participant"
+      format: "JSON and CSV bilayer/disorder cases"
+      provenance_ids: ["evidence-025"]
+    - id: "artifact-momentum-operator"
+      role: "intermediate"
+      origin: "participant"
+      visibility: "private_rubric"
+      format: "biased spinful bilayer operator"
+      provenance_ids: ["evidence-025"]
+    - id: "artifact-momentum-projectors"
+      role: "intermediate"
+      origin: "participant"
+      visibility: "private_rubric"
+      format: "phase-correct momentum projectors"
+      provenance_ids: ["evidence-025"]
+    - id: "artifact-momentum-realization-maps"
+      role: "intermediate"
+      origin: "participant"
+      visibility: "private_rubric"
+      format: "per-realization spectral maps"
+      provenance_ids: ["evidence-006", "evidence-025"]
+    - id: "artifact-momentum-map"
+      role: "output"
+      origin: "participant"
+      visibility: "participant_output"
+      format: "NPZ disorder-averaged spectral map"
+      provenance_ids: ["evidence-025"]
+      supports_claim_leaf_ids: ["leaf-momentum-spectrum"]
+    - id: "artifact-momentum-ridges"
+      role: "output"
+      origin: "participant"
+      visibility: "participant_output"
+      format: "CSV ridge and linewidth table"
+      provenance_ids: ["evidence-025"]
+      supports_claim_leaf_ids: ["leaf-momentum-spectrum"]
+    - id: "artifact-momentum-report"
+      role: "output"
+      origin: "participant"
+      visibility: "participant_output"
+      format: "JSON ablation comparison"
+      provenance_ids: ["evidence-025"]
+      supports_claim_leaf_ids: ["leaf-momentum-spectrum"]
+
+  operations:
+    - id: "op-spectral-assemble"
+      name: "Parse upper-triangle bonds and assemble a complex Hermitian sparse operator"
+      authority: "participant"
+      inputs: ["artifact-spectral-public-systems"]
+      outputs: ["artifact-spectral-operator"]
+      tool: "Python and NumPy"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 2
+      provenance_ids: ["evidence-020"]
+      origin_class: "grounded_extension"
+    - id: "op-spectral-rescale"
+      name: "Validate conservative spectral bounds and apply the affine canonical rescaling"
+      authority: "participant"
+      inputs: ["artifact-spectral-operator"]
+      outputs: ["artifact-spectral-scaled-operator"]
+      tool: "Python and NumPy"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 2
+      provenance_ids: ["evidence-003"]
+      origin_class: "paper_reported"
+    - id: "op-spectral-recurrence"
+      name: "Run sparse Chebyshev recurrences for every explicit trace probe"
+      authority: "participant"
+      inputs: ["artifact-spectral-scaled-operator", "artifact-spectral-public-systems"]
+      outputs: ["artifact-spectral-probe-moments"]
+      tool: "Python and NumPy"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 8
+      provenance_ids: ["evidence-002", "evidence-009"]
+      origin_class: "paper_reported"
+    - id: "op-spectral-aggregate"
+      name: "Preserve probe-resolved raw moments and form the disclosed equal-weight probe mean"
+      authority: "participant"
+      inputs: ["artifact-spectral-probe-moments"]
+      outputs: ["artifact-spectral-moments"]
+      tool: "Python and NumPy"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 1
+      provenance_ids: ["evidence-004", "evidence-008", "evidence-009", "evidence-015", "evidence-019"]
+      origin_class: "grounded_extension"
+    - id: "op-spectral-reconstruct"
+      name: "Reuse moment prefixes for finite retarded, advanced, and spectral-density query batches"
+      authority: "participant"
+      inputs: ["artifact-spectral-moments", "artifact-spectral-public-systems"]
+      outputs: ["artifact-spectral-response"]
+      tool: "Python and NumPy"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 4
+      provenance_ids: ["evidence-004", "evidence-005", "evidence-006", "evidence-008", "evidence-015", "evidence-016", "evidence-019"]
+      origin_class: "paper_reported"
+    - id: "op-spectral-diagnose"
+      name: "Produce affine-bound, Gershgorin, order-zero, imaginary-roundoff, and moment-magnitude diagnostics"
+      authority: "participant"
+      inputs: ["artifact-spectral-public-systems", "artifact-spectral-scaled-operator", "artifact-spectral-moments", "artifact-spectral-response"]
+      outputs: ["artifact-spectral-diagnostics"]
+      tool: "Python and NumPy"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 2
+      provenance_ids: ["evidence-003", "evidence-004"]
+      origin_class: "grounded_extension"
+    - id: "op-spin-assemble"
+      name: "Assemble spin blocks with complex hopping, bond-directed coupling, and explicit disorder"
+      authority: "participant"
+      inputs: ["artifact-spin-public-systems"]
+      outputs: ["artifact-spin-hamiltonians"]
+      tool: "Python and NumPy"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 4
+      provenance_ids: ["evidence-011", "evidence-020"]
+      origin_class: "grounded_extension"
+    - id: "op-spin-packet"
+      name: "Construct and normalize Gaussian plane-wave spinors in the disclosed site-major basis"
+      authority: "participant"
+      inputs: ["artifact-spin-public-systems"]
+      outputs: ["artifact-spin-packets"]
+      tool: "Python and NumPy"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 2
+      provenance_ids: ["evidence-012", "evidence-022"]
+      origin_class: "paper_reported"
+    - id: "op-spin-rescale"
+      name: "Validate bounds and rescale every disorder Hamiltonian to the canonical interval"
+      authority: "participant"
+      inputs: ["artifact-spin-hamiltonians"]
+      outputs: ["artifact-spin-scaled-hamiltonians", "artifact-spin-bounds"]
+      tool: "Python and NumPy"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 2
+      provenance_ids: ["evidence-003"]
+      origin_class: "paper_reported"
+    - id: "op-spin-recurrence"
+      name: "Generate reusable Chebyshev basis states for each disorder realization"
+      authority: "participant"
+      inputs: ["artifact-spin-scaled-hamiltonians", "artifact-spin-packets"]
+      outputs: ["artifact-spin-basis"]
+      tool: "Python and NumPy"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 10
+      provenance_ids: ["evidence-002", "evidence-010", "evidence-017"]
+      origin_class: "paper_reported"
+    - id: "op-spin-contract"
+      name: "Contract basis states with Bessel coefficients at every requested public time"
+      authority: "participant"
+      inputs: ["artifact-spin-basis", "artifact-spin-public-systems"]
+      outputs: ["artifact-spin-states"]
+      tool: "Python and NumPy"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 3
+      provenance_ids: ["evidence-010", "evidence-021"]
+      origin_class: "paper_reported"
+    - id: "op-spin-observables"
+      name: "Compute norm, three spin components, means, and second raw moments"
+      authority: "participant"
+      inputs: ["artifact-spin-states", "artifact-spin-public-systems"]
+      outputs: ["artifact-spin-trajectories"]
+      tool: "Python and NumPy"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 3
+      provenance_ids: ["evidence-013", "evidence-017"]
+      origin_class: "paper_reported"
+    - id: "op-spin-ensemble"
+      name: "Average observables across explicit realizations without averaging wavefunctions"
+      authority: "participant"
+      inputs: ["artifact-spin-trajectories"]
+      outputs: ["artifact-spin-ensemble"]
+      tool: "Python and NumPy"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 1
+      provenance_ids: ["evidence-013", "evidence-014"]
+      origin_class: "grounded_extension"
+    - id: "op-spin-analysis"
+      name: "Extract evidence-linked precession features and compare scalar with Ising disorder"
+      authority: "participant"
+      inputs: ["artifact-spin-ensemble", "artifact-spin-bounds"]
+      outputs: ["artifact-spin-analysis"]
+      tool: "Python and NumPy"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 2
+      provenance_ids: ["evidence-014"]
+      origin_class: "grounded_extension"
+
+    - id: "op-spectral-hidden-contract"
+      name: "Contract the submitted cache at withheld energy, broadening, sector, and prefix tuples"
+      authority: "private evaluator"
+      inputs: ["artifact-spectral-moments", "artifact-spectral-hidden-queries", "artifact-spectral-public-systems"]
+      outputs: ["artifact-spectral-hidden-response"]
+      tool: "trusted Python and NumPy evaluator"
+      meaningful_operation: false
+      stochastic: false
+      estimated_runtime_minutes: 1
+      provenance_ids: ["evidence-006", "evidence-008"]
+      origin_class: "benchmark_choice"
+    - id: "op-spin-hidden-contract"
+      name: "Contract the submitted reusable basis at withheld in-range times"
+      authority: "private evaluator"
+      inputs: ["artifact-spin-basis", "artifact-spin-hidden-times", "artifact-spin-public-systems"]
+      outputs: ["artifact-spin-hidden-trajectories"]
+      tool: "trusted Python and NumPy evaluator"
+      meaningful_operation: false
+      stochastic: false
+      estimated_runtime_minutes: 1
+      provenance_ids: ["evidence-010", "evidence-013"]
+      origin_class: "benchmark_choice"
+
+    - id: "op-hall-assemble"
+      name: "Assemble the spin-orbit/exchange model and disorder cases"
+      authority: "participant"
+      inputs: ["artifact-hall-model"]
+      outputs: ["artifact-hall-operator"]
+      tool: "Python and NumPy"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 4
+      provenance_ids: ["evidence-023"]
+      origin_class: "paper_reported"
+    - id: "op-hall-velocities"
+      name: "Construct velocity operators in the two lattice directions"
+      authority: "participant"
+      inputs: ["artifact-hall-operator", "artifact-hall-model"]
+      outputs: ["artifact-hall-velocities"]
+      tool: "Python and NumPy"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 3
+      provenance_ids: ["evidence-023"]
+      origin_class: "paper_reported"
+    - id: "op-hall-moments"
+      name: "Generate the rank-two response moment tensor"
+      authority: "participant"
+      inputs: ["artifact-hall-operator", "artifact-hall-velocities"]
+      outputs: ["artifact-hall-moments"]
+      tool: "Python and NumPy"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 10
+      provenance_ids: ["evidence-002", "evidence-023"]
+      origin_class: "paper_reported"
+    - id: "op-hall-integrate"
+      name: "Integrate the cached response over energy and disorder cases"
+      authority: "participant"
+      inputs: ["artifact-hall-moments", "artifact-hall-model"]
+      outputs: ["artifact-hall-curves"]
+      tool: "Python and NumPy"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 5
+      provenance_ids: ["evidence-023"]
+      origin_class: "paper_reported"
+    - id: "op-hall-audit"
+      name: "Compare clean and disordered plateau behavior"
+      authority: "participant"
+      inputs: ["artifact-hall-curves"]
+      outputs: ["artifact-hall-report"]
+      tool: "Python and NumPy"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 2
+      provenance_ids: ["evidence-023"]
+      origin_class: "grounded_extension"
+
+    - id: "op-matrix-pattern-parse"
+      name: "Parse periodic pattern rules into an implicit operator"
+      authority: "participant"
+      inputs: ["artifact-matrix-public-patterns"]
+      outputs: ["artifact-matrix-pattern-operator"]
+      tool: "Python and NumPy"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 2
+      provenance_ids: ["evidence-024"]
+      origin_class: "grounded_extension"
+    - id: "op-matrix-partition"
+      name: "Build domain and tile partitions"
+      authority: "participant"
+      inputs: ["artifact-matrix-pattern-operator", "artifact-matrix-public-patterns"]
+      outputs: ["artifact-matrix-partitions"]
+      tool: "Python and NumPy"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 3
+      provenance_ids: ["evidence-024"]
+      origin_class: "paper_reported"
+    - id: "op-matrix-halo"
+      name: "Construct deterministic ghost and halo exchange states"
+      authority: "participant"
+      inputs: ["artifact-matrix-partitions", "artifact-matrix-public-patterns"]
+      outputs: ["artifact-matrix-halo-states"]
+      tool: "Python and NumPy"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 3
+      provenance_ids: ["evidence-024"]
+      origin_class: "paper_reported"
+    - id: "op-matrix-defect-fuse"
+      name: "Fuse disclosed defects and disorder into pattern application"
+      authority: "participant"
+      inputs: ["artifact-matrix-pattern-operator", "artifact-matrix-halo-states"]
+      outputs: ["artifact-matrix-defect-operator"]
+      tool: "Python and NumPy"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 3
+      provenance_ids: ["evidence-024"]
+      origin_class: "paper_reported"
+    - id: "op-matrix-recurrence"
+      name: "Run decomposed matvec and Chebyshev recurrence checkpoints"
+      authority: "participant"
+      inputs: ["artifact-matrix-defect-operator", "artifact-matrix-partitions"]
+      outputs: ["artifact-matrix-checkpoints", "artifact-matrix-moments"]
+      tool: "Python and NumPy"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 6
+      provenance_ids: ["evidence-002", "evidence-024"]
+      origin_class: "grounded_extension"
+    - id: "op-matrix-equivalence"
+      name: "Audit checkpoint equivalence across decomposition and tile choices"
+      authority: "participant"
+      inputs: ["artifact-matrix-checkpoints", "artifact-matrix-moments", "artifact-matrix-public-patterns"]
+      outputs: ["artifact-matrix-counters"]
+      tool: "Python and NumPy"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 2
+      provenance_ids: ["evidence-024"]
+      origin_class: "grounded_extension"
+
+    - id: "op-momentum-assemble"
+      name: "Assemble biased spinful bilayer and disorder realizations"
+      authority: "participant"
+      inputs: ["artifact-momentum-public-model"]
+      outputs: ["artifact-momentum-operator"]
+      tool: "Python and NumPy"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 4
+      provenance_ids: ["evidence-025"]
+      origin_class: "paper_reported"
+    - id: "op-momentum-projectors"
+      name: "Construct phase-correct momentum projectors"
+      authority: "participant"
+      inputs: ["artifact-momentum-public-model"]
+      outputs: ["artifact-momentum-projectors"]
+      tool: "Python and NumPy"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 3
+      provenance_ids: ["evidence-025"]
+      origin_class: "paper_reported"
+    - id: "op-momentum-resolvent"
+      name: "Evaluate per-realization momentum-resolved spectral maps"
+      authority: "participant"
+      inputs: ["artifact-momentum-operator", "artifact-momentum-projectors"]
+      outputs: ["artifact-momentum-realization-maps"]
+      tool: "Python and NumPy"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 8
+      provenance_ids: ["evidence-006", "evidence-025"]
+      origin_class: "paper_reported"
+    - id: "op-momentum-average"
+      name: "Average maps over disclosed disorder realizations"
+      authority: "participant"
+      inputs: ["artifact-momentum-realization-maps"]
+      outputs: ["artifact-momentum-map"]
+      tool: "Python and NumPy"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 2
+      provenance_ids: ["evidence-025"]
+      origin_class: "paper_reported"
+    - id: "op-momentum-ridges"
+      name: "Extract band ridges and linewidths with disclosed tolerances"
+      authority: "participant"
+      inputs: ["artifact-momentum-map"]
+      outputs: ["artifact-momentum-ridges"]
+      tool: "Python and NumPy"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 3
+      provenance_ids: ["evidence-025"]
+      origin_class: "grounded_extension"
+    - id: "op-momentum-compare"
+      name: "Compare bias, spin-orbit, and disorder ablations"
+      authority: "participant"
+      inputs: ["artifact-momentum-map", "artifact-momentum-ridges"]
+      outputs: ["artifact-momentum-report"]
+      tool: "Python and NumPy"
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 2
+      provenance_ids: ["evidence-025"]
+      origin_class: "grounded_extension"
+
+  edges:
+    - {from: "artifact-spectral-public-systems", to: "op-spectral-assemble", type: "consumed_by"}
+    - {from: "op-spectral-assemble", to: "artifact-spectral-operator", type: "produces"}
+    - {from: "artifact-spectral-operator", to: "op-spectral-rescale", type: "consumed_by"}
+    - {from: "op-spectral-rescale", to: "artifact-spectral-scaled-operator", type: "produces"}
+    - {from: "artifact-spectral-scaled-operator", to: "op-spectral-recurrence", type: "consumed_by"}
+    - {from: "artifact-spectral-public-systems", to: "op-spectral-recurrence", type: "consumed_by"}
+    - {from: "op-spectral-recurrence", to: "artifact-spectral-probe-moments", type: "produces"}
+    - {from: "artifact-spectral-probe-moments", to: "op-spectral-aggregate", type: "consumed_by"}
+    - {from: "op-spectral-aggregate", to: "artifact-spectral-moments", type: "produces"}
+    - {from: "artifact-spectral-moments", to: "op-spectral-reconstruct", type: "consumed_by"}
+    - {from: "artifact-spectral-public-systems", to: "op-spectral-reconstruct", type: "consumed_by"}
+    - {from: "op-spectral-reconstruct", to: "artifact-spectral-response", type: "produces"}
+    - {from: "artifact-spectral-response", to: "op-spectral-diagnose", type: "consumed_by"}
+    - {from: "artifact-spectral-public-systems", to: "op-spectral-diagnose", type: "consumed_by"}
+    - {from: "artifact-spectral-scaled-operator", to: "op-spectral-diagnose", type: "consumed_by"}
+    - {from: "artifact-spectral-moments", to: "op-spectral-diagnose", type: "consumed_by"}
+    - {from: "op-spectral-diagnose", to: "artifact-spectral-diagnostics", type: "produces"}
+    - {from: "artifact-spectral-moments", to: "op-spectral-hidden-contract", type: "consumed_by"}
+    - {from: "artifact-spectral-hidden-queries", to: "op-spectral-hidden-contract", type: "consumed_by"}
+    - {from: "artifact-spectral-public-systems", to: "op-spectral-hidden-contract", type: "consumed_by"}
+    - {from: "op-spectral-hidden-contract", to: "artifact-spectral-hidden-response", type: "produces"}
+    - {from: "artifact-spin-public-systems", to: "op-spin-assemble", type: "consumed_by"}
+    - {from: "op-spin-assemble", to: "artifact-spin-hamiltonians", type: "produces"}
+    - {from: "artifact-spin-public-systems", to: "op-spin-packet", type: "consumed_by"}
+    - {from: "op-spin-packet", to: "artifact-spin-packets", type: "produces"}
+    - {from: "artifact-spin-hamiltonians", to: "op-spin-rescale", type: "consumed_by"}
+    - {from: "op-spin-rescale", to: "artifact-spin-scaled-hamiltonians", type: "produces"}
+    - {from: "op-spin-rescale", to: "artifact-spin-bounds", type: "produces"}
+    - {from: "artifact-spin-scaled-hamiltonians", to: "op-spin-recurrence", type: "consumed_by"}
+    - {from: "artifact-spin-packets", to: "op-spin-recurrence", type: "consumed_by"}
+    - {from: "op-spin-recurrence", to: "artifact-spin-basis", type: "produces"}
+    - {from: "artifact-spin-basis", to: "op-spin-contract", type: "consumed_by"}
+    - {from: "artifact-spin-public-systems", to: "op-spin-contract", type: "consumed_by"}
+    - {from: "op-spin-contract", to: "artifact-spin-states", type: "produces"}
+    - {from: "artifact-spin-states", to: "op-spin-observables", type: "consumed_by"}
+    - {from: "artifact-spin-public-systems", to: "op-spin-observables", type: "consumed_by"}
+    - {from: "op-spin-observables", to: "artifact-spin-trajectories", type: "produces"}
+    - {from: "artifact-spin-trajectories", to: "op-spin-ensemble", type: "consumed_by"}
+    - {from: "op-spin-ensemble", to: "artifact-spin-ensemble", type: "produces"}
+    - {from: "artifact-spin-ensemble", to: "op-spin-analysis", type: "consumed_by"}
+    - {from: "artifact-spin-bounds", to: "op-spin-analysis", type: "consumed_by"}
+    - {from: "op-spin-analysis", to: "artifact-spin-analysis", type: "produces"}
+    - {from: "artifact-spin-basis", to: "op-spin-hidden-contract", type: "consumed_by"}
+    - {from: "artifact-spin-hidden-times", to: "op-spin-hidden-contract", type: "consumed_by"}
+    - {from: "artifact-spin-public-systems", to: "op-spin-hidden-contract", type: "consumed_by"}
+    - {from: "op-spin-hidden-contract", to: "artifact-spin-hidden-trajectories", type: "produces"}
+
+    - {from: "artifact-hall-model", to: "op-hall-assemble", type: "consumed_by"}
+    - {from: "op-hall-assemble", to: "artifact-hall-operator", type: "produces"}
+    - {from: "artifact-hall-operator", to: "op-hall-velocities", type: "consumed_by"}
+    - {from: "artifact-hall-model", to: "op-hall-velocities", type: "consumed_by"}
+    - {from: "op-hall-velocities", to: "artifact-hall-velocities", type: "produces"}
+    - {from: "artifact-hall-operator", to: "op-hall-moments", type: "consumed_by"}
+    - {from: "artifact-hall-velocities", to: "op-hall-moments", type: "consumed_by"}
+    - {from: "op-hall-moments", to: "artifact-hall-moments", type: "produces"}
+    - {from: "artifact-hall-moments", to: "op-hall-integrate", type: "consumed_by"}
+    - {from: "artifact-hall-model", to: "op-hall-integrate", type: "consumed_by"}
+    - {from: "op-hall-integrate", to: "artifact-hall-curves", type: "produces"}
+    - {from: "artifact-hall-curves", to: "op-hall-audit", type: "consumed_by"}
+    - {from: "op-hall-audit", to: "artifact-hall-report", type: "produces"}
+
+    - {from: "artifact-matrix-public-patterns", to: "op-matrix-pattern-parse", type: "consumed_by"}
+    - {from: "op-matrix-pattern-parse", to: "artifact-matrix-pattern-operator", type: "produces"}
+    - {from: "artifact-matrix-pattern-operator", to: "op-matrix-partition", type: "consumed_by"}
+    - {from: "artifact-matrix-public-patterns", to: "op-matrix-partition", type: "consumed_by"}
+    - {from: "op-matrix-partition", to: "artifact-matrix-partitions", type: "produces"}
+    - {from: "artifact-matrix-partitions", to: "op-matrix-halo", type: "consumed_by"}
+    - {from: "artifact-matrix-public-patterns", to: "op-matrix-halo", type: "consumed_by"}
+    - {from: "op-matrix-halo", to: "artifact-matrix-halo-states", type: "produces"}
+    - {from: "artifact-matrix-pattern-operator", to: "op-matrix-defect-fuse", type: "consumed_by"}
+    - {from: "artifact-matrix-halo-states", to: "op-matrix-defect-fuse", type: "consumed_by"}
+    - {from: "op-matrix-defect-fuse", to: "artifact-matrix-defect-operator", type: "produces"}
+    - {from: "artifact-matrix-defect-operator", to: "op-matrix-recurrence", type: "consumed_by"}
+    - {from: "artifact-matrix-partitions", to: "op-matrix-recurrence", type: "consumed_by"}
+    - {from: "op-matrix-recurrence", to: "artifact-matrix-checkpoints", type: "produces"}
+    - {from: "op-matrix-recurrence", to: "artifact-matrix-moments", type: "produces"}
+    - {from: "artifact-matrix-checkpoints", to: "op-matrix-equivalence", type: "consumed_by"}
+    - {from: "artifact-matrix-moments", to: "op-matrix-equivalence", type: "consumed_by"}
+    - {from: "artifact-matrix-public-patterns", to: "op-matrix-equivalence", type: "consumed_by"}
+    - {from: "op-matrix-equivalence", to: "artifact-matrix-counters", type: "produces"}
+
+    - {from: "artifact-momentum-public-model", to: "op-momentum-assemble", type: "consumed_by"}
+    - {from: "op-momentum-assemble", to: "artifact-momentum-operator", type: "produces"}
+    - {from: "artifact-momentum-public-model", to: "op-momentum-projectors", type: "consumed_by"}
+    - {from: "op-momentum-projectors", to: "artifact-momentum-projectors", type: "produces"}
+    - {from: "artifact-momentum-operator", to: "op-momentum-resolvent", type: "consumed_by"}
+    - {from: "artifact-momentum-projectors", to: "op-momentum-resolvent", type: "consumed_by"}
+    - {from: "op-momentum-resolvent", to: "artifact-momentum-realization-maps", type: "produces"}
+    - {from: "artifact-momentum-realization-maps", to: "op-momentum-average", type: "consumed_by"}
+    - {from: "op-momentum-average", to: "artifact-momentum-map", type: "produces"}
+    - {from: "artifact-momentum-map", to: "op-momentum-ridges", type: "consumed_by"}
+    - {from: "op-momentum-ridges", to: "artifact-momentum-ridges", type: "produces"}
+    - {from: "artifact-momentum-map", to: "op-momentum-compare", type: "consumed_by"}
+    - {from: "artifact-momentum-ridges", to: "op-momentum-compare", type: "consumed_by"}
+    - {from: "op-momentum-compare", to: "artifact-momentum-report", type: "produces"}
+
+leaf_workflow_links:
+  - leaf_id: "leaf-spectral-cache"
+    target_artifact_ids: ["artifact-spectral-moments", "artifact-spectral-response", "artifact-spectral-diagnostics"]
+    backward_slice_operation_ids: ["op-spectral-assemble", "op-spectral-rescale", "op-spectral-recurrence", "op-spectral-aggregate", "op-spectral-reconstruct", "op-spectral-diagnose"]
+    private_evaluator_operation_ids: ["op-spectral-hidden-contract"]
+    backward_slice_artifact_ids: ["artifact-spectral-public-systems", "artifact-spectral-operator", "artifact-spectral-scaled-operator", "artifact-spectral-probe-moments", "artifact-spectral-moments", "artifact-spectral-response", "artifact-spectral-hidden-queries", "artifact-spectral-hidden-response", "artifact-spectral-diagnostics"]
+    closure_status: "closed"
+    closure_notes: "All normalization, branch, scaling, query-range, schema, and diagnostic conventions are participant-visible."
+  - leaf_id: "leaf-spin-precession"
+    target_artifact_ids: ["artifact-spin-basis", "artifact-spin-trajectories", "artifact-spin-ensemble", "artifact-spin-analysis"]
+    backward_slice_operation_ids: ["op-spin-assemble", "op-spin-packet", "op-spin-rescale", "op-spin-recurrence", "op-spin-contract", "op-spin-observables", "op-spin-ensemble", "op-spin-analysis"]
+    private_evaluator_operation_ids: ["op-spin-hidden-contract"]
+    backward_slice_artifact_ids: ["artifact-spin-public-systems", "artifact-spin-hamiltonians", "artifact-spin-scaled-hamiltonians", "artifact-spin-bounds", "artifact-spin-packets", "artifact-spin-basis", "artifact-spin-states", "artifact-spin-hidden-times", "artifact-spin-hidden-trajectories", "artifact-spin-trajectories", "artifact-spin-ensemble", "artifact-spin-analysis"]
+    closure_status: "closed"
+    closure_notes: "Basis order, bond direction, spin blocks, packet width, time units, Bessel coefficients, and observables are participant-visible."
+  - leaf_id: "leaf-hall-response"
+    target_artifact_ids: ["artifact-hall-moments", "artifact-hall-curves", "artifact-hall-report"]
+    backward_slice_operation_ids: ["op-hall-assemble", "op-hall-velocities", "op-hall-moments", "op-hall-integrate", "op-hall-audit"]
+    backward_slice_artifact_ids: ["artifact-hall-model", "artifact-hall-operator", "artifact-hall-velocities", "artifact-hall-moments", "artifact-hall-curves", "artifact-hall-report"]
+    closure_status: "has-gap"
+    closure_notes: "The graph slice is grounded, but the candidate was rejected because the paper does not publish enough of the DC response kernel to close a paper-blind scored contract without a high-risk author convention."
+  - leaf_id: "leaf-matrix-free-equivalence"
+    target_artifact_ids: ["artifact-matrix-checkpoints", "artifact-matrix-moments", "artifact-matrix-counters"]
+    backward_slice_operation_ids: ["op-matrix-pattern-parse", "op-matrix-partition", "op-matrix-halo", "op-matrix-defect-fuse", "op-matrix-recurrence", "op-matrix-equivalence"]
+    backward_slice_artifact_ids: ["artifact-matrix-public-patterns", "artifact-matrix-pattern-operator", "artifact-matrix-partitions", "artifact-matrix-halo-states", "artifact-matrix-defect-operator", "artifact-matrix-checkpoints", "artifact-matrix-moments", "artifact-matrix-counters"]
+    closure_status: "closed"
+    closure_notes: "Numerically closeable but rejected as more software-kernel-centric than the selected scientific slices."
+  - leaf_id: "leaf-momentum-spectrum"
+    target_artifact_ids: ["artifact-momentum-map", "artifact-momentum-ridges", "artifact-momentum-report"]
+    backward_slice_operation_ids: ["op-momentum-assemble", "op-momentum-projectors", "op-momentum-resolvent", "op-momentum-average", "op-momentum-ridges", "op-momentum-compare"]
+    backward_slice_artifact_ids: ["artifact-momentum-public-model", "artifact-momentum-operator", "artifact-momentum-projectors", "artifact-momentum-realization-maps", "artifact-momentum-map", "artifact-momentum-ridges", "artifact-momentum-report"]
+    closure_status: "has-gap"
+    closure_notes: "The workflow is grounded, but stable paper-blind peak and linewidth tolerances were less reliable on CPU-bounded finite systems."
+
+conflicts:
+  - id: "conflict-moment-normalization-002"
+    paper_evidence_ids: ["evidence-004", "evidence-009"]
+    code_evidence_ids: ["evidence-015", "evidence-016"]
+    observed_evidence_ids: ["evidence-019"]
+    resolution: "benchmark-choice"
+    rationale: "Use explicitly disclosed raw moments and validate with independent dense eigensystems."
+  - id: "conflict-time-phase-004"
+    paper_evidence_ids: ["evidence-010"]
+    code_evidence_ids: ["evidence-017"]
+    observed_evidence_ids: ["evidence-021"]
+    resolution: "benchmark-choice"
+    rationale: "Use the disclosed unitary (-i)^n phase and validate against dense propagation."
+  - id: "conflict-wavepacket-envelope-005"
+    paper_evidence_ids: ["evidence-012"]
+    code_evidence_ids: ["evidence-017"]
+    observed_evidence_ids: ["evidence-022"]
+    resolution: "benchmark-choice"
+    rationale: "Use a disclosed probability-width convention rather than a malformed or code-specific hidden choice."

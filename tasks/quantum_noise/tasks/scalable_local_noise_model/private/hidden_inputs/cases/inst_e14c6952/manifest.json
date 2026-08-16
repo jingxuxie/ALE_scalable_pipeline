@@ -1,0 +1,392 @@
+{
+  "audit_top_k": 3,
+  "cliques": [
+    {
+      "clique_id": "c08_8926",
+      "new_variables": [
+        "u06_646",
+        "u08_232",
+        "u42_463",
+        "u26_985"
+      ],
+      "parent_id": "c9933_root",
+      "separator_variables": [
+        "u34_231"
+      ],
+      "variables": [
+        "u34_231",
+        "u06_646",
+        "u08_232",
+        "u42_463",
+        "u26_985"
+      ]
+    },
+    {
+      "clique_id": "c10_6702",
+      "new_variables": [
+        "u29_836",
+        "u21_169"
+      ],
+      "parent_id": "c02_1707",
+      "separator_variables": [
+        "u41_284",
+        "u25_814",
+        "u23_927"
+      ],
+      "variables": [
+        "u29_836",
+        "u21_169",
+        "u41_284",
+        "u25_814",
+        "u23_927"
+      ]
+    },
+    {
+      "clique_id": "c07_5578",
+      "new_variables": [
+        "u01_591",
+        "u54_455",
+        "u27_226",
+        "u53_406"
+      ],
+      "parent_id": "c9933_root",
+      "separator_variables": [
+        "u12_945"
+      ],
+      "variables": [
+        "u01_591",
+        "u12_945",
+        "u54_455",
+        "u27_226",
+        "u53_406"
+      ]
+    },
+    {
+      "clique_id": "c13_9557",
+      "new_variables": [
+        "u30_239",
+        "u03_321",
+        "u44_692",
+        "u10_852",
+        "u40_969"
+      ],
+      "parent_id": "c02_1707",
+      "separator_variables": [
+        "u51_649"
+      ],
+      "variables": [
+        "u30_239",
+        "u03_321",
+        "u44_692",
+        "u10_852",
+        "u51_649",
+        "u40_969"
+      ]
+    },
+    {
+      "clique_id": "c03_9062",
+      "new_variables": [
+        "u28_306",
+        "u47_297",
+        "u49_957",
+        "u24_902"
+      ],
+      "parent_id": "c01_4556",
+      "separator_variables": [
+        "u41_284"
+      ],
+      "variables": [
+        "u28_306",
+        "u47_297",
+        "u49_957",
+        "u41_284",
+        "u24_902"
+      ]
+    },
+    {
+      "clique_id": "c09_9365",
+      "new_variables": [
+        "u37_317",
+        "u22_577",
+        "u48_132",
+        "u17_727"
+      ],
+      "parent_id": "c03_9062",
+      "separator_variables": [
+        "u41_284"
+      ],
+      "variables": [
+        "u37_317",
+        "u22_577",
+        "u41_284",
+        "u48_132",
+        "u17_727"
+      ]
+    },
+    {
+      "clique_id": "c04_2932",
+      "new_variables": [
+        "u32_791",
+        "u15_114",
+        "u13_507",
+        "u19_981"
+      ],
+      "parent_id": "c01_4556",
+      "separator_variables": [
+        "u34_231",
+        "u41_284"
+      ],
+      "variables": [
+        "u32_791",
+        "u15_114",
+        "u34_231",
+        "u41_284",
+        "u13_507",
+        "u19_981"
+      ]
+    },
+    {
+      "clique_id": "c02_1707",
+      "new_variables": [
+        "u25_814",
+        "u46_235",
+        "u11_577"
+      ],
+      "parent_id": "c01_4556",
+      "separator_variables": [
+        "u41_284",
+        "u23_927",
+        "u51_649"
+      ],
+      "variables": [
+        "u25_814",
+        "u41_284",
+        "u23_927",
+        "u46_235",
+        "u11_577",
+        "u51_649"
+      ]
+    },
+    {
+      "clique_id": "c06_6765",
+      "new_variables": [
+        "u04_182",
+        "u18_727",
+        "u14_257"
+      ],
+      "parent_id": "c01_4556",
+      "separator_variables": [
+        "u41_284",
+        "u34_231"
+      ],
+      "variables": [
+        "u04_182",
+        "u18_727",
+        "u41_284",
+        "u14_257",
+        "u34_231"
+      ]
+    },
+    {
+      "clique_id": "c14_2402",
+      "new_variables": [
+        "u52_948",
+        "u33_581",
+        "u07_180"
+      ],
+      "parent_id": "c03_9062",
+      "separator_variables": [
+        "u41_284",
+        "u49_957"
+      ],
+      "variables": [
+        "u52_948",
+        "u33_581",
+        "u41_284",
+        "u07_180",
+        "u49_957"
+      ]
+    },
+    {
+      "clique_id": "c01_4556",
+      "new_variables": [
+        "u41_284",
+        "u51_649"
+      ],
+      "parent_id": "c9933_root",
+      "separator_variables": [
+        "u34_231",
+        "u23_927",
+        "u12_945"
+      ],
+      "variables": [
+        "u41_284",
+        "u34_231",
+        "u23_927",
+        "u51_649",
+        "u12_945"
+      ]
+    },
+    {
+      "clique_id": "c11_3973",
+      "new_variables": [
+        "u45_703",
+        "u31_619",
+        "u39_611",
+        "u00_367",
+        "u05_887"
+      ],
+      "parent_id": "c01_4556",
+      "separator_variables": [
+        "u34_231"
+      ],
+      "variables": [
+        "u45_703",
+        "u31_619",
+        "u39_611",
+        "u34_231",
+        "u00_367",
+        "u05_887"
+      ]
+    },
+    {
+      "clique_id": "c12_9893",
+      "new_variables": [
+        "u35_783",
+        "u36_215",
+        "u43_688"
+      ],
+      "parent_id": "c9933_root",
+      "separator_variables": [
+        "u38_144",
+        "u20_224",
+        "u34_231"
+      ],
+      "variables": [
+        "u35_783",
+        "u38_144",
+        "u20_224",
+        "u36_215",
+        "u34_231",
+        "u43_688"
+      ]
+    },
+    {
+      "clique_id": "c9933_root",
+      "new_variables": [
+        "u12_945",
+        "u38_144",
+        "u34_231",
+        "u20_224",
+        "u23_927"
+      ],
+      "parent_id": null,
+      "separator_variables": [],
+      "variables": [
+        "u12_945",
+        "u38_144",
+        "u34_231",
+        "u20_224",
+        "u23_927"
+      ]
+    },
+    {
+      "clique_id": "c05_2356",
+      "new_variables": [
+        "u09_414",
+        "u50_575",
+        "u02_554",
+        "u16_782"
+      ],
+      "parent_id": "c01_4556",
+      "separator_variables": [
+        "u34_231"
+      ],
+      "variables": [
+        "u09_414",
+        "u50_575",
+        "u02_554",
+        "u16_782",
+        "u34_231"
+      ]
+    }
+  ],
+  "counts_file": "clique_counts.json",
+  "declared_bounds": {
+    "maximum_clique_size": 7,
+    "maximum_queries": 64,
+    "maximum_validation_interactions": 64,
+    "maximum_variables": 96
+  },
+  "instance_id": "inst_e14c6952",
+  "queries_file": "queries.jsonl",
+  "root_clique_id": "c9933_root",
+  "schema_version": "local-noise-input/v1",
+  "smoothing_pseudocount": 0.5,
+  "table_encoding": {
+    "assignment_values": [
+      0,
+      1
+    ],
+    "index_rule": "sum(value[j] * 2**j)"
+  },
+  "validation_file": "validation.jsonl",
+  "variable_count": 55,
+  "variable_ids": [
+    "u08_232",
+    "u52_948",
+    "u54_455",
+    "u19_981",
+    "u13_507",
+    "u20_224",
+    "u18_727",
+    "u31_619",
+    "u35_783",
+    "u53_406",
+    "u47_297",
+    "u09_414",
+    "u17_727",
+    "u30_239",
+    "u11_577",
+    "u22_577",
+    "u28_306",
+    "u45_703",
+    "u39_611",
+    "u33_581",
+    "u48_132",
+    "u00_367",
+    "u16_782",
+    "u14_257",
+    "u24_902",
+    "u51_649",
+    "u05_887",
+    "u26_985",
+    "u10_852",
+    "u27_226",
+    "u37_317",
+    "u46_235",
+    "u34_231",
+    "u03_321",
+    "u32_791",
+    "u38_144",
+    "u44_692",
+    "u07_180",
+    "u12_945",
+    "u40_969",
+    "u25_814",
+    "u01_591",
+    "u50_575",
+    "u21_169",
+    "u29_836",
+    "u43_688",
+    "u04_182",
+    "u02_554",
+    "u42_463",
+    "u15_114",
+    "u06_646",
+    "u49_957",
+    "u36_215",
+    "u23_927",
+    "u41_284"
+  ]
+}

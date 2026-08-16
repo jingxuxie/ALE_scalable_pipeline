@@ -1,0 +1,63 @@
+{
+  "bit_count": 6,
+  "count_columns": [
+    "length",
+    "sequence_id",
+    "target_mask",
+    "observed_mask",
+    "count"
+  ],
+  "count_file": "raw_counts.csv",
+  "experiment_id": "amber-array",
+  "local_model": {
+    "cliques": [
+      [
+        0,
+        1,
+        2
+      ],
+      [
+        1,
+        2,
+        3
+      ],
+      [
+        2,
+        3,
+        4
+      ],
+      [
+        2,
+        3,
+        5
+      ]
+    ],
+    "top_k_nonlocal": 3,
+    "tree_edges": [
+      [
+        0,
+        1
+      ],
+      [
+        1,
+        2
+      ],
+      [
+        1,
+        3
+      ]
+    ],
+    "type": "junction_tree_clique_marginals"
+  },
+  "mask_convention": "unsigned decimal; unit 0 is the least-significant bit",
+  "schema_version": "spectral-correlation-audit-input/v1",
+  "sequence_lengths": [
+    0,
+    1,
+    2,
+    4,
+    7,
+    11,
+    15
+  ]
+}

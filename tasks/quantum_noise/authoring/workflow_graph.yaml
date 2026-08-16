@@ -1,0 +1,914 @@
+schema_version: paper2ale.codex-workflow-graph/v1
+
+paper:
+  paper_id: arxiv-1907.13022v2
+  title: Efficient learning of quantum noise
+  source_manifest_path: authoring/source_manifest.yaml
+
+claim_tree:
+  root:
+    id: claim-root
+    question: >-
+      How can correlated quantum noise be reconstructed, diagnosed, and modeled
+      from randomized experiments without exponential experimental scaling?
+    children:
+      - id: claim-branch-reconstruct-averaged-noise
+        question: Can randomized count decays yield a SPAM-robust averaged error distribution?
+        children:
+          - id: claim-leaf-spam-free-spectrum
+            type: finding_leaf
+            statement: >-
+              Walsh-domain exponential fits recover SPAM-free averaged
+              eigenvalues that invert to a simplex-constrained observed-error distribution.
+            scientific_importance: central
+            supporting_artifact_ids:
+              - artifact-transformed-spectra
+              - artifact-fitted-decays
+              - artifact-simplex-distribution
+            reported_evidence_ids:
+              - evidence-paper-five-stage-protocol
+              - evidence-paper-decay-model
+              - evidence-paper-projection-noncommutation
+            private_instance_potential: high
+
+          - id: claim-leaf-observed-rates-preserve-correlations
+            type: finding_leaf
+            statement: >-
+              The 2^n observed-error representation retains many-body correlation
+              information; in one paper-reported constructed example, its
+              correlation pattern matches the averaged Pauli-rate pattern with
+              reduced magnitudes.
+            scientific_importance: central
+            supporting_artifact_ids:
+              - artifact-simplex-distribution
+              - artifact-dependence-table
+            reported_evidence_ids:
+              - evidence-paper-observed-rate-definition
+              - evidence-paper-observed-pauli-visibility-map
+              - evidence-paper-observed-vs-pauli-correlation
+              - evidence-source-two-qubit-xy-typo
+            private_instance_potential: high
+
+      - id: claim-branch-diagnose-correlations
+        question: Can reconstructed errors reveal correlation structure and local-model failure?
+        children:
+          - id: claim-leaf-correlation-matrix
+            type: finding_leaf
+            statement: >-
+              Pairwise covariance and Pearson-correlation diagnostics are
+              computable from reconstructed binary error distributions.
+            scientific_importance: supporting
+            supporting_artifact_ids:
+              - artifact-dependence-table
+            reported_evidence_ids:
+              - evidence-paper-dependence-definitions
+              - evidence-paper-polynomial-correlations
+            private_instance_potential: high
+
+          - id: claim-leaf-long-range-correlations-and-local-model-mismatch
+            type: finding_leaf
+            statement: >-
+              A reconstructed observed-error distribution can expose nonlocal
+              dependencies and quantify mismatch with a short-range local model.
+            scientific_importance: central
+            supporting_artifact_ids:
+              - artifact-simplex-distribution
+              - artifact-dependence-table
+              - artifact-local-model-audit
+            reported_evidence_ids:
+              - evidence-paper-long-range-mismatch
+              - evidence-paper-jsd-definition
+              - evidence-paper-observed-pauli-visibility-map
+            private_instance_potential: high
+
+          - id: claim-leaf-single-mode-small-mismatch
+            type: finding_leaf
+            statement: >-
+              The reported single-qubit-mode data have smaller but nonzero
+              mismatch with a local GRF.
+            scientific_importance: diagnostic
+            supporting_artifact_ids: []
+            reported_evidence_ids:
+              - evidence-paper-single-mode-mismatch
+            private_instance_potential: medium
+
+      - id: claim-branch-scale-local-models
+        question: Can bounded-locality noise be reconstructed and queried without enumerating 2^n states?
+        children:
+          - id: claim-leaf-bounded-local-grf-scalability
+            type: finding_leaf
+            statement: >-
+              The paper asserts polynomial bounded-degree GRF learning from local
+              marginals up to normalization; the selected grounded extension makes
+              this concrete as a normalized bounded-width junction-tree model with
+              exact partial-assignment queries and held-out interaction auditing.
+            scientific_importance: central
+            supporting_artifact_ids:
+              - artifact-junction-tree-factor-model
+              - artifact-query-results
+              - artifact-validation-audit
+              - artifact-model-diagnostics
+            reported_evidence_ids:
+              - evidence-paper-grf-locality
+              - evidence-paper-grf-factorization
+              - evidence-paper-marginalization-scalability
+              - evidence-benchmark-local-junction-extension
+            private_instance_potential: high
+            qualification: >-
+              The paper states learning only up to normalization and delegates the
+              global proof to Ref. 28. The selected task's normalized junction-tree
+              query/audit contract is benchmark-derived and uses generic classical
+              q* distributions, not asserted physical observed-error channels.
+
+          - id: claim-leaf-figure4-sqrt-scaling
+            type: finding_leaf
+            statement: >-
+              The reported chain simulation reaches length 100 from fixed-sample
+              local marginals and qualitatively supports incoherent error accumulation.
+            scientific_importance: supporting
+            supporting_artifact_ids: []
+            reported_evidence_ids:
+              - evidence-paper-figure4-scalability
+              - evidence-source-figure4-mismatch
+            private_instance_potential: low
+            qualification: >-
+              Source conflicts prevent using the reported metric identity, fit
+              family, indexing, or coefficient as exact oracle truth.
+
+          - id: claim-leaf-topology-learning-open
+            type: open_problem_leaf
+            statement: Learn an adequate GRF topology directly from experimental data.
+            scientific_importance: future_work
+            supporting_artifact_ids: []
+            reported_evidence_ids:
+              - evidence-paper-topology-open
+            private_instance_potential: low
+
+          - id: claim-leaf-covariance-estimator-open
+            type: open_problem_leaf
+            statement: >-
+              Choose a best globally consistent covariance estimator from
+              statistically inconsistent local estimates.
+            scientific_importance: future_work
+            supporting_artifact_ids: []
+            reported_evidence_ids:
+              - evidence-paper-covariance-estimator-open
+            private_instance_potential: low
+
+workflow:
+  artifacts:
+    - id: artifact-randomized-target-histograms
+      role: input
+      origin: trusted_synthetic_generator
+      visibility: participant
+      format: CSV count rows plus neutral manifest
+      provenance_ids:
+        - evidence-benchmark-synthetic-spectral-instances
+        - evidence-paper-observed-pauli-visibility-map
+
+    - id: artifact-local-clique-tree-spec
+      role: input
+      origin: trusted_synthetic_generator
+      visibility: participant
+      format: JSON manifest with disclosed clique-tree scopes and conventions
+      provenance_ids:
+        - evidence-paper-grf-factorization
+        - evidence-benchmark-synthetic-spectral-instances
+
+    - id: artifact-hidden-generalizing-spectral-analyzer
+      role: submitted_executable
+      origin: participant
+      visibility: participant_submission
+      format: Python executable at output/analyze.py
+      dataflow_status: >-
+        External program artifact that implements every spectral operation; it is
+        intentionally not connected by scientific consumed_by/produces edges.
+      provenance_ids:
+        - evidence-paper-five-stage-protocol
+      supports_claim_leaf_ids:
+        - claim-leaf-long-range-correlations-and-local-model-mismatch
+
+    - id: artifact-aggregated-histograms
+      role: intermediate
+      origin: participant
+      visibility: participant_output_private_rubric
+      format: aggregated.csv
+      provenance_ids:
+        - evidence-paper-five-stage-protocol
+
+    - id: artifact-transformed-spectra
+      role: intermediate
+      origin: participant
+      visibility: participant_output_private_rubric
+      format: spectra.csv
+      provenance_ids:
+        - evidence-paper-five-stage-protocol
+
+    - id: artifact-fitted-decays
+      role: intermediate
+      origin: participant
+      visibility: participant_output_private_rubric
+      format: decays.csv
+      provenance_ids:
+        - evidence-paper-decay-model
+
+    - id: artifact-simplex-distribution
+      role: output
+      origin: participant
+      visibility: participant_output
+      format: distribution.csv
+      provenance_ids:
+        - evidence-paper-five-stage-protocol
+        - evidence-paper-observed-rate-definition
+      supports_claim_leaf_ids:
+        - claim-leaf-spam-free-spectrum
+        - claim-leaf-observed-rates-preserve-correlations
+        - claim-leaf-long-range-correlations-and-local-model-mismatch
+
+    - id: artifact-dependence-table
+      role: output
+      origin: participant
+      visibility: participant_output
+      format: dependence.csv
+      provenance_ids:
+        - evidence-paper-dependence-definitions
+      supports_claim_leaf_ids:
+        - claim-leaf-correlation-matrix
+        - claim-leaf-long-range-correlations-and-local-model-mismatch
+
+    - id: artifact-local-model-audit
+      role: output
+      origin: participant
+      visibility: participant_output
+      format: summary.json
+      provenance_ids:
+        - evidence-paper-long-range-mismatch
+        - evidence-paper-jsd-definition
+      supports_claim_leaf_ids:
+        - claim-leaf-long-range-correlations-and-local-model-mismatch
+
+    - id: artifact-local-model-residuals
+      role: intermediate
+      origin: participant
+      visibility: private_rubric
+      format: in-memory or summary.json intermediate fields
+      provenance_ids:
+        - evidence-paper-grf-factorization
+        - evidence-paper-jsd-definition
+
+    - id: artifact-hidden-spectral-cases
+      role: private_input
+      origin: trusted_synthetic_generator
+      visibility: private
+      format: generated manifests and counts
+      provenance_ids:
+        - evidence-benchmark-synthetic-spectral-instances
+        - evidence-paper-observed-pauli-visibility-map
+
+    - id: artifact-hidden-spectral-references
+      role: private_reference
+      origin: privileged_oracle
+      visibility: private
+      format: structured reference distributions and diagnostics
+      provenance_ids:
+        - evidence-paper-five-stage-protocol
+        - evidence-paper-dependence-definitions
+        - evidence-paper-observed-pauli-visibility-map
+
+    - id: artifact-local-count-tables
+      role: input
+      origin: trusted_synthetic_generator
+      visibility: participant
+      format: clique_counts.json
+      provenance_ids:
+        - evidence-benchmark-local-junction-extension
+
+    - id: artifact-disclosed-junction-tree-layout
+      role: input
+      origin: trusted_synthetic_generator
+      visibility: participant
+      format: manifest.json
+      provenance_ids:
+        - evidence-paper-grf-factorization
+        - evidence-benchmark-local-junction-extension
+
+    - id: artifact-public-partial-assignment-queries
+      role: input
+      origin: trusted_synthetic_generator
+      visibility: participant
+      format: queries.jsonl
+      provenance_ids:
+        - evidence-benchmark-local-junction-extension
+
+    - id: artifact-validation-parity-counts
+      role: input
+      origin: trusted_synthetic_generator
+      visibility: participant
+      format: validation.jsonl
+      provenance_ids:
+        - evidence-benchmark-local-junction-extension
+
+    - id: artifact-junction-tree-factor-model
+      role: output
+      origin: participant
+      visibility: participant_output
+      format: model.json
+      provenance_ids:
+        - evidence-paper-grf-factorization
+        - evidence-benchmark-local-junction-extension
+      supports_claim_leaf_ids:
+        - claim-leaf-bounded-local-grf-scalability
+
+    - id: artifact-parsed-local-instance
+      role: intermediate
+      origin: participant
+      visibility: private_rubric
+      format: normalized in-memory instance representation
+      provenance_ids:
+        - evidence-benchmark-local-junction-extension
+
+    - id: artifact-reconciled-local-marginals
+      role: intermediate
+      origin: participant
+      visibility: private_rubric
+      format: consistent clique and separator probability tables
+      provenance_ids:
+        - evidence-paper-grf-factorization
+        - evidence-benchmark-local-junction-extension
+
+    - id: artifact-unranked-validation-scores
+      role: intermediate
+      origin: participant
+      visibility: private_rubric
+      format: per-interaction predictions and standardized residuals
+      provenance_ids:
+        - evidence-benchmark-local-junction-extension
+
+    - id: artifact-query-results
+      role: output
+      origin: participant
+      visibility: participant_output
+      format: query_results.jsonl
+      provenance_ids:
+        - evidence-paper-grf-factorization
+      supports_claim_leaf_ids:
+        - claim-leaf-bounded-local-grf-scalability
+
+    - id: artifact-validation-audit
+      role: output
+      origin: participant
+      visibility: participant_output
+      format: audit.json
+      provenance_ids:
+        - evidence-benchmark-local-junction-extension
+      supports_claim_leaf_ids:
+        - claim-leaf-bounded-local-grf-scalability
+
+    - id: artifact-model-diagnostics
+      role: output
+      origin: participant
+      visibility: participant_output
+      format: diagnostics.json
+      provenance_ids:
+        - evidence-benchmark-local-junction-extension
+      supports_claim_leaf_ids:
+        - claim-leaf-bounded-local-grf-scalability
+
+    - id: artifact-hidden-local-noise-instances
+      role: private_input
+      origin: trusted_synthetic_generator
+      visibility: private
+      format: hidden JSON instances
+      provenance_ids:
+        - evidence-benchmark-local-junction-extension
+
+    - id: artifact-latent-local-factor-models
+      role: private_reference
+      origin: trusted_synthetic_generator
+      visibility: private
+      format: exact latent factor parameters
+      provenance_ids:
+        - evidence-benchmark-local-junction-extension
+
+    - id: artifact-hidden-query-probabilities
+      role: private_reference
+      origin: privileged_oracle
+      visibility: private
+      format: exact or high-accuracy query probabilities
+      provenance_ids:
+        - evidence-paper-grf-factorization
+
+    - id: artifact-injected-interaction-labels
+      role: private_reference
+      origin: trusted_synthetic_generator
+      visibility: private
+      format: hidden anomaly labels and strengths
+      provenance_ids:
+        - evidence-benchmark-local-junction-extension
+
+  operations:
+    - id: op-xor-correct-and-aggregate-counts
+      name: XOR-correct targets and aggregate repeated count rows
+      authority: participant
+      inputs:
+        - artifact-randomized-target-histograms
+      outputs:
+        - artifact-aggregated-histograms
+      tool: Python data processing
+      parameters: disclosed target-mask, observed-mask, length, sequence, and count conventions
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 1
+      provenance_ids:
+        - evidence-paper-five-stage-protocol
+        - evidence-paper-randomized-x-mask
+        - evidence-code-acquisition-xor-convention
+        - evidence-benchmark-synthetic-spectral-instances
+      origin_class: grounded_extension
+      claims_supported:
+        - claim-leaf-spam-free-spectrum
+
+    - id: op-transform-length-histograms
+      name: Normalize histograms and compute disclosed Walsh spectra
+      authority: participant
+      inputs:
+        - artifact-aggregated-histograms
+      outputs:
+        - artifact-transformed-spectra
+      tool: Python numerical arrays
+      parameters: public Walsh normalization, bit order, and mask mapping
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 1
+      provenance_ids:
+        - evidence-paper-five-stage-protocol
+        - evidence-code-transform-fit-project
+      origin_class: reported_workflow_slice
+      claims_supported:
+        - claim-leaf-spam-free-spectrum
+
+    - id: op-fit-nuisance-decays
+      name: Fit nuisance-amplitude spectral decays across irregular lengths
+      authority: participant
+      inputs:
+        - artifact-transformed-spectra
+      outputs:
+        - artifact-fitted-decays
+      tool: Python numerical optimization
+      parameters: public A times lambda^m observation model; method otherwise free
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 2
+      provenance_ids:
+        - evidence-paper-decay-model
+        - evidence-paper-fit-cutoff-ambiguity
+        - evidence-benchmark-synthetic-spectral-instances
+      origin_class: grounded_extension
+      claims_supported:
+        - claim-leaf-spam-free-spectrum
+
+    - id: op-reconstruct-simplex-distribution
+      name: Invert fitted spectrum and enforce a valid probability distribution
+      authority: participant
+      inputs:
+        - artifact-fitted-decays
+      outputs:
+        - artifact-simplex-distribution
+      tool: Python numerical arrays or optimization
+      parameters: outcome ordering disclosed; projection method is evaluator-method-agnostic
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 1
+      provenance_ids:
+        - evidence-paper-five-stage-protocol
+        - evidence-paper-observed-rate-definition
+        - evidence-paper-observed-pauli-visibility-map
+        - evidence-paper-projection-noncommutation
+      origin_class: reported_workflow_slice
+      claims_supported:
+        - claim-leaf-spam-free-spectrum
+        - claim-leaf-observed-rates-preserve-correlations
+
+    - id: op-compute-dependence-diagnostics
+      name: Compute marginals, MI, CMI, covariance, and Pearson diagnostics
+      authority: participant
+      inputs:
+        - artifact-simplex-distribution
+      outputs:
+        - artifact-dependence-table
+      tool: Python exact finite-distribution operations
+      parameters: public binary variable, log, degeneracy, and conditioning conventions
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 1
+      provenance_ids:
+        - evidence-paper-dependence-definitions
+      origin_class: reported_workflow_slice
+      claims_supported:
+        - claim-leaf-correlation-matrix
+        - claim-leaf-long-range-correlations-and-local-model-mismatch
+
+    - id: op-reconstruct-local-clique-tree-model
+      name: Reconstruct the disclosed local clique-tree approximation and mismatch
+      authority: participant
+      inputs:
+        - artifact-simplex-distribution
+        - artifact-local-clique-tree-spec
+      outputs:
+        - artifact-local-model-residuals
+      tool: Python finite graphical-model operations
+      parameters: >-
+        public clique/separator semantics and square-root natural-log JSD;
+        exact implementation is method-agnostic
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 1
+      provenance_ids:
+        - evidence-paper-grf-factorization
+        - evidence-paper-jsd-definition
+        - evidence-benchmark-local-junction-extension
+      origin_class: grounded_extension
+      claims_supported:
+        - claim-leaf-long-range-correlations-and-local-model-mismatch
+
+    - id: op-rank-nonlocal-interactions
+      name: Rank nonlocal residual interactions missed by the local model
+      authority: participant
+      inputs:
+        - artifact-dependence-table
+        - artifact-local-model-residuals
+      outputs:
+        - artifact-local-model-audit
+      tool: Python structured analysis
+      parameters: public candidate universe and deterministic tie behavior
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 1
+      provenance_ids:
+        - evidence-paper-long-range-mismatch
+        - evidence-benchmark-synthetic-spectral-instances
+      origin_class: grounded_extension
+      claims_supported:
+        - claim-leaf-long-range-correlations-and-local-model-mismatch
+
+    - id: op-parse-local-count-tables
+      name: Parse ordered binary clique scopes, tables, queries, and validation records
+      authority: participant
+      inputs:
+        - artifact-local-count-tables
+        - artifact-disclosed-junction-tree-layout
+        - artifact-public-partial-assignment-queries
+        - artifact-validation-parity-counts
+      outputs:
+        - artifact-parsed-local-instance
+      tool: Python JSON and JSONL processing
+      parameters: public LSB-first table indexing and identifier schemas
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 1
+      provenance_ids:
+        - evidence-benchmark-local-junction-extension
+      origin_class: benchmark_choice
+      claims_supported:
+        - claim-leaf-bounded-local-grf-scalability
+
+    - id: op-reconcile-overlapping-marginals
+      name: Smooth and reconcile independently sampled overlapping clique marginals
+      authority: participant
+      inputs:
+        - artifact-parsed-local-instance
+      outputs:
+        - artifact-reconciled-local-marginals
+      tool: Python numerical optimization or iterative reconciliation
+      parameters: >-
+        public predictive behavioral target and normalization constraints; the
+        disclosed pseudocount estimator is a baseline, not a required projection algorithm
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 2
+      provenance_ids:
+        - evidence-paper-grf-locality
+        - evidence-paper-marginalization-scalability
+        - evidence-benchmark-local-junction-extension
+        - evidence-source-grf-zero-support-heuristic
+      origin_class: grounded_extension
+      claims_supported:
+        - claim-leaf-bounded-local-grf-scalability
+
+    - id: op-construct-normalized-junction-model
+      name: Construct normalized root and conditional factors on the clique tree
+      authority: participant
+      inputs:
+        - artifact-reconciled-local-marginals
+        - artifact-parsed-local-instance
+      outputs:
+        - artifact-junction-tree-factor-model
+      tool: Python finite graphical-model operations
+      parameters: public running-intersection and separator conventions
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 1
+      provenance_ids:
+        - evidence-paper-grf-factorization
+        - evidence-benchmark-local-junction-extension
+      origin_class: grounded_extension
+      claims_supported:
+        - claim-leaf-bounded-local-grf-scalability
+
+    - id: op-answer-partial-assignment-queries
+      name: Answer arbitrary partial-assignment probabilities by junction-tree inference
+      authority: participant
+      inputs:
+        - artifact-junction-tree-factor-model
+        - artifact-public-partial-assignment-queries
+      outputs:
+        - artifact-query-results
+      tool: Python sum-product or equivalent exact bounded-width inference
+      parameters: public marginalization, empty assignment, overlap, and ordering semantics
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 2
+      provenance_ids:
+        - evidence-paper-grf-factorization
+        - evidence-paper-marginalization-scalability
+        - evidence-benchmark-local-junction-extension
+      origin_class: grounded_extension
+      claims_supported:
+        - claim-leaf-bounded-local-grf-scalability
+
+    - id: op-predict-validation-interactions
+      name: Predict parity-validation counts under the fitted local model
+      authority: participant
+      inputs:
+        - artifact-junction-tree-factor-model
+        - artifact-validation-parity-counts
+      outputs:
+        - artifact-unranked-validation-scores
+      tool: Python bounded-width inference and statistical scoring
+      parameters: public parity and standardized residual definitions
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 2
+      provenance_ids:
+        - evidence-benchmark-local-junction-extension
+      origin_class: grounded_extension
+      claims_supported:
+        - claim-leaf-bounded-local-grf-scalability
+
+    - id: op-rank-missed-interactions
+      name: Rank validation interactions missed by the local model
+      authority: participant
+      inputs:
+        - artifact-unranked-validation-scores
+      outputs:
+        - artifact-validation-audit
+      tool: Python structured ranking
+      parameters: public score direction and deterministic tie rule
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 1
+      provenance_ids:
+        - evidence-benchmark-local-junction-extension
+      origin_class: grounded_extension
+      claims_supported:
+        - claim-leaf-bounded-local-grf-scalability
+
+    - id: op-report-model-diagnostics
+      name: Report normalization, separator consistency, and computational diagnostics
+      authority: participant
+      inputs:
+        - artifact-junction-tree-factor-model
+        - artifact-query-results
+        - artifact-validation-audit
+      outputs:
+        - artifact-model-diagnostics
+      tool: Python structured reporting with evaluator-recomputed metrics
+      parameters: public diagnostic schema; self-reported quality is not trusted
+      meaningful_operation: true
+      stochastic: false
+      estimated_runtime_minutes: 1
+      provenance_ids:
+        - evidence-benchmark-local-junction-extension
+      origin_class: benchmark_choice
+      claims_supported:
+        - claim-leaf-bounded-local-grf-scalability
+
+  edges:
+    - {from: artifact-randomized-target-histograms, to: op-xor-correct-and-aggregate-counts, type: consumed_by}
+    - {from: op-xor-correct-and-aggregate-counts, to: artifact-aggregated-histograms, type: produces}
+    - {from: artifact-aggregated-histograms, to: op-transform-length-histograms, type: consumed_by}
+    - {from: op-transform-length-histograms, to: artifact-transformed-spectra, type: produces}
+    - {from: artifact-transformed-spectra, to: op-fit-nuisance-decays, type: consumed_by}
+    - {from: op-fit-nuisance-decays, to: artifact-fitted-decays, type: produces}
+    - {from: artifact-fitted-decays, to: op-reconstruct-simplex-distribution, type: consumed_by}
+    - {from: op-reconstruct-simplex-distribution, to: artifact-simplex-distribution, type: produces}
+    - {from: artifact-simplex-distribution, to: op-compute-dependence-diagnostics, type: consumed_by}
+    - {from: op-compute-dependence-diagnostics, to: artifact-dependence-table, type: produces}
+    - {from: artifact-simplex-distribution, to: op-reconstruct-local-clique-tree-model, type: consumed_by}
+    - {from: artifact-local-clique-tree-spec, to: op-reconstruct-local-clique-tree-model, type: consumed_by}
+    - {from: op-reconstruct-local-clique-tree-model, to: artifact-local-model-residuals, type: produces}
+    - {from: artifact-dependence-table, to: op-rank-nonlocal-interactions, type: consumed_by}
+    - {from: artifact-local-model-residuals, to: op-rank-nonlocal-interactions, type: consumed_by}
+    - {from: op-rank-nonlocal-interactions, to: artifact-local-model-audit, type: produces}
+    - {from: artifact-local-count-tables, to: op-parse-local-count-tables, type: consumed_by}
+    - {from: artifact-disclosed-junction-tree-layout, to: op-parse-local-count-tables, type: consumed_by}
+    - {from: artifact-public-partial-assignment-queries, to: op-parse-local-count-tables, type: consumed_by}
+    - {from: artifact-validation-parity-counts, to: op-parse-local-count-tables, type: consumed_by}
+    - {from: op-parse-local-count-tables, to: artifact-parsed-local-instance, type: produces}
+    - {from: artifact-parsed-local-instance, to: op-reconcile-overlapping-marginals, type: consumed_by}
+    - {from: op-reconcile-overlapping-marginals, to: artifact-reconciled-local-marginals, type: produces}
+    - {from: artifact-reconciled-local-marginals, to: op-construct-normalized-junction-model, type: consumed_by}
+    - {from: artifact-parsed-local-instance, to: op-construct-normalized-junction-model, type: consumed_by}
+    - {from: op-construct-normalized-junction-model, to: artifact-junction-tree-factor-model, type: produces}
+    - {from: artifact-junction-tree-factor-model, to: op-answer-partial-assignment-queries, type: consumed_by}
+    - {from: artifact-public-partial-assignment-queries, to: op-answer-partial-assignment-queries, type: consumed_by}
+    - {from: op-answer-partial-assignment-queries, to: artifact-query-results, type: produces}
+    - {from: artifact-junction-tree-factor-model, to: op-predict-validation-interactions, type: consumed_by}
+    - {from: artifact-validation-parity-counts, to: op-predict-validation-interactions, type: consumed_by}
+    - {from: op-predict-validation-interactions, to: artifact-unranked-validation-scores, type: produces}
+    - {from: artifact-unranked-validation-scores, to: op-rank-missed-interactions, type: consumed_by}
+    - {from: op-rank-missed-interactions, to: artifact-validation-audit, type: produces}
+    - {from: artifact-junction-tree-factor-model, to: op-report-model-diagnostics, type: consumed_by}
+    - {from: artifact-query-results, to: op-report-model-diagnostics, type: consumed_by}
+    - {from: artifact-validation-audit, to: op-report-model-diagnostics, type: consumed_by}
+    - {from: op-report-model-diagnostics, to: artifact-model-diagnostics, type: produces}
+
+  implementation_artifact_exceptions:
+    - artifact_id: artifact-hidden-generalizing-spectral-analyzer
+      outside_scientific_execution_dag: true
+      implements_operation_ids:
+        - op-xor-correct-and-aggregate-counts
+        - op-transform-length-histograms
+        - op-fit-nuisance-decays
+        - op-reconstruct-simplex-distribution
+        - op-compute-dependence-diagnostics
+        - op-reconstruct-local-clique-tree-model
+        - op-rank-nonlocal-interactions
+      rationale: >-
+        This is the participant's submitted implementation artifact, not a
+        scientific data product consumed or produced by one workflow stage.
+        Runtime artifacts remain fully connected by consumed_by/produces edges.
+
+leaf_workflow_links:
+  - leaf_id: claim-leaf-long-range-correlations-and-local-model-mismatch
+    selected_task:
+      task_slug: spectral_correlation_audit
+      task_id: spectral-correlation-audit-v1
+    target_artifact_ids:
+      - artifact-hidden-generalizing-spectral-analyzer
+      - artifact-simplex-distribution
+      - artifact-dependence-table
+      - artifact-local-model-residuals
+      - artifact-local-model-audit
+    backward_slice_operation_ids:
+      - op-xor-correct-and-aggregate-counts
+      - op-transform-length-histograms
+      - op-fit-nuisance-decays
+      - op-reconstruct-simplex-distribution
+      - op-compute-dependence-diagnostics
+      - op-reconstruct-local-clique-tree-model
+      - op-rank-nonlocal-interactions
+    backward_slice_artifact_ids:
+      - artifact-randomized-target-histograms
+      - artifact-local-clique-tree-spec
+      - artifact-aggregated-histograms
+      - artifact-transformed-spectra
+      - artifact-fitted-decays
+      - artifact-simplex-distribution
+      - artifact-dependence-table
+      - artifact-local-model-residuals
+      - artifact-local-model-audit
+      - artifact-hidden-generalizing-spectral-analyzer
+    meaningful_operation_count: 7
+    dependency_depth: 7
+    branch_count: 4
+    closure_status: verified_checkout_stable_post_hardening
+    closure_notes: >-
+      An earlier participant-only review passed after fit conditioning,
+      valid-input, byte/identifier, metric, topology, and resource bounds were
+      disclosed. A later review reopened validator/source-policy claims and the
+      qualitative-success/private-scoring boundary; the repaired current
+      participant projection then received an aggregate independent PASS. A
+      previously passing oracle/solver/evaluator build was separately superseded
+      after adversarial evaluator/generator findings. A later full-task build
+      58feb1090f58ca4f51b8771a39a2b091aac8c71b7b158cf54d124c9db5756786
+      passed all ten verifier groups in an independent root rerun. Oracle,
+      clean-room and alternative solvers, fourteen scientific mutants, seven
+      metamorphic or invariant checks, 28 malformed/security cases, three
+      contract-bypass probes, leakage, and package nonmutation all passed, but a
+      subsequent audit found a private mutant-status documentation contradiction.
+      A clean-checkout audit also found CRLF generated fixtures despite repository
+      LF normalization. Both defects were repaired. Checkout-stable build
+      0bba762f4be56c68c2b20c5147c99d37b716f47ae74a8cff88f7f2271e796a1b
+      has 42 files, zero CRLF files, and zero caches, and passed all ten verifier
+      groups in an independent root rerun. The fourteen mutants are accurately
+      classified as thirteen mandatory scientific rejects plus one hard linked-
+      ranking reject. Paper-blind, scientific, evaluator, security, leakage, and
+      package-nonmutation gates all pass.
+
+  - leaf_id: claim-leaf-bounded-local-grf-scalability
+    selected_task:
+      task_slug: scalable_local_noise_model
+      task_id: local-junction-noise-model-v1
+    target_artifact_ids:
+      - artifact-junction-tree-factor-model
+      - artifact-query-results
+      - artifact-validation-audit
+      - artifact-model-diagnostics
+    backward_slice_operation_ids:
+      - op-parse-local-count-tables
+      - op-reconcile-overlapping-marginals
+      - op-construct-normalized-junction-model
+      - op-answer-partial-assignment-queries
+      - op-predict-validation-interactions
+      - op-rank-missed-interactions
+      - op-report-model-diagnostics
+    backward_slice_artifact_ids:
+      - artifact-local-count-tables
+      - artifact-disclosed-junction-tree-layout
+      - artifact-public-partial-assignment-queries
+      - artifact-validation-parity-counts
+      - artifact-parsed-local-instance
+      - artifact-reconciled-local-marginals
+      - artifact-junction-tree-factor-model
+      - artifact-query-results
+      - artifact-unranked-validation-scores
+      - artifact-validation-audit
+      - artifact-model-diagnostics
+    meaningful_operation_count: 7
+    dependency_depth: 6
+    branch_count: 4
+    closure_status: verified_checkout_stable_post_hardening
+    closure_notes: >-
+      The participant contract passed external paper-blind review. After a
+      transient trusted-oracle metadata defect invalidated an earlier builder run,
+      the generator was isolated and a corrected full-task build
+      b006df370e1038ac1e6cf7deeea1cc824110366807f6523223ca408612c196b0
+      passed all nine verifier groups in an independent root rerun. Oracle,
+      clean-room and alternative solvers, eleven mutants, nine metamorphic or
+      invariant checks, security/leakage probes, and 92-file task idempotence all
+      passed. A later clean-checkout audit found 56 generated text fixtures were
+      CRLF despite repository LF normalization, so that build identity and runtime
+      evidence was retracted. Checkout-stable build
+      9716962c4c4f3338ef2b66a7aea69e10289c8575db33edd64cbadb81e8a62573
+      and participant projection
+      f095d644815187489501b6a83567f01888b929b47164156f140b9bc6f0841834
+      contain 92 UTF-8/LF files, zero CRLF files, and zero caches. The build
+      passed all nine verifier groups in an independent root rerun in 68.8558793
+      seconds, with oracle score 1.0, both valid solvers passing, all eleven
+      mutants rejected, all nine metamorphic/invariant checks passing, and
+      security, leakage, clean regeneration, and task-idempotence gates passing.
+
+  - leaf_id: claim-leaf-figure4-sqrt-scaling
+    target_artifact_ids: []
+    backward_slice_operation_ids: []
+    backward_slice_artifact_ids: []
+    closure_status: rejected_source_conflict
+    closure_notes: >-
+      Caption, notebook metric identity, fit family, and indexing disagree;
+      exact Figure 4 reproduction is also a clone-and-run proprietary-notebook task.
+
+  - leaf_id: claim-leaf-topology-learning-open
+    target_artifact_ids: []
+    backward_slice_operation_ids: []
+    backward_slice_artifact_ids: []
+    closure_status: rejected_open_problem
+    closure_notes: No unique trusted paper-grounded behavioral reference is supplied.
+
+conflicts:
+  - id: conflict-jsd-definition
+    paper_evidence_ids:
+      - evidence-paper-jsd-definition
+    code_evidence_ids:
+      - evidence-code-jsd-definition
+    observed_evidence_ids: []
+    resolution: benchmark-choice
+    rationale: Spectral task publicly specifies square-root JSD with natural logs.
+
+  - id: conflict-dependence-log-base
+    paper_evidence_ids:
+      - evidence-paper-dependence-definitions
+    code_evidence_ids:
+      - evidence-code-dependence-functions
+    observed_evidence_ids: []
+    resolution: benchmark-choice
+    rationale: Spectral task publicly specifies natural-log MI and CMI.
+
+  - id: conflict-source-scalability
+    paper_evidence_ids:
+      - evidence-paper-marginalization-scalability
+    code_evidence_ids:
+      - evidence-code-hardcoded-reconstruct
+      - evidence-code-marginal-local-pipeline
+    observed_evidence_ids: []
+    resolution: benchmark-choice
+    rationale: Local task requires a size-generic junction-tree implementation and hidden scale tests.
+
+  - id: conflict-figure4-source
+    paper_evidence_ids:
+      - evidence-paper-figure4-scalability
+    code_evidence_ids:
+      - evidence-source-figure4-mismatch
+    observed_evidence_ids: []
+    resolution: unresolved
+    rationale: The Figure 4 leaf is rejected as an exact final task.

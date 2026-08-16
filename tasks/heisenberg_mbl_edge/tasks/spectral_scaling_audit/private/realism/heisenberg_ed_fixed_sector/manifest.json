@@ -1,0 +1,58 @@
+{
+  "adjacent_gap_ratio": "mean(min(delta_n,delta_(n+1))/max(delta_n,delta_(n+1))) after nearest-target selection",
+  "case_id": "heisenberg_ed_fixed_sector",
+  "derivation_type": "small_exact_diagonalization",
+  "description": "complete spectra of a periodic random-field Heisenberg chain in the fixed zero-magnetization sector",
+  "files": {
+    "eigenvalues": "eigenvalues.npz",
+    "packets": "packets.csv"
+  },
+  "generation": {
+    "controls": [
+      0.75,
+      8.0
+    ],
+    "diagonalization": "numpy.linalg.eigvalsh on a real symmetric dense matrix",
+    "packet_spectra_are_shuffled": true,
+    "realizations_per_size": 12,
+    "sector_dimensions": {
+      "10": 252,
+      "8": 70
+    },
+    "seed": 14110660,
+    "sizes": [
+      8,
+      10
+    ],
+    "spectrum_scope": "complete fixed-sector spectrum per realization and control",
+    "targets": [
+      0.25,
+      0.5,
+      0.75
+    ]
+  },
+  "independent_sampling_unit": "realization_id within (target,size,control)",
+  "model": {
+    "basis": "computational bitstrings with size/2 up spins",
+    "boundary": "periodic",
+    "exchange_coupling": 1.0,
+    "field_distribution": "independent uniform[-control,+control] before paired control scaling",
+    "hamiltonian": "sum_i S_i dot S_(i+1) - sum_i field_i S_i^z",
+    "sector": "sum_i S_i^z = 0"
+  },
+  "packet_columns": [
+    "packet_id",
+    "realization_id",
+    "size",
+    "control",
+    "target",
+    "e_min",
+    "e_max",
+    "shift_energy",
+    "keep_count",
+    "eigen_offset",
+    "eigen_count"
+  ],
+  "schema_version": "spectral-ed-realism/v1",
+  "target_energy": "e_max + target * (e_min - e_max)"
+}

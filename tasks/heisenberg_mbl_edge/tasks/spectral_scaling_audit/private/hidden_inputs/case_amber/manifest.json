@@ -1,0 +1,67 @@
+{
+  "bootstrap_seed": 202944,
+  "case_id": "case_amber",
+  "case_token": "hidden-amber-31d86a0f",
+  "derivation_type": "grounded_extension",
+  "description": "finite-size crossover spectra with realization-clustered packets",
+  "expected_output_files": [
+    "realization_stats.csv",
+    "packet_stats.csv",
+    "transition.csv",
+    "stability.csv",
+    "predictions.csv",
+    "claims.json"
+  ],
+  "files": {
+    "analysis_grid": "analysis_grid.json",
+    "eigenvalues": "eigenvalues.npz",
+    "packets": "packets.csv",
+    "queries": "queries.csv"
+  },
+  "grid_summary": {
+    "control_max": 4.65,
+    "control_min": 1.45,
+    "sizes": [
+      7,
+      11,
+      17,
+      25
+    ],
+    "stability_variant_count": 6,
+    "targets": [
+      0.18,
+      0.5,
+      0.82
+    ]
+  },
+  "independent_sampling_unit": "realization_id within (target,size,control)",
+  "packet_columns": [
+    "packet_id",
+    "realization_id",
+    "size",
+    "control",
+    "target",
+    "e_min",
+    "e_max",
+    "shift_energy",
+    "keep_count",
+    "eigen_offset",
+    "eigen_count"
+  ],
+  "query_columns": [
+    "query_id",
+    "target",
+    "size",
+    "control"
+  ],
+  "resource_contract": {
+    "network": "disabled",
+    "numpy": "2.3.5",
+    "output_bytes": 4000000,
+    "python": "3.11+",
+    "wall_time_seconds": 180
+  },
+  "scaling_coordinate": "(control - h_c) * size**(1/nu)",
+  "schema_version": "spectral-scaling-input/v1",
+  "target_energy": "e_max + target * (e_min - e_max)"
+}
