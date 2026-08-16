@@ -1,0 +1,105 @@
+schema_version: paper2ale.codex-difficulty-pilot/v2
+
+candidate_id: "<candidate-id>"
+participant_snapshot:
+  root: "screening/participant_draft"
+  sha256: "<64-lowercase-hex>"
+  frozen_at_utc: "<timestamp>"
+
+pilot_evaluator:
+  root: "screening/pilot_evaluator"
+  sha256: "<64-lowercase-hex>"
+  score_range: [0.0, 1.0]
+  primary_metric: "<metric>"
+  ordinary_hidden_case_count: 1
+  shifted_hidden_case_count: 1
+  reliability_notes: "<why a high score is meaningful>"
+
+screening_thresholds:
+  maximum_b0_score: 0.15
+  maximum_b1_score: 0.40
+  reject_on_any_full_pass: true
+  reject_on_median_agent_score_at_or_above: 0.70
+  quick_solve_limit_minutes: 20
+  reject_on_direct_single_pass_solution: true
+
+baselines:
+  - baseline_id: b0
+    name: unchanged_or_trivial
+    command: "<command>"
+    runtime_seconds: null
+    score: null
+    passed: null
+    notes: "<notes>"
+  - baseline_id: b1
+    name: direct_recipe
+    command: "<command>"
+    runtime_seconds: null
+    score: null
+    passed: null
+    implementation_size_lines: null
+    notes: "<how much reasoning/search was needed>"
+  - baseline_id: b2
+    name: source_clone_or_lookup
+    applicable: false
+    command: null
+    runtime_seconds: null
+    score: null
+    passed: null
+    notes: "<notes>"
+
+agent_systems:
+  - agent_system_id: "<stable-id>"
+    provider: "<provider>"
+    model_revision: "<immutable-revision>"
+    harness_revision: "<commit-or-version>"
+    tool_policy: "<policy>"
+    network_policy: "<policy>"
+    token_budget: null
+    wall_time_minutes: 30
+
+attempts:
+  - attempt_id: attempt-001
+    agent_system_id: "<stable-id>"
+    fresh_context: true
+    source_isolation_verified: true
+    participant_snapshot_sha256: "<same-64-hex>"
+    pilot_evaluator_sha256: "<same-64-hex>"
+    seed_or_run_coordinate: "<coordinate>"
+    exit_status: "<completed/timeout/error>"
+    runtime_seconds: null
+    time_to_first_valid_artifact_seconds: null
+    score: null
+    passed: null
+    direct_single_pass_solution: null
+    meaningful_iteration_count: null
+    strategy_summary: "<summary>"
+    major_decisions: []
+    failure_mode: "<none/specification/tooling/method-selection/integration/generalization/etc>"
+    output_digest: "<sha256-or-null>"
+
+aggregate:
+  valid_attempt_count: 0
+  pass_count: 0
+  score_median: null
+  score_mean: null
+  minimum_score: null
+  maximum_score: null
+  quick_full_solve_count: 0
+  direct_single_pass_count: 0
+  specification_failure_count: 0
+
+strengthening_history:
+  - revision_id: draft-v1
+    participant_snapshot_sha256: "<hash>"
+    trigger: "<baseline-or-agent-result>"
+    change_to_responsibility: "<not-more-rows-or-tighter-thresholds>"
+    result: "<retest-result>"
+
+decision:
+  status: "<rejected_recipe_task/rejected_pilot_too_easy/needs_difficulty_pilot/hardening_candidate/rejected_specification_gap>"
+  criteria_triggered: []
+  rationale: >
+    <State whether difficulty was falsified, not merely whether the evaluator
+    and packaging worked.>
+  next_action: "<reject/strengthen/run-pilot/start-hardening>"

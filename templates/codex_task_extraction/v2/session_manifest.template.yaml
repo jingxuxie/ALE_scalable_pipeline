@@ -1,0 +1,138 @@
+schema_version: paper2ale.codex-session/v2
+
+session:
+  paper_id: "<stable-paper-id>"
+  paper_path_or_url: "<local-path-or-url>"
+  supplement_path_or_url: null
+  official_code_hint: null
+  data_hint: null
+  output_root: "generated_tasks/<paper-slug>"
+  preferred_task_count: 1
+  maximum_hardened_task_count: 1
+  overwrite: false
+
+phase_budgets:
+  rapid_source_pass_minutes: 20
+  candidate_design_minutes: 20
+  pilot_package_minutes: 30
+  baseline_minutes: 15
+  per_agent_pilot_minutes: 30
+  maximum_hardening_minutes: 180
+  enforce_screen_before_harden: true
+
+source_policy:
+  find_official_code: true
+  find_official_data: true
+  pin_exact_versions_after_survival: true
+  record_licenses_after_survival: true
+  allow_synthetic_or_derived_inputs: true
+  execute_source_only_when_task_relevant: true
+  exhaustive_evidence_map_before_pilot: false
+  cache_resolved_sources: true
+
+task_policy:
+  preferred_archetypes:
+    - debugging_and_repair
+    - transfer_under_shift
+    - method_selection_and_optimization
+    - reproduction_plus_extension
+    - experiment_design_and_evidence_reconciliation
+    - multi_module_completion
+    - outcome_based_inverse_problem
+  disfavored_archetypes:
+    - disclosed_formula_implementation
+    - pseudocode_transcription
+    - deterministic_row_generation
+    - clone_and_run
+    - single_standard_fit
+  maximum_screened_candidates: 3
+  prefer_existing_inadequate_workspace: true
+  prefer_baseline_improvement_objective: true
+  allow_single_file_submission_only_with_pilot_evidence: false
+  minimum_consequential_decisions: 2
+  minimum_feedback_loops: 1
+  minimum_independent_challenge_sources: 2
+  require_hidden_regime_shift: true
+  require_machine_verifiable_outcome: true
+  require_specification_closure: true
+  maximum_recipe_disclosure_ratio: 0.55
+  reject_if_task_md_mirrors_reference_solver: true
+  allow_no_viable_task_outcome: true
+
+screening_evaluation:
+  build_minimal_evaluator_only: true
+  ordinary_hidden_case_count: 1
+  shifted_hidden_case_count: 1
+  primary_metric_count: 1
+  score_range: [0.0, 1.0]
+  require_participant_snapshot_hash: true
+  require_pilot_evaluator_hash: true
+
+baseline_policy:
+  require_b0_unchanged_or_trivial: true
+  require_b1_direct_recipe: true
+  test_b2_source_clone_or_lookup_when_applicable: true
+  maximum_b0_score: 0.15
+  maximum_b1_score: 0.40
+  reject_when_source_clone_passes: true
+
+pilot_policy:
+  required_before_hardening: true
+  solver_prompt: "prompts/codex_task_extraction/v2/PILOT_SOLVER_PROMPT.md"
+  fresh_context_per_attempt: true
+  minimum_independent_attempts: 2
+  agent_commands:
+    - "<operator-supplied-command-or-remove>"
+  target_agent_systems:
+    - provider: "<provider>"
+      model_revision: "<immutable-model-revision>"
+      harness_revision: "<harness-commit-or-version>"
+      tool_policy: "<policy>"
+  token_budget_per_attempt: "<integer-or-null>"
+  wall_time_minutes_per_attempt: 30
+  quick_solve_limit_minutes: 20
+  reject_on_any_full_pass: true
+  reject_on_median_score_at_or_above: 0.70
+  reject_on_direct_single_pass_solution: true
+  reject_on_source_lookup_solution: true
+  zero_score_requires_specification_diagnosis: true
+  status_when_no_agent_command: needs_difficulty_pilot
+
+participant_environment:
+  os: "<for-example-ubuntu-24.04>"
+  cpu_count: 4
+  memory_gb: 16
+  gpu: null
+  wall_time_minutes: 60
+  disk_gb: 20
+  network:
+    enabled: false
+    allowlist: []
+  allowed_languages:
+    - python
+  required_packages: []
+
+hardening_policy:
+  start_only_after_pilot_survival: true
+  build_at_most_one_task: true
+  complete_task_relevant_provenance: true
+  require_privileged_oracle: true
+  require_clean_room_reference_solver: true
+  require_alternative_valid_solution_when_useful: true
+  require_paper_blind_specification_review: true
+  require_tolerance_justification: true
+  require_targeted_mutants: true
+  minimum_distinct_mutant_categories: 5
+  require_metamorphic_tests_when_applicable: true
+  require_repeated_deterministic_evaluator_runs: true
+  require_resource_and_leakage_checks: true
+
+status_policy:
+  pre_pilot_status: screen_candidate
+  easy_recipe_status: rejected_recipe_task
+  easy_pilot_status: rejected_pilot_too_easy
+  no_pilot_status: needs_difficulty_pilot
+  survivor_status: hardening_candidate
+  hardened_status: verified_hard_candidate
+  uncalibrated_release_status: needs_full_agent_calibration
+  calibrated_status: frontier_challenging

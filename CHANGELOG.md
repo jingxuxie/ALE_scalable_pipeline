@@ -1,5 +1,17 @@
 # Changelog
 
+## Unreleased
+
+- Added a difficulty-first Codex task-extraction V2 workflow that screens
+  recipe disclosure, trivial/direct baselines, and frozen-snapshot strong-agent
+  pilots before full evaluator hardening.
+- Added decision-enriched workflow graphs, method-disclosure budgets, pilot
+  evaluator and difficulty-report templates, phase time budgets, and explicit
+  rejection statuses for easy recipe tasks.
+- Documented why the current verified paper-derived tasks can remain easy even
+  after extensive provenance, mutation, metamorphic, and packaging work.
+- Retained the V1 authoring kit as a legacy reproducibility path.
+
 ## 0.3.0
 
 - Added end-to-end orchestration from locked sources and assets through

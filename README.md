@@ -57,9 +57,16 @@ paper2ale publish examples/generic/project.json --out dist --jobs 2
 
 ## Using your own paper
 
-For an interactive one-paper Codex authoring session focused on genuinely hard,
-long-workflow tasks, use the [Codex hard-task extraction guide](docs/CODEX_TASK_EXTRACTION.md)
-and copy-paste [session prompt](prompts/codex_task_extraction/v1/SESSION_PROMPT.md).
+For a new interactive one-paper Codex session, use the difficulty-first
+[V2 authoring guide](docs/CODEX_TASK_EXTRACTION_V2.md) and copy-paste
+[V2 session prompt](prompts/codex_task_extraction/v2/SESSION_PROMPT.md). V2
+screens recipe disclosure, trivial baselines, and fresh strong-agent solve
+attempts before it spends time on full provenance and evaluator hardening. Read
+[why verified tasks can still be easy](docs/TASK_DIFFICULTY_FAILURE_ANALYSIS.md)
+for the failure mode that motivated this change.
+
+The original [V1 guide](docs/CODEX_TASK_EXTRACTION.md) is retained for legacy
+reproducibility, but it should not be the default for new hard-task generation.
 
 1. Create an orchestration manifest that names the paper, local code or data,
    provenance, licenses, and suitability information.
@@ -116,6 +123,11 @@ configuration, not proof that frontier agents will achieve a particular solve
 rate. Empirical claims require trials bound to the exact task build and agent
 system. See [the difficulty guide](docs/DIFFICULTY.md).
 
+The Codex V2 authoring flow adds an earlier gate: a candidate must survive
+frozen-snapshot baselines and fresh strong-agent difficulty pilots before full
+hardening. Passing provenance, oracle, mutation, or packaging checks alone does
+not establish task difficulty.
+
 ## Included examples
 
 | Example | Purpose |
@@ -148,6 +160,8 @@ bundles.
   custom task family.
 - Difficulty profiles have structural validation, but the hard examples have
   not yet been calibrated across a matrix of frontier models and agents.
+- V2 rejects or pauses candidates without fresh-agent pilot evidence; it cannot
+  guarantee frontier difficulty from templates alone.
 - The repository produces ALE-compatible local bundles but does not claim a
   live `cua_bench`, cloud, or interactive computer-use run.
 
@@ -159,7 +173,9 @@ bundles.
 - [Difficulty](docs/DIFFICULTY.md): controls and empirical calibration.
 - [Threat model](docs/THREAT_MODEL.md): publication gates and failure modes.
 - [Extending Paper2ALE](docs/EXTENDING.md): providers, capabilities, and task families.
-- [Codex hard-task extraction](docs/CODEX_TASK_EXTRACTION.md): author and verify long paper-derived workflows in an interactive session.
+- [Codex hard-task extraction V2](docs/CODEX_TASK_EXTRACTION_V2.md): screen difficulty before full hardening.
+- [Why verified tasks can still be easy](docs/TASK_DIFFICULTY_FAILURE_ANALYSIS.md): diagnosis of the current generated tasks.
+- [Codex hard-task extraction V1](docs/CODEX_TASK_EXTRACTION.md): legacy build-first workflow.
 - [Changelog](CHANGELOG.md): version history.
 
 ## Development
