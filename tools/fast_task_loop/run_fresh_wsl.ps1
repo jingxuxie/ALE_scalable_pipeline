@@ -172,7 +172,10 @@ $outputFiles = @()
 $outputRoot = Join-Path $attempt "output"
 if (Test-Path -LiteralPath $outputRoot -PathType Container) {
     $outputFiles = @(Get-ChildItem -LiteralPath $outputRoot -Recurse -File | ForEach-Object {
-        $_.FullName.Substring($outputRoot.Length).TrimStart('\', '/')
+        $_.FullName.Substring($outputRoot.Length).TrimStart(
+            [System.IO.Path]::DirectorySeparatorChar,
+            [System.IO.Path]::AltDirectorySeparatorChar
+        )
     })
 }
 
