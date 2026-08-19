@@ -2,11 +2,13 @@
 
 ## Unreleased
 
-- Added a minimal fast task loop that keeps only one participant task, one
-  known-good solution, one quick evaluator, and one 10-minute fresh-agent
-  attempt before accepting or strengthening a candidate.
-- Added concise author, fresh-agent, and hardening prompts plus minimal task,
-  evaluator, and status templates.
+- Added an autonomous fast task loop in which one Windows Codex session creates
+  a task, solution, and evaluator, launches fresh ephemeral Codex attempts in
+  WSL, grades them, and structurally revises easy tasks without user handoff.
+- Added a reusable PowerShell-to-WSL runner with a hard time limit, fresh
+  temporary workspaces, participant-only copying, and copied-back outputs/logs.
+- Added one concise end-to-end author prompt, one fresh-agent prompt, and minimal
+  task, evaluator, and status templates.
 - Made the fast loop the recommended candidate-discovery path; V2 remains an
   optional production-hardening path for tasks that survive screening.
 - Added a difficulty-first Codex task-extraction V2 workflow that screens
