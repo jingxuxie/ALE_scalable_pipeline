@@ -18,6 +18,19 @@ A task is a `pilot_hard_candidate` when all three conditions hold:
 
 That is the entire screening rule. It is deliberately empirical and lightweight.
 
+## Throughput target
+
+Target roughly 20–30 minutes of active authoring for the first candidate:
+
+```text
+source skim                 5 minutes
+participant task draft      8 minutes
+solution + evaluator       10 minutes
+reference run/fixes         5 minutes
+```
+
+Run the 10-minute fresh-agent attempt in a separate session. The author can start the next paper while that attempt runs, then return only when a task needs strengthening. This parallelism is the main path to approximately order-of-magnitude higher throughput.
+
 ## Minimal directory layout
 
 ```text
@@ -44,7 +57,7 @@ The fresh agent receives only `participant/`. It does not receive `solution/`, `
 
 ### Step 1: skim the paper
 
-Spend no more than 10 minutes on the first pass.
+Spend no more than five minutes on the first pass. If the paper does not quickly suggest a verifiable, non-recipe task, skip it and move on.
 
 Identify one workflow that can become a difficult professional task. Prefer:
 
@@ -59,24 +72,24 @@ Avoid tasks that mainly ask the agent to transcribe equations, implement a compl
 
 ### Step 2: draft one task
 
-Spend no more than 15 minutes on the first draft.
+Spend no more than eight minutes on the first participant draft.
 
 Create only:
 
 - `participant/TASK.md`;
-- the necessary public inputs and optional starter workspace;
-- one known-good solution;
-- one quick evaluator.
+- the necessary public inputs and optional starter workspace.
 
 The participant task must be clear about the goal, files, outputs, environment, and constraints. It should not reveal the complete solution recipe unless that recipe is unavoidable.
 
 A good task should require at least one consequential choice, diagnosis, or run-inspect-revise loop. More graph nodes do not automatically make a task harder.
 
-### Step 3: run the known-good solution
+### Step 3: build and run the known-good path
+
+Spend about ten minutes creating one known-good solution and one quick evaluator, then no more than five minutes running and fixing them.
 
 The known-good solution may use insights learned from the paper and official code, but at runtime it should read the same participant inputs whenever practical.
 
-Run it once and run the evaluator once. The reference solve should normally finish within two minutes and the evaluator within 30 seconds. If the known-good solution does not pass, fix the task or evaluator before testing an agent.
+Run it once and run the evaluator once. The reference solve should normally finish within two minutes and the evaluator within 30 seconds. If the known-good solution does not pass after a small fix, reject or defer the task rather than entering a long debugging cycle.
 
 No alternative solver, mutation suite, metamorphic suite, archive reproducibility check, hash manifest, or repeated deterministic run is required in this fast loop.
 
@@ -92,7 +105,7 @@ network: whatever the benchmark intends to allow
 attempts: one
 ```
 
-Save its output under `attempts/fresh_01/output/` and run the evaluator.
+Save its output under `attempts/fresh_01/output/` and run the evaluator. The authoring session does not need to wait; move to the next paper while this attempt runs.
 
 ### Step 5: decide
 
