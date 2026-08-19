@@ -1,8 +1,8 @@
 # Fast task-loop templates
 
-Copy these files only when useful. The fast loop intentionally has no required schema system.
+The fast loop uses one Windows authoring session and automatically launches fresh Codex attempts in WSL. No manual handoff is required.
 
-Recommended task directory:
+Minimal task directory:
 
 ```text
 <task>/
@@ -16,7 +16,6 @@ Recommended task directory:
     evaluate.py
     hidden/            # optional
   attempts/
-    fresh_01/output/
   status.json
 ```
 
@@ -28,14 +27,17 @@ Template mapping:
 | `evaluate.py.template` | `evaluator/evaluate.py` |
 | `status.json.template` | `status.json` |
 
-The authoring session writes the task-specific inputs and known-good solution directly.
+The authoring session writes task-specific inputs and the known-good solution directly. It then runs:
 
-Typical commands:
-
-```text
-python solution/solve.py --input participant/input --output _reference_output
-python evaluator/evaluate.py --submission _reference_output
-python evaluator/evaluate.py --submission attempts/fresh_01/output
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass `
+  -File tools/fast_task_loop/run_fresh_wsl.ps1 `
+  -TaskDirectory <task> `
+  -Round 1 `
+  -TimeoutSeconds 360 `
+  -Model gpt-5.6-sol
 ```
 
-A task is retained when the reference passes and one fresh agent fails within the recorded time limit for a substantive reason. Production ALE packaging can be performed later for retained tasks.
+The helper copies only `participant/` to a new WSL workspace, launches an ephemeral fresh Codex run, and copies the resulting `output/` to `attempts/fresh_01/output/`. The Windows authoring session then runs the task-specific evaluator and either keeps the task or revises it automatically.
+
+Use `prompts/fast_task_loop/AUTHOR_PROMPT.md` as the single initial prompt.

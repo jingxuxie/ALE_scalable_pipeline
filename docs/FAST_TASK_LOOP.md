@@ -1,202 +1,228 @@
-# Fast task loop
+# Fast end-to-end task loop
 
-This is the default workflow for rapidly screening paper-derived tasks. It is intentionally much smaller than the V1/V2 authoring pipelines.
+This is the default workflow for rapidly extracting and screening hard paper-derived tasks.
 
-The goal is not to prove that a task is perfectly packaged or universally hard. The goal is to answer one practical question quickly:
-
-> Can a fresh strong agent solve this task correctly within 10 minutes using only the participant-visible files?
-
-If yes, strengthen the task and try again. If no, keep it as a hard candidate.
-
-## Minimal acceptance rule
-
-A task is a `pilot_hard_candidate` when all three conditions hold:
-
-1. the known-good solution passes the evaluator;
-2. a fresh agent receives only `participant/` and fails to produce a passing answer within the time limit;
-3. the failure is not obviously caused by a missing file, broken command, or contradictory task statement.
-
-That is the entire screening rule. It is deliberately empirical and lightweight.
-
-## Throughput target
-
-Target roughly 20–30 minutes of active authoring for the first candidate:
+The user supplies one prompt to a main Codex session on Windows. That session performs the entire loop:
 
 ```text
-source skim                 5 minutes
-participant task draft      8 minutes
-solution + evaluator       10 minutes
-reference run/fixes         5 minutes
+paper/code
+   ↓
+create one task + one solution + one evaluator
+   ↓
+reference solution passes
+   ↓
+copy participant files to a clean WSL workspace
+   ↓
+launch a fresh ephemeral Codex session
+   ↓
+evaluate its output
+   ↓
+fail → keep hard candidate
+pass → structurally strengthen and repeat
 ```
 
-Run the 10-minute fresh-agent attempt in a separate session. The author can start the next paper while that attempt runs, then return only when a task needs strengthening. This parallelism is the main path to approximately order-of-magnitude higher throughput.
+There is no manual fresh-agent handoff.
 
-## Minimal directory layout
+## Acceptance rule
+
+A task is a `pilot_hard_candidate` when:
+
+1. the known-good solution passes;
+2. a fresh strong agent receives only `participant/`;
+3. that agent does not produce a passing output within the configured time limit; and
+4. the failure is not obviously caused by a missing file, broken command, or contradictory task statement.
+
+This is intentionally a fast empirical screen. It is not a claim that every frontier agent will fail.
+
+## Default speed settings
+
+Recommended defaults:
+
+```text
+source skim:            3–5 minutes
+candidate construction: 10–15 minutes
+fresh-agent timeout:    360 seconds
+maximum total rounds:   2
+quick evaluator:        under 30 seconds
+```
+
+The fresh timeout may be raised to 600 seconds, but the helper rejects larger values. If a paper does not quickly yield a promising non-recipe task, reject it rather than spending hours forcing one.
+
+## Minimal task directory
 
 ```text
 tasks/<paper>/<task>/
   participant/
     TASK.md
     input/
-    software/                 # optional starter workspace
+    software/                 # optional
   solution/
-    solve.py                  # or another simple known-good solution
+    solve.py                  # one known-good solution
   evaluator/
     evaluate.py
     hidden/                   # optional small hidden case/reference
   attempts/
     fresh_01/
       output/
-      notes.txt
+      run.json
+      evaluation.json
+      agent_stdout.txt
+      agent_stderr.txt
+    fresh_02/
+      ...
   status.json
 ```
 
-The fresh agent receives only `participant/`. It does not receive `solution/`, `evaluator/`, the paper, source code, or the authoring conversation.
+Only `participant/` is copied into WSL for the fresh attempt.
 
-## The loop
+## Prerequisites
 
-### Step 1: skim the paper
+The Windows authoring machine needs:
 
-Spend no more than five minutes on the first pass. If the paper does not quickly suggest a verifiable, non-recipe task, skip it and move on.
+- WSL;
+- a Linux Codex CLI installation inside WSL;
+- Codex already authenticated/configured inside WSL;
+- GNU `timeout`, normally provided by coreutils;
+- Windows PowerShell.
 
-Identify one workflow that can become a difficult professional task. Prefer:
+Codex CLI supports non-interactive runs through `codex exec`. The helper uses a new ephemeral session, a workspace-write sandbox, no approval prompts, and a fresh temporary workspace for every round.
 
-- debugging or repairing a multi-file scientific workspace;
-- adapting a method to a shifted regime;
-- selecting or optimizing a method under a budget;
-- reproducing one result and then performing a nontrivial extension or ablation;
-- running experiments and reconciling conflicting evidence;
-- completing an incomplete pipeline where several components interact.
+## One-prompt workflow
 
-Avoid tasks that mainly ask the agent to transcribe equations, implement a completely disclosed recurrence, call one standard fitting routine, or generate many rows from one formula.
-
-### Step 2: draft one task
-
-Spend no more than eight minutes on the first participant draft.
-
-Create only:
-
-- `participant/TASK.md`;
-- the necessary public inputs and optional starter workspace.
-
-The participant task must be clear about the goal, files, outputs, environment, and constraints. It should not reveal the complete solution recipe unless that recipe is unavoidable.
-
-A good task should require at least one consequential choice, diagnosis, or run-inspect-revise loop. More graph nodes do not automatically make a task harder.
-
-### Step 3: build and run the known-good path
-
-Spend about ten minutes creating one known-good solution and one quick evaluator, then no more than five minutes running and fixing them.
-
-The known-good solution may use insights learned from the paper and official code, but at runtime it should read the same participant inputs whenever practical.
-
-Run it once and run the evaluator once. The reference solve should normally finish within two minutes and the evaluator within 30 seconds. If the known-good solution does not pass after a small fix, reject or defer the task rather than entering a long debugging cycle.
-
-No alternative solver, mutation suite, metamorphic suite, archive reproducibility check, hash manifest, or repeated deterministic run is required in this fast loop.
-
-### Step 4: run one fresh agent
-
-Start a new session with no paper/source context. Give it only `participant/` and the fresh-agent prompt.
-
-Default limits:
+Paste:
 
 ```text
-wall time: 600 seconds
-network: whatever the benchmark intends to allow
-attempts: one
+prompts/fast_task_loop/AUTHOR_PROMPT.md
 ```
 
-Save its output under `attempts/fresh_01/output/` and run the evaluator. The authoring session does not need to wait; move to the next paper while this attempt runs.
+into the main Windows Codex session and fill in the paper, optional code/data, output directory, model, timeout, and WSL distro.
 
-### Step 5: decide
+The main session must not stop after proposing or building a task. It must continue through the fresh WSL attempt, evaluation, and any required hardening rounds.
 
-- **Fresh agent fails or times out with an incorrect/incomplete result:** keep the task as `pilot_hard_candidate`.
-- **Fresh agent passes:** the task is too easy. Strengthen it and rerun the loop.
-- **Fresh agent fails because of an obvious missing dependency, broken path, or contradictory specification:** fix the task and rerun; do not count this as hardness.
-- **No useful task can be made without disclosing the whole algorithm:** reject the paper for this pipeline.
+## Authoring loop
 
-Use at most three strengthening rounds. Do not spend hours polishing a task that repeatedly remains easy.
+### 1. Pick one non-recipe workflow
 
-## How to strengthen a task
+Prefer:
 
-When the fresh agent passes, inspect how it solved the task. Change the structure of the work rather than adding volume.
+- diagnosis and repair of a partially working multi-file scientific workspace;
+- transfer or adaptation under a shifted regime;
+- method selection or optimization under a budget;
+- reproduction followed by an ablation, robustness study, or extension;
+- experiment design and reconciliation of conflicting evidence;
+- a run–inspect–revise feedback loop.
 
-Good strengthening moves:
+Avoid:
 
-1. **Recipe to repair:** provide a partially working multi-file pipeline with realistic interacting faults instead of asking for a clean implementation from formulas.
-2. **In-distribution to transfer:** add a hidden regime shift and require the agent to adapt or select a robust method.
-3. **Single method to method choice:** provide an inadequate baseline and require the agent to choose, justify, and implement improvements.
-4. **One-shot to feedback loop:** require public diagnostics, iteration, and evidence that the final configuration fixed the observed failure.
-5. **Reproduction to extension:** require an ablation, robustness study, or controlled comparison after the basic result is reproduced.
-6. **Single artifact to coupled deliverables:** require code, results, and a machine-readable evidence summary that must agree.
+- formula transcription;
+- a fully disclosed recurrence or algorithm;
+- one standard fit, optimizer, or library call;
+- clone-and-run reproduction;
+- large repetitive outputs;
+- difficulty created by missing arbitrary facts.
 
-Bad strengthening moves:
+### 2. Build only the essentials
 
-- more rows of the same calculation;
-- tighter numerical tolerance without scientific reason;
-- larger compute only;
-- obscure constants hidden from the participant;
-- longer formatting rules;
-- more hidden cases that test the same fully disclosed algorithm.
+Create:
 
-## Quick evaluator guidance
+- a clear participant task and public inputs;
+- one known-good solution;
+- one quick evaluator.
 
-The evaluator should be small and fast. It may return either pass/fail or a score in `[0,1]`.
+The evaluator prints one JSON object:
 
-Use exact checks only for basic structure. Use numerical tolerance for scientific results:
+```json
+{"passed": false, "score": 0.42, "reason": "hidden-case error"}
+```
+
+Use exact checks only for basic file/schema validity. Use ordinary absolute/relative tolerance for numerical results:
 
 ```python
 abs(actual - expected) <= atol + rtol * abs(expected)
 ```
 
-Prefer checking final behavior on one or a few hidden inputs over comparing source code or exact bytes. Do not build a complicated rubric before the task survives the fresh-agent test.
+### 3. Verify the known-good path once
 
-A minimal evaluator output is:
+Run the solution and evaluator once. If the reference cannot pass after one obvious fix, reject or defer the task. Do not start a large debugging or verification campaign.
 
-```json
-{"passed": false, "score": 0.42, "reason": "hidden-case prediction error"}
+### 4. Launch the fresh WSL attempt automatically
+
+The main Windows session runs:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass `
+  -File tools/fast_task_loop/run_fresh_wsl.ps1 `
+  -TaskDirectory <TASK_DIRECTORY> `
+  -Round 1 `
+  -TimeoutSeconds 360 `
+  -Model gpt-5.6-sol
 ```
 
-## What this fast loop intentionally skips
+Use `-Distro <name>` when a non-default WSL distribution is required.
 
-The screening loop does not require:
+The helper:
 
-- source hashes and content-addressed manifests;
-- exhaustive evidence maps;
-- full claim trees or provenance graphs;
-- license reports during initial screening;
-- deterministic archive reproduction;
-- multiple valid solvers;
-- large mutant suites;
-- metamorphic test suites;
-- complex score-weight contracts;
-- cross-platform packaging audits;
-- repeated evaluator runs;
-- full ALE deployment integration.
+1. creates `attempts/fresh_NN/`;
+2. copies only `participant/` into a new `/tmp/paper2ale-fast/...` directory;
+3. pipes the fresh-agent prompt into `codex exec --ephemeral`;
+4. terminates the process at the configured deadline;
+5. copies `output/` and small run logs back to Windows;
+6. deletes the temporary WSL workspace unless `-KeepWorkspace` is supplied.
 
-Those can be added later to the small subset of tasks that actually survive difficulty screening and are selected for production.
+The helper does **not** decide task correctness. `codex exec` may exit without a correct submission, so the task evaluator is authoritative.
 
-## Recommended commands
+### 5. Grade and iterate
 
-The exact commands are task-specific, but keep the interface simple:
+Run the evaluator on:
 
 ```text
-python solution/solve.py --input participant/input --output _reference_output
-python evaluator/evaluate.py --submission _reference_output
-
-# After the fresh agent run:
-python evaluator/evaluate.py --submission attempts/fresh_01/output
+attempts/fresh_NN/output/
 ```
+
+Then:
+
+- **Evaluator fails or the attempt times out:** keep the task as `pilot_hard_candidate`, unless the failure is clearly an infrastructure/specification problem.
+- **Evaluator passes:** inspect how the agent solved it, make one structural hardening change, update the solution/evaluator, rerun the reference, and launch a new fresh WSL session.
+- **Setup/specification failure:** fix automatically and rerun; do not count it as hardness.
+- **Still easy after the maximum rounds:** mark `rejected` with reason `remains_too_easy`.
+
+Good hardening changes alter the reasoning workflow:
+
+- clean implementation → interacting diagnosis/repair;
+- in-distribution behavior → hidden regime shift;
+- disclosed method → method choice under outcome-based evaluation;
+- one-shot execution → public diagnostics and revision;
+- reproduction → extension or ablation;
+- one output → coupled code, results, and evidence.
+
+Do not harden through more rows, obscure constants, stricter formatting, unjustified tolerance, or raw compute.
+
+## What is intentionally omitted
+
+Initial screening does not require:
+
+- source hashes or manifests;
+- evidence/claim/workflow graphs;
+- exhaustive provenance or license reports;
+- alternative solvers;
+- mutant or metamorphic suites;
+- archive reproducibility;
+- complicated scoring contracts;
+- repeated grader runs;
+- production security packaging;
+- full ALE integration.
+
+Those may be added later only to the small subset of tasks selected for release.
 
 ## Status values
 
-Use only these statuses:
+Use only:
 
 - `draft`
 - `reference_failed`
-- `ready_for_fresh_agent`
+- `blocked`
 - `too_easy`
-- `needs_fix`
 - `pilot_hard_candidate`
 - `rejected`
 
-A `pilot_hard_candidate` means one fresh agent failed under the recorded time limit. It is a fast screening result, not a universal frontier-hardness claim.
+The main Codex session should update `status.json` after every round and finish without requesting a manual fresh-agent action.
