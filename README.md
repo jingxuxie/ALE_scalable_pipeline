@@ -40,8 +40,7 @@ Python 3.11 or newer is required.
 python -m pip install -e .
 ```
 
-Run the complete pipeline with the offline replay fixture. This requires no
-LLM API:
+Run the complete compiler pipeline with the offline replay fixture:
 
 ```powershell
 paper2ale orchestrate examples/orchestration/manifest.json `
@@ -57,24 +56,31 @@ paper2ale publish examples/generic/project.json --out dist --jobs 2
 
 ## Using your own paper
 
-### Fast difficulty screening
+### Fast autonomous difficulty screening
 
-For rapid task generation, use the [fast task loop](docs/FAST_TASK_LOOP.md) and
-copy-paste [author prompt](prompts/fast_task_loop/AUTHOR_PROMPT.md).
+For high-throughput task discovery, paste the single
+[fast author prompt](prompts/fast_task_loop/AUTHOR_PROMPT.md) into a main Codex
+session running on Windows.
 
-The fast loop keeps only the core:
+The main session performs the entire loop itself:
 
 ```text
 paper -> task + known-good solution + quick evaluator
-      -> one fresh-agent attempt with a 10-minute limit
-      -> keep if the agent fails; strengthen if it passes
+      -> copy participant files into a clean WSL workspace
+      -> launch a fresh ephemeral Codex run with a hard deadline
+      -> evaluate its output
+      -> keep if it fails; structurally strengthen and repeat if it passes
 ```
 
-It intentionally skips source hashes, evidence graphs, alternative solvers,
-mutation suites, metamorphic suites, archive checks, and production packaging.
-Use the [fresh-agent prompt](prompts/fast_task_loop/FRESH_AGENT_PROMPT.md) for
-the independent attempt and the [hardening prompt](prompts/fast_task_loop/HARDEN_PROMPT.md)
-when the agent passes.
+The user does not start the fresh session or grade it manually. The Windows
+session calls [`tools/fast_task_loop/run_fresh_wsl.ps1`](tools/fast_task_loop/run_fresh_wsl.ps1),
+which copies only `participant/`, invokes `codex exec --ephemeral` in WSL, and
+copies the generated `output/` back for evaluation.
+
+Read the [fast loop guide](docs/FAST_TASK_LOOP.md) for prerequisites and the
+minimal status rules. The initial screen intentionally skips source hashes,
+evidence graphs, alternative solvers, mutation suites, metamorphic suites,
+archive checks, and production packaging.
 
 ### Full compiler and production path
 
@@ -99,14 +105,14 @@ paper2ale orchestrate manifests/my-paper.json `
 An LLM API is optional. Offline replays and manually authored projects need no
 model. Automated extraction for a new paper needs a structured provider, which
 may call either a local model or an operator-owned hosted API. Provider output
-remains untrusted throughout the pipeline.
+remains untrusted throughout the compiler pipeline.
 
 See [the orchestration guide](docs/ORCHESTRATION.md) for the manifest and
 provider contracts.
 
 ## Which papers are accepted?
 
-Paper2ALE uses a verification-first admission policy.
+Paper2ALE uses a verification-first admission policy for production compilation.
 
 | Outcome | Typical reason |
 | --- | --- |
@@ -124,7 +130,7 @@ license claims are reconciled against resolved snapshots.
 ## Controlling difficulty
 
 Use `easy`, `medium`, `hard`, or `frontier` to change concrete task and
-evaluation controls:
+evaluation controls in the compiler path:
 
 ```powershell
 paper2ale resolve-difficulty hard
@@ -133,16 +139,14 @@ paper2ale publish examples/hnn_hard/project.json `
 ```
 
 Difficulty separates the challenge presented to the agent, the strength of
-hidden evaluation, and benchmark sampling coverage. A level is a structural
-configuration, not proof that frontier agents will achieve a particular solve
-rate. Empirical claims require trials bound to the exact task build and agent
-system. See [the difficulty guide](docs/DIFFICULTY.md).
+hidden evaluation, and benchmark sampling coverage. A structural configuration
+is not proof of a frontier-agent solve rate. See
+[the difficulty guide](docs/DIFFICULTY.md).
 
-For fast paper-derived screening, the practical test is simpler: freeze the
-participant package, give it to one fresh strong agent for at most 10 minutes,
-and run the quick evaluator. A reference-passing task that the agent does not
-solve becomes a `pilot_hard_candidate`; a passing attempt triggers another
-hardening round.
+The fast loop uses a simpler screening signal: the known-good solution must
+pass, then one fresh strong agent receives only the participant package for a
+configurable limit of at most 10 minutes. A substantive failure yields a
+`pilot_hard_candidate`; a passing attempt triggers an automatic hardening round.
 
 ## Included examples
 
@@ -156,11 +160,11 @@ hardening round.
 
 ## Trust and publication
 
+The production compiler supports stronger checks:
+
 - Source and asset bytes are pinned by hash with portable provenance records.
-- Source text and provider output cannot register code, commands, or grading
-  authority.
-- Private graders calculate the correct results from hidden data. Known-correct
-  solutions must pass, while deliberately incorrect solutions must fail.
+- Source text and provider output cannot register code, commands, or grading authority.
+- Private graders calculate the correct results from hidden data.
 - Hidden-data privacy, resource limits, repeatability, file paths, checksums,
   and task packages are checked before release.
 
@@ -168,27 +172,27 @@ hardening round.
 readiness and emits deterministic agent, evaluator, author, and ALE-local
 bundles.
 
-The fast loop is a candidate-discovery path, not a replacement for these
-production release guarantees. Add them only after a task has survived the
-fresh-agent difficulty screen and is worth publishing.
+The fast loop is only a candidate-discovery path. Add production checks later
+to the small subset of tasks that survive empirical difficulty screening and
+are worth releasing.
 
 ## Scope and limitations
 
 - Paper sourcing and internet-scale ranking are upstream concerns.
-- The built-in generic compiler covers three safe data-transformation
-  templates; new scientific workflows may require a reviewed capability or
-  custom task family.
-- Difficulty profiles have structural validation, but the hard examples have
-  not yet been calibrated across a matrix of frontier models and agents.
-- One 10-minute fresh-agent failure is a fast screening signal, not proof that
-  every frontier system will fail.
+- The built-in generic compiler covers three safe data-transformation templates;
+  new scientific workflows may require a reviewed capability or custom family.
+- One fresh-agent failure is a fast screening signal, not proof that every
+  frontier system will fail.
+- The WSL helper provides practical context separation, not a production
+  adversarial security boundary.
 - The repository produces ALE-compatible local bundles but does not claim a
   live `cua_bench`, cloud, or interactive computer-use run.
 
 ## Documentation
 
-- [Fast task loop](docs/FAST_TASK_LOOP.md): minimal task, solution, evaluator, and one-agent screening workflow.
-- [Fast author prompt](prompts/fast_task_loop/AUTHOR_PROMPT.md): copy-paste prompt for a new paper.
+- [Fast autonomous task loop](docs/FAST_TASK_LOOP.md): one Windows prompt, automatic WSL fresh runs, evaluation, and iteration.
+- [Fast author prompt](prompts/fast_task_loop/AUTHOR_PROMPT.md): the only prompt the user needs to provide.
+- [WSL fresh-agent runner](tools/fast_task_loop/run_fresh_wsl.ps1): launches isolated ephemeral attempts and copies outputs back.
 - [Fast task templates](templates/fast_task_loop/README.md): minimal task directory and files.
 - [Architecture](docs/ARCHITECTURE.md): pipeline stages, trust zones, and identities.
 - [Orchestration](docs/ORCHESTRATION.md): end-to-end manifests and providers.
@@ -197,7 +201,7 @@ fresh-agent difficulty screen and is worth publishing.
 - [Threat model](docs/THREAT_MODEL.md): publication gates and failure modes.
 - [Extending Paper2ALE](docs/EXTENDING.md): providers, capabilities, and task families.
 - [Codex hard-task extraction V2](docs/CODEX_TASK_EXTRACTION_V2.md): optional stronger hardening after screening.
-- [Why verified tasks can still be easy](docs/TASK_DIFFICULTY_FAILURE_ANALYSIS.md): diagnosis of the current generated tasks.
+- [Why verified tasks can still be easy](docs/TASK_DIFFICULTY_FAILURE_ANALYSIS.md): diagnosis of the earlier generated tasks.
 - [Codex hard-task extraction V1](docs/CODEX_TASK_EXTRACTION.md): legacy build-first workflow.
 - [Changelog](CHANGELOG.md): version history.
 

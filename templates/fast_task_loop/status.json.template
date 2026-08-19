@@ -1,19 +1,18 @@
 {
   "task_id": "<task-id>",
-  "round": 0,
   "status": "draft",
+  "current_round": 0,
+  "max_rounds": 2,
+  "fresh_agent": {
+    "model": "gpt-5.6-sol",
+    "timeout_seconds": 360,
+    "wsl_distro": null
+  },
   "reference": {
     "passed": false,
-    "runtime_seconds": null,
-    "score": null
-  },
-  "fresh_agent": {
-    "model_or_agent": null,
-    "timeout_seconds": 600,
-    "passed": null,
     "score": null,
-    "failure_reason": null
+    "runtime_seconds": null
   },
-  "decision": null,
-  "notes": ""
+  "attempts": [],
+  "final_reason": ""
 }
