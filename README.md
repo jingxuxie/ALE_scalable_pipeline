@@ -57,16 +57,31 @@ paper2ale publish examples/generic/project.json --out dist --jobs 2
 
 ## Using your own paper
 
-For a new interactive one-paper Codex session, use the difficulty-first
-[V2 authoring guide](docs/CODEX_TASK_EXTRACTION_V2.md) and copy-paste
-[V2 session prompt](prompts/codex_task_extraction/v2/SESSION_PROMPT.md). V2
-screens recipe disclosure, trivial baselines, and fresh strong-agent solve
-attempts before it spends time on full provenance and evaluator hardening. Read
-[why verified tasks can still be easy](docs/TASK_DIFFICULTY_FAILURE_ANALYSIS.md)
-for the failure mode that motivated this change.
+### Fast difficulty screening
 
-The original [V1 guide](docs/CODEX_TASK_EXTRACTION.md) is retained for legacy
-reproducibility, but it should not be the default for new hard-task generation.
+For rapid task generation, use the [fast task loop](docs/FAST_TASK_LOOP.md) and
+copy-paste [author prompt](prompts/fast_task_loop/AUTHOR_PROMPT.md).
+
+The fast loop keeps only the core:
+
+```text
+paper -> task + known-good solution + quick evaluator
+      -> one fresh-agent attempt with a 10-minute limit
+      -> keep if the agent fails; strengthen if it passes
+```
+
+It intentionally skips source hashes, evidence graphs, alternative solvers,
+mutation suites, metamorphic suites, archive checks, and production packaging.
+Use the [fresh-agent prompt](prompts/fast_task_loop/FRESH_AGENT_PROMPT.md) for
+the independent attempt and the [hardening prompt](prompts/fast_task_loop/HARDEN_PROMPT.md)
+when the agent passes.
+
+### Full compiler and production path
+
+The difficulty-first [V2 authoring guide](docs/CODEX_TASK_EXTRACTION_V2.md) is
+retained for the small subset of tasks that survive the fast screen and later
+need stronger provenance, evaluation, and packaging. V1 remains available for
+legacy reproducibility.
 
 1. Create an orchestration manifest that names the paper, local code or data,
    provenance, licenses, and suitability information.
@@ -123,10 +138,11 @@ configuration, not proof that frontier agents will achieve a particular solve
 rate. Empirical claims require trials bound to the exact task build and agent
 system. See [the difficulty guide](docs/DIFFICULTY.md).
 
-The Codex V2 authoring flow adds an earlier gate: a candidate must survive
-frozen-snapshot baselines and fresh strong-agent difficulty pilots before full
-hardening. Passing provenance, oracle, mutation, or packaging checks alone does
-not establish task difficulty.
+For fast paper-derived screening, the practical test is simpler: freeze the
+participant package, give it to one fresh strong agent for at most 10 minutes,
+and run the quick evaluator. A reference-passing task that the agent does not
+solve becomes a `pilot_hard_candidate`; a passing attempt triggers another
+hardening round.
 
 ## Included examples
 
@@ -152,6 +168,10 @@ not establish task difficulty.
 readiness and emits deterministic agent, evaluator, author, and ALE-local
 bundles.
 
+The fast loop is a candidate-discovery path, not a replacement for these
+production release guarantees. Add them only after a task has survived the
+fresh-agent difficulty screen and is worth publishing.
+
 ## Scope and limitations
 
 - Paper sourcing and internet-scale ranking are upstream concerns.
@@ -160,20 +180,23 @@ bundles.
   custom task family.
 - Difficulty profiles have structural validation, but the hard examples have
   not yet been calibrated across a matrix of frontier models and agents.
-- V2 rejects or pauses candidates without fresh-agent pilot evidence; it cannot
-  guarantee frontier difficulty from templates alone.
+- One 10-minute fresh-agent failure is a fast screening signal, not proof that
+  every frontier system will fail.
 - The repository produces ALE-compatible local bundles but does not claim a
   live `cua_bench`, cloud, or interactive computer-use run.
 
 ## Documentation
 
+- [Fast task loop](docs/FAST_TASK_LOOP.md): minimal task, solution, evaluator, and one-agent screening workflow.
+- [Fast author prompt](prompts/fast_task_loop/AUTHOR_PROMPT.md): copy-paste prompt for a new paper.
+- [Fast task templates](templates/fast_task_loop/README.md): minimal task directory and files.
 - [Architecture](docs/ARCHITECTURE.md): pipeline stages, trust zones, and identities.
 - [Orchestration](docs/ORCHESTRATION.md): end-to-end manifests and providers.
 - [Generation](docs/GENERATION.md): provider, replay, and project-generation contracts.
 - [Difficulty](docs/DIFFICULTY.md): controls and empirical calibration.
 - [Threat model](docs/THREAT_MODEL.md): publication gates and failure modes.
 - [Extending Paper2ALE](docs/EXTENDING.md): providers, capabilities, and task families.
-- [Codex hard-task extraction V2](docs/CODEX_TASK_EXTRACTION_V2.md): screen difficulty before full hardening.
+- [Codex hard-task extraction V2](docs/CODEX_TASK_EXTRACTION_V2.md): optional stronger hardening after screening.
 - [Why verified tasks can still be easy](docs/TASK_DIFFICULTY_FAILURE_ANALYSIS.md): diagnosis of the current generated tasks.
 - [Codex hard-task extraction V1](docs/CODEX_TASK_EXTRACTION.md): legacy build-first workflow.
 - [Changelog](CHANGELOG.md): version history.
