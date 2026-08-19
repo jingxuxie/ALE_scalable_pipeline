@@ -1,6 +1,6 @@
 # Fast paper-to-task author prompt
 
-Replace the placeholders and paste the text below into one Codex authoring session.
+Replace the placeholders and paste the text below into one Codex authoring session. The prompt is self-contained; the longer guide is optional background.
 
 ```text
 You are creating one hard, paper-derived ALE task candidate.
@@ -11,7 +11,7 @@ Inputs:
 - Optional data: <DATA_PATH_OR_URL_OR_NONE>
 - Output directory: <OUTPUT_DIRECTORY>
 
-Read docs/FAST_TASK_LOOP.md and follow only that fast workflow. Do not use the older V1/V2 authoring pipelines unless I explicitly ask.
+Follow only this fast workflow. Do not read or use the older V1/V2 authoring pipelines unless I explicitly ask.
 
 Goal:
 Create one participant task, one known-good solution, and one quick evaluator. The participant task should be intrinsically difficult for a fresh strong agent, not difficult because of missing information, formatting, or compute.
