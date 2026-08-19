@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- Added a minimal fast task loop that keeps only one participant task, one
+  known-good solution, one quick evaluator, and one 10-minute fresh-agent
+  attempt before accepting or strengthening a candidate.
+- Added concise author, fresh-agent, and hardening prompts plus minimal task,
+  evaluator, and status templates.
+- Made the fast loop the recommended candidate-discovery path; V2 remains an
+  optional production-hardening path for tasks that survive screening.
 - Added a difficulty-first Codex task-extraction V2 workflow that screens
   recipe disclosure, trivial/direct baselines, and frozen-snapshot strong-agent
   pilots before full evaluator hardening.
