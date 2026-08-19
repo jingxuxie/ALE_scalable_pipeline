@@ -16,11 +16,13 @@ Read docs/FAST_TASK_LOOP.md and follow only that fast workflow. Do not use the o
 Goal:
 Create one participant task, one known-good solution, and one quick evaluator. The participant task should be intrinsically difficult for a fresh strong agent, not difficult because of missing information, formatting, or compute.
 
-Time boxes for the first round:
-- paper/code skim: 10 minutes maximum;
-- task design and public inputs: 15 minutes maximum;
-- known-good solution and evaluator: 15 minutes maximum;
-- reference run and quick fixes: 10 minutes maximum.
+Target active authoring time for the first round: 20-30 minutes.
+- paper/code skim: 5 minutes maximum;
+- task design and public inputs: 8 minutes maximum;
+- known-good solution and evaluator: 10 minutes maximum;
+- reference run and quick fixes: 5 minutes maximum.
+
+If the paper does not quickly yield a promising non-recipe task, reject it and move on. Do not spend an hour forcing a candidate.
 
 Prefer tasks involving one or more of:
 - debugging or repairing a multi-file scientific pipeline;
@@ -66,9 +68,9 @@ Requirements:
 Before finishing:
 - run the known-good solution once;
 - run the evaluator once;
-- fix obvious task/evaluator problems;
+- fix only obvious task/evaluator problems;
 - report the exact commands;
 - briefly explain what consequential decision, diagnosis, or feedback loop should make the task difficult.
 
-Stop after producing a working candidate. Do not spend time on production packaging.
+Stop after producing a working candidate. Start the fresh-agent session separately and move to the next paper instead of waiting for it. Do not spend time on production packaging.
 ```
