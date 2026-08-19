@@ -1,0 +1,41 @@
+# <Neutral task title>
+
+## Objective
+
+<Describe the professional outcome. State what must work, not the hidden source paper or reference method.>
+
+## Provided files
+
+- `input/<file>`: <purpose>
+- `software/<file>`: <optional starter workspace and known current behavior>
+
+## Required work
+
+<Describe the problem boundary, important public definitions, and any public diagnostics. Avoid prescribing the complete solution algorithm.>
+
+The task should normally require at least one consequential choice, diagnosis, experiment, or run-inspect-revise cycle.
+
+## Required outputs
+
+Write all deliverables under `output/`:
+
+- `output/<artifact>`: <format and required contents>
+- `output/<artifact>`: <format and required contents>
+
+## Success criteria
+
+A successful submission:
+
+- <behavioral/scientific criterion>;
+- <robustness or held-out-generalization criterion stated qualitatively>;
+- <consistency criterion between code, results, and evidence when applicable>.
+
+Exact hidden cases and numeric pass thresholds are not public.
+
+## Environment and limits
+
+- Runtime: <for example, 10 minutes>
+- Hardware: <CPU/GPU/memory>
+- Network: <on/off>
+- Available software: <packages/tools>
+- Submission constraints: <only essential constraints>

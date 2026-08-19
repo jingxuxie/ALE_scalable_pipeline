@@ -1,0 +1,19 @@
+{
+  "task_id": "<task-id>",
+  "round": 0,
+  "status": "draft",
+  "reference": {
+    "passed": false,
+    "runtime_seconds": null,
+    "score": null
+  },
+  "fresh_agent": {
+    "model_or_agent": null,
+    "timeout_seconds": 600,
+    "passed": null,
+    "score": null,
+    "failure_reason": null
+  },
+  "decision": null,
+  "notes": ""
+}
